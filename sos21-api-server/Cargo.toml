@@ -1,0 +1,12 @@
+[package]
+name = "sos21-api-server"
+version = "0.1.0"
+authors = ["coord_e <me@coord-e.com>"]
+edition = "2018"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+warp = "0.3"
+structopt = "0.3"
