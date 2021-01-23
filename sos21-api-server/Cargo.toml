@@ -6,7 +6,23 @@ edition = "2018"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-futures = "0.2"
+tracing-subscriber = "0.2"
 anyhow = "1"
 serde = { version = "1", features = ["derive"] }
-warp = "0.3"
+serde_json = "1"
+futures = "0.3"
+async-trait = "0.1.42"
+thiserror = "1"
+chrono = "0.4"
+warp = { version = "0.3", default-features = false }
+sqlx = { git = "https://github.com/launchbadge/sqlx", features = ["postgres", "runtime-tokio-rustls"] }
+jsonwebtoken = "7"
+reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"] }
+url = "2"
 structopt = "0.3"
+sos21-context = { path = "../sos21-context" }
+sos21-model = { path = "../sos21-model" }
+sos21-database = { path = "../sos21-database" }
+sos21-use-case = { path = "../sos21-use-case" }

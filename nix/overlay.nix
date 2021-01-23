@@ -1,3 +1,4 @@
 self: super: {
-  rustPlatform = import ./rust.nix { pkgs = self; };
+  rustPlatform = super.callPackage ./rustPlatform.nix { };
+  sqlx-cli = super.callPackage ./sqlx-cli.nix { };
 }
