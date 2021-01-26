@@ -1,8 +1,10 @@
-use crate::model::{project::Project, user::User};
+use crate::model::{
+    project::{Project, ProjectAttributes, ProjectCategory},
+    user::{User, UserRole},
+};
 
 use anyhow::{Context, Result};
 use futures::stream::{BoxStream, StreamExt};
-use sqlx::{FromRow, Row};
 
 pub struct ProjectWithOwner {
     pub project: Project,
@@ -11,30 +13,30 @@ pub struct ProjectWithOwner {
 
 pub fn list_projects<'a, E>(conn: E) -> BoxStream<'a, Result<ProjectWithOwner>>
 where
-    E: sqlx::Executor<'a, Database = sqlx::Postgres>,
+    E: sqlx::Executor<'a, Database = sqlx::Postgres> + 'a,
 {
-    // TODO: Concise row interpretation in presence of JOIN
-    sqlx::query(
+    // TODO: Remove tedeous null forcings
+    sqlx::query!(
         r#"
 SELECT
-        projects.id,
-        projects.created_at,
-        owner_id,
-        name,
-        kana_name,
-        group_name,
-        kana_group_name,
-        description,
-        category,
-        attributes,
-        users.id as user_id,
-        users.created_at as user_created_at,
-        first_name,
-        kana_first_name,
-        last_name,
-        kana_last_name,
-        email,
-        role
+        projects.id as "id!",
+        projects.created_at as "created_at!",
+        owner_id as "owner_id!",
+        name as "name!",
+        kana_name as "kana_name!",
+        group_name as "group_name!",
+        kana_group_name as "kana_group_name!",
+        description as "description!",
+        category as "category!: ProjectCategory",
+        attributes as "attributes!: ProjectAttributes",
+        users.id as "user_id!",
+        users.created_at as "user_created_at!",
+        first_name as "first_name!",
+        kana_first_name as "kana_first_name!",
+        last_name as "last_name!",
+        kana_last_name as "kana_last_name!",
+        email as "email!",
+        role as "role!: UserRole"
 FROM projects
 INNER JOIN users ON (projects.owner_id = users.id)
 "#,
@@ -42,16 +44,27 @@ INNER JOIN users ON (projects.owner_id = users.id)
     .fetch(conn)
     .map(|row| {
         let row = row.context("Failed to select from projects")?;
-        let project = Project::from_row(&row)?;
+        let project = Project {
+            id: row.id,
+            created_at: row.created_at,
+            owner_id: row.owner_id,
+            name: row.name,
+            kana_name: row.kana_name,
+            group_name: row.group_name,
+            kana_group_name: row.kana_group_name,
+            description: row.description,
+            category: row.category,
+            attributes: row.attributes,
+        };
         let owner = User {
-            id: row.try_get("user_id")?,
-            created_at: row.try_get("user_created_at")?,
-            first_name: row.try_get("first_name")?,
-            kana_first_name: row.try_get("kana_first_name")?,
-            last_name: row.try_get("last_name")?,
-            kana_last_name: row.try_get("kana_last_name")?,
-            email: row.try_get("email")?,
-            role: row.try_get("role")?,
+            id: row.user_id,
+            created_at: row.user_created_at,
+            first_name: row.first_name,
+            kana_first_name: row.kana_first_name,
+            last_name: row.last_name,
+            kana_last_name: row.kana_last_name,
+            email: row.email,
+            role: row.role,
         };
         Ok(ProjectWithOwner { owner, project })
     })

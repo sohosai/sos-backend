@@ -7,7 +7,7 @@ pub fn list_users<'a, E>(conn: E) -> BoxStream<'a, Result<User>>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres> + 'a,
 {
-    sqlx::query_as("SELECT * FROM users")
+    sqlx::query_as_unchecked!(User, "SELECT * FROM users")
         .fetch(conn)
         .map_err(anyhow::Error::msg)
         .boxed()

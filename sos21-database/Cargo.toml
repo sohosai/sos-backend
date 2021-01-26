@@ -13,4 +13,4 @@ bitflags = "1"
 
 [dependencies.sqlx]
 git = "https://github.com/launchbadge/sqlx"
-features = ["macros", "postgres", "chrono", "uuid", "runtime-tokio-rustls"]
+features = ["macros", "postgres", "chrono", "uuid", "offline", "runtime-tokio-rustls"]

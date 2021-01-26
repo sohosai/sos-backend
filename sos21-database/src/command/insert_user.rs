@@ -17,7 +17,7 @@ where
         role,
     } = user;
 
-    sqlx::query(
+    sqlx::query!(
         r#"
 INSERT INTO users (
     id,
@@ -30,15 +30,15 @@ INSERT INTO users (
     role
 ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
 "#,
+        id,
+        created_at,
+        first_name,
+        kana_first_name,
+        last_name,
+        kana_last_name,
+        email,
+        role as _
     )
-    .bind(id)
-    .bind(created_at)
-    .bind(first_name)
-    .bind(kana_first_name)
-    .bind(last_name)
-    .bind(kana_last_name)
-    .bind(email)
-    .bind(role)
     .execute(conn)
     .await
     .context("Failed to insert to users")?;

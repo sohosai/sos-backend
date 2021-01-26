@@ -16,7 +16,7 @@ pub async fn update_user<'a, E>(conn: E, input: Input) -> Result<()>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
-    sqlx::query(
+    sqlx::query!(
         r#"
 UPDATE users
   SET
@@ -27,13 +27,13 @@ UPDATE users
     role = $6
   WHERE id = $1
 "#,
+        input.id,
+        input.first_name,
+        input.kana_first_name,
+        input.last_name,
+        input.kana_last_name,
+        input.role as _
     )
-    .bind(input.id)
-    .bind(input.first_name)
-    .bind(input.kana_first_name)
-    .bind(input.last_name)
-    .bind(input.kana_last_name)
-    .bind(input.role)
     .execute(conn)
     .await
     .context("Failed to update on users")?;

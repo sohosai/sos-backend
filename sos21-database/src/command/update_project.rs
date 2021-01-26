@@ -20,7 +20,7 @@ pub async fn update_project<'a, E>(conn: E, input: Input) -> Result<()>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
-    sqlx::query(
+    sqlx::query!(
         r#"
 UPDATE projects
   SET
@@ -34,16 +34,16 @@ UPDATE projects
     attributes = $9
   WHERE id = $1
 "#,
+        input.id,
+        input.owner_id,
+        input.name,
+        input.kana_name,
+        input.group_name,
+        input.kana_group_name,
+        input.description,
+        input.category as _,
+        input.attributes as _
     )
-    .bind(input.id)
-    .bind(input.owner_id)
-    .bind(input.name)
-    .bind(input.kana_name)
-    .bind(input.group_name)
-    .bind(input.kana_group_name)
-    .bind(input.description)
-    .bind(input.category)
-    .bind(input.attributes)
     .execute(conn)
     .await
     .context("Failed to update on projects")?;

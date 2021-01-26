@@ -19,7 +19,7 @@ where
         attributes,
     } = project;
 
-    sqlx::query(
+    sqlx::query!(
         r#"
 INSERT INTO projects (
     id,
@@ -34,17 +34,17 @@ INSERT INTO projects (
     attributes
 ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )
 "#,
+        id,
+        created_at,
+        owner_id,
+        name,
+        kana_name,
+        group_name,
+        kana_group_name,
+        description,
+        category as _,
+        attributes as _
     )
-    .bind(id)
-    .bind(created_at)
-    .bind(owner_id)
-    .bind(name)
-    .bind(kana_name)
-    .bind(group_name)
-    .bind(kana_group_name)
-    .bind(description)
-    .bind(category)
-    .bind(attributes)
     .execute(conn)
     .await
     .context("Failed to insert to projects")?;
