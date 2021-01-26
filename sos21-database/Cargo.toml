@@ -5,6 +5,12 @@ authors = ["coord.e <me@coord-e.com>"]
 edition = "2018"
 
 [dependencies]
-sqlx = { git = "https://github.com/launchbadge/sqlx", features = ["macros", "postgres", "chrono", "runtime-tokio-rustls"] }
 anyhow = "1"
 chrono = "0.4"
+uuid = "0.8"
+futures = "0.3"
+bitflags = "1"
+
+[dependencies.sqlx]
+git = "https://github.com/launchbadge/sqlx"
+features = ["macros", "postgres", "chrono", "uuid", "runtime-tokio-rustls"]

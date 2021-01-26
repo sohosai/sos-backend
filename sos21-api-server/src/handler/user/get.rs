@@ -1,0 +1,52 @@
+use crate::app::App;
+use crate::handler::model::user::{User, UserId};
+use crate::handler::{HandlerResponse, HandlerResult};
+
+use serde::{Deserialize, Serialize};
+use sos21_domain_context::Login;
+use sos21_use_case::get_user;
+use warp::http::StatusCode;
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Request {
+    pub user_id: UserId,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Response {
+    pub user: User,
+}
+
+impl HandlerResponse for Response {
+    fn status_code(&self) -> StatusCode {
+        StatusCode::OK
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub enum Error {
+    NotFound,
+}
+
+impl HandlerResponse for Error {
+    fn status_code(&self) -> StatusCode {
+        match self {
+            Error::NotFound => StatusCode::NOT_FOUND,
+        }
+    }
+}
+
+impl From<get_user::Error> for Error {
+    fn from(err: get_user::Error) -> Error {
+        match err {
+            get_user::Error::NotFound => Error::NotFound,
+        }
+    }
+}
+
+pub async fn handler(app: Login<App>, request: Request) -> HandlerResult<Response, Error> {
+    let user = get_user::run(&app, request.user_id.into_use_case()).await?;
+    Ok(Response {
+        user: User::from_use_case(user),
+    })
+}

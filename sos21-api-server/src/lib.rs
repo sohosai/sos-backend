@@ -1,8 +1,9 @@
 mod app;
 mod config;
-mod filter;
-mod handler;
 mod server;
+
+pub mod filter;
+pub mod handler;
 
 pub use config::Config;
 pub use server::Server;

@@ -1,8 +1,9 @@
-use crate::app::{App, Authentication};
+use crate::app::App;
 use crate::config::Config;
 
 use anyhow::Context;
 use jsonwebtoken as jwt;
+use sos21_domain_context::authentication::{self, Authentication};
 use tracing::{event, Level};
 use warp::{Filter, Rejection};
 
@@ -26,11 +27,8 @@ async fn validate_token(
         leeway: 0,
         validate_exp: true,
         validate_nbf: false,
-        aud: Some(std::iter::once(config.firebase_project_id.clone()).collect()),
-        iss: Some(format!(
-            "https://securetoken.google.com/{}",
-            &config.firebase_project_id
-        )),
+        aud: Some(std::iter::once(config.jwt_audience.clone()).collect()),
+        iss: Some(config.jwt_issuer.clone()),
         sub: None,
         algorithms: vec![jwt::Algorithm::RS256],
     };
@@ -42,6 +40,7 @@ async fn validate_token(
 pub enum AuthenticationError {
     InvalidToken,
     UnverifiedEmail,
+    InvalidEmail,
     NoEmail,
     Unauthorized,
 }
@@ -53,7 +52,7 @@ async fn handle_validation(
     (key_store, app): (KeyStore, App),
     bearer: Bearer,
 ) -> Result<Authentication<App>, Rejection> {
-    let claims = match validate_token(&app.config, key_store, bearer).await {
+    let claims = match validate_token(app.config(), key_store, bearer).await {
         Ok(cs) => cs,
         Err(error) => {
             event!(Level::INFO, %error, "Invalid token");
@@ -70,7 +69,12 @@ async fn handle_validation(
         return Err(warp::reject::custom(AuthenticationError::UnverifiedEmail));
     }
 
-    Ok(Authentication::new(app, claims.sub, email))
+    match Authentication::new(app, claims.sub, email) {
+        Ok(app) => Ok(app),
+        Err(authentication::AuthenticationError::InvalidEmail) => {
+            Err(warp::reject::custom(AuthenticationError::InvalidEmail))
+        }
+    }
 }
 
 pub fn authenticate(

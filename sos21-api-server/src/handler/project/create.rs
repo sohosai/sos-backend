@@ -1,15 +1,21 @@
-use crate::app::{App, Login};
+use crate::app::App;
+use crate::handler::model::project::{Project, ProjectAttribute, ProjectCategory};
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
-use sos21_model::user::{User, UserName};
-use sos21_use_case as use_case;
-use sos21_use_case::signup;
+use sos21_domain_context::Login;
+use sos21_use_case::create_project;
 use warp::http::StatusCode;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {
-    pub name: UserName,
+    pub name: String,
+    pub kana_name: String,
+    pub group_name: String,
+    pub kana_group_name: String,
+    pub description: String,
+    pub category: ProjectCategory,
+    pub attributes: Vec<ProjectAttribute>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -24,21 +30,48 @@ impl HandlerResponse for Response {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub enum Error {}
+pub enum Error {
+    InvalidField(&'static str),
+    DuplicatedAttributes,
+}
 
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
-        match self {}
+        match self {
+            Error::InvalidField(_) => StatusCode::BAD_REQUEST,
+            Error::DuplicatedAttributes => StatusCode::BAD_REQUEST,
+        }
     }
 }
 
-impl From<signup::Error> for Error {
-    fn from(err: signup::Error) -> Error {
-        match err {}
+impl From<create_project::Error> for Error {
+    fn from(err: create_project::Error) -> Error {
+        match err {
+            create_project::Error::InvalidName => Error::InvalidField("name"),
+            create_project::Error::InvalidKanaName => Error::InvalidField("kana_name"),
+            create_project::Error::InvalidGroupName => Error::InvalidField("group_name"),
+            create_project::Error::InvalidKanaGroupName => Error::InvalidField("kana_group_name"),
+            create_project::Error::InvalidDescription => Error::InvalidField("description"),
+            create_project::Error::DuplicatedAttributes => Error::DuplicatedAttributes,
+        }
     }
 }
 
 pub async fn handler(app: Login<App>, request: Request) -> HandlerResult<Response, Error> {
-    let user = use_case::signup::run(app, request.name).await?;
-    Ok(Response { user })
+    let input = create_project::Input {
+        name: request.name,
+        kana_name: request.kana_name,
+        group_name: request.group_name,
+        kana_group_name: request.kana_group_name,
+        description: request.description,
+        category: request.category.into_use_case(),
+        attributes: request
+            .attributes
+            .into_iter()
+            .map(ProjectAttribute::into_use_case)
+            .collect(),
+    };
+    let project = create_project::run(&app, input).await?;
+    let project = Project::from_use_case(project);
+    Ok(Response { project })
 }

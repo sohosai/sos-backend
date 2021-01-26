@@ -1,7 +1,11 @@
 { pkgs ? import ./nix/pkgs.nix }:
 with pkgs;
 mkShell {
-  nativeBuildInputs = with rustPlatform.rust; [ rustc cargo ];
+  nativeBuildInputs = [
+    rustPlatform.rust.rustc
+    rustPlatform.rust.cargo
+    pkgs.sqlx-cli
+  ];
 
   RUST_BACKTRACE = 1;
 }

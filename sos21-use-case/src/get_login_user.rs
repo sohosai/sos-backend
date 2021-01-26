@@ -1,21 +1,34 @@
-use crate::error::{UseCaseError, UseCaseResult};
+use std::convert::Infallible;
 
-use sos21_context::{AuthenticationContext, UserRepository};
-use sos21_model::user::User;
+use crate::error::UseCaseResult;
+use crate::model::user::User;
 
-#[derive(Debug, Clone)]
-pub enum Error {
-    NotSignedUp,
-}
+use sos21_domain_context::Login;
 
 #[tracing::instrument(skip(ctx))]
-pub async fn run<C>(ctx: C) -> UseCaseResult<User, Error>
-where
-    C: UserRepository + AuthenticationContext,
-{
-    if let Some(user) = ctx.get_user(ctx.login_user()).await? {
-        Ok(user)
-    } else {
-        return Err(UseCaseError::UseCase(Error::NotSignedUp));
+pub async fn run<C>(ctx: &Login<C>) -> UseCaseResult<User, Infallible> {
+    Ok(User::from_entity(ctx.login_user().clone()))
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::get_login_user;
+    use crate::model::user::{UserId, UserName};
+    use sos21_domain_test as test;
+
+    #[tokio::test]
+    async fn test_get() {
+        let user = test::model::new_general_user();
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        assert!(matches!(
+            get_login_user::run(&app).await,
+            Ok(got)
+            if got.id == UserId::from_entity(user.id) && got.name == UserName::from_entity(user.name)
+        ));
     }
 }

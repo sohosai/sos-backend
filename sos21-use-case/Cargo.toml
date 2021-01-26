@@ -6,7 +6,13 @@ edition = "2018"
 
 [dependencies]
 anyhow = "1"
+chrono = "0.4"
+uuid = { version = "0.8", features = ["v4"] }
 tracing = "0.1"
 tracing-futures = "0.2"
-sos21-model = { path = "../sos21-model" }
-sos21-context = { path = "../sos21-context" }
+sos21-domain-model = { path = "../sos21-domain/model" }
+sos21-domain-context = { path = "../sos21-domain/context" }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+sos21-domain-test = { path = "../sos21-domain/test" }

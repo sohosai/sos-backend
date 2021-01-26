@@ -1,11 +1,15 @@
-use crate::app::{App, Authentication};
+use std::convert::Infallible;
+
+use crate::app::App;
+use crate::handler::model::user::User;
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::Serialize;
-use sos21_model::user::User;
-use sos21_use_case as use_case;
+use sos21_domain_context::Login;
 use sos21_use_case::get_login_user;
 use warp::http::StatusCode;
+
+pub mod project;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Response {
@@ -19,27 +23,22 @@ impl HandlerResponse for Response {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub enum Error {
-    NotSignedUp,
-}
+pub enum Error {}
 
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
-        match self {
-            Error::NotSignedUp => StatusCode::FORBIDDEN,
-        }
+        match *self {}
     }
 }
 
-impl From<get_login_user::Error> for Error {
-    fn from(err: get_login_user::Error) -> Error {
-        match err {
-            get_login_user::Error::NotSignedUp => Error::NotSignedUp,
-        }
+impl From<Infallible> for Error {
+    fn from(x: Infallible) -> Error {
+        match x {}
     }
 }
 
-pub async fn handler(app: Authentication<App>) -> HandlerResult<Response, Error> {
-    let user = use_case::get_login_user::run(app).await?;
+pub async fn handler(app: Login<App>) -> HandlerResult<Response, Error> {
+    let user = get_login_user::run(&app).await?;
+    let user = User::from_use_case(user);
     Ok(Response { user })
 }

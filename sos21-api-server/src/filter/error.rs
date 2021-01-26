@@ -2,6 +2,7 @@ use std::convert::Infallible;
 
 use super::authentication::AuthenticationError;
 use super::handler::ErasedHandlerError;
+use super::login::LoginError;
 
 use tracing::{event, Level};
 use warp::{
@@ -9,7 +10,7 @@ use warp::{
     {reject::Rejection, reply::Reply},
 };
 
-mod model;
+pub mod model;
 use model::{AuthenticationErrorId, Error, ErrorBody, RequestErrorId};
 
 // TODO: Can't we somehow type `Rejection` and detect unhandled rejections statically?
@@ -49,6 +50,12 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                 },
                 status: StatusCode::UNAUTHORIZED,
             },
+            AuthenticationError::InvalidEmail => Error {
+                error: ErrorBody::Authentication {
+                    id: AuthenticationErrorId::InvalidEmail,
+                },
+                status: StatusCode::BAD_REQUEST,
+            },
             AuthenticationError::NoEmail => Error {
                 error: ErrorBody::Authentication {
                     id: AuthenticationErrorId::NoEmail,
@@ -62,35 +69,56 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                 status: StatusCode::FORBIDDEN,
             },
         }
-    } else if let Some(_) = err.find::<warp::reject::UnsupportedMediaType>() {
+    } else if let Some(err) = err.find::<LoginError>() {
+        match err {
+            LoginError::NotSignedUp => Error {
+                error: ErrorBody::NotSignedUp,
+                status: StatusCode::UNAUTHORIZED,
+            },
+            LoginError::Internal(error) => {
+                event!(Level::ERROR, %error, "Unexpected error in login");
+                Error {
+                    error: ErrorBody::Internal,
+                    status: StatusCode::INTERNAL_SERVER_ERROR,
+                }
+            }
+        }
+    } else if err.find::<warp::reject::UnsupportedMediaType>().is_some() {
         Error {
             error: ErrorBody::Request {
                 id: RequestErrorId::UnsupportedMediaType,
             },
             status: StatusCode::UNSUPPORTED_MEDIA_TYPE,
         }
-    } else if let Some(_) = err.find::<warp::reject::MethodNotAllowed>() {
+    } else if err.find::<warp::reject::MethodNotAllowed>().is_some() {
         Error {
             error: ErrorBody::Request {
                 id: RequestErrorId::MethodNotAllowed,
             },
             status: StatusCode::METHOD_NOT_ALLOWED,
         }
-    } else if let Some(_) = err.find::<warp::reject::MissingHeader>() {
+    } else if err.find::<warp::reject::MissingHeader>().is_some() {
         Error {
             error: ErrorBody::Request {
                 id: RequestErrorId::MissingHeader,
             },
             status: StatusCode::BAD_REQUEST,
         }
-    } else if let Some(_) = err.find::<warp::reject::InvalidHeader>() {
+    } else if err.find::<warp::reject::InvalidHeader>().is_some() {
         Error {
             error: ErrorBody::Request {
                 id: RequestErrorId::InvalidHeader,
             },
             status: StatusCode::BAD_REQUEST,
         }
-    } else if let Some(_) = err.find::<warp::reject::InvalidQuery>() {
+    } else if err.find::<warp::body::BodyDeserializeError>().is_some() {
+        Error {
+            error: ErrorBody::Request {
+                id: RequestErrorId::InvalidBody,
+            },
+            status: StatusCode::BAD_REQUEST,
+        }
+    } else if err.find::<warp::reject::InvalidQuery>().is_some() {
         Error {
             error: ErrorBody::Request {
                 id: RequestErrorId::InvalidQuery,

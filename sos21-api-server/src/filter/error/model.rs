@@ -6,6 +6,7 @@ use warp::http::StatusCode;
 pub enum AuthenticationErrorId {
     Unauthrized,
     InvalidToken,
+    InvalidEmail,
     UnverifiedEmail,
     NoEmail,
 }
@@ -19,6 +20,7 @@ pub enum RequestErrorId {
     MethodNotAllowed,
     InvalidHeader,
     InvalidQuery,
+    InvalidBody,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -28,6 +30,7 @@ pub enum ErrorBody {
     Api { info: serde_json::Value },
     Authentication { id: AuthenticationErrorId },
     Request { id: RequestErrorId },
+    NotSignedUp,
     Internal,
 }
 

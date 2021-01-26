@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum UseCaseError<E> {
     UseCase(E),
     Internal(anyhow::Error),

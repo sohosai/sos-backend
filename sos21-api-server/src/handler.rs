@@ -2,8 +2,12 @@ use serde::Serialize;
 use sos21_use_case::UseCaseError;
 use warp::http::StatusCode;
 
+pub mod model;
+
 pub mod health;
+pub mod project;
 pub mod signup;
+pub mod user;
 pub use signup::handler as signup;
 pub mod me;
 pub use me::handler as me;

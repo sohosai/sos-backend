@@ -1,2 +1,10 @@
+mod find_project;
 mod find_user;
+mod list_projects;
+mod list_projects_by_owner;
+mod list_users;
+pub use find_project::find_project;
 pub use find_user::find_user;
+pub use list_projects::list_projects;
+pub use list_projects_by_owner::list_projects_by_owner;
+pub use list_users::list_users;

@@ -3,37 +3,28 @@ on: [push, pull_request]
 name: CI
 
 jobs:
-  test:
-    name: Test
+  build:
+    name: Build
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
         with:
-          toolchain: stable
-          override: true
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ubuntu-18.04-stable-cargo-all-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ubuntu-18.04-stable-cargo-all-
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --tests
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
+          name: sos21-backend
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: nix-build
   fmt:
     name: Rustfmt
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - run: rustup component add rustfmt
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: sos21-backend
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: nix-env -f ./nix/pkgs.nix -iA rustPlatform.rust.cargo
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
@@ -43,8 +34,13 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - run: rustup component add clippy
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: sos21-backend
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: nix-env -f ./nix/pkgs.nix -iA rustPlatform.rust.cargo
       - uses: actions-rs/clippy-check@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: '${{ secrets.GITHUB_TOKEN }}'
           args: -- -D warnings

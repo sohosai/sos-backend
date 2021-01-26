@@ -1,10 +1,29 @@
-CREATE TYPE USER_ROLE AS ENUM ('admin', 'committee', 'general');
+CREATE TYPE user_role AS ENUM ('admin', 'committee_operator', 'committee', 'general');
 
 CREATE TABLE users (
-    id VARCHAR(64) NOT NULL PRIMARY KEY,
-    created_at TIMESTAMPTZ NOT NULL,
-    first_name VARCHAR(128) NOT NULL,
-    last_name VARCHAR(128) NOT NULL,
-    email VARCHAR(254) UNIQUE NOT NULL,
-    role USER_ROLE NOT NULL
+    id varchar(64) PRIMARY KEY,
+    created_at timestamptz NOT NULL,
+    first_name varchar(64) NOT NULL,
+    kana_first_name varchar(256) NOT NULL,
+    last_name varchar(64) NOT NULL,
+    kana_last_name varchar(256) NOT NULL,
+    email varchar(128) NOT NULL,
+    role user_role NOT NULL
 );
+
+CREATE TYPE project_category AS ENUM ('general', 'stage');
+
+CREATE TABLE projects (
+    id uuid PRIMARY KEY,
+    created_at timestamptz NOT NULL,
+    owner_id varchar(64) NOT NULL REFERENCES users ON DELETE RESTRICT,
+    name varchar(128) NOT NULL,
+    kana_name varchar(512) NOT NULL,
+    group_name varchar(128) NOT NULL,
+    kana_group_name varchar(512) NOT NULL,
+    description varchar(4096) NOT NULL,
+    category project_category NOT NULL,
+    attributes bigint NOT NULL
+);
+
+CREATE INDEX ON projects ( owner_id );

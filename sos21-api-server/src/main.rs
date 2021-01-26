@@ -12,8 +12,10 @@ use url::Url;
 struct Opt {
     #[structopt(short = "j", long, env = "SOS21_API_SERVER_THREADS")]
     threads: Option<usize>,
-    #[structopt(long, env = "SOS21_API_SERVER_FIREBASE_PROJECT_ID")]
-    firebase_project_id: String,
+    #[structopt(long, env = "SOS21_API_SERVER_JWT_AUDIENCE")]
+    jwt_audience: String,
+    #[structopt(long, env = "SOS21_API_SERVER_JWT_ISSUER")]
+    jwt_issuer: String,
     #[structopt(long, env = "SOS21_API_SERVER_JWT_KEYS_URL")]
     jwt_keys_url: Url,
     #[structopt(
@@ -31,7 +33,7 @@ struct Opt {
 fn main() {
     let opt = Opt::from_args();
 
-    tracing_subscriber::fmt().init();
+    tracing_subscriber::fmt().pretty().init();
 
     if let Err(error) = run(opt) {
         event!(Level::ERROR, %error);
@@ -50,7 +52,8 @@ fn run(opt: Opt) -> Result<()> {
 
     runtime.block_on(async move {
         let config = Config {
-            firebase_project_id: opt.firebase_project_id,
+            jwt_audience: opt.jwt_audience,
+            jwt_issuer: opt.jwt_issuer,
             jwt_keys_url: opt.jwt_keys_url,
             postgres_uri: opt.postgres_uri,
             max_database_connections: opt.max_database_connections,

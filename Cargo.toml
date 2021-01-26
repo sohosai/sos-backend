@@ -1,4 +1,10 @@
 [workspace]
 members = [
+  "sos21-domain/model",
+  "sos21-domain/context",
+  "sos21-domain/test",
+  "sos21-use-case",
+  "sos21-database",
+  "sos21-gateway/database",
   "sos21-api-server",
 ]

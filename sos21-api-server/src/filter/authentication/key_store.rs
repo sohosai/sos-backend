@@ -106,7 +106,7 @@ fn parse_max_age(v: &reqwest::header::HeaderValue) -> Option<u64> {
     let mut sp = s.splitn(2, "max-age");
     sp.next()?;
     let after_max_age = sp.next()?;
-    assert!(sp.next().is_none());
+    debug_assert!(sp.next().is_none());
     let after_equal = after_max_age.trim().strip_prefix('=')?;
     let mut sp = after_equal
         .trim()

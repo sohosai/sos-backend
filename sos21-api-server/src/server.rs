@@ -38,7 +38,7 @@ fn spawn_key_refresh_worker(key_store: KeyStore) -> JoinHandle<Infallible> {
                     FETCH_MINIMUM_INTERVAL
                 }
             };
-            assert!(interval_sec >= FETCH_MINIMUM_INTERVAL);
+            debug_assert!(interval_sec >= FETCH_MINIMUM_INTERVAL);
             time::sleep(Duration::from_secs(interval_sec)).await;
         }
     })
@@ -64,6 +64,17 @@ impl Server {
     pub async fn run(&self, bind: impl Into<SocketAddr>) {
         warp::serve(filter::endpoints(self.app.clone(), self.key_store.clone()))
             .run(bind)
+            .await
+    }
+
+    pub async fn run_incoming<I>(&self, incoming: I)
+    where
+        I: futures::stream::TryStream + Send,
+        I::Ok: tokio::io::AsyncRead + tokio::io::AsyncWrite + Send + 'static + Unpin,
+        I::Error: Into<Box<dyn std::error::Error + Send + Sync>>,
+    {
+        warp::serve(filter::endpoints(self.app.clone(), self.key_store.clone()))
+            .run_incoming(incoming)
             .await
     }
 }
