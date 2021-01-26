@@ -21,8 +21,29 @@ impl Database {
 
 #[async_trait::async_trait]
 impl UserRepository for Database {
-    async fn create_user(&self, user: User) -> Result<()> {
-        command::insert_user(&self.pool, from_user(user)).await
+    async fn store_user(&self, user: User) -> Result<()> {
+        let mut transaction = self.pool.begin().await?;
+
+        let user = from_user(user);
+        if query::find_user(&mut transaction, user.id.clone())
+            .await?
+            .is_some()
+        {
+            let input = command::update_user::Input {
+                id: user.id,
+                first_name: user.first_name,
+                kana_first_name: user.kana_first_name,
+                last_name: user.last_name,
+                kana_last_name: user.kana_last_name,
+                role: user.role,
+            };
+            command::update_user(&mut transaction, input).await?;
+        } else {
+            command::insert_user(&mut transaction, user).await?;
+        }
+
+        transaction.commit().await?;
+        Ok(())
     }
 
     async fn get_user(&self, id: UserId) -> Result<Option<User>> {

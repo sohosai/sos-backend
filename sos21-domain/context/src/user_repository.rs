@@ -3,7 +3,7 @@ use sos21_domain_model::user::{User, UserId};
 
 #[async_trait::async_trait]
 pub trait UserRepository {
-    async fn create_user(&self, user: User) -> Result<()>;
+    async fn store_user(&self, user: User) -> Result<()>;
     async fn get_user(&self, id: UserId) -> Result<Option<User>>;
     async fn list_users(&self) -> Result<Vec<User>>;
 }
@@ -13,11 +13,11 @@ macro_rules! delegate_user_repository {
     (impl <$($vars:ident $(: $c0:ident $(+ $cs:ident)* )? ),*> for $t:ty : $field:ident) => {
         #[::async_trait::async_trait]
         impl<$($vars$(: $c0 $(+ $cs)* )?,)*> $crate::UserRepository for $t {
-            async fn create_user(
+            async fn store_user(
                 &self,
                 user: ::sos21_domain_model::user::User,
             ) -> ::anyhow::Result<()> {
-                self.$field.create_user(user).await
+                self.$field.store_user(user).await
             }
             async fn get_user(
                 &self,
@@ -36,8 +36,8 @@ macro_rules! delegate_user_repository {
 
 #[async_trait::async_trait]
 impl<C: UserRepository + Sync> UserRepository for &C {
-    async fn create_user(&self, user: User) -> Result<()> {
-        <C as UserRepository>::create_user(self, user).await
+    async fn store_user(&self, user: User) -> Result<()> {
+        <C as UserRepository>::store_user(self, user).await
     }
 
     async fn get_user(&self, id: UserId) -> Result<Option<User>> {

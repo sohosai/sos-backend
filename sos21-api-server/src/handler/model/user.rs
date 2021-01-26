@@ -61,6 +61,7 @@ impl UserKanaName {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum UserRole {
     Administrator,
     CommitteeOperator,

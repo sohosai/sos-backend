@@ -18,6 +18,8 @@ pub mod list_all_projects;
 pub mod list_user_projects;
 pub mod list_users;
 pub mod signup;
+pub mod update_project;
+pub mod update_user;
 
 mod error;
 pub use error::{UseCaseError, UseCaseResult};

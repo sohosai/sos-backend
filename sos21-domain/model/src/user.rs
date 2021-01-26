@@ -4,8 +4,8 @@ use crate::permissions::Permissions;
 use chrono::{DateTime, Utc};
 use thiserror::Error;
 
-mod name;
-mod role;
+pub mod name;
+pub mod role;
 pub use name::{UserKanaName, UserName};
 pub use role::UserRole;
 
@@ -50,6 +50,18 @@ impl User {
         }
 
         user.permissions().contains(Permissions::READ_ALL_USERS)
+    }
+
+    pub fn set_name(&mut self, name: UserName) {
+        self.name = name;
+    }
+
+    pub fn set_kana_name(&mut self, kana_name: UserKanaName) {
+        self.kana_name = kana_name;
+    }
+
+    pub fn set_role(&mut self, role: UserRole) {
+        self.role = role;
     }
 }
 

@@ -1,4 +1,4 @@
-CREATE TYPE user_role AS ENUM ('admin', 'committee_operator', 'committee', 'general');
+CREATE TYPE user_role AS ENUM ('administrator', 'committee_operator', 'committee', 'general');
 
 CREATE TABLE users (
     id varchar(64) PRIMARY KEY,

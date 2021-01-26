@@ -4,10 +4,10 @@ use crate::user::{User, UserId};
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-mod attribute;
-mod category;
-mod description;
-mod name;
+pub mod attribute;
+pub mod category;
+pub mod description;
+pub mod name;
 pub use attribute::{ProjectAttribute, ProjectAttributes};
 pub use category::ProjectCategory;
 pub use description::ProjectDescription;
@@ -47,6 +47,34 @@ impl Project {
         }
 
         user.permissions().contains(Permissions::READ_ALL_PROJECTS)
+    }
+
+    pub fn set_name(&mut self, name: ProjectName) {
+        self.name = name;
+    }
+
+    pub fn set_kana_name(&mut self, kana_name: ProjectKanaName) {
+        self.kana_name = kana_name;
+    }
+
+    pub fn set_group_name(&mut self, group_name: ProjectGroupName) {
+        self.group_name = group_name;
+    }
+
+    pub fn set_kana_group_name(&mut self, kana_group_name: ProjectKanaGroupName) {
+        self.kana_group_name = kana_group_name;
+    }
+
+    pub fn set_description(&mut self, description: ProjectDescription) {
+        self.description = description;
+    }
+
+    pub fn set_category(&mut self, category: ProjectCategory) {
+        self.category = category;
+    }
+
+    pub fn set_attributes(&mut self, attributes: ProjectAttributes) {
+        self.attributes = attributes;
     }
 }
 

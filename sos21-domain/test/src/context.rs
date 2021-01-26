@@ -89,7 +89,7 @@ impl MockApp {
 
 #[async_trait::async_trait]
 impl UserRepository for MockApp {
-    async fn create_user(&self, user: User) -> Result<()> {
+    async fn store_user(&self, user: User) -> Result<()> {
         self.users.lock().await.insert(user.id.clone(), user);
         Ok(())
     }
@@ -105,7 +105,7 @@ impl UserRepository for MockApp {
 
 #[async_trait::async_trait]
 impl ProjectRepository for MockApp {
-    async fn create_project(&self, project: Project) -> Result<()> {
+    async fn store_project(&self, project: Project) -> Result<()> {
         self.projects.lock().await.insert(project.id, project);
         Ok(())
     }

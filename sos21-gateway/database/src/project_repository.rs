@@ -28,8 +28,32 @@ impl Database {
 
 #[async_trait::async_trait]
 impl ProjectRepository for Database {
-    async fn create_project(&self, project: Project) -> Result<()> {
-        command::insert_project(&self.pool, from_project(project)).await
+    async fn store_project(&self, project: Project) -> Result<()> {
+        let mut transaction = self.pool.begin().await?;
+
+        let project = from_project(project);
+        if query::find_project(&mut transaction, project.id)
+            .await?
+            .is_some()
+        {
+            let input = command::update_project::Input {
+                id: project.id,
+                owner_id: project.owner_id,
+                name: project.name,
+                kana_name: project.kana_name,
+                group_name: project.group_name,
+                kana_group_name: project.kana_group_name,
+                description: project.description,
+                category: project.category,
+                attributes: project.attributes,
+            };
+            command::update_project(&mut transaction, input).await?;
+        } else {
+            command::insert_project(&mut transaction, project).await?;
+        }
+
+        transaction.commit().await?;
+        Ok(())
     }
 
     async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {

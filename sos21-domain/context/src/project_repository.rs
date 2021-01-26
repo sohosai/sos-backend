@@ -6,7 +6,7 @@ use sos21_domain_model::{
 
 #[async_trait::async_trait]
 pub trait ProjectRepository {
-    async fn create_project(&self, project: Project) -> Result<()>;
+    async fn store_project(&self, project: Project) -> Result<()>;
     async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>>;
     async fn list_projects(&self) -> Result<Vec<(Project, User)>>;
     async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<Project>>;
@@ -17,11 +17,11 @@ macro_rules! delegate_project_repository {
     (impl <$($vars:ident $(: $c0:ident $(+ $cs:ident)* )? ),*> for $t:ty : $field:ident) => {
         #[::async_trait::async_trait]
         impl<$($vars$(: $c0 $(+ $cs)* )?,)*> $crate::ProjectRepository for $t {
-            async fn create_project(
+            async fn store_project(
                 &self,
                 project: ::sos21_domain_model::project::Project,
             ) -> ::anyhow::Result<()> {
-                self.$field.create_project(project).await
+                self.$field.store_project(project).await
             }
             async fn get_project(
                 &self,
@@ -56,8 +56,8 @@ macro_rules! delegate_project_repository {
 
 #[async_trait::async_trait]
 impl<C: ProjectRepository + Sync> ProjectRepository for &C {
-    async fn create_project(&self, project: Project) -> Result<()> {
-        <C as ProjectRepository>::create_project(self, project).await
+    async fn store_project(&self, project: Project) -> Result<()> {
+        <C as ProjectRepository>::store_project(self, project).await
     }
 
     async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {

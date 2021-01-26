@@ -47,7 +47,7 @@ where
         created_at: Utc::now(),
         role: user::UserRole::General,
     };
-    ctx.create_user(user.clone())
+    ctx.store_user(user.clone())
         .await
         .context("Failed to create a user")?;
     Ok(User::from_entity(user))

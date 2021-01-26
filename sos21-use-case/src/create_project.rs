@@ -52,7 +52,9 @@ where
             .into_iter()
             .map(ProjectAttribute::into_entity),
     )
-    .map_err(|_| UseCaseError::UseCase(Error::DuplicatedAttributes))?;
+    .map_err(|_: project::attribute::DuplicatedAttributesError| {
+        UseCaseError::UseCase(Error::DuplicatedAttributes)
+    })?;
 
     let project = project::Project {
         id: project::ProjectId::from_uuid(Uuid::new_v4()),
@@ -66,7 +68,7 @@ where
         category: input.category.into_entity(),
         attributes,
     };
-    ctx.create_project(project.clone())
+    ctx.store_project(project.clone())
         .await
         .context("Failed to create a project")?;
     use_case_ensure!(project.is_visible_to(login_user));
