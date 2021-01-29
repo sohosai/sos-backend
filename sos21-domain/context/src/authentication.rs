@@ -43,5 +43,14 @@ impl<C> Authentication<C> {
     }
 }
 
-crate::delegate_project_repository! { impl<C: ProjectRepository + Send + Sync> for Authentication<C> : inner }
-crate::delegate_user_repository! { impl<C: UserRepository + Send + Sync> for Authentication<C> : inner }
+crate::delegate_project_repository! {
+    impl<C: ProjectRepository + Send + Sync> ProjectRepository for Authentication<C> {
+        self { &self.inner }
+    }
+}
+
+crate::delegate_user_repository! {
+    impl<C: UserRepository + Send + Sync> UserRepository for Authentication<C> {
+        self { &self.inner }
+    }
+}

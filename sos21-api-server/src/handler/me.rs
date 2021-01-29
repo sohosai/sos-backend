@@ -1,6 +1,6 @@
 use std::convert::Infallible;
 
-use crate::app::App;
+use crate::app::Context;
 use crate::handler::model::user::User;
 use crate::handler::{HandlerResponse, HandlerResult};
 
@@ -37,8 +37,9 @@ impl From<Infallible> for Error {
     }
 }
 
-pub async fn handler(app: Login<App>) -> HandlerResult<Response, Error> {
-    let user = get_login_user::run(&app).await?;
+#[apply_macro::apply(handler)]
+pub async fn handler(ctx: Login<Context>) -> HandlerResult<Response, Error> {
+    let user = get_login_user::run(&ctx).await?;
     let user = User::from_use_case(user);
     Ok(Response { user })
 }

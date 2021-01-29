@@ -1,8 +1,7 @@
 use std::convert::Infallible;
 
 use super::authentication::AuthenticationError;
-use super::handler::ErasedHandlerError;
-use super::login::LoginError;
+use crate::handler::ErasedHandlerError;
 
 use tracing::{event, Level};
 use warp::{
@@ -31,6 +30,16 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                     status: StatusCode::INTERNAL_SERVER_ERROR,
                 }
             }
+            ErasedHandlerError::InvalidEmail => Error {
+                error: ErrorBody::Authentication {
+                    id: AuthenticationErrorId::InvalidEmail,
+                },
+                status: StatusCode::BAD_REQUEST,
+            },
+            ErasedHandlerError::NotSignedUp => Error {
+                error: ErrorBody::NotSignedUp,
+                status: StatusCode::UNAUTHORIZED,
+            },
             ErasedHandlerError::Client { status_code, info } => Error {
                 error: ErrorBody::Api { info: info.clone() },
                 status: *status_code,
@@ -50,12 +59,6 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                 },
                 status: StatusCode::UNAUTHORIZED,
             },
-            AuthenticationError::InvalidEmail => Error {
-                error: ErrorBody::Authentication {
-                    id: AuthenticationErrorId::InvalidEmail,
-                },
-                status: StatusCode::BAD_REQUEST,
-            },
             AuthenticationError::NoEmail => Error {
                 error: ErrorBody::Authentication {
                     id: AuthenticationErrorId::NoEmail,
@@ -68,20 +71,6 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                 },
                 status: StatusCode::FORBIDDEN,
             },
-        }
-    } else if let Some(err) = err.find::<LoginError>() {
-        match err {
-            LoginError::NotSignedUp => Error {
-                error: ErrorBody::NotSignedUp,
-                status: StatusCode::UNAUTHORIZED,
-            },
-            LoginError::Internal(error) => {
-                event!(Level::ERROR, %error, "Unexpected error in login");
-                Error {
-                    error: ErrorBody::Internal,
-                    status: StatusCode::INTERNAL_SERVER_ERROR,
-                }
-            }
         }
     } else if err.find::<warp::reject::UnsupportedMediaType>().is_some() {
         Error {

@@ -44,5 +44,14 @@ impl<C> Login<C> {
     }
 }
 
-crate::delegate_project_repository! { impl<C: ProjectRepository + Send + Sync> for Login<C> : inner }
-crate::delegate_user_repository! { impl<C: UserRepository + Send + Sync> for Login<C> : inner }
+crate::delegate_project_repository! {
+    impl<C: ProjectRepository + Send + Sync> ProjectRepository for Login<C> {
+        self { &self.inner }
+    }
+}
+
+crate::delegate_user_repository! {
+    impl<C: UserRepository + Send + Sync> UserRepository for Login<C> {
+        self { &self.inner }
+    }
+}

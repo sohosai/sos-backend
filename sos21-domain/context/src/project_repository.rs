@@ -14,17 +14,19 @@ pub trait ProjectRepository {
 
 #[macro_export]
 macro_rules! delegate_project_repository {
-    (impl <$($vars:ident $(: $c0:ident $(+ $cs:ident)* )? ),*> for $t:ty : $field:ident) => {
+    (impl $(<$($vars:ident $(: $c0:ident $(+ $cs:ident)* )? ),*>)? ProjectRepository for $ty:ty {
+        $sel:ident $target:block
+    }) => {
         #[::async_trait::async_trait]
-        impl<$($vars$(: $c0 $(+ $cs)* )?,)*> $crate::ProjectRepository for $t {
+        impl $(<$($vars$(: $c0 $(+ $cs)* )?,)*>)? $crate::ProjectRepository for $ty {
             async fn store_project(
-                &self,
+                &$sel,
                 project: ::sos21_domain_model::project::Project,
             ) -> ::anyhow::Result<()> {
-                self.$field.store_project(project).await
+                $target.store_project(project).await
             }
             async fn get_project(
-                &self,
+                &$sel,
                 id: ::sos21_domain_model::project::ProjectId,
             ) -> ::anyhow::Result<
                 Option<(
@@ -32,23 +34,23 @@ macro_rules! delegate_project_repository {
                     ::sos21_domain_model::user::User,
                 )>,
             > {
-                self.$field.get_project(id).await
+                $target.get_project(id).await
             }
             async fn list_projects(
-                &self,
+                &$sel,
             ) -> ::anyhow::Result<
                 Vec<(
                     ::sos21_domain_model::project::Project,
                     ::sos21_domain_model::user::User,
                 )>,
             > {
-                self.$field.list_projects().await
+                $target.list_projects().await
             }
             async fn list_projects_by_owner(
-                &self,
+                &$sel,
                 id: ::sos21_domain_model::user::UserId,
             ) -> ::anyhow::Result<Vec<::sos21_domain_model::project::Project>> {
-                self.$field.list_projects_by_owner(id).await
+                $target.list_projects_by_owner(id).await
             }
         }
     };

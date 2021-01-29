@@ -1,31 +1,26 @@
 use anyhow::Result;
+use futures::lock::Mutex;
 use futures::{future, stream::TryStreamExt};
+use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
 use sos21_domain_context::UserRepository;
 use sos21_domain_model::{
     email::EmailAddress,
     user::{User, UserId, UserKanaName, UserName, UserRole},
 };
-use sqlx::postgres::PgPool;
+use sqlx::{Postgres, Transaction};
 
-#[derive(Debug, Clone)]
-pub struct Database {
-    pool: PgPool,
-}
-
-impl Database {
-    pub fn new(pool: PgPool) -> Self {
-        Database { pool }
-    }
-}
+#[derive(Debug, RefCast)]
+#[repr(transparent)]
+pub struct UserDatabase(Mutex<Transaction<'static, Postgres>>);
 
 #[async_trait::async_trait]
-impl UserRepository for Database {
+impl UserRepository for UserDatabase {
     async fn store_user(&self, user: User) -> Result<()> {
-        let mut transaction = self.pool.begin().await?;
+        let mut lock = self.0.lock().await;
 
         let user = from_user(user);
-        if query::find_user(&mut transaction, user.id.clone())
+        if query::find_user(&mut *lock, user.id.clone())
             .await?
             .is_some()
         {
@@ -37,23 +32,22 @@ impl UserRepository for Database {
                 kana_last_name: user.kana_last_name,
                 role: user.role,
             };
-            command::update_user(&mut transaction, input).await?;
+            command::update_user(&mut *lock, input).await
         } else {
-            command::insert_user(&mut transaction, user).await?;
+            command::insert_user(&mut *lock, user).await
         }
-
-        transaction.commit().await?;
-        Ok(())
     }
 
     async fn get_user(&self, id: UserId) -> Result<Option<User>> {
-        query::find_user(&self.pool, id.0)
+        let mut lock = self.0.lock().await;
+        query::find_user(&mut *lock, id.0)
             .await
             .and_then(|opt| opt.map(to_user).transpose())
     }
 
     async fn list_users(&self) -> Result<Vec<User>> {
-        query::list_users(&self.pool)
+        let mut lock = self.0.lock().await;
+        query::list_users(&mut *lock)
             .and_then(|user| future::ready(to_user(user)))
             .try_collect()
             .await

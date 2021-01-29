@@ -1,4 +1,4 @@
-use crate::app::App;
+use crate::app::Context;
 use crate::handler::model::user::{User, UserKanaName, UserName};
 use crate::handler::{HandlerResponse, HandlerResult};
 
@@ -49,12 +49,16 @@ impl From<signup::Error> for Error {
     }
 }
 
-pub async fn handler(app: Authentication<App>, request: Request) -> HandlerResult<Response, Error> {
+#[apply_macro::apply(handler)]
+pub async fn handler(
+    ctx: Authentication<Context>,
+    request: Request,
+) -> HandlerResult<Response, Error> {
     let input = signup::Input {
         name: request.name.into_use_case(),
         kana_name: request.kana_name.into_use_case(),
     };
-    let user = signup::run(&app, input).await?;
+    let user = signup::run(&ctx, input).await?;
     let user = User::from_use_case(user);
     Ok(Response { user })
 }

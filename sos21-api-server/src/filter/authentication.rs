@@ -1,9 +1,7 @@
-use crate::app::App;
 use crate::config::Config;
 
-use anyhow::Context;
+use anyhow::Context as _;
 use jsonwebtoken as jwt;
-use sos21_domain_context::authentication::{self, Authentication};
 use tracing::{event, Level};
 use warp::{Filter, Rejection};
 
@@ -13,6 +11,12 @@ mod key_store;
 use bearer::Bearer;
 use claim::Claims;
 pub use key_store::KeyStore;
+
+#[derive(Debug, Clone)]
+pub struct AuthenticationInfo {
+    pub user_id: String,
+    pub email: String,
+}
 
 #[tracing::instrument(skip(config, key_store), level = "debug")]
 async fn validate_token(
@@ -40,19 +44,19 @@ async fn validate_token(
 pub enum AuthenticationError {
     InvalidToken,
     UnverifiedEmail,
-    InvalidEmail,
     NoEmail,
     Unauthorized,
 }
 
 impl warp::reject::Reject for AuthenticationError {}
 
-#[tracing::instrument(skip(key_store, app), level = "debug")]
+#[tracing::instrument(skip(key_store, config), level = "debug")]
 async fn handle_validation(
-    (key_store, app): (KeyStore, App),
+    key_store: KeyStore,
+    config: Config,
     bearer: Bearer,
-) -> Result<Authentication<App>, Rejection> {
-    let claims = match validate_token(app.config(), key_store, bearer).await {
+) -> Result<AuthenticationInfo, Rejection> {
+    let claims = match validate_token(&config, key_store, bearer).await {
         Ok(cs) => cs,
         Err(error) => {
             event!(Level::INFO, %error, "Invalid token");
@@ -69,20 +73,19 @@ async fn handle_validation(
         return Err(warp::reject::custom(AuthenticationError::UnverifiedEmail));
     }
 
-    match Authentication::new(app, claims.sub, email) {
-        Ok(app) => Ok(app),
-        Err(authentication::AuthenticationError::InvalidEmail) => {
-            Err(warp::reject::custom(AuthenticationError::InvalidEmail))
-        }
-    }
+    Ok(AuthenticationInfo {
+        user_id: claims.sub,
+        email,
+    })
 }
 
 pub fn authenticate(
     key_store: KeyStore,
-    app: App,
-) -> impl Filter<Extract = (Authentication<App>,), Error = Rejection> + Clone {
+    config: Config,
+) -> impl Filter<Extract = (AuthenticationInfo,), Error = Rejection> + Clone {
     warp::any()
-        .map(move || (key_store.clone(), app.clone()))
+        .map(move || key_store.clone())
+        .and(warp::any().map(move || config.clone()))
         .and(
             warp::header::<Bearer>("authorization").or_else(|_| async {
                 Err(warp::reject::custom(AuthenticationError::Unauthorized))

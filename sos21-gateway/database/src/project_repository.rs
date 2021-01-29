@@ -3,7 +3,9 @@ use std::collections::HashSet;
 use crate::user_repository::to_user;
 
 use anyhow::{ensure, Result};
+use futures::lock::Mutex;
 use futures::{future, stream::TryStreamExt};
+use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
 use sos21_domain_context::ProjectRepository;
 use sos21_domain_model::{
@@ -13,29 +15,19 @@ use sos21_domain_model::{
     },
     user::{User, UserId},
 };
-use sqlx::postgres::PgPool;
+use sqlx::{Postgres, Transaction};
 
-#[derive(Debug, Clone)]
-pub struct Database {
-    pool: PgPool,
-}
-
-impl Database {
-    pub fn new(pool: PgPool) -> Self {
-        Database { pool }
-    }
-}
+#[derive(Debug, RefCast)]
+#[repr(transparent)]
+pub struct ProjectDatabase(Mutex<Transaction<'static, Postgres>>);
 
 #[async_trait::async_trait]
-impl ProjectRepository for Database {
+impl ProjectRepository for ProjectDatabase {
     async fn store_project(&self, project: Project) -> Result<()> {
-        let mut transaction = self.pool.begin().await?;
+        let mut lock = self.0.lock().await;
 
         let project = from_project(project);
-        if query::find_project(&mut transaction, project.id)
-            .await?
-            .is_some()
-        {
+        if query::find_project(&mut *lock, project.id).await?.is_some() {
             let input = command::update_project::Input {
                 id: project.id,
                 owner_id: project.owner_id,
@@ -47,17 +39,15 @@ impl ProjectRepository for Database {
                 category: project.category,
                 attributes: project.attributes,
             };
-            command::update_project(&mut transaction, input).await?;
+            command::update_project(&mut *lock, input).await
         } else {
-            command::insert_project(&mut transaction, project).await?;
+            command::insert_project(&mut *lock, project).await
         }
-
-        transaction.commit().await?;
-        Ok(())
     }
 
     async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {
-        let result = match query::find_project(&self.pool, id.to_uuid()).await? {
+        let mut lock = self.0.lock().await;
+        let result = match query::find_project(&mut *lock, id.to_uuid()).await? {
             Some(x) => x,
             None => return Ok(None),
         };
@@ -65,14 +55,16 @@ impl ProjectRepository for Database {
     }
 
     async fn list_projects(&self) -> Result<Vec<(Project, User)>> {
-        query::list_projects(&self.pool)
+        let mut lock = self.0.lock().await;
+        query::list_projects(&mut *lock)
             .and_then(|result| future::ready(to_project_with_owner(result.project, result.owner)))
             .try_collect()
             .await
     }
 
     async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<Project>> {
-        query::list_projects_by_owner(&self.pool, id.0)
+        let mut lock = self.0.lock().await;
+        query::list_projects_by_owner(&mut *lock, id.0)
             .and_then(|project| future::ready(to_project(project)))
             .try_collect()
             .await

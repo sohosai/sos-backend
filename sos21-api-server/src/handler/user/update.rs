@@ -1,4 +1,4 @@
-use crate::app::App;
+use crate::app::Context;
 use crate::handler::model::user::{User, UserId, UserKanaName, UserName, UserRole};
 use crate::handler::{HandlerResponse, HandlerResult};
 
@@ -57,14 +57,15 @@ impl From<update_user::Error> for Error {
     }
 }
 
-pub async fn handler(app: Login<App>, request: Request) -> HandlerResult<Response, Error> {
+#[apply_macro::apply(handler)]
+pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let input = update_user::Input {
         id: request.id.into_use_case(),
         name: request.name.map(UserName::into_use_case),
         kana_name: request.kana_name.map(UserKanaName::into_use_case),
         role: request.role.map(UserRole::into_use_case),
     };
-    let user = update_user::run(&app, input).await?;
+    let user = update_user::run(&ctx, input).await?;
     let user = User::from_use_case(user);
     Ok(Response { user })
 }

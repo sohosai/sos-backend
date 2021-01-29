@@ -1,4 +1,4 @@
-use crate::app::App;
+use crate::app::Context;
 use crate::handler::model::project::{Project, ProjectAttribute, ProjectCategory, ProjectId};
 use crate::handler::{HandlerResponse, HandlerResult};
 
@@ -69,7 +69,8 @@ impl From<update_project::Error> for Error {
     }
 }
 
-pub async fn handler(app: Login<App>, request: Request) -> HandlerResult<Response, Error> {
+#[apply_macro::apply(handler)]
+pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let input = update_project::Input {
         id: request.id.into_use_case(),
         name: request.name,
@@ -85,7 +86,7 @@ pub async fn handler(app: Login<App>, request: Request) -> HandlerResult<Respons
                 .collect()
         }),
     };
-    let project = update_project::run(&app, input).await?;
+    let project = update_project::run(&ctx, input).await?;
     let project = Project::from_use_case(project);
     Ok(Response { project })
 }

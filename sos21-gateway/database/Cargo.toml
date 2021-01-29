@@ -8,6 +8,7 @@ edition = "2018"
 anyhow = "1"
 futures = "0.3"
 async-trait = "0.1.42"
+ref-cast = "1"
 sos21-database = { path = "../../sos21-database" }
 sos21-domain-model = { path = "../../sos21-domain/model" }
 sos21-domain-context = { path = "../../sos21-domain/context" }

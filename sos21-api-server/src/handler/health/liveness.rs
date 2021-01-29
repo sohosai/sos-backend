@@ -23,6 +23,7 @@ impl HandlerResponse for Response {
     }
 }
 
+#[apply_macro::apply(handler)]
 pub async fn handler() -> HandlerResult<Response, Error> {
     Ok(Response { ok: true })
 }

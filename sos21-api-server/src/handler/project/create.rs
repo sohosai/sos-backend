@@ -1,4 +1,4 @@
-use crate::app::App;
+use crate::app::Context;
 use crate::handler::model::project::{Project, ProjectAttribute, ProjectCategory};
 use crate::handler::{HandlerResponse, HandlerResult};
 
@@ -57,7 +57,8 @@ impl From<create_project::Error> for Error {
     }
 }
 
-pub async fn handler(app: Login<App>, request: Request) -> HandlerResult<Response, Error> {
+#[apply_macro::apply(handler)]
+pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let input = create_project::Input {
         name: request.name,
         kana_name: request.kana_name,
@@ -71,7 +72,7 @@ pub async fn handler(app: Login<App>, request: Request) -> HandlerResult<Respons
             .map(ProjectAttribute::into_use_case)
             .collect(),
     };
-    let project = create_project::run(&app, input).await?;
+    let project = create_project::run(&ctx, input).await?;
     let project = Project::from_use_case(project);
     Ok(Response { project })
 }

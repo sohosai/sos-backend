@@ -1,4 +1,4 @@
-use crate::app::App;
+use crate::app::Context;
 use crate::handler::model::user::User;
 use crate::handler::{HandlerResponse, HandlerResult};
 
@@ -42,8 +42,9 @@ impl From<list_users::Error> for Error {
     }
 }
 
-pub async fn handler(app: Login<App>, _request: Request) -> HandlerResult<Response, Error> {
-    let users = list_users::run(&app).await?;
+#[apply_macro::apply(handler)]
+pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
+    let users = list_users::run(&ctx).await?;
     let users = users.into_iter().map(User::from_use_case).collect();
     Ok(Response { users })
 }
