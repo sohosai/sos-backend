@@ -11,6 +11,7 @@ macro_rules! use_case_ensure {
 }
 
 pub mod create_project;
+pub mod export_users;
 pub mod get_login_user;
 pub mod get_project;
 pub mod get_user;

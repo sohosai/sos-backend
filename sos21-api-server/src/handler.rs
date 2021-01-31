@@ -43,6 +43,14 @@ where
 
 impl warp::reject::Reject for ErasedHandlerError {}
 
+fn handle_raw_handler_result<R, E>(result: HandlerResult<R, E>) -> Result<R, Rejection>
+where
+    R: Reply,
+    E: HandlerResponse,
+{
+    result.map_err(|error| warp::reject::custom(crate::handler::ErasedHandlerError::from(error)))
+}
+
 fn handle_handler_result<R, E>(result: HandlerResult<R, E>) -> Result<impl Reply, Rejection>
 where
     R: HandlerResponse,
@@ -60,16 +68,35 @@ where
     }
 }
 
+macro_rules! raw_response_handler {
+    ($vis:vis async fn $name:ident (
+        $ctx:ident: Authentication<Context>
+        $(, $param:ident : $ty:ty)* $(,)?
+    ) -> HandlerResult<impl warp::Reply, $err:ty> $body:block) => {
+        handler! {
+            @impl_authentication $vis $name($ctx, $($param: $ty),*) -> impl warp::Reply, $err, $body;
+              crate::handler::handle_raw_handler_result
+        }
+    };
+    ($vis:vis async fn $name:ident (
+        $ctx:ident: Login<Context>
+        $(, $param:ident : $ty:ty)* $(,)?
+    ) -> HandlerResult<impl warp::Reply, $err:ty> $body:block) => {
+        handler! {
+            @impl_login $vis $name($ctx, $($param: $ty),*) -> impl warp::Reply, $err, $body;
+              crate::handler::handle_raw_handler_result
+        }
+    };
+}
+
 macro_rules! handler {
     ($vis:vis async fn $name:ident (
         $ctx:ident: Authentication<Context>
         $(, $param:ident : $ty:ty)* $(,)?
     ) -> HandlerResult<$resp:ty, $err:ty> $body:block) => {
         handler! {
-            @impl $vis $name (
-                (auth, ctx) $ctx = Authentication::<Context>::new(ctx, auth.user_id, auth.email)?,
-                $($param: $ty),*
-            ) -> $resp, $err, $body
+            @impl_authentication $vis $name($ctx, $($param: $ty),*) -> $resp, $err, $body;
+              crate::handler::handle_handler_result
         }
     };
     ($vis:vis async fn $name:ident (
@@ -77,17 +104,8 @@ macro_rules! handler {
         $(, $param:ident : $ty:ty)* $(,)?
     ) -> HandlerResult<$resp:ty, $err:ty> $body:block) => {
         handler! {
-            @impl $vis $name (
-                (auth, ctx) $ctx = {
-                    let ctx = ::sos21_domain_context::Authentication::new(
-                        ctx,
-                        auth.user_id,
-                        auth.email
-                    )?;
-                    Login::<Context>::new(ctx).await?
-                },
-                $($param: $ty),*
-            ) -> $resp, $err, $body
+                @impl_login $vis $name($ctx, $($param: $ty),*) -> $resp, $err, $body;
+              crate::handler::handle_handler_result
         }
     };
     ($vis:vis async fn $name:ident (
@@ -100,10 +118,41 @@ macro_rules! handler {
             crate::handler::handle_handler_result(result)
         }
     };
+    (@impl_authentication $vis:vis $name:ident (
+            $ctx:ident,
+            $($param:ident : $ty:ty),*
+     ) -> $resp:ty, $err:ty, $body:block; $handle:path
+    ) => {
+        handler! {
+            @impl $vis $name (
+                (auth, ctx) $ctx = Authentication::<Context>::new(ctx, auth.user_id, auth.email)?,
+                $($param: $ty),*
+            ) -> $resp, $err, $body; $handle
+        }
+    };
+    (@impl_login $vis:vis $name:ident (
+            $ctx:ident,
+            $($param:ident : $ty:ty),*
+     ) -> $resp:ty, $err:ty, $body:block; $handle:path
+    ) => {
+        handler! {
+            @impl $vis $name (
+                (auth, ctx) $ctx = {
+                    let ctx = ::sos21_domain_context::Authentication::new(
+                        ctx,
+                        auth.user_id,
+                        auth.email
+                    )?;
+                    Login::<Context>::new(ctx).await?
+                },
+                $($param: $ty),*
+            ) -> $resp, $err, $body; $handle
+        }
+    };
     (@impl $vis:vis $name:ident (
             ($auth_bind:ident, $ctx_bind:ident) $ctx:ident = $make_ctx:expr,
             $($param:ident : $ty:ty),*
-     ) -> $resp:ty, $err:ty, $body:block
+     ) -> $resp:ty, $err:ty, $body:block; $handle:path
     ) => {
         $vis async fn $name(
             app: crate::app::App,
@@ -117,12 +166,12 @@ macro_rules! handler {
             ) -> HandlerResult<$resp, $err> {
                 let $ctx_bind = app.start_context().await?;
                 let $ctx = $make_ctx;
-                let result: HandlerResult<$resp, $err> = $body;
+                let result: HandlerResult<_, $err> = $body;
                 $ctx.into_inner().commit_changes().await?;
                 result
             }
 
-            crate::handler::handle_handler_result(run(app, auth $(, $param)*).await)
+            $handle(run(app, auth $(, $param)*).await)
         }
     };
 }
