@@ -9,6 +9,7 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub struct Input {
+    pub display_id: String,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -20,6 +21,7 @@ pub struct Input {
 
 #[derive(Debug, Clone)]
 pub enum Error {
+    InvalidDisplayId,
     InvalidName,
     InvalidKanaName,
     InvalidGroupName,
@@ -35,6 +37,8 @@ where
 {
     let login_user = ctx.login_user();
 
+    let display_id = project::ProjectDisplayId::from_string(input.display_id)
+        .map_err(|_| UseCaseError::UseCase(Error::InvalidDisplayId))?;
     let name = project::ProjectName::from_string(input.name)
         .map_err(|_| UseCaseError::UseCase(Error::InvalidName))?;
     let kana_name = project::ProjectKanaName::from_string(input.kana_name)
@@ -59,6 +63,7 @@ where
     let project = project::Project {
         id: project::ProjectId::from_uuid(Uuid::new_v4()),
         created_at: Utc::now(),
+        display_id,
         owner_id: login_user.id.clone(),
         name,
         kana_name,
@@ -90,8 +95,10 @@ mod tests {
             .login_as(user.clone())
             .await;
 
+        let display_id = "hello_project".to_string();
         let name = "テストテスト".to_string();
         let input = create_project::Input {
+            display_id: display_id.clone(),
             name: name.clone(),
             kana_name: test::model::mock_project_kana_name().into_string(),
             group_name: test::model::mock_project_group_name().into_string(),
@@ -105,6 +112,7 @@ mod tests {
         assert!(result.is_ok());
 
         let got = result.unwrap();
+        assert!(got.display_id == display_id);
         assert!(got.name == name);
         assert!(got.owner_id == UserId::from_entity(user.id));
 

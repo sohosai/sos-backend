@@ -72,6 +72,7 @@ impl ProjectAttribute {
 pub struct Project {
     pub id: ProjectId,
     pub created_at: DateTime<Utc>,
+    pub display_id: String,
     pub owner_id: UserId,
     pub owner_name: UserName,
     pub name: String,
@@ -88,6 +89,7 @@ impl Project {
         Project {
             id: ProjectId::from_use_case(project.id),
             created_at: project.created_at,
+            display_id: project.display_id,
             owner_id: UserId::from_use_case(project.owner_id),
             owner_name: UserName::from_use_case(project.owner_name),
             name: project.name,

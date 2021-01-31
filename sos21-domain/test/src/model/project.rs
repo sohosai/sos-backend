@@ -2,7 +2,8 @@ use chrono::Utc;
 use sos21_domain_model::{
     project::{
         Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
-        ProjectGroupName, ProjectId, ProjectKanaGroupName, ProjectKanaName, ProjectName,
+        ProjectDisplayId, ProjectGroupName, ProjectId, ProjectKanaGroupName, ProjectKanaName,
+        ProjectName,
     },
     user::UserId,
 };
@@ -10,6 +11,10 @@ use uuid::Uuid;
 
 pub fn new_project_id() -> ProjectId {
     ProjectId(Uuid::new_v4())
+}
+
+pub fn mock_project_display_id() -> ProjectDisplayId {
+    ProjectDisplayId::from_string("mock_project_id").unwrap()
 }
 
 pub fn mock_project_name() -> ProjectName {
@@ -43,6 +48,7 @@ pub fn new_project_with_attributes(
     Project {
         id: new_project_id(),
         created_at: Utc::now(),
+        display_id: mock_project_display_id(),
         owner_id,
         name: mock_project_name(),
         kana_name: mock_project_kana_name(),

@@ -7,10 +7,12 @@ use uuid::Uuid;
 pub mod attribute;
 pub mod category;
 pub mod description;
+pub mod display_id;
 pub mod name;
 pub use attribute::{ProjectAttribute, ProjectAttributes};
 pub use category::ProjectCategory;
 pub use description::ProjectDescription;
+pub use display_id::ProjectDisplayId;
 pub use name::{ProjectGroupName, ProjectKanaGroupName, ProjectKanaName, ProjectName};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -30,6 +32,7 @@ impl ProjectId {
 pub struct Project {
     pub id: ProjectId,
     pub created_at: DateTime<Utc>,
+    pub display_id: ProjectDisplayId,
     pub owner_id: UserId,
     pub name: ProjectName,
     pub kana_name: ProjectKanaName,

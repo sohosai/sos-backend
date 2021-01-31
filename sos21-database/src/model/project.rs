@@ -56,6 +56,7 @@ impl sqlx::Decode<'_, sqlx::Postgres> for ProjectAttributes {
 pub struct Project {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
+    pub display_id: String,
     pub owner_id: String,
     pub name: String,
     pub kana_name: String,

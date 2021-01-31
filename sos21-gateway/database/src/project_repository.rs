@@ -11,7 +11,8 @@ use sos21_domain_context::ProjectRepository;
 use sos21_domain_model::{
     project::{
         Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
-        ProjectGroupName, ProjectId, ProjectKanaGroupName, ProjectKanaName, ProjectName,
+        ProjectDisplayId, ProjectGroupName, ProjectId, ProjectKanaGroupName, ProjectKanaName,
+        ProjectName,
     },
     user::{User, UserId},
 };
@@ -84,6 +85,7 @@ fn from_project(project: Project) -> data::project::Project {
     let Project {
         id,
         created_at,
+        display_id,
         owner_id,
         name,
         kana_name,
@@ -96,6 +98,7 @@ fn from_project(project: Project) -> data::project::Project {
     data::project::Project {
         id: id.to_uuid(),
         created_at,
+        display_id: display_id.into_string(),
         owner_id: owner_id.0,
         name: name.into_string(),
         kana_name: kana_name.into_string(),
@@ -121,6 +124,7 @@ fn to_project(project: data::project::Project) -> Result<Project> {
     let data::project::Project {
         id,
         created_at,
+        display_id,
         owner_id,
         name,
         kana_name,
@@ -150,6 +154,7 @@ fn to_project(project: data::project::Project) -> Result<Project> {
     Ok(Project {
         id: ProjectId::from_uuid(id),
         created_at,
+        display_id: ProjectDisplayId::from_string(display_id)?,
         owner_id: UserId(owner_id),
         name: ProjectName::from_string(name)?,
         kana_name: ProjectKanaName::from_string(kana_name)?,

@@ -1,36 +1,5 @@
 {
   "db": "PostgreSQL",
-  "0160136608f14603db94ae6a60893423d63ee2a28de10d3316a1165991ebe025": {
-    "query": "\nINSERT INTO projects (\n    id,\n    created_at,\n    owner_id,\n    name,\n    kana_name,\n    group_name,\n    kana_group_name,\n    description,\n    category,\n    attributes\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Timestamptz",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          {
-            "Custom": {
-              "name": "project_category",
-              "kind": {
-                "Enum": [
-                  "general",
-                  "stage"
-                ]
-              }
-            }
-          },
-          "Int8"
-        ]
-      },
-      "nullable": []
-    }
-  },
   "1d590755cfdaf09c0e44dca775a2f22b397c319242588480ed307e5e700a36b2": {
     "query": "SELECT * FROM projects WHERE owner_id = $1",
     "describe": {
@@ -47,36 +16,41 @@
         },
         {
           "ordinal": 2,
-          "name": "owner_id",
+          "name": "display_id",
           "type_info": "Varchar"
         },
         {
           "ordinal": 3,
-          "name": "name",
+          "name": "owner_id",
           "type_info": "Varchar"
         },
         {
           "ordinal": 4,
-          "name": "kana_name",
+          "name": "name",
           "type_info": "Varchar"
         },
         {
           "ordinal": 5,
-          "name": "group_name",
+          "name": "kana_name",
           "type_info": "Varchar"
         },
         {
           "ordinal": 6,
-          "name": "kana_group_name",
+          "name": "group_name",
           "type_info": "Varchar"
         },
         {
           "ordinal": 7,
-          "name": "description",
+          "name": "kana_group_name",
           "type_info": "Varchar"
         },
         {
           "ordinal": 8,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
           "name": "category",
           "type_info": {
             "Custom": {
@@ -91,7 +65,7 @@
           }
         },
         {
-          "ordinal": 9,
+          "ordinal": 10,
           "name": "attributes",
           "type_info": "Int8"
         }
@@ -102,6 +76,7 @@
         ]
       },
       "nullable": [
+        false,
         false,
         false,
         false,
@@ -151,11 +126,21 @@
         },
         {
           "ordinal": 6,
-          "name": "email",
+          "name": "phone_number",
           "type_info": "Varchar"
         },
         {
           "ordinal": 7,
+          "name": "affiliation",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
           "name": "role",
           "type_info": {
             "Custom": {
@@ -183,17 +168,185 @@
         false,
         false,
         false,
+        false,
+        false,
         false
       ]
     }
   },
-  "2beaab48def53de4763bbaad451bb4d8a7e034f696830c9949a43183df2b465d": {
-    "query": "\nUPDATE users\n  SET\n    first_name = $2,\n    kana_first_name = $3,\n    last_name = $4,\n    kana_last_name = $5,\n    role = $6\n  WHERE id = $1\n",
+  "2ca1fe8e63fa682c66ac966396b7c24ca8f644e22c3da22729a0d5321edb66a1": {
+    "query": "\nSELECT\n        projects.id,\n        projects.created_at,\n        display_id,\n        owner_id,\n        name,\n        kana_name,\n        group_name,\n        kana_group_name,\n        description,\n        category as \"category: ProjectCategory\",\n        attributes as \"attributes: ProjectAttributes\",\n        users.id as user_id,\n        users.created_at as user_created_at,\n        first_name,\n        kana_first_name,\n        last_name,\n        kana_last_name,\n        phone_number,\n        affiliation,\n        email,\n        role as \"role: UserRole\"\nFROM projects\nINNER JOIN users ON (projects.owner_id = users.id)\nWHERE projects.id = $1\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "display_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "owner_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "kana_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "kana_group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
+          "name": "category: ProjectCategory",
+          "type_info": {
+            "Custom": {
+              "name": "project_category",
+              "kind": {
+                "Enum": [
+                  "general",
+                  "stage"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 10,
+          "name": "attributes: ProjectAttributes",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 11,
+          "name": "user_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 12,
+          "name": "user_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 13,
+          "name": "first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 14,
+          "name": "kana_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 15,
+          "name": "last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 16,
+          "name": "kana_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 17,
+          "name": "phone_number",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 18,
+          "name": "affiliation",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 19,
+          "name": "email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 20,
+          "name": "role: UserRole",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "78dcdd55e9f569e0540408557c6143889de406eb881c006fa12ba63bbf73b1cd": {
+    "query": "\nINSERT INTO users (\n    id,\n    created_at,\n    first_name,\n    kana_first_name,\n    last_name,\n    kana_last_name,\n    email,\n    phone_number,\n    affiliation,\n    role\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )\n",
     "describe": {
       "columns": [],
       "parameters": {
         "Left": [
-          "Text",
+          "Varchar",
+          "Timestamptz",
+          "Varchar",
+          "Varchar",
+          "Varchar",
           "Varchar",
           "Varchar",
           "Varchar",
@@ -252,11 +405,21 @@
         },
         {
           "ordinal": 6,
-          "name": "email",
+          "name": "phone_number",
           "type_info": "Varchar"
         },
         {
           "ordinal": 7,
+          "name": "affiliation",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
           "name": "role",
           "type_info": {
             "Custom": {
@@ -286,12 +449,77 @@
         false,
         false,
         false,
+        false,
+        false,
         false
       ]
     }
   },
-  "b426095b0f636008b7057f45c2e9ddec1539e33d478652afe8c3cbabb4da0d71": {
-    "query": "\nSELECT\n        projects.id as \"id!\",\n        projects.created_at as \"created_at!\",\n        owner_id as \"owner_id!\",\n        name as \"name!\",\n        kana_name as \"kana_name!\",\n        group_name as \"group_name!\",\n        kana_group_name as \"kana_group_name!\",\n        description as \"description!\",\n        category as \"category!: ProjectCategory\",\n        attributes as \"attributes!: ProjectAttributes\",\n        users.id as \"user_id!\",\n        users.created_at as \"user_created_at!\",\n        first_name as \"first_name!\",\n        kana_first_name as \"kana_first_name!\",\n        last_name as \"last_name!\",\n        kana_last_name as \"kana_last_name!\",\n        email as \"email!\",\n        role as \"role!: UserRole\"\nFROM projects\nINNER JOIN users ON (projects.owner_id = users.id)\n",
+  "8961a87485269ce34863940e112d19d899936bde2daa697151b35098ef5ff3e8": {
+    "query": "\nINSERT INTO projects (\n    id,\n    created_at,\n    display_id,\n    owner_id,\n    name,\n    kana_name,\n    group_name,\n    kana_group_name,\n    description,\n    category,\n    attributes\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Timestamptz",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          {
+            "Custom": {
+              "name": "project_category",
+              "kind": {
+                "Enum": [
+                  "general",
+                  "stage"
+                ]
+              }
+            }
+          },
+          "Int8"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "bb3ffec2dc48f2ed714fd0f17a5b036eaaa3e44b9846621e5651f2d9b5d75241": {
+    "query": "\nUPDATE users\n  SET\n    first_name = $2,\n    kana_first_name = $3,\n    last_name = $4,\n    kana_last_name = $5,\n    phone_number = $6,\n    affiliation = $7,\n    role = $8\n  WHERE id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "bfd6f948fdccfc39572a7a5b640fe541478f1e69f559a18913c808f315bdf79f": {
+    "query": "\nSELECT\n        projects.id as \"id!\",\n        projects.created_at as \"created_at!\",\n        display_id as \"display_id!\",\n        owner_id as \"owner_id!\",\n        name as \"name!\",\n        kana_name as \"kana_name!\",\n        group_name as \"group_name!\",\n        kana_group_name as \"kana_group_name!\",\n        description as \"description!\",\n        category as \"category!: ProjectCategory\",\n        attributes as \"attributes!: ProjectAttributes\",\n        users.id as \"user_id!\",\n        users.created_at as \"user_created_at!\",\n        first_name as \"first_name!\",\n        kana_first_name as \"kana_first_name!\",\n        last_name as \"last_name!\",\n        kana_last_name as \"kana_last_name!\",\n        phone_number as \"phone_number!\",\n        affiliation as \"affiliation!\",\n        email as \"email!\",\n        role as \"role!: UserRole\"\nFROM projects\nINNER JOIN users ON (projects.owner_id = users.id)\n",
     "describe": {
       "columns": [
         {
@@ -306,36 +534,41 @@
         },
         {
           "ordinal": 2,
-          "name": "owner_id!",
+          "name": "display_id!",
           "type_info": "Varchar"
         },
         {
           "ordinal": 3,
-          "name": "name!",
+          "name": "owner_id!",
           "type_info": "Varchar"
         },
         {
           "ordinal": 4,
-          "name": "kana_name!",
+          "name": "name!",
           "type_info": "Varchar"
         },
         {
           "ordinal": 5,
-          "name": "group_name!",
+          "name": "kana_name!",
           "type_info": "Varchar"
         },
         {
           "ordinal": 6,
-          "name": "kana_group_name!",
+          "name": "group_name!",
           "type_info": "Varchar"
         },
         {
           "ordinal": 7,
-          "name": "description!",
+          "name": "kana_group_name!",
           "type_info": "Varchar"
         },
         {
           "ordinal": 8,
+          "name": "description!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
           "name": "category!: ProjectCategory",
           "type_info": {
             "Custom": {
@@ -350,47 +583,57 @@
           }
         },
         {
-          "ordinal": 9,
+          "ordinal": 10,
           "name": "attributes!: ProjectAttributes",
           "type_info": "Int8"
         },
         {
-          "ordinal": 10,
+          "ordinal": 11,
           "name": "user_id!",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 11,
+          "ordinal": 12,
           "name": "user_created_at!",
           "type_info": "Timestamptz"
         },
         {
-          "ordinal": 12,
+          "ordinal": 13,
           "name": "first_name!",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 13,
+          "ordinal": 14,
           "name": "kana_first_name!",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 14,
+          "ordinal": 15,
           "name": "last_name!",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 15,
+          "ordinal": 16,
           "name": "kana_last_name!",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 16,
+          "ordinal": 17,
+          "name": "phone_number!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 18,
+          "name": "affiliation!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 19,
           "name": "email!",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 17,
+          "ordinal": 20,
           "name": "role!: UserRole",
           "type_info": {
             "Custom": {
@@ -428,151 +671,10 @@
         true,
         true,
         true,
+        true,
+        true,
+        true,
         true
-      ]
-    }
-  },
-  "c5e1859442e2afdc40c4143695c00a327a615143f8adcb1753917cb043704ad5": {
-    "query": "\nSELECT\n        projects.id,\n        projects.created_at,\n        owner_id,\n        name,\n        kana_name,\n        group_name,\n        kana_group_name,\n        description,\n        category as \"category: ProjectCategory\",\n        attributes as \"attributes: ProjectAttributes\",\n        users.id as user_id,\n        users.created_at as user_created_at,\n        first_name,\n        kana_first_name,\n        last_name,\n        kana_last_name,\n        email,\n        role as \"role: UserRole\"\nFROM projects\nINNER JOIN users ON (projects.owner_id = users.id)\nWHERE projects.id = $1\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 2,
-          "name": "owner_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 3,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 4,
-          "name": "kana_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 6,
-          "name": "kana_group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 7,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 8,
-          "name": "category: ProjectCategory",
-          "type_info": {
-            "Custom": {
-              "name": "project_category",
-              "kind": {
-                "Enum": [
-                  "general",
-                  "stage"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 9,
-          "name": "attributes: ProjectAttributes",
-          "type_info": "Int8"
-        },
-        {
-          "ordinal": 10,
-          "name": "user_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 11,
-          "name": "user_created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 12,
-          "name": "first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 13,
-          "name": "kana_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 14,
-          "name": "last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 15,
-          "name": "kana_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 16,
-          "name": "email",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 17,
-          "name": "role: UserRole",
-          "type_info": {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
       ]
     }
   },
@@ -601,37 +703,6 @@
             }
           },
           "Int8"
-        ]
-      },
-      "nullable": []
-    }
-  },
-  "e881c4e406173d523c09de0749807b390068dc7f4a84a6307b822771bfc00ec9": {
-    "query": "\nINSERT INTO users (\n    id,\n    created_at,\n    first_name,\n    kana_first_name,\n    last_name,\n    kana_last_name,\n    email,\n    role\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Varchar",
-          "Timestamptz",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
         ]
       },
       "nullable": []

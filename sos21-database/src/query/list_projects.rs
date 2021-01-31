@@ -21,6 +21,7 @@ where
 SELECT
         projects.id as "id!",
         projects.created_at as "created_at!",
+        display_id as "display_id!",
         owner_id as "owner_id!",
         name as "name!",
         kana_name as "kana_name!",
@@ -49,6 +50,7 @@ INNER JOIN users ON (projects.owner_id = users.id)
         let project = Project {
             id: row.id,
             created_at: row.created_at,
+            display_id: row.display_id,
             owner_id: row.owner_id,
             name: row.name,
             kana_name: row.kana_name,

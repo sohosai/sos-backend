@@ -68,6 +68,7 @@ impl ProjectAttribute {
 pub struct Project {
     pub id: ProjectId,
     pub created_at: DateTime<Utc>,
+    pub display_id: String,
     pub owner_id: UserId,
     pub owner_name: UserName,
     pub name: String,
@@ -87,6 +88,7 @@ impl Project {
         Project {
             id: ProjectId::from_entity(project.id),
             created_at: project.created_at,
+            display_id: project.display_id.into_string(),
             owner_id: UserId::from_entity(project.owner_id),
             owner_name: UserName::from_entity(owner_name),
             name: project.name.into_string(),

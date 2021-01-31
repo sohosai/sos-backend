@@ -9,6 +9,7 @@ where
     let Project {
         id,
         created_at,
+        display_id,
         owner_id,
         name,
         kana_name,
@@ -24,6 +25,7 @@ where
 INSERT INTO projects (
     id,
     created_at,
+    display_id,
     owner_id,
     name,
     kana_name,
@@ -32,10 +34,11 @@ INSERT INTO projects (
     description,
     category,
     attributes
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )
 "#,
         id,
         created_at,
+        display_id,
         owner_id,
         name,
         kana_name,

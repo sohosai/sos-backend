@@ -20,6 +20,7 @@ where
 SELECT
         projects.id,
         projects.created_at,
+        display_id,
         owner_id,
         name,
         kana_name,
@@ -54,6 +55,7 @@ WHERE projects.id = $1
     let project = Project {
         id: row.id,
         created_at: row.created_at,
+        display_id: row.display_id,
         owner_id: row.owner_id,
         name: row.name,
         kana_name: row.kana_name,
