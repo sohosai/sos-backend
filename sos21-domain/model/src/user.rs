@@ -1,7 +1,7 @@
+use crate::date_time::DateTime;
 use crate::permissions::Permissions;
 use crate::phone_number::PhoneNumber;
 
-use chrono::{DateTime, Utc};
 use thiserror::Error;
 
 pub mod affiliation;
@@ -19,7 +19,7 @@ pub struct UserId(pub String);
 #[derive(Debug, Clone)]
 pub struct User {
     pub id: UserId,
-    pub created_at: DateTime<Utc>,
+    pub created_at: DateTime,
     pub name: UserName,
     pub kana_name: UserKanaName,
     pub phone_number: PhoneNumber,

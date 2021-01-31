@@ -2,9 +2,8 @@ use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::user::{User, UserKanaName, UserName};
 
 use anyhow::Context;
-use chrono::Utc;
 use sos21_domain_context::{Authentication, UserRepository};
-use sos21_domain_model::{phone_number, user};
+use sos21_domain_model::{date_time::DateTime, phone_number, user};
 
 #[derive(Debug, Clone)]
 pub enum Error {
@@ -54,7 +53,7 @@ where
         email: ctx.authenticated_email(),
         phone_number,
         affiliation,
-        created_at: Utc::now(),
+        created_at: DateTime::now(),
         role: user::UserRole::General,
     };
     ctx.store_user(user.clone())

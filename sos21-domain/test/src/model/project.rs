@@ -1,5 +1,5 @@
-use chrono::Utc;
 use sos21_domain_model::{
+    date_time::DateTime,
     project::{
         Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
         ProjectDisplayId, ProjectGroupName, ProjectId, ProjectKanaGroupName, ProjectKanaName,
@@ -47,7 +47,7 @@ pub fn new_project_with_attributes(
 ) -> Project {
     Project {
         id: new_project_id(),
-        created_at: Utc::now(),
+        created_at: DateTime::now(),
         display_id: mock_project_display_id(),
         owner_id,
         name: mock_project_name(),

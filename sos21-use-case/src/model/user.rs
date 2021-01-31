@@ -92,7 +92,7 @@ impl User {
     pub fn from_entity(user: entity::User) -> User {
         User {
             id: UserId::from_entity(user.id),
-            created_at: user.created_at,
+            created_at: user.created_at.utc(),
             name: UserName::from_entity(user.name),
             kana_name: UserKanaName::from_entity(user.kana_name),
             email: user.email.into_string(),

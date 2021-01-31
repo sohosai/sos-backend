@@ -5,6 +5,7 @@ use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
 use sos21_domain_context::UserRepository;
 use sos21_domain_model::{
+    date_time::DateTime,
     phone_number::PhoneNumber,
     user::{User, UserAffiliation, UserEmailAddress, UserId, UserKanaName, UserName, UserRole},
 };
@@ -71,7 +72,7 @@ fn from_user(user: User) -> data::user::User {
     let (kana_first_name, kana_last_name) = kana_name.into_string();
     data::user::User {
         id: id.0,
-        created_at,
+        created_at: created_at.utc(),
         first_name,
         kana_first_name,
         last_name,
@@ -103,7 +104,7 @@ pub fn to_user(user: data::user::User) -> Result<User> {
     } = user;
     Ok(User {
         id: UserId(id),
-        created_at,
+        created_at: DateTime::from_utc(created_at),
         name: UserName::from_string(first_name, last_name)?,
         kana_name: UserKanaName::from_string(kana_first_name, kana_last_name)?,
         email: UserEmailAddress::from_string(email)?,

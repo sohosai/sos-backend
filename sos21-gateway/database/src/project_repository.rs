@@ -9,6 +9,7 @@ use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
 use sos21_domain_context::ProjectRepository;
 use sos21_domain_model::{
+    date_time::DateTime,
     project::{
         Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
         ProjectDisplayId, ProjectGroupName, ProjectId, ProjectKanaGroupName, ProjectKanaName,
@@ -97,7 +98,7 @@ fn from_project(project: Project) -> data::project::Project {
     } = project;
     data::project::Project {
         id: id.to_uuid(),
-        created_at,
+        created_at: created_at.utc(),
         display_id: display_id.into_string(),
         owner_id: owner_id.0,
         name: name.into_string(),
@@ -153,7 +154,7 @@ fn to_project(project: data::project::Project) -> Result<Project> {
 
     Ok(Project {
         id: ProjectId::from_uuid(id),
-        created_at,
+        created_at: DateTime::from_utc(created_at),
         display_id: ProjectDisplayId::from_string(display_id)?,
         owner_id: UserId(owner_id),
         name: ProjectName::from_string(name)?,

@@ -1,7 +1,7 @@
+use crate::date_time::DateTime;
 use crate::permissions::Permissions;
 use crate::user::{User, UserId};
 
-use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 pub mod attribute;
@@ -31,7 +31,7 @@ impl ProjectId {
 #[derive(Debug, Clone)]
 pub struct Project {
     pub id: ProjectId,
-    pub created_at: DateTime<Utc>,
+    pub created_at: DateTime,
     pub display_id: ProjectDisplayId,
     pub owner_id: UserId,
     pub name: ProjectName,

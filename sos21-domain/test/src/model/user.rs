@@ -1,5 +1,5 @@
-use chrono::Utc;
 use sos21_domain_model::{
+    date_time::DateTime,
     phone_number::PhoneNumber,
     user::{User, UserAffiliation, UserEmailAddress, UserId, UserKanaName, UserName, UserRole},
 };
@@ -32,7 +32,7 @@ pub fn mock_user_affiliation() -> UserAffiliation {
 pub fn new_user(role: UserRole) -> User {
     User {
         id: new_user_id(),
-        created_at: Utc::now(),
+        created_at: DateTime::now(),
         name: mock_user_name(),
         kana_name: mock_user_kana_name(),
         email: mock_user_email_address(),

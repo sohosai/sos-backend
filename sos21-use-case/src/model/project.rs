@@ -87,7 +87,7 @@ impl Project {
     ) -> Project {
         Project {
             id: ProjectId::from_entity(project.id),
-            created_at: project.created_at,
+            created_at: project.created_at.utc(),
             display_id: project.display_id.into_string(),
             owner_id: UserId::from_entity(project.owner_id),
             owner_name: UserName::from_entity(owner_name),

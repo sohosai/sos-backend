@@ -2,9 +2,8 @@ use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::project::{Project, ProjectAttribute, ProjectCategory};
 
 use anyhow::Context;
-use chrono::Utc;
 use sos21_domain_context::{Login, ProjectRepository};
-use sos21_domain_model::project;
+use sos21_domain_model::{date_time::DateTime, project};
 use uuid::Uuid;
 
 #[derive(Debug, Clone)]
@@ -62,7 +61,7 @@ where
 
     let project = project::Project {
         id: project::ProjectId::from_uuid(Uuid::new_v4()),
-        created_at: Utc::now(),
+        created_at: DateTime::now(),
         display_id,
         owner_id: login_user.id.clone(),
         name,
