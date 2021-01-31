@@ -7,6 +7,8 @@ CREATE TABLE users (
     kana_first_name varchar(256) NOT NULL,
     last_name varchar(64) NOT NULL,
     kana_last_name varchar(256) NOT NULL,
+    phone_number varchar(16) NOT NULL,
+    affiliation varchar(128) NOT NULL,
     email varchar(128) NOT NULL,
     role user_role NOT NULL
 );

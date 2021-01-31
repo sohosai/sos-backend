@@ -30,11 +30,17 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                     status: StatusCode::INTERNAL_SERVER_ERROR,
                 }
             }
-            ErasedHandlerError::InvalidEmail => Error {
+            ErasedHandlerError::InvalidEmailAddress => Error {
                 error: ErrorBody::Authentication {
-                    id: AuthenticationErrorId::InvalidEmail,
+                    id: AuthenticationErrorId::InvalidEmailAddress,
                 },
                 status: StatusCode::BAD_REQUEST,
+            },
+            ErasedHandlerError::NotUniversityEmailAddress => Error {
+                error: ErrorBody::Authentication {
+                    id: AuthenticationErrorId::NotUniversityEmailAddress,
+                },
+                status: StatusCode::FORBIDDEN,
             },
             ErasedHandlerError::NotSignedUp => Error {
                 error: ErrorBody::NotSignedUp,
@@ -59,15 +65,15 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                 },
                 status: StatusCode::UNAUTHORIZED,
             },
-            AuthenticationError::NoEmail => Error {
+            AuthenticationError::NoEmailAddress => Error {
                 error: ErrorBody::Authentication {
                     id: AuthenticationErrorId::NoEmail,
                 },
                 status: StatusCode::BAD_REQUEST,
             },
-            AuthenticationError::UnverifiedEmail => Error {
+            AuthenticationError::UnverifiedEmailAddress => Error {
                 error: ErrorBody::Authentication {
-                    id: AuthenticationErrorId::UnverifiedEmail,
+                    id: AuthenticationErrorId::UnverifiedEmailAddress,
                 },
                 status: StatusCode::FORBIDDEN,
             },

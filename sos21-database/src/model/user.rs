@@ -18,6 +18,8 @@ pub struct User {
     pub kana_first_name: String,
     pub last_name: String,
     pub kana_last_name: String,
+    pub phone_number: String,
+    pub affiliation: String,
     pub email: String,
     pub role: UserRole,
 }

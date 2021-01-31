@@ -4,19 +4,23 @@ use crate::model::user::{User, UserKanaName, UserName};
 use anyhow::Context;
 use chrono::Utc;
 use sos21_domain_context::{Authentication, UserRepository};
-use sos21_domain_model::user;
+use sos21_domain_model::{phone_number, user};
 
 #[derive(Debug, Clone)]
 pub enum Error {
     AlreadySignedUp,
     InvalidUserName,
     InvalidUserKanaName,
+    InvalidPhoneNumber,
+    InvalidUserAffiliation,
 }
 
 #[derive(Debug, Clone)]
 pub struct Input {
     pub name: UserName,
     pub kana_name: UserKanaName,
+    pub phone_number: String,
+    pub affiliation: String,
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -38,12 +42,18 @@ where
         .kana_name
         .into_entity()
         .ok_or(UseCaseError::UseCase(Error::InvalidUserKanaName))?;
+    let phone_number = phone_number::PhoneNumber::from_string(input.phone_number)
+        .map_err(|_| UseCaseError::UseCase(Error::InvalidPhoneNumber))?;
+    let affiliation = user::UserAffiliation::from_string(input.affiliation)
+        .map_err(|_| UseCaseError::UseCase(Error::InvalidUserAffiliation))?;
 
     let user = user::User {
         id,
         name,
         kana_name,
         email: ctx.authenticated_email(),
+        phone_number,
+        affiliation,
         created_at: Utc::now(),
         role: user::UserRole::General,
     };
@@ -62,13 +72,20 @@ mod tests {
     fn mock_input() -> signup::Input {
         let name = UserName::from_entity(test::model::mock_user_name());
         let kana_name = UserKanaName::from_entity(test::model::mock_user_kana_name());
-        signup::Input { name, kana_name }
+        let phone_number = test::model::mock_phone_number().into_string();
+        let affiliation = test::model::mock_user_affiliation().into_string();
+        signup::Input {
+            name,
+            kana_name,
+            phone_number,
+            affiliation,
+        }
     }
 
     #[tokio::test]
     async fn test_signup() {
         let user_id = "test_user_id".to_string();
-        let email = "test@example.com".to_string();
+        let email = "test@s.tsukuba.ac.jp".to_string();
 
         let app = test::build_mock_app()
             .build()
@@ -103,7 +120,7 @@ mod tests {
     #[tokio::test]
     async fn test_twice() {
         let user_id = "test_user_id".to_string();
-        let email = "test@example.com".to_string();
+        let email = "test@s.tsukuba.ac.jp".to_string();
 
         let app = test::build_mock_app()
             .build()

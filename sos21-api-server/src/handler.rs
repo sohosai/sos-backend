@@ -12,7 +12,8 @@ pub enum ErasedHandlerError {
         info: serde_json::Value,
     },
     NotSignedUp,
-    InvalidEmail,
+    InvalidEmailAddress,
+    NotUniversityEmailAddress,
     Server(anyhow::Error),
 }
 
@@ -31,7 +32,10 @@ where
                 ErasedHandlerError::Client { status_code, info }
             }
             HandlerError::NotSignedUp => ErasedHandlerError::NotSignedUp,
-            HandlerError::InvalidEmail => ErasedHandlerError::InvalidEmail,
+            HandlerError::InvalidEmailAddress => ErasedHandlerError::InvalidEmailAddress,
+            HandlerError::NotUniversityEmailAddress => {
+                ErasedHandlerError::NotUniversityEmailAddress
+            }
             HandlerError::Server(err) => ErasedHandlerError::Server(err),
         }
     }
@@ -141,7 +145,8 @@ pub trait HandlerResponse: Serialize {
 pub enum HandlerError<E> {
     Client(E),
     NotSignedUp,
-    InvalidEmail,
+    InvalidEmailAddress,
+    NotUniversityEmailAddress,
     Server(anyhow::Error),
 }
 
@@ -169,7 +174,10 @@ impl<E> From<sos21_domain_context::authentication::AuthenticationError> for Hand
     fn from(e: sos21_domain_context::authentication::AuthenticationError) -> HandlerError<E> {
         use sos21_domain_context::authentication::AuthenticationError;
         match e {
-            AuthenticationError::InvalidEmail => HandlerError::InvalidEmail,
+            AuthenticationError::InvalidEmailAddress => HandlerError::InvalidEmailAddress,
+            AuthenticationError::NotUniversityEmailAddress => {
+                HandlerError::NotUniversityEmailAddress
+            }
         }
     }
 }

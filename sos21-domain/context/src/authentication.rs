@@ -1,32 +1,40 @@
 use crate::{ProjectRepository, UserRepository};
 
-use sos21_domain_model::{email::EmailAddress, user::UserId};
+use sos21_domain_model::user::{email, UserEmailAddress, UserId};
 use thiserror::Error;
 
 #[derive(Debug, Clone)]
 pub struct Authentication<C> {
     inner: C,
     user_id: UserId,
-    email: EmailAddress,
+    email: UserEmailAddress,
 }
 
 #[derive(Debug, Error, Clone)]
 pub enum AuthenticationError {
     #[error("invalid email address")]
-    InvalidEmail,
+    InvalidEmailAddress,
+    #[error("not a university email address")]
+    NotUniversityEmailAddress,
 }
 
 impl<C> Authentication<C> {
     pub fn new(inner: C, user_id: String, email: String) -> Result<Self, AuthenticationError> {
         let user_id = UserId(user_id);
-        if let Ok(email) = EmailAddress::from_string(email) {
-            Ok(Authentication {
+        match UserEmailAddress::from_string(email) {
+            Ok(email) => Ok(Authentication {
                 inner,
                 user_id,
                 email,
-            })
-        } else {
-            Err(AuthenticationError::InvalidEmail)
+            }),
+            Err(err) => match err.kind() {
+                email::EmailAddressErrorKind::InvalidEmailAddress => {
+                    Err(AuthenticationError::InvalidEmailAddress)
+                }
+                email::EmailAddressErrorKind::NotUniversityEmailAddress => {
+                    Err(AuthenticationError::NotUniversityEmailAddress)
+                }
+            },
         }
     }
 
@@ -34,7 +42,7 @@ impl<C> Authentication<C> {
         self.user_id.clone()
     }
 
-    pub fn authenticated_email(&self) -> EmailAddress {
+    pub fn authenticated_email(&self) -> UserEmailAddress {
         self.email.clone()
     }
 

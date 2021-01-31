@@ -43,8 +43,8 @@ async fn validate_token(
 #[derive(Debug)]
 pub enum AuthenticationError {
     InvalidToken,
-    UnverifiedEmail,
-    NoEmail,
+    UnverifiedEmailAddress,
+    NoEmailAddress,
     Unauthorized,
 }
 
@@ -66,11 +66,13 @@ async fn handle_validation(
 
     let email = match claims.email {
         Some(email) => email,
-        None => return Err(warp::reject::custom(AuthenticationError::NoEmail)),
+        None => return Err(warp::reject::custom(AuthenticationError::NoEmailAddress)),
     };
 
     if !claims.email_verified {
-        return Err(warp::reject::custom(AuthenticationError::UnverifiedEmail));
+        return Err(warp::reject::custom(
+            AuthenticationError::UnverifiedEmailAddress,
+        ));
     }
 
     Ok(AuthenticationInfo {

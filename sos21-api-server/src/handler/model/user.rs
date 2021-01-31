@@ -96,6 +96,8 @@ pub struct User {
     pub name: UserName,
     pub kana_name: UserKanaName,
     pub email: String,
+    pub phone_number: String,
+    pub affiliation: String,
     pub role: UserRole,
 }
 
@@ -107,6 +109,8 @@ impl User {
             name: UserName::from_use_case(user.name),
             kana_name: UserKanaName::from_use_case(user.kana_name),
             email: user.email,
+            phone_number: user.phone_number,
+            affiliation: user.affiliation,
             role: UserRole::from_use_case(user.role),
         }
     }

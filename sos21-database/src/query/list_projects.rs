@@ -35,6 +35,8 @@ SELECT
         kana_first_name as "kana_first_name!",
         last_name as "last_name!",
         kana_last_name as "kana_last_name!",
+        phone_number as "phone_number!",
+        affiliation as "affiliation!",
         email as "email!",
         role as "role!: UserRole"
 FROM projects
@@ -63,6 +65,8 @@ INNER JOIN users ON (projects.owner_id = users.id)
             kana_first_name: row.kana_first_name,
             last_name: row.last_name,
             kana_last_name: row.kana_last_name,
+            phone_number: row.phone_number,
+            affiliation: row.affiliation,
             email: row.email,
             role: row.role,
         };

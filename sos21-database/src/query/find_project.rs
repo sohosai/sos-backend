@@ -34,6 +34,8 @@ SELECT
         kana_first_name,
         last_name,
         kana_last_name,
+        phone_number,
+        affiliation,
         email,
         role as "role: UserRole"
 FROM projects
@@ -68,6 +70,8 @@ WHERE projects.id = $1
         kana_first_name: row.kana_first_name,
         last_name: row.last_name,
         kana_last_name: row.kana_last_name,
+        phone_number: row.phone_number,
+        affiliation: row.affiliation,
         email: row.email,
         role: row.role,
     };

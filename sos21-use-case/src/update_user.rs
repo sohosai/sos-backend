@@ -3,13 +3,15 @@ use crate::model::user::{User, UserId, UserKanaName, UserName, UserRole};
 
 use anyhow::Context;
 use sos21_domain_context::{Login, UserRepository};
-use sos21_domain_model::permissions::Permissions;
+use sos21_domain_model::{permissions::Permissions, phone_number, user};
 
 #[derive(Debug, Clone)]
 pub enum Error {
     NotFound,
     InvalidUserName,
     InvalidUserKanaName,
+    InvalidPhoneNumber,
+    InvalidUserAffiliation,
     InsufficientPermissions,
 }
 
@@ -18,6 +20,8 @@ pub struct Input {
     pub id: UserId,
     pub name: Option<UserName>,
     pub kana_name: Option<UserKanaName>,
+    pub phone_number: Option<String>,
+    pub affiliation: Option<String>,
     pub role: Option<UserRole>,
 }
 
@@ -58,6 +62,18 @@ where
         user.set_kana_name(kana_name);
     }
 
+    if let Some(phone_number) = input.phone_number {
+        let phone_number = phone_number::PhoneNumber::from_string(phone_number)
+            .map_err(|_| UseCaseError::UseCase(Error::InvalidPhoneNumber))?;
+        user.set_phone_number(phone_number);
+    }
+
+    if let Some(affiliation) = input.affiliation {
+        let affiliation = user::UserAffiliation::from_string(affiliation)
+            .map_err(|_| UseCaseError::UseCase(Error::InvalidUserAffiliation))?;
+        user.set_affiliation(affiliation);
+    }
+
     if let Some(role) = input.role {
         user.set_role(role.into_entity());
     }
@@ -90,6 +106,8 @@ mod tests {
             id: UserId::from_entity(user.id),
             name: None,
             kana_name: None,
+            phone_number: None,
+            affiliation: None,
             role: Some(UserRole::Administrator),
         };
         assert!(matches!(
@@ -115,6 +133,8 @@ mod tests {
             id: UserId::from_entity(user.id),
             name: None,
             kana_name: None,
+            phone_number: None,
+            affiliation: None,
             role: Some(UserRole::General),
         };
         assert!(matches!(
@@ -140,6 +160,8 @@ mod tests {
             id: UserId::from_entity(user.id),
             name: None,
             kana_name: None,
+            phone_number: None,
+            affiliation: None,
             role: Some(UserRole::Committee),
         };
         assert!(matches!(
@@ -165,6 +187,8 @@ mod tests {
             id: UserId::from_entity(user.id),
             name: None,
             kana_name: None,
+            phone_number: None,
+            affiliation: None,
             role: Some(UserRole::CommitteeOperator),
         };
         assert!(matches!(

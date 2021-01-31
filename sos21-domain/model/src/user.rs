@@ -1,11 +1,15 @@
-use crate::email::EmailAddress;
 use crate::permissions::Permissions;
+use crate::phone_number::PhoneNumber;
 
 use chrono::{DateTime, Utc};
 use thiserror::Error;
 
+pub mod affiliation;
+pub mod email;
 pub mod name;
 pub mod role;
+pub use affiliation::UserAffiliation;
+pub use email::UserEmailAddress;
 pub use name::{UserKanaName, UserName};
 pub use role::UserRole;
 
@@ -18,7 +22,9 @@ pub struct User {
     pub created_at: DateTime<Utc>,
     pub name: UserName,
     pub kana_name: UserKanaName,
-    pub email: EmailAddress,
+    pub phone_number: PhoneNumber,
+    pub affiliation: UserAffiliation,
+    pub email: UserEmailAddress,
     pub role: UserRole,
 }
 
@@ -58,6 +64,14 @@ impl User {
 
     pub fn set_kana_name(&mut self, kana_name: UserKanaName) {
         self.kana_name = kana_name;
+    }
+
+    pub fn set_phone_number(&mut self, phone_number: PhoneNumber) {
+        self.phone_number = phone_number;
+    }
+
+    pub fn set_affiliation(&mut self, affiliation: UserAffiliation) {
+        self.affiliation = affiliation;
     }
 
     pub fn set_role(&mut self, role: UserRole) {

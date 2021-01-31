@@ -14,6 +14,8 @@ where
         last_name,
         kana_last_name,
         email,
+        phone_number,
+        affiliation,
         role,
     } = user;
 
@@ -27,8 +29,10 @@ INSERT INTO users (
     last_name,
     kana_last_name,
     email,
+    phone_number,
+    affiliation,
     role
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )
 "#,
         id,
         created_at,
@@ -37,6 +41,8 @@ INSERT INTO users (
         last_name,
         kana_last_name,
         email,
+        phone_number,
+        affiliation,
         role as _
     )
     .execute(conn)

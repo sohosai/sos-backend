@@ -11,6 +11,8 @@ use warp::http::StatusCode;
 pub struct Request {
     pub name: UserName,
     pub kana_name: UserKanaName,
+    pub phone_number: String,
+    pub affiliation: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -45,6 +47,8 @@ impl From<signup::Error> for Error {
             signup::Error::AlreadySignedUp => Error::AlreadySignedUp,
             signup::Error::InvalidUserName => Error::InvalidField("name"),
             signup::Error::InvalidUserKanaName => Error::InvalidField("kana_name"),
+            signup::Error::InvalidPhoneNumber => Error::InvalidField("phone_number"),
+            signup::Error::InvalidUserAffiliation => Error::InvalidField("affiliation"),
         }
     }
 }
@@ -57,6 +61,8 @@ pub async fn handler(
     let input = signup::Input {
         name: request.name.into_use_case(),
         kana_name: request.kana_name.into_use_case(),
+        phone_number: request.phone_number,
+        affiliation: request.affiliation,
     };
     let user = signup::run(&ctx, input).await?;
     let user = User::from_use_case(user);

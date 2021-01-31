@@ -1,7 +1,7 @@
 use chrono::Utc;
 use sos21_domain_model::{
-    email::EmailAddress,
-    user::{User, UserId, UserKanaName, UserName, UserRole},
+    phone_number::PhoneNumber,
+    user::{User, UserAffiliation, UserEmailAddress, UserId, UserKanaName, UserName, UserRole},
 };
 use uuid::Uuid;
 
@@ -17,8 +17,16 @@ pub fn mock_user_kana_name() -> UserKanaName {
     UserKanaName::from_string("タロウ", "ユーザー").unwrap()
 }
 
-pub fn mock_email_address() -> EmailAddress {
-    EmailAddress::from_string("hello@example.com".to_string()).unwrap()
+pub fn mock_user_email_address() -> UserEmailAddress {
+    UserEmailAddress::from_string("example@s.tsukuba.ac.jp").unwrap()
+}
+
+pub fn mock_phone_number() -> PhoneNumber {
+    PhoneNumber::from_string("+81900000000").unwrap()
+}
+
+pub fn mock_user_affiliation() -> UserAffiliation {
+    UserAffiliation::from_string("情報学群情報科学類").unwrap()
 }
 
 pub fn new_user(role: UserRole) -> User {
@@ -27,7 +35,9 @@ pub fn new_user(role: UserRole) -> User {
         created_at: Utc::now(),
         name: mock_user_name(),
         kana_name: mock_user_kana_name(),
-        email: mock_email_address(),
+        email: mock_user_email_address(),
+        phone_number: mock_phone_number(),
+        affiliation: mock_user_affiliation(),
         role,
     }
 }

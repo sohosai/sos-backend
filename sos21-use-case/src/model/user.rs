@@ -83,6 +83,8 @@ pub struct User {
     pub name: UserName,
     pub kana_name: UserKanaName,
     pub email: String,
+    pub phone_number: String,
+    pub affiliation: String,
     pub role: UserRole,
 }
 
@@ -94,6 +96,8 @@ impl User {
             name: UserName::from_entity(user.name),
             kana_name: UserKanaName::from_entity(user.kana_name),
             email: user.email.into_string(),
+            phone_number: user.phone_number.into_string(),
+            affiliation: user.affiliation.into_string(),
             role: UserRole::from_entity(user.role),
         }
     }

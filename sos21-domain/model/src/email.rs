@@ -31,6 +31,10 @@ impl EmailAddress {
     pub fn into_string(self) -> String {
         self.0.into_inner()
     }
+
+    pub fn ends_with(&self, suffix: impl AsRef<str>) -> bool {
+        self.0.as_ref().ends_with(suffix.as_ref())
+    }
 }
 
 impl From<EmailAddress> for String {

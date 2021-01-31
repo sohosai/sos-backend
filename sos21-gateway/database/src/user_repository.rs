@@ -5,8 +5,8 @@ use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
 use sos21_domain_context::UserRepository;
 use sos21_domain_model::{
-    email::EmailAddress,
-    user::{User, UserId, UserKanaName, UserName, UserRole},
+    phone_number::PhoneNumber,
+    user::{User, UserAffiliation, UserEmailAddress, UserId, UserKanaName, UserName, UserRole},
 };
 use sqlx::{Postgres, Transaction};
 
@@ -30,6 +30,8 @@ impl UserRepository for UserDatabase {
                 kana_first_name: user.kana_first_name,
                 last_name: user.last_name,
                 kana_last_name: user.kana_last_name,
+                phone_number: user.phone_number,
+                affiliation: user.affiliation,
                 role: user.role,
             };
             command::update_user(&mut *lock, input).await
@@ -61,6 +63,8 @@ fn from_user(user: User) -> data::user::User {
         name,
         kana_name,
         email,
+        phone_number,
+        affiliation,
         role,
     } = user;
     let (first_name, last_name) = name.into_string();
@@ -73,6 +77,8 @@ fn from_user(user: User) -> data::user::User {
         last_name,
         kana_last_name,
         email: email.into_string(),
+        phone_number: phone_number.into_string(),
+        affiliation: affiliation.into_string(),
         role: match role {
             UserRole::Administrator => data::user::UserRole::Administrator,
             UserRole::CommitteeOperator => data::user::UserRole::CommitteeOperator,
@@ -91,6 +97,8 @@ pub fn to_user(user: data::user::User) -> Result<User> {
         last_name,
         kana_last_name,
         email,
+        phone_number,
+        affiliation,
         role,
     } = user;
     Ok(User {
@@ -98,7 +106,9 @@ pub fn to_user(user: data::user::User) -> Result<User> {
         created_at,
         name: UserName::from_string(first_name, last_name)?,
         kana_name: UserKanaName::from_string(kana_first_name, kana_last_name)?,
-        email: EmailAddress::from_string(email)?,
+        email: UserEmailAddress::from_string(email)?,
+        phone_number: PhoneNumber::from_string(phone_number)?,
+        affiliation: UserAffiliation::from_string(affiliation)?,
         role: match role {
             data::user::UserRole::Administrator => UserRole::Administrator,
             data::user::UserRole::CommitteeOperator => UserRole::CommitteeOperator,

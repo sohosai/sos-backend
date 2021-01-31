@@ -6,8 +6,9 @@ use warp::http::StatusCode;
 pub enum AuthenticationErrorId {
     Unauthrized,
     InvalidToken,
-    InvalidEmail,
-    UnverifiedEmail,
+    InvalidEmailAddress,
+    UnverifiedEmailAddress,
+    NotUniversityEmailAddress,
     NoEmail,
 }
 
