@@ -23,7 +23,13 @@ where
 
     let projects = projects
         .into_iter()
-        .map(|project| Project::from_entity(project, login_user.name.clone()))
+        .map(|project| {
+            Project::from_entity(
+                project,
+                login_user.name.clone(),
+                login_user.kana_name.clone(),
+            )
+        })
         .collect();
     Ok(projects)
 }

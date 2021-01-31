@@ -31,11 +31,12 @@ where
     use_case_ensure!(projects
         .iter()
         .all(|(project, owner)| project.is_visible_to(login_user)
-            && owner.name.is_visible_to(login_user)));
+            && owner.name.is_visible_to(login_user)
+            && owner.kana_name.is_visible_to(login_user)));
 
     let projects = projects
         .into_iter()
-        .map(|(project, owner)| Project::from_entity(project, owner.name))
+        .map(|(project, owner)| Project::from_entity(project, owner.name, owner.kana_name))
         .collect();
     Ok(projects)
 }

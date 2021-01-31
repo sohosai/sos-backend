@@ -24,11 +24,14 @@ where
     };
 
     let login_user = ctx.login_user();
-    if !project.is_visible_to(login_user) || !owner.name.is_visible_to(login_user) {
+    if !project.is_visible_to(login_user)
+        || !owner.name.is_visible_to(login_user)
+        || !owner.kana_name.is_visible_to(login_user)
+    {
         return Err(UseCaseError::UseCase(Error::NotFound));
     }
 
-    Ok(Project::from_entity(project, owner.name))
+    Ok(Project::from_entity(project, owner.name, owner.kana_name))
 }
 
 #[cfg(test)]

@@ -1,4 +1,4 @@
-use crate::handler::model::user::{UserId, UserName};
+use crate::handler::model::user::{UserId, UserKanaName, UserName};
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -75,6 +75,7 @@ pub struct Project {
     pub display_id: String,
     pub owner_id: UserId,
     pub owner_name: UserName,
+    pub owner_kana_name: UserKanaName,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -92,6 +93,7 @@ impl Project {
             display_id: project.display_id,
             owner_id: UserId::from_use_case(project.owner_id),
             owner_name: UserName::from_use_case(project.owner_name),
+            owner_kana_name: UserKanaName::from_use_case(project.owner_kana_name),
             name: project.name,
             kana_name: project.kana_name,
             group_name: project.group_name,

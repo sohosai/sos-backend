@@ -1,4 +1,4 @@
-use crate::model::user::{UserId, UserName};
+use crate::model::user::{UserId, UserKanaName, UserName};
 
 use chrono::{DateTime, Utc};
 use sos21_domain_model::project as entity;
@@ -71,6 +71,7 @@ pub struct Project {
     pub display_id: String,
     pub owner_id: UserId,
     pub owner_name: UserName,
+    pub owner_kana_name: UserKanaName,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -84,6 +85,7 @@ impl Project {
     pub fn from_entity(
         project: entity::Project,
         owner_name: sos21_domain_model::user::UserName,
+        owner_kana_name: sos21_domain_model::user::UserKanaName,
     ) -> Project {
         Project {
             id: ProjectId::from_entity(project.id),
@@ -91,6 +93,7 @@ impl Project {
             display_id: project.display_id.into_string(),
             owner_id: UserId::from_entity(project.owner_id),
             owner_name: UserName::from_entity(owner_name),
+            owner_kana_name: UserKanaName::from_entity(owner_kana_name),
             name: project.name.into_string(),
             kana_name: project.kana_name.into_string(),
             group_name: project.group_name.into_string(),

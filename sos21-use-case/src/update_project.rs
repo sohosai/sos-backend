@@ -95,8 +95,17 @@ where
     ctx.store_project(project.clone())
         .await
         .context("Failed to store a updated project")?;
-    use_case_ensure!(project.is_visible_to(login_user));
-    Ok(Project::from_entity(project, owner.name.clone()))
+
+    use_case_ensure!(
+        project.is_visible_to(login_user)
+            && owner.name.is_visible_to(login_user)
+            && owner.kana_name.is_visible_to(login_user)
+    );
+    Ok(Project::from_entity(
+        project,
+        owner.name.clone(),
+        owner.kana_name.clone(),
+    ))
 }
 
 #[cfg(test)]

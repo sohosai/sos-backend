@@ -76,7 +76,11 @@ where
         .await
         .context("Failed to create a project")?;
     use_case_ensure!(project.is_visible_to(login_user));
-    Ok(Project::from_entity(project, login_user.name.clone()))
+    Ok(Project::from_entity(
+        project,
+        login_user.name.clone(),
+        login_user.kana_name.clone(),
+    ))
 }
 
 #[cfg(test)]
