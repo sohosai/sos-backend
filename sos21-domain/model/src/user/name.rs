@@ -82,6 +82,10 @@ impl UserKanaName {
             self.last.into_inner().into_inner(),
         )
     }
+
+    pub fn is_visible_to(&self, _user: &User) -> bool {
+        true
+    }
 }
 
 #[cfg(test)]

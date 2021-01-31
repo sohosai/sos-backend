@@ -32,6 +32,10 @@ impl ProjectAttributes {
         Ok(ProjectAttributes(result))
     }
 
+    pub fn contains(&self, attribute: ProjectAttribute) -> bool {
+        self.0.contains(&attribute)
+    }
+
     pub fn attributes(&self) -> impl Iterator<Item = ProjectAttribute> + '_ {
         self.0.iter().copied()
     }
