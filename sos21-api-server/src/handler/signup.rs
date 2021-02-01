@@ -27,15 +27,16 @@ impl HandlerResponse for Response {
 }
 
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {
-    InvalidField(&'static str),
+    InvalidField { field: &'static str },
     AlreadySignedUp,
 }
 
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::InvalidField(_) => StatusCode::BAD_REQUEST,
+            Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
             Error::AlreadySignedUp => StatusCode::CONFLICT,
         }
     }
@@ -45,10 +46,14 @@ impl From<signup::Error> for Error {
     fn from(err: signup::Error) -> Error {
         match err {
             signup::Error::AlreadySignedUp => Error::AlreadySignedUp,
-            signup::Error::InvalidUserName => Error::InvalidField("name"),
-            signup::Error::InvalidUserKanaName => Error::InvalidField("kana_name"),
-            signup::Error::InvalidPhoneNumber => Error::InvalidField("phone_number"),
-            signup::Error::InvalidUserAffiliation => Error::InvalidField("affiliation"),
+            signup::Error::InvalidUserName => Error::InvalidField { field: "name" },
+            signup::Error::InvalidUserKanaName => Error::InvalidField { field: "kana_name" },
+            signup::Error::InvalidPhoneNumber => Error::InvalidField {
+                field: "phone_number",
+            },
+            signup::Error::InvalidUserAffiliation => Error::InvalidField {
+                field: "affiliation",
+            },
         }
     }
 }

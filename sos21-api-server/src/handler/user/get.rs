@@ -24,14 +24,15 @@ impl HandlerResponse for Response {
 }
 
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {
-    NotFound,
+    UserNotFound,
 }
 
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::NotFound => StatusCode::NOT_FOUND,
+            Error::UserNotFound => StatusCode::NOT_FOUND,
         }
     }
 }
@@ -39,7 +40,7 @@ impl HandlerResponse for Error {
 impl From<get_user::Error> for Error {
     fn from(err: get_user::Error) -> Error {
         match err {
-            get_user::Error::NotFound => Error::NotFound,
+            get_user::Error::NotFound => Error::UserNotFound,
         }
     }
 }

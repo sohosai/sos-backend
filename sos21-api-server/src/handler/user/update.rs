@@ -34,18 +34,19 @@ impl HandlerResponse for Response {
 }
 
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {
-    NotFound,
+    UserNotFound,
     InsufficientPermissions,
-    InvalidField(&'static str),
+    InvalidField { field: &'static str },
 }
 
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::NotFound => StatusCode::NOT_FOUND,
+            Error::UserNotFound => StatusCode::NOT_FOUND,
             Error::InsufficientPermissions => StatusCode::FORBIDDEN,
-            Error::InvalidField(_) => StatusCode::BAD_REQUEST,
+            Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
         }
     }
 }
@@ -53,12 +54,16 @@ impl HandlerResponse for Error {
 impl From<update_user::Error> for Error {
     fn from(err: update_user::Error) -> Error {
         match err {
-            update_user::Error::NotFound => Error::NotFound,
+            update_user::Error::NotFound => Error::UserNotFound,
             update_user::Error::InsufficientPermissions => Error::InsufficientPermissions,
-            update_user::Error::InvalidUserName => Error::InvalidField("name"),
-            update_user::Error::InvalidUserKanaName => Error::InvalidField("kana_name"),
-            update_user::Error::InvalidPhoneNumber => Error::InvalidField("phone_number"),
-            update_user::Error::InvalidUserAffiliation => Error::InvalidField("affiliation"),
+            update_user::Error::InvalidUserName => Error::InvalidField { field: "name" },
+            update_user::Error::InvalidUserKanaName => Error::InvalidField { field: "kana_name" },
+            update_user::Error::InvalidPhoneNumber => Error::InvalidField {
+                field: "phone_number",
+            },
+            update_user::Error::InvalidUserAffiliation => Error::InvalidField {
+                field: "affiliation",
+            },
         }
     }
 }

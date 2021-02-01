@@ -40,22 +40,23 @@ impl HandlerResponse for Response {
 }
 
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {
-    NotFound,
+    ProjectNotFound,
     InsufficientPermissions,
-    UnavailableDisplayId,
-    DuplicatedAttributes,
-    InvalidField(&'static str),
+    UnavailableProjectDisplayId,
+    DuplicatedProjectAttributes,
+    InvalidField { field: &'static str },
 }
 
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::NotFound => StatusCode::NOT_FOUND,
+            Error::ProjectNotFound => StatusCode::NOT_FOUND,
             Error::InsufficientPermissions => StatusCode::FORBIDDEN,
-            Error::UnavailableDisplayId => StatusCode::CONFLICT,
-            Error::DuplicatedAttributes => StatusCode::BAD_REQUEST,
-            Error::InvalidField(_) => StatusCode::BAD_REQUEST,
+            Error::UnavailableProjectDisplayId => StatusCode::CONFLICT,
+            Error::DuplicatedProjectAttributes => StatusCode::BAD_REQUEST,
+            Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
         }
     }
 }
@@ -63,16 +64,24 @@ impl HandlerResponse for Error {
 impl From<update_project::Error> for Error {
     fn from(err: update_project::Error) -> Error {
         match err {
-            update_project::Error::NotFound => Error::NotFound,
+            update_project::Error::NotFound => Error::ProjectNotFound,
             update_project::Error::InsufficientPermissions => Error::InsufficientPermissions,
-            update_project::Error::InvalidDisplayId => Error::InvalidField("display_id"),
-            update_project::Error::UnavailableDisplayId => Error::UnavailableDisplayId,
-            update_project::Error::InvalidName => Error::InvalidField("name"),
-            update_project::Error::InvalidKanaName => Error::InvalidField("kana_name"),
-            update_project::Error::InvalidGroupName => Error::InvalidField("group_name"),
-            update_project::Error::InvalidKanaGroupName => Error::InvalidField("kana_group_name"),
-            update_project::Error::InvalidDescription => Error::InvalidField("description"),
-            update_project::Error::DuplicatedAttributes => Error::DuplicatedAttributes,
+            update_project::Error::InvalidDisplayId => Error::InvalidField {
+                field: "display_id",
+            },
+            update_project::Error::UnavailableDisplayId => Error::UnavailableProjectDisplayId,
+            update_project::Error::InvalidName => Error::InvalidField { field: "name" },
+            update_project::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
+            update_project::Error::InvalidGroupName => Error::InvalidField {
+                field: "group_name",
+            },
+            update_project::Error::InvalidKanaGroupName => Error::InvalidField {
+                field: "kana_group_name",
+            },
+            update_project::Error::InvalidDescription => Error::InvalidField {
+                field: "description",
+            },
+            update_project::Error::DuplicatedAttributes => Error::DuplicatedProjectAttributes,
         }
     }
 }

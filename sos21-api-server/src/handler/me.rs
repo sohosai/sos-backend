@@ -23,6 +23,7 @@ impl HandlerResponse for Response {
 }
 
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {}
 
 impl HandlerResponse for Error {

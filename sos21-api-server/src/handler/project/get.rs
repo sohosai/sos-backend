@@ -24,14 +24,15 @@ impl HandlerResponse for Response {
 }
 
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {
-    NotFound,
+    ProjectNotFound,
 }
 
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::NotFound => StatusCode::NOT_FOUND,
+            Error::ProjectNotFound => StatusCode::NOT_FOUND,
         }
     }
 }
@@ -39,7 +40,7 @@ impl HandlerResponse for Error {
 impl From<get_project::Error> for Error {
     fn from(err: get_project::Error) -> Error {
         match err {
-            get_project::Error::NotFound => Error::NotFound,
+            get_project::Error::NotFound => Error::ProjectNotFound,
         }
     }
 }

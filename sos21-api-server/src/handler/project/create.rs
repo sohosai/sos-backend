@@ -31,18 +31,19 @@ impl HandlerResponse for Response {
 }
 
 #[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {
-    InvalidField(&'static str),
-    UnavailableDisplayId,
-    DuplicatedAttributes,
+    InvalidField { field: &'static str },
+    UnavailableProjectDisplayId,
+    DuplicatedProjectAttributes,
 }
 
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::InvalidField(_) => StatusCode::BAD_REQUEST,
-            Error::UnavailableDisplayId => StatusCode::CONFLICT,
-            Error::DuplicatedAttributes => StatusCode::BAD_REQUEST,
+            Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
+            Error::UnavailableProjectDisplayId => StatusCode::CONFLICT,
+            Error::DuplicatedProjectAttributes => StatusCode::BAD_REQUEST,
         }
     }
 }
@@ -50,14 +51,22 @@ impl HandlerResponse for Error {
 impl From<create_project::Error> for Error {
     fn from(err: create_project::Error) -> Error {
         match err {
-            create_project::Error::InvalidDisplayId => Error::InvalidField("display_id"),
-            create_project::Error::UnavailableDisplayId => Error::UnavailableDisplayId,
-            create_project::Error::InvalidName => Error::InvalidField("name"),
-            create_project::Error::InvalidKanaName => Error::InvalidField("kana_name"),
-            create_project::Error::InvalidGroupName => Error::InvalidField("group_name"),
-            create_project::Error::InvalidKanaGroupName => Error::InvalidField("kana_group_name"),
-            create_project::Error::InvalidDescription => Error::InvalidField("description"),
-            create_project::Error::DuplicatedAttributes => Error::DuplicatedAttributes,
+            create_project::Error::InvalidDisplayId => Error::InvalidField {
+                field: "display_id",
+            },
+            create_project::Error::UnavailableDisplayId => Error::UnavailableProjectDisplayId,
+            create_project::Error::InvalidName => Error::InvalidField { field: "name" },
+            create_project::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
+            create_project::Error::InvalidGroupName => Error::InvalidField {
+                field: "group_name",
+            },
+            create_project::Error::InvalidKanaGroupName => Error::InvalidField {
+                field: "kana_group_name",
+            },
+            create_project::Error::InvalidDescription => Error::InvalidField {
+                field: "description",
+            },
+            create_project::Error::DuplicatedAttributes => Error::DuplicatedProjectAttributes,
         }
     }
 }

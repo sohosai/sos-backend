@@ -25,8 +25,7 @@ pub enum RequestErrorId {
 }
 
 #[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "snake_case")]
-#[serde(tag = "type")]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum ErrorBody {
     Api { info: serde_json::Value },
     Authentication { id: AuthenticationErrorId },
