@@ -1,5 +1,8 @@
 use crate::context::ProjectRepository;
-use crate::model::string::LengthBoundedString;
+use crate::model::{
+    string::{self, LengthBoundedString},
+    user::User,
+};
 
 use thiserror::Error;
 
@@ -9,20 +12,49 @@ use thiserror::Error;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProjectDisplayId(LengthBoundedString<typenum::U3, typenum::U64, String>);
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DisplayIdErrorKind {
+    TooLong,
+    TooShort,
+    ContainsDisallowedCharacter,
+    StartsWithUnderscore,
+}
+
+impl DisplayIdErrorKind {
+    fn from_length_error_kind(kind: string::LengthErrorKind) -> Self {
+        match kind {
+            string::LengthErrorKind::TooShort => DisplayIdErrorKind::TooShort,
+            string::LengthErrorKind::TooLong => DisplayIdErrorKind::TooLong,
+        }
+    }
+}
+
 #[derive(Debug, Error, Clone)]
 #[error("invalid project display id")]
 pub struct DisplayIdError {
-    _priv: (),
+    kind: DisplayIdErrorKind,
+}
+
+impl DisplayIdError {
+    fn from_length_error(err: string::LengthError) -> Self {
+        DisplayIdError {
+            kind: DisplayIdErrorKind::from_length_error_kind(err.kind()),
+        }
+    }
+}
+
+impl DisplayIdError {
+    pub fn kind(&self) -> DisplayIdErrorKind {
+        self.kind
+    }
 }
 
 impl ProjectDisplayId {
     pub fn from_string(display_id: impl Into<String>) -> Result<Self, DisplayIdError> {
         let display_id = LengthBoundedString::new(display_id.into())
-            .map_err(|_| DisplayIdError { _priv: () })?;
-        if !is_valid_display_id(display_id.as_ref()) {
-            return Err(DisplayIdError { _priv: () });
-        }
+            .map_err(DisplayIdError::from_length_error)?;
 
+        validate_display_id(display_id.as_ref())?;
         Ok(ProjectDisplayId(display_id))
     }
 
@@ -38,29 +70,65 @@ impl ProjectDisplayId {
             .await
             .map(|opt| opt.is_none())
     }
+
+    // Display ID itself is visible to every user, though projects cannot be seen by others.
+    // This is because we need to do a check for every user that some display ID is available or not.
+    pub fn is_visible_to(&self, _user: &User) -> bool {
+        true
+    }
 }
 
-fn is_valid_display_id(s: &str) -> bool {
+fn validate_display_id(s: &str) -> Result<(), DisplayIdError> {
     if s.starts_with('_') {
-        return false;
+        return Err(DisplayIdError {
+            kind: DisplayIdErrorKind::StartsWithUnderscore,
+        });
     }
 
-    s.bytes()
-        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == b'_')
+    if !s.bytes().all(is_valid_display_id_character) {
+        return Err(DisplayIdError {
+            kind: DisplayIdErrorKind::ContainsDisallowedCharacter,
+        });
+    }
+
+    Ok(())
+}
+
+fn is_valid_display_id_character(c: u8) -> bool {
+    c.is_ascii_lowercase() || c.is_ascii_digit() || c == b'_'
 }
 
 #[cfg(test)]
 mod tests {
-    use super::ProjectDisplayId;
+    use super::{DisplayIdErrorKind, ProjectDisplayId};
 
     #[test]
     fn test_display_id_invalid() {
-        assert!(ProjectDisplayId::from_string("").is_err());
-        assert!(ProjectDisplayId::from_string("ac").is_err());
-        assert!(ProjectDisplayId::from_string("a@bc").is_err());
-        assert!(ProjectDisplayId::from_string("a(b)c").is_err());
-        assert!(ProjectDisplayId::from_string("a-bc").is_err());
-        assert!(ProjectDisplayId::from_string("_abc").is_err());
+        assert_eq!(
+            ProjectDisplayId::from_string("").unwrap_err().kind(),
+            DisplayIdErrorKind::TooShort
+        );
+        assert_eq!(
+            ProjectDisplayId::from_string("ac").unwrap_err().kind(),
+            DisplayIdErrorKind::TooShort
+        );
+        assert_eq!(
+            ProjectDisplayId::from_string("a@bc").unwrap_err().kind(),
+            DisplayIdErrorKind::ContainsDisallowedCharacter
+        );
+        assert_eq!(
+            ProjectDisplayId::from_string("a(b)c").unwrap_err().kind(),
+            DisplayIdErrorKind::ContainsDisallowedCharacter
+        );
+        assert_eq!(
+            ProjectDisplayId::from_string("a-bc").unwrap_err().kind(),
+            DisplayIdErrorKind::ContainsDisallowedCharacter
+        );
+        assert_eq!(
+            ProjectDisplayId::from_string("_abc").unwrap_err().kind(),
+            DisplayIdErrorKind::StartsWithUnderscore
+        );
+        assert!(ProjectDisplayId::from_string("a-").is_err());
         assert!(ProjectDisplayId::from_string("___").is_err());
     }
 

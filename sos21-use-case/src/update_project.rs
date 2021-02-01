@@ -59,6 +59,7 @@ where
         let display_id = project::ProjectDisplayId::from_string(display_id)
             .map_err(|_| UseCaseError::UseCase(Error::InvalidDisplayId))?;
 
+        use_case_ensure!(display_id.is_visible_to(login_user));
         project.set_display_id(ctx, display_id).await?.map_err(
             |_: project::ProjectDisplayIdNotAvailableError| {
                 UseCaseError::UseCase(Error::UnavailableDisplayId)

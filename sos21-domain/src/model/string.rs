@@ -31,12 +31,16 @@ impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
         let len = s.as_ref().chars().count();
         if let Some(lower) = Lower::limit() {
             if len < lower {
-                return Err(LengthError { _priv: () });
+                return Err(LengthError {
+                    kind: LengthErrorKind::TooShort,
+                });
             }
         }
         if let Some(upper) = Upper::limit() {
             if len > upper {
-                return Err(LengthError { _priv: () });
+                return Err(LengthError {
+                    kind: LengthErrorKind::TooLong,
+                });
             }
         }
 
@@ -52,10 +56,22 @@ impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LengthErrorKind {
+    TooLong,
+    TooShort,
+}
+
 #[derive(Debug, Error, Clone)]
 #[error("the string's length is out of bounds")]
 pub struct LengthError {
-    _priv: (),
+    kind: LengthErrorKind,
+}
+
+impl LengthError {
+    pub fn kind(&self) -> LengthErrorKind {
+        self.kind
+    }
 }
 
 // This cannot be generic because of the blanket impl `TryFrom<T> for U where U: Into<T>`
