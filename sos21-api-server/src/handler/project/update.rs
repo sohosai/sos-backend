@@ -3,13 +3,15 @@ use crate::handler::model::project::{Project, ProjectAttribute, ProjectCategory,
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
-use sos21_domain_context::Login;
+use sos21_domain::context::Login;
 use sos21_use_case::update_project;
 use warp::http::StatusCode;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {
     pub id: ProjectId,
+    #[serde(default)]
+    pub display_id: Option<String>,
     #[serde(default)]
     pub name: Option<String>,
     #[serde(default)]
@@ -41,6 +43,8 @@ impl HandlerResponse for Response {
 pub enum Error {
     NotFound,
     InsufficientPermissions,
+    UnavailableDisplayId,
+    DuplicatedAttributes,
     InvalidField(&'static str),
 }
 
@@ -49,6 +53,8 @@ impl HandlerResponse for Error {
         match self {
             Error::NotFound => StatusCode::NOT_FOUND,
             Error::InsufficientPermissions => StatusCode::FORBIDDEN,
+            Error::UnavailableDisplayId => StatusCode::CONFLICT,
+            Error::DuplicatedAttributes => StatusCode::BAD_REQUEST,
             Error::InvalidField(_) => StatusCode::BAD_REQUEST,
         }
     }
@@ -59,12 +65,14 @@ impl From<update_project::Error> for Error {
         match err {
             update_project::Error::NotFound => Error::NotFound,
             update_project::Error::InsufficientPermissions => Error::InsufficientPermissions,
+            update_project::Error::InvalidDisplayId => Error::InvalidField("display_id"),
+            update_project::Error::UnavailableDisplayId => Error::UnavailableDisplayId,
             update_project::Error::InvalidName => Error::InvalidField("name"),
             update_project::Error::InvalidKanaName => Error::InvalidField("kana_name"),
             update_project::Error::InvalidGroupName => Error::InvalidField("group_name"),
             update_project::Error::InvalidKanaGroupName => Error::InvalidField("kana_group_name"),
             update_project::Error::InvalidDescription => Error::InvalidField("description"),
-            update_project::Error::DuplicatedAttributes => Error::InvalidField("attributes"),
+            update_project::Error::DuplicatedAttributes => Error::DuplicatedAttributes,
         }
     }
 }
@@ -73,6 +81,7 @@ impl From<update_project::Error> for Error {
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let input = update_project::Input {
         id: request.id.into_use_case(),
+        display_id: request.display_id,
         name: request.name,
         kana_name: request.kana_name,
         group_name: request.group_name,

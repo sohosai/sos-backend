@@ -336,6 +336,37 @@
       ]
     }
   },
+  "742873c2f5b75855fc80db103bfbf2e285bede1abeda7cf46107cd1fa41c3461": {
+    "query": "\nUPDATE projects\n  SET\n    owner_id = $2,\n    display_id = $3,\n    name = $4,\n    kana_name = $5,\n    group_name = $6,\n    kana_group_name = $7,\n    description = $8,\n    category = $9,\n    attributes = $10\n  WHERE id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          {
+            "Custom": {
+              "name": "project_category",
+              "kind": {
+                "Enum": [
+                  "general",
+                  "stage"
+                ]
+              }
+            }
+          },
+          "Int8"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "78dcdd55e9f569e0540408557c6143889de406eb881c006fa12ba63bbf73b1cd": {
     "query": "\nINSERT INTO users (\n    id,\n    created_at,\n    first_name,\n    kana_first_name,\n    last_name,\n    kana_last_name,\n    email,\n    phone_number,\n    affiliation,\n    role\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )\n",
     "describe": {
@@ -678,20 +709,59 @@
       ]
     }
   },
-  "e6fd1f938020c2ab8b41082d5aa92884c08cb72dbc996503ff06cdff3d6d01ba": {
-    "query": "\nUPDATE projects\n  SET\n    owner_id = $2,\n    name = $3,\n    kana_name = $4,\n    group_name = $5,\n    kana_group_name = $6,\n    description = $7,\n    category = $8,\n    attributes = $9\n  WHERE id = $1\n",
+  "c2778815e90a5dd3c2c46e1f1b62ea55a631de9269ace9ec3b7c1dc75bd14422": {
+    "query": "\nSELECT\n        projects.id,\n        projects.created_at,\n        display_id,\n        owner_id,\n        name,\n        kana_name,\n        group_name,\n        kana_group_name,\n        description,\n        category as \"category: ProjectCategory\",\n        attributes as \"attributes: ProjectAttributes\",\n        users.id as user_id,\n        users.created_at as user_created_at,\n        first_name,\n        kana_first_name,\n        last_name,\n        kana_last_name,\n        phone_number,\n        affiliation,\n        email,\n        role as \"role: UserRole\"\nFROM projects\nINNER JOIN users ON (projects.owner_id = users.id)\nWHERE projects.display_id = $1\n",
     "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "display_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "owner_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "kana_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "kana_group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
+          "name": "category: ProjectCategory",
+          "type_info": {
             "Custom": {
               "name": "project_category",
               "kind": {
@@ -701,11 +771,104 @@
                 ]
               }
             }
-          },
-          "Int8"
+          }
+        },
+        {
+          "ordinal": 10,
+          "name": "attributes: ProjectAttributes",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 11,
+          "name": "user_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 12,
+          "name": "user_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 13,
+          "name": "first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 14,
+          "name": "kana_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 15,
+          "name": "last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 16,
+          "name": "kana_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 17,
+          "name": "phone_number",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 18,
+          "name": "affiliation",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 19,
+          "name": "email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 20,
+          "name": "role: UserRole",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
         ]
       },
-      "nullable": []
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
     }
   }
 }

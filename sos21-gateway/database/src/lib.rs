@@ -24,13 +24,13 @@ impl Database {
     }
 }
 
-sos21_domain_context::delegate_project_repository! {
+sos21_domain::delegate_project_repository! {
     impl ProjectRepository for Database {
         self { ProjectDatabase::ref_cast(&self.connection) }
     }
 }
 
-sos21_domain_context::delegate_user_repository! {
+sos21_domain::delegate_user_repository! {
     impl UserRepository for Database {
         self { UserDatabase::ref_cast(&self.connection) }
     }

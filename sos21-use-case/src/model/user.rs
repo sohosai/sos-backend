@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use sos21_domain_model::user as entity;
+use sos21_domain::model::user as entity;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct UserId(pub String);

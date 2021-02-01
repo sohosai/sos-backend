@@ -1,4 +1,4 @@
-use crate::email::{self, EmailAddress};
+use crate::model::email::{self, EmailAddress};
 
 use thiserror::Error;
 

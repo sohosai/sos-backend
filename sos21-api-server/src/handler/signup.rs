@@ -3,7 +3,7 @@ use crate::handler::model::user::{User, UserKanaName, UserName};
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
-use sos21_domain_context::Authentication;
+use sos21_domain::context::Authentication;
 use sos21_use_case::signup;
 use warp::http::StatusCode;
 

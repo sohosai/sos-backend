@@ -10,5 +10,4 @@ futures = "0.3"
 chrono = "0.4"
 uuid = { version = "0.8", features = ["v4"] }
 async-trait = "0.1.42"
-sos21-domain-model = { path = "../model" }
-sos21-domain-context = { path = "../context" }
+sos21-domain = { path = ".." }

@@ -138,7 +138,7 @@ macro_rules! handler {
         handler! {
             @impl $vis $name (
                 (auth, ctx) $ctx = {
-                    let ctx = ::sos21_domain_context::Authentication::new(
+                    let ctx = ::sos21_domain::context::Authentication::new(
                         ctx,
                         auth.user_id,
                         auth.email
@@ -219,9 +219,9 @@ impl<E> From<anyhow::Error> for HandlerError<E> {
     }
 }
 
-impl<E> From<sos21_domain_context::authentication::AuthenticationError> for HandlerError<E> {
-    fn from(e: sos21_domain_context::authentication::AuthenticationError) -> HandlerError<E> {
-        use sos21_domain_context::authentication::AuthenticationError;
+impl<E> From<sos21_domain::context::authentication::AuthenticationError> for HandlerError<E> {
+    fn from(e: sos21_domain::context::authentication::AuthenticationError) -> HandlerError<E> {
+        use sos21_domain::context::authentication::AuthenticationError;
         match e {
             AuthenticationError::InvalidEmailAddress => HandlerError::InvalidEmailAddress,
             AuthenticationError::NotUniversityEmailAddress => {
@@ -231,9 +231,9 @@ impl<E> From<sos21_domain_context::authentication::AuthenticationError> for Hand
     }
 }
 
-impl<E> From<sos21_domain_context::login::LoginError> for HandlerError<E> {
-    fn from(e: sos21_domain_context::login::LoginError) -> HandlerError<E> {
-        use sos21_domain_context::login::LoginError;
+impl<E> From<sos21_domain::context::login::LoginError> for HandlerError<E> {
+    fn from(e: sos21_domain::context::login::LoginError) -> HandlerError<E> {
+        use sos21_domain::context::login::LoginError;
         match e {
             LoginError::NotSignedUp => HandlerError::NotSignedUp,
             LoginError::Internal(e) => HandlerError::Server(e),

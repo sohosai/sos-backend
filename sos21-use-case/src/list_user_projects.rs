@@ -4,7 +4,7 @@ use crate::error::UseCaseResult;
 use crate::model::project::Project;
 
 use anyhow::Context;
-use sos21_domain_context::{Login, ProjectRepository};
+use sos21_domain::context::{Login, ProjectRepository};
 
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Login<C>) -> UseCaseResult<Vec<Project>, Infallible>

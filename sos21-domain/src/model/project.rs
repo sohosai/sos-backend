@@ -1,7 +1,9 @@
-use crate::date_time::DateTime;
-use crate::permissions::Permissions;
-use crate::user::{User, UserId};
+use crate::context::ProjectRepository;
+use crate::model::date_time::DateTime;
+use crate::model::permissions::Permissions;
+use crate::model::user::{User, UserId};
 
+use thiserror::Error;
 use uuid::Uuid;
 
 pub mod attribute;
@@ -32,6 +34,7 @@ impl ProjectId {
 pub struct Project {
     pub id: ProjectId,
     pub created_at: DateTime,
+    // TODO: encupsulate to ensure availability
     pub display_id: ProjectDisplayId,
     pub owner_id: UserId,
     pub name: ProjectName,
@@ -41,6 +44,12 @@ pub struct Project {
     pub description: ProjectDescription,
     pub category: ProjectCategory,
     pub attributes: ProjectAttributes,
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("the project display id is not available")]
+pub struct ProjectDisplayIdNotAvailableError {
+    _priv: (),
 }
 
 impl Project {
@@ -79,6 +88,22 @@ impl Project {
     pub fn set_attributes(&mut self, attributes: ProjectAttributes) {
         self.attributes = attributes;
     }
+
+    pub async fn set_display_id<C>(
+        &mut self,
+        ctx: C,
+        display_id: ProjectDisplayId,
+    ) -> anyhow::Result<Result<(), ProjectDisplayIdNotAvailableError>>
+    where
+        C: ProjectRepository,
+    {
+        if !display_id.is_available(ctx).await? {
+            return Ok(Err(ProjectDisplayIdNotAvailableError { _priv: () }));
+        }
+
+        self.display_id = display_id;
+        Ok(Ok(()))
+    }
 }
 
 #[cfg(test)]
@@ -114,5 +139,46 @@ mod tests {
         let other = test_model::new_general_user();
         let project = test_model::new_general_project(other.id.clone());
         assert!(project.is_visible_to(&user));
+    }
+
+    #[tokio::test]
+    async fn test_set_display_id_unavailable() {
+        use sos21_domain_test as test;
+
+        let user = test::model::new_general_user();
+        let mut project1 = test::model::new_general_project(user.id.clone());
+        let project2 = test::model::new_general_project(user.id.clone());
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .projects(vec![project1.clone(), project2.clone()])
+            .build();
+
+        assert!(matches!(
+            project1
+                .set_display_id(app, project2.display_id)
+                .await
+                .unwrap(),
+            Err(_)
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_set_display_id_available() {
+        use sos21_domain_test as test;
+
+        let user = test::model::new_general_user();
+        let mut project = test::model::new_general_project(user.id.clone());
+        let display_id = test::model::new_project_display_id();
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .projects(vec![project.clone()])
+            .build();
+
+        assert!(project
+            .set_display_id(app, display_id.clone())
+            .await
+            .unwrap()
+            .is_ok());
+        assert_eq!(project.display_id, display_id);
     }
 }

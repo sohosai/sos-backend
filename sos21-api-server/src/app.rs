@@ -42,13 +42,13 @@ impl Context {
     }
 }
 
-sos21_domain_context::delegate_user_repository! {
+sos21_domain::delegate_user_repository! {
     impl UserRepository for Context {
         self { &self.database }
     }
 }
 
-sos21_domain_context::delegate_project_repository! {
+sos21_domain::delegate_project_repository! {
     impl ProjectRepository for Context {
         self { &self.database }
     }

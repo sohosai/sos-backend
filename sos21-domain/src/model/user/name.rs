@@ -1,5 +1,5 @@
-use crate::string::{KanaString, LengthBoundedString};
-use crate::user::User;
+use crate::model::string::{KanaString, LengthBoundedString};
+use crate::model::user::User;
 
 use thiserror::Error;
 

@@ -18,7 +18,7 @@ CREATE TYPE project_category AS ENUM ('general', 'stage');
 CREATE TABLE projects (
     id uuid PRIMARY KEY,
     created_at timestamptz NOT NULL,
-    display_id varchar(64) NOT NULL,
+    display_id varchar(64) UNIQUE NOT NULL,
     owner_id varchar(64) NOT NULL REFERENCES users ON DELETE RESTRICT,
     name varchar(128) NOT NULL,
     kana_name varchar(512) NOT NULL,
@@ -30,3 +30,4 @@ CREATE TABLE projects (
 );
 
 CREATE INDEX ON projects ( owner_id );
+CREATE INDEX ON projects ( display_id );

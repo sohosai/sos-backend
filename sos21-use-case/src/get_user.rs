@@ -2,7 +2,7 @@ use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::user::{User, UserId};
 
 use anyhow::Context;
-use sos21_domain_context::{Login, UserRepository};
+use sos21_domain::context::{Login, UserRepository};
 
 #[derive(Debug, Clone)]
 pub enum Error {

@@ -1,4 +1,4 @@
-use sos21_domain_model::{
+use sos21_domain::model::{
     date_time::DateTime,
     phone_number::PhoneNumber,
     user::{User, UserAffiliation, UserEmailAddress, UserId, UserKanaName, UserName, UserRole},

@@ -1,4 +1,4 @@
-use crate::permissions::Permissions;
+use crate::model::permissions::Permissions;
 
 use thiserror::Error;
 

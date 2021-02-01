@@ -1,4 +1,4 @@
-use crate::string::{KanaString, LengthBoundedString};
+use crate::model::string::{KanaString, LengthBoundedString};
 
 use thiserror::Error;
 

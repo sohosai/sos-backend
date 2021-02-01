@@ -1480,8 +1480,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "sos21-domain-context",
- "sos21-domain-model",
+ "sos21-domain",
  "sos21-gateway-database",
  "sos21-use-case",
  "sqlx",
@@ -1509,23 +1508,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "sos21-domain-context"
+name = "sos21-domain"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "sos21-domain-model",
- "thiserror",
-]
-
-[[package]]
-name = "sos21-domain-model"
-version = "0.1.0"
-dependencies = [
  "bitflags",
  "chrono",
  "sos21-domain-test",
  "thiserror",
+ "tokio",
  "typenum",
  "uuid",
 ]
@@ -1538,8 +1530,7 @@ dependencies = [
  "async-trait",
  "chrono",
  "futures",
- "sos21-domain-context",
- "sos21-domain-model",
+ "sos21-domain",
  "uuid",
 ]
 
@@ -1552,8 +1543,7 @@ dependencies = [
  "futures",
  "ref-cast",
  "sos21-database",
- "sos21-domain-context",
- "sos21-domain-model",
+ "sos21-domain",
  "sqlx",
 ]
 
@@ -1564,8 +1554,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "csv",
- "sos21-domain-context",
- "sos21-domain-model",
+ "sos21-domain",
  "sos21-domain-test",
  "tokio",
  "tracing",

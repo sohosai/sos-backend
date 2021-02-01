@@ -1,6 +1,6 @@
-use crate::date_time::DateTime;
-use crate::permissions::Permissions;
-use crate::phone_number::PhoneNumber;
+use crate::model::date_time::DateTime;
+use crate::model::permissions::Permissions;
+use crate::model::phone_number::PhoneNumber;
 
 use thiserror::Error;
 

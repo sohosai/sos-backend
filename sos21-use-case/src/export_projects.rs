@@ -1,8 +1,8 @@
 use crate::error::{UseCaseError, UseCaseResult};
 
 use anyhow::Context;
-use sos21_domain_context::{Login, ProjectRepository};
-use sos21_domain_model::{permissions::Permissions, project, user};
+use sos21_domain::context::{Login, ProjectRepository};
+use sos21_domain::model::{permissions::Permissions, project, user};
 
 #[derive(Debug, Clone)]
 pub enum Error {
@@ -302,8 +302,8 @@ where
 #[cfg(test)]
 mod tests {
     use crate::{export_projects, UseCaseError};
-    use sos21_domain_context::Login;
-    use sos21_domain_model as domain;
+    use sos21_domain::context::Login;
+    use sos21_domain::model as domain;
     use sos21_domain_test as test;
 
     async fn prepare_app(login_user: domain::user::User) -> Login<test::context::MockApp> {

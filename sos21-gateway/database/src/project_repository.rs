@@ -7,8 +7,8 @@ use futures::lock::Mutex;
 use futures::{future, stream::TryStreamExt};
 use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
-use sos21_domain_context::ProjectRepository;
-use sos21_domain_model::{
+use sos21_domain::context::ProjectRepository;
+use sos21_domain::model::{
     date_time::DateTime,
     project::{
         Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
@@ -33,6 +33,7 @@ impl ProjectRepository for ProjectDatabase {
             let input = command::update_project::Input {
                 id: project.id,
                 owner_id: project.owner_id,
+                display_id: project.display_id,
                 name: project.name,
                 kana_name: project.kana_name,
                 group_name: project.group_name,
@@ -45,6 +46,20 @@ impl ProjectRepository for ProjectDatabase {
         } else {
             command::insert_project(&mut *lock, project).await
         }
+    }
+
+    async fn find_project_by_display_id(
+        &self,
+        display_id: ProjectDisplayId,
+    ) -> Result<Option<(Project, User)>> {
+        let mut lock = self.0.lock().await;
+
+        let opt = query::find_project_by_display_id(&mut *lock, display_id.into_string()).await?;
+        let result = match opt {
+            Some(x) => x,
+            None => return Ok(None),
+        };
+        to_project_with_owner(result.project, result.owner).map(Some)
     }
 
     async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {

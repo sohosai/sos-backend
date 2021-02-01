@@ -2,7 +2,7 @@ use crate::app::Context;
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
-use sos21_domain_context::Login;
+use sos21_domain::context::Login;
 use sos21_use_case::export_users;
 use warp::http::StatusCode;
 

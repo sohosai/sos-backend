@@ -1,4 +1,4 @@
-use crate::string::LengthBoundedString;
+use crate::model::string::LengthBoundedString;
 
 use thiserror::Error;
 

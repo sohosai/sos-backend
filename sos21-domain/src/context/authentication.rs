@@ -1,6 +1,6 @@
-use crate::{ProjectRepository, UserRepository};
+use crate::context::{ProjectRepository, UserRepository};
+use crate::model::user::{email, UserEmailAddress, UserId};
 
-use sos21_domain_model::user::{email, UserEmailAddress, UserId};
 use thiserror::Error;
 
 #[derive(Debug, Clone)]

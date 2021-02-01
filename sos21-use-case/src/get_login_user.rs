@@ -3,7 +3,7 @@ use std::convert::Infallible;
 use crate::error::UseCaseResult;
 use crate::model::user::User;
 
-use sos21_domain_context::Login;
+use sos21_domain::context::Login;
 
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Login<C>) -> UseCaseResult<User, Infallible> {

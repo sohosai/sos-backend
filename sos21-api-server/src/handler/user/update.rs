@@ -3,7 +3,7 @@ use crate::handler::model::user::{User, UserId, UserKanaName, UserName, UserRole
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
-use sos21_domain_context::Login;
+use sos21_domain::context::Login;
 use sos21_use_case::update_user;
 use warp::http::StatusCode;
 

@@ -3,8 +3,8 @@ use futures::lock::Mutex;
 use futures::{future, stream::TryStreamExt};
 use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
-use sos21_domain_context::UserRepository;
-use sos21_domain_model::{
+use sos21_domain::context::UserRepository;
+use sos21_domain::model::{
     date_time::DateTime,
     phone_number::PhoneNumber,
     user::{User, UserAffiliation, UserEmailAddress, UserId, UserKanaName, UserName, UserRole},

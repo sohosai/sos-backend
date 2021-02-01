@@ -7,9 +7,9 @@ use futures::{
     future::TryFutureExt,
     stream::{StreamExt, TryStreamExt},
 };
-use sos21_domain_context::{Authentication, Login, ProjectRepository, UserRepository};
-use sos21_domain_model::{
-    project::{Project, ProjectId},
+use sos21_domain::context::{Authentication, Login, ProjectRepository, UserRepository};
+use sos21_domain::model::{
+    project::{Project, ProjectDisplayId, ProjectId},
     user::{User, UserId},
 };
 
@@ -112,6 +112,25 @@ impl ProjectRepository for MockApp {
 
     async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {
         let project = self.projects.lock().await.get(&id).cloned();
+        if let Some(project) = project {
+            let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
+            Ok(Some((project, owner)))
+        } else {
+            Ok(None)
+        }
+    }
+
+    async fn find_project_by_display_id(
+        &self,
+        display_id: ProjectDisplayId,
+    ) -> Result<Option<(Project, User)>> {
+        let project = self
+            .projects
+            .lock()
+            .await
+            .values()
+            .find(|project| project.display_id == display_id)
+            .cloned();
         if let Some(project) = project {
             let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
             Ok(Some((project, owner)))

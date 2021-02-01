@@ -3,7 +3,7 @@ use crate::handler::model::project::{Project, ProjectAttribute, ProjectCategory}
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
-use sos21_domain_context::Login;
+use sos21_domain::context::Login;
 use sos21_use_case::create_project;
 use warp::http::StatusCode;
 
@@ -33,6 +33,7 @@ impl HandlerResponse for Response {
 #[derive(Debug, Clone, Serialize)]
 pub enum Error {
     InvalidField(&'static str),
+    UnavailableDisplayId,
     DuplicatedAttributes,
 }
 
@@ -40,6 +41,7 @@ impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
             Error::InvalidField(_) => StatusCode::BAD_REQUEST,
+            Error::UnavailableDisplayId => StatusCode::CONFLICT,
             Error::DuplicatedAttributes => StatusCode::BAD_REQUEST,
         }
     }
@@ -49,6 +51,7 @@ impl From<create_project::Error> for Error {
     fn from(err: create_project::Error) -> Error {
         match err {
             create_project::Error::InvalidDisplayId => Error::InvalidField("display_id"),
+            create_project::Error::UnavailableDisplayId => Error::UnavailableDisplayId,
             create_project::Error::InvalidName => Error::InvalidField("name"),
             create_project::Error::InvalidKanaName => Error::InvalidField("kana_name"),
             create_project::Error::InvalidGroupName => Error::InvalidField("group_name"),

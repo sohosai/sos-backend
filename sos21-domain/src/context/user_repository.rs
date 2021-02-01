@@ -1,5 +1,6 @@
+use crate::model::user::{User, UserId};
+
 use anyhow::Result;
-use sos21_domain_model::user::{User, UserId};
 
 #[async_trait::async_trait]
 pub trait UserRepository {
@@ -14,22 +15,22 @@ macro_rules! delegate_user_repository {
         $sel:ident $target:block
     }) => {
         #[::async_trait::async_trait]
-        impl $(<$($vars$(: $c0 $(+ $cs)* )?,)*>)? $crate::UserRepository for $ty {
+        impl $(<$($vars$(: $c0 $(+ $cs)* )?,)*>)? $crate::context::UserRepository for $ty {
             async fn store_user(
                 &$sel,
-                user: ::sos21_domain_model::user::User,
+                user: $crate::model::user::User,
             ) -> ::anyhow::Result<()> {
                 $target.store_user(user).await
             }
             async fn get_user(
                 &$sel,
-                id: ::sos21_domain_model::user::UserId,
-            ) -> ::anyhow::Result<Option<::sos21_domain_model::user::User>> {
+                id: $crate::model::user::UserId,
+            ) -> ::anyhow::Result<Option<$crate::model::user::User>> {
                 $target.get_user(id).await
             }
             async fn list_users(
                 &$sel,
-            ) -> ::anyhow::Result<Vec<::sos21_domain_model::user::User>> {
+            ) -> ::anyhow::Result<Vec<$crate::model::user::User>> {
                 $target.list_users().await
             }
         }

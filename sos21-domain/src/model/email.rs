@@ -1,7 +1,7 @@
 use std::fmt::{self, Debug, Display};
 use std::str::FromStr;
 
-use crate::string::{Bounded, LengthLimitedString};
+use crate::model::string::{Bounded, LengthLimitedString};
 
 use thiserror::Error;
 

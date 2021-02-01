@@ -2,8 +2,8 @@ use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::user::{User, UserId, UserKanaName, UserName, UserRole};
 
 use anyhow::Context;
-use sos21_domain_context::{Login, UserRepository};
-use sos21_domain_model::{permissions::Permissions, phone_number, user};
+use sos21_domain::context::{Login, UserRepository};
+use sos21_domain::model::{permissions::Permissions, phone_number, user};
 
 #[derive(Debug, Clone)]
 pub enum Error {

@@ -1,7 +1,7 @@
 use crate::model::user::{UserId, UserKanaName, UserName};
 
 use chrono::{DateTime, Utc};
-use sos21_domain_model::project as entity;
+use sos21_domain::model::project as entity;
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -84,8 +84,8 @@ pub struct Project {
 impl Project {
     pub fn from_entity(
         project: entity::Project,
-        owner_name: sos21_domain_model::user::UserName,
-        owner_kana_name: sos21_domain_model::user::UserKanaName,
+        owner_name: sos21_domain::model::user::UserName,
+        owner_kana_name: sos21_domain::model::user::UserKanaName,
     ) -> Project {
         Project {
             id: ProjectId::from_entity(project.id),

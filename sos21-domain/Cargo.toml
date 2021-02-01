@@ -1,5 +1,5 @@
 [package]
-name = "sos21-domain-model"
+name = "sos21-domain"
 version = "0.1.0"
 authors = ["coord.e <me@coord-e.com>"]
 edition = "2018"
@@ -10,6 +10,9 @@ thiserror = "1"
 bitflags = "1"
 uuid = { version = "0.8", features = ["serde"] }
 typenum = "1"
+async-trait = "0.1.42"
+anyhow = "1"
 
 [dev-dependencies]
-sos21-domain-test = { path = "../test" }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+sos21-domain-test = { path = "test" }

@@ -1,6 +1,6 @@
-use crate::{authentication::Authentication, ProjectRepository, UserRepository};
+use crate::context::{authentication::Authentication, ProjectRepository, UserRepository};
+use crate::model::user::User;
 
-use sos21_domain_model::user::User;
 use thiserror::Error;
 
 #[derive(Debug, Clone)]

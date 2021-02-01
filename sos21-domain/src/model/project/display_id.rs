@@ -1,4 +1,5 @@
-use crate::string::LengthBoundedString;
+use crate::context::ProjectRepository;
+use crate::model::string::LengthBoundedString;
 
 use thiserror::Error;
 
@@ -27,6 +28,15 @@ impl ProjectDisplayId {
 
     pub fn into_string(self) -> String {
         self.0.into_inner()
+    }
+
+    pub async fn is_available<C>(&self, ctx: C) -> anyhow::Result<bool>
+    where
+        C: ProjectRepository,
+    {
+        ctx.find_project_by_display_id(self.clone())
+            .await
+            .map(|opt| opt.is_none())
     }
 }
 
@@ -61,5 +71,30 @@ mod tests {
         assert!(ProjectDisplayId::from_string("a_b1d_e").is_ok());
         assert!(ProjectDisplayId::from_string("ac_").is_ok());
         assert!(ProjectDisplayId::from_string("a__c").is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_unavailable() {
+        use sos21_domain_test as test;
+
+        let user = test::model::new_general_user();
+        let project = test::model::new_general_project(user.id.clone());
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .projects(vec![project.clone()])
+            .build();
+
+        assert!(!project.display_id.is_available(&app).await.unwrap());
+    }
+
+    #[tokio::test]
+    async fn test_available() {
+        use sos21_domain_test as test;
+
+        let user = test::model::new_general_user();
+        let project_id = test::model::new_project_display_id();
+        let app = test::build_mock_app().users(vec![user.clone()]).build();
+
+        assert!(project_id.is_available(&app).await.unwrap());
     }
 }

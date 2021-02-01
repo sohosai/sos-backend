@@ -5,7 +5,7 @@ use crate::handler::model::project::Project;
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
-use sos21_domain_context::Login;
+use sos21_domain::context::Login;
 use sos21_use_case::list_user_projects;
 use warp::http::StatusCode;
 
