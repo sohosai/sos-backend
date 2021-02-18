@@ -3,6 +3,7 @@ use crate::model::date_time::DateTime;
 use crate::model::permissions::Permissions;
 use crate::model::user::{User, UserId};
 
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use uuid::Uuid;
 
@@ -17,8 +18,9 @@ pub use description::ProjectDescription;
 pub use display_id::ProjectDisplayId;
 pub use name::{ProjectGroupName, ProjectKanaGroupName, ProjectKanaName, ProjectName};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ProjectId(pub Uuid);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(transparent)]
+pub struct ProjectId(Uuid);
 
 impl ProjectId {
     pub fn from_uuid(uuid: Uuid) -> ProjectId {

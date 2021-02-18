@@ -10,7 +10,8 @@ chrono = "0.4"
 uuid = "0.8"
 futures = "0.3"
 bitflags = "1"
+bincode = "1"
 
 [dependencies.sqlx]
 git = "https://github.com/launchbadge/sqlx"
-features = ["macros", "postgres", "chrono", "uuid", "offline", "runtime-tokio-rustls"]
+features = ["macros", "postgres", "chrono", "uuid", "bit-vec", "offline", "runtime-tokio-rustls"]

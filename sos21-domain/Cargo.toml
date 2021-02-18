@@ -12,7 +12,9 @@ uuid = { version = "0.8", features = ["serde"] }
 typenum = "1"
 async-trait = "0.1.42"
 anyhow = "1"
+serde = "1"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+maplit = "1"
 sos21-domain-test = { path = "test" }

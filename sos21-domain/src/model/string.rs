@@ -3,10 +3,13 @@ use std::fmt::{self, Debug, Display};
 use std::marker::PhantomData;
 use std::str::FromStr;
 
+use serde::{
+    de::{self, Deserialize, Deserializer},
+    ser::{Serialize, Serializer},
+};
 use thiserror::Error;
 
-mod bound;
-pub use bound::{Bound, Bounded, Unbounded};
+use crate::model::bound::{Bound, Bounded};
 
 /// A length-limited string.
 ///
@@ -25,8 +28,8 @@ impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
     pub fn new(s: S) -> Result<Self, LengthError>
     where
         S: AsRef<str>,
-        Lower: Bound,
-        Upper: Bound,
+        Lower: Bound<usize>,
+        Upper: Bound<usize>,
     {
         let len = s.as_ref().chars().count();
         if let Some(lower) = Lower::limit() {
@@ -77,8 +80,8 @@ impl LengthError {
 // This cannot be generic because of the blanket impl `TryFrom<T> for U where U: Into<T>`
 impl<Lower, Upper> TryFrom<String> for LengthLimitedString<Lower, Upper, String>
 where
-    Lower: Bound,
-    Upper: Bound,
+    Lower: Bound<usize>,
+    Upper: Bound<usize>,
 {
     type Error = LengthError;
     fn try_from(s: String) -> Result<Self, Self::Error> {
@@ -113,13 +116,39 @@ impl<Lower, Upper, S: Debug> Debug for LengthLimitedString<Lower, Upper, S> {
 
 impl<Lower, Upper> FromStr for LengthLimitedString<Lower, Upper, String>
 where
-    Lower: Bound,
-    Upper: Bound,
+    Lower: Bound<usize>,
+    Upper: Bound<usize>,
 {
     type Err = LengthError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.to_owned();
         LengthLimitedString::new(s)
+    }
+}
+
+impl<Lower, Upper, S> Serialize for LengthLimitedString<Lower, Upper, S>
+where
+    S: Serialize,
+{
+    fn serialize<Ser>(&self, serializer: Ser) -> Result<Ser::Ok, Ser::Error>
+    where
+        Ser: Serializer,
+    {
+        self.inner.serialize(serializer)
+    }
+}
+
+impl<'de, Lower, Upper, S> Deserialize<'de> for LengthLimitedString<Lower, Upper, S>
+where
+    Lower: Bound<usize>,
+    Upper: Bound<usize>,
+    S: Deserialize<'de> + AsRef<str>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        LengthLimitedString::new(S::deserialize(deserializer)?).map_err(de::Error::custom)
     }
 }
 
@@ -213,7 +242,8 @@ impl FromStr for KanaString<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{Bounded, KanaString, LengthLimitedString, Unbounded};
+    use super::{KanaString, LengthLimitedString};
+    use crate::model::bound::{Bounded, Unbounded};
     use std::str::FromStr;
 
     #[test]

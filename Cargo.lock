@@ -133,6 +133,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
 
 [[package]]
+name = "bincode"
+version = "1.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f30d3a39baa26f9651f17b375061f3233dde33424a8b72b0dbe93a68a0bc896d"
+dependencies = [
+ "byteorder",
+ "serde",
+]
+
+[[package]]
+name = "bit-vec"
+version = "0.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "349f9b6a179ed607305526ca489b34ad0a41aed5f7980fa90eb03160b69598fb"
+
+[[package]]
 name = "bitflags"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1500,6 +1516,7 @@ name = "sos21-database"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "bincode",
  "bitflags",
  "chrono",
  "futures",
@@ -1515,6 +1532,8 @@ dependencies = [
  "async-trait",
  "bitflags",
  "chrono",
+ "maplit",
+ "serde",
  "sos21-domain-test",
  "thiserror",
  "tokio",
@@ -1540,6 +1559,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
+ "bincode",
  "futures",
  "ref-cast",
  "sos21-database",
@@ -1598,6 +1618,7 @@ dependencies = [
  "ahash 0.6.3",
  "atoi",
  "base64 0.13.0",
+ "bit-vec",
  "bitflags",
  "byteorder",
  "bytes",

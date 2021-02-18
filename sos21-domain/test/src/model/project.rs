@@ -10,7 +10,7 @@ use sos21_domain::model::{
 use uuid::Uuid;
 
 pub fn new_project_id() -> ProjectId {
-    ProjectId(Uuid::new_v4())
+    ProjectId::from_uuid(Uuid::new_v4())
 }
 
 pub fn new_project_display_id() -> ProjectDisplayId {

@@ -4,6 +4,10 @@ use sqlx::{Postgres, Transaction};
 
 mod project_repository;
 use project_repository::ProjectDatabase;
+mod form_repository;
+use form_repository::FormDatabase;
+mod form_answer_repository;
+use form_answer_repository::FormAnswerDatabase;
 mod user_repository;
 use user_repository::UserDatabase;
 
@@ -33,5 +37,17 @@ sos21_domain::delegate_project_repository! {
 sos21_domain::delegate_user_repository! {
     impl UserRepository for Database {
         self { UserDatabase::ref_cast(&self.connection) }
+    }
+}
+
+sos21_domain::delegate_form_repository! {
+    impl FormRepository for Database {
+        self { FormDatabase::ref_cast(&self.connection) }
+    }
+}
+
+sos21_domain::delegate_form_answer_repository! {
+    impl FormAnswerRepository for Database {
+        self { FormAnswerDatabase::ref_cast(&self.connection) }
     }
 }

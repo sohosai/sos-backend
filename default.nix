@@ -4,5 +4,5 @@ rustPlatform.buildRustPackage {
   pname = "sos21-api-server";
   version = "0.1.0";
   src = ./.;
-  cargoSha256 = "0v02263jh65np6p1agfdk2vq7g2q4y0x9hqkn86z1khii74bdhsj";
+  cargoSha256 = "0w3js5qkyap80q4arff2246xmrx2f4qzvqh44smarkl0yryxg9ls";
 }

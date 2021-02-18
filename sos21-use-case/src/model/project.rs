@@ -9,11 +9,11 @@ pub struct ProjectId(pub Uuid);
 
 impl ProjectId {
     pub fn from_entity(id: entity::ProjectId) -> ProjectId {
-        ProjectId(id.0)
+        ProjectId(id.to_uuid())
     }
 
     pub fn into_entity(self) -> entity::ProjectId {
-        entity::ProjectId(self.0)
+        entity::ProjectId::from_uuid(self.0)
     }
 }
 

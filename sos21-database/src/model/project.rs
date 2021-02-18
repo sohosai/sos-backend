@@ -23,13 +23,13 @@ bitflags::bitflags! {
 
 impl sqlx::Type<sqlx::Postgres> for ProjectAttributes {
     fn type_info() -> PgTypeInfo {
-        <i64 as sqlx::Type<sqlx::Postgres>>::type_info()
+        <i32 as sqlx::Type<sqlx::Postgres>>::type_info()
     }
 }
 
 impl sqlx::Encode<'_, sqlx::Postgres> for ProjectAttributes {
     fn encode_by_ref(&self, buf: &mut PgArgumentBuffer) -> sqlx::encode::IsNull {
-        (self.bits() as i64).encode_by_ref(buf)
+        (self.bits() as i32).encode_by_ref(buf)
     }
 }
 
@@ -46,7 +46,7 @@ impl std::error::Error for FromBitsError {}
 
 impl sqlx::Decode<'_, sqlx::Postgres> for ProjectAttributes {
     fn decode(value: PgValueRef) -> Result<Self, sqlx::error::BoxDynError> {
-        let bits = <i64 as sqlx::Decode<sqlx::Postgres>>::decode(value)?.try_into()?;
+        let bits = <i32 as sqlx::Decode<sqlx::Postgres>>::decode(value)?.try_into()?;
         ProjectAttributes::from_bits(bits)
             .ok_or_else::<sqlx::error::BoxDynError, _>(|| Box::new(FromBitsError))
     }

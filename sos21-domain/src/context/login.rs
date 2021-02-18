@@ -1,4 +1,7 @@
-use crate::context::{authentication::Authentication, ProjectRepository, UserRepository};
+use crate::context::{
+    authentication::Authentication, FormAnswerRepository, FormRepository, ProjectRepository,
+    UserRepository,
+};
 use crate::model::user::User;
 
 use thiserror::Error;
@@ -52,6 +55,18 @@ crate::delegate_project_repository! {
 
 crate::delegate_user_repository! {
     impl<C: UserRepository + Send + Sync> UserRepository for Login<C> {
+        self { &self.inner }
+    }
+}
+
+crate::delegate_form_repository! {
+    impl<C: FormRepository + Send + Sync> FormRepository for Login<C> {
+        self { &self.inner }
+    }
+}
+
+crate::delegate_form_answer_repository! {
+    impl<C: FormAnswerRepository + Send + Sync> FormAnswerRepository for Login<C> {
         self { &self.inner }
     }
 }

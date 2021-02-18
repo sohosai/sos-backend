@@ -7,8 +7,12 @@ use futures::{
     future::TryFutureExt,
     stream::{StreamExt, TryStreamExt},
 };
-use sos21_domain::context::{Authentication, Login, ProjectRepository, UserRepository};
+use sos21_domain::context::{
+    Authentication, FormAnswerRepository, FormRepository, Login, ProjectRepository, UserRepository,
+};
 use sos21_domain::model::{
+    form::{Form, FormId},
+    form_answer::{FormAnswer, FormAnswerId},
     project::{Project, ProjectDisplayId, ProjectId},
     user::{User, UserId},
 };
@@ -17,6 +21,8 @@ use sos21_domain::model::{
 pub struct MockAppBuilder {
     users: Vec<User>,
     projects: Vec<Project>,
+    forms: Vec<Form>,
+    answers: Vec<FormAnswer>,
 }
 
 impl MockAppBuilder {
@@ -40,6 +46,22 @@ impl MockAppBuilder {
         self
     }
 
+    pub fn forms<I>(&mut self, forms: I) -> &mut Self
+    where
+        I: IntoIterator<Item = Form>,
+    {
+        self.forms.extend(forms);
+        self
+    }
+
+    pub fn answers<I>(&mut self, answers: I) -> &mut Self
+    where
+        I: IntoIterator<Item = FormAnswer>,
+    {
+        self.answers.extend(answers);
+        self
+    }
+
     pub fn build(&self) -> MockApp {
         let users = self
             .users
@@ -53,10 +75,24 @@ impl MockAppBuilder {
             .into_iter()
             .map(|project| (project.id, project))
             .collect();
+        let forms = self
+            .forms
+            .clone()
+            .into_iter()
+            .map(|form| (form.id, form))
+            .collect();
+        let answers = self
+            .answers
+            .clone()
+            .into_iter()
+            .map(|answer| (answer.id, answer))
+            .collect();
 
         MockApp {
             users: Arc::new(Mutex::new(users)),
             projects: Arc::new(Mutex::new(projects)),
+            forms: Arc::new(Mutex::new(forms)),
+            answers: Arc::new(Mutex::new(answers)),
         }
     }
 }
@@ -65,6 +101,8 @@ impl MockAppBuilder {
 pub struct MockApp {
     users: Arc<Mutex<HashMap<UserId, User>>>,
     projects: Arc<Mutex<HashMap<ProjectId, Project>>>,
+    forms: Arc<Mutex<HashMap<FormId, Form>>>,
+    answers: Arc<Mutex<HashMap<FormAnswerId, FormAnswer>>>,
 }
 
 impl MockApp {
@@ -156,6 +194,57 @@ impl ProjectRepository for MockApp {
             .await
             .values()
             .filter(|project| project.owner_id == id)
+            .cloned()
+            .collect())
+    }
+}
+
+#[async_trait::async_trait]
+impl FormRepository for MockApp {
+    async fn store_form(&self, form: Form) -> Result<()> {
+        self.forms.lock().await.insert(form.id, form);
+        Ok(())
+    }
+
+    async fn get_form(&self, id: FormId) -> Result<Option<Form>> {
+        Ok(self.forms.lock().await.get(&id).cloned())
+    }
+
+    async fn list_forms(&self) -> Result<Vec<Form>> {
+        Ok(self.forms.lock().await.values().cloned().collect())
+    }
+
+    async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<Form>> {
+        let (project, _) = self.get_project(id).await?.unwrap();
+        Ok(self
+            .forms
+            .lock()
+            .await
+            .values()
+            .filter(|form| form.condition.check(&project))
+            .cloned()
+            .collect())
+    }
+}
+
+#[async_trait::async_trait]
+impl FormAnswerRepository for MockApp {
+    async fn store_form_answer(&self, answer: FormAnswer) -> Result<()> {
+        self.answers.lock().await.insert(answer.id, answer);
+        Ok(())
+    }
+
+    async fn get_form_answer(&self, id: FormAnswerId) -> Result<Option<FormAnswer>> {
+        Ok(self.answers.lock().await.get(&id).cloned())
+    }
+
+    async fn list_form_answers(&self, form_id: FormId) -> Result<Vec<FormAnswer>> {
+        Ok(self
+            .answers
+            .lock()
+            .await
+            .values()
+            .filter(|answer| answer.form_id == form_id)
             .cloned()
             .collect())
     }

@@ -1,7 +1,7 @@
 use std::fmt::{self, Debug, Display};
 use std::str::FromStr;
 
-use crate::model::string::{Bounded, LengthLimitedString};
+use crate::model::string::LengthBoundedString;
 
 use thiserror::Error;
 
@@ -9,7 +9,7 @@ use thiserror::Error;
 ///
 /// The email is validated against the definition used in the living HTML standard.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct EmailAddress(LengthLimitedString<Bounded<typenum::U3>, Bounded<typenum::U128>, String>);
+pub struct EmailAddress(LengthBoundedString<typenum::U3, typenum::U128, String>);
 
 #[derive(Debug, Error, Clone)]
 #[error("invalid email address")]
@@ -20,7 +20,7 @@ pub struct FromStringError {
 impl EmailAddress {
     pub fn from_string(s: String) -> Result<EmailAddress, FromStringError> {
         if is_valid_email_address(&s) {
-            if let Ok(s) = LengthLimitedString::new(s) {
+            if let Ok(s) = LengthBoundedString::new(s) {
                 return Ok(EmailAddress(s));
             }
         }

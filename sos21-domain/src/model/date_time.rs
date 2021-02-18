@@ -1,5 +1,5 @@
 /// A point of time without timezone-related semantics.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DateTime(chrono::DateTime<chrono::Utc>);
 
 impl DateTime {
