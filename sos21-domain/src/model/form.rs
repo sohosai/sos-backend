@@ -1,5 +1,6 @@
 use crate::model::date_time::DateTime;
 use crate::model::permissions::Permissions;
+use crate::model::project::Project;
 use crate::model::user::{User, UserId};
 
 use uuid::Uuid;
@@ -44,5 +45,13 @@ pub struct Form {
 impl Form {
     pub fn is_visible_to(&self, user: &User) -> bool {
         user.permissions().contains(Permissions::READ_ALL_FORMS)
+    }
+
+    pub fn is_visible_to_with_project(&self, user: &User, project: &Project) -> bool {
+        if self.is_visible_to(user) {
+            return true;
+        }
+
+        self.condition.check(project) && project.is_visible_to(user)
     }
 }

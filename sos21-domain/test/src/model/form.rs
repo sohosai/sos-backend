@@ -46,7 +46,7 @@ pub fn mock_form_condition() -> FormCondition {
     }
 }
 
-pub fn new_form(author_id: UserId) -> Form {
+pub fn new_form_with_condition(author_id: UserId, condition: FormCondition) -> Form {
     Form {
         id: new_form_id(),
         created_at: DateTime::now(),
@@ -55,6 +55,22 @@ pub fn new_form(author_id: UserId) -> Form {
         description: mock_form_description(),
         period: mock_form_period(),
         items: new_form_items(),
-        condition: mock_form_condition(),
+        condition,
     }
+}
+
+pub fn new_form_with_query(author_id: UserId, query: ProjectQuery) -> Form {
+    new_form_with_condition(
+        author_id,
+        FormCondition {
+            query,
+            includes: FormConditionProjectSet::from_projects(Vec::new()).unwrap(),
+            excludes: FormConditionProjectSet::from_projects(Vec::new()).unwrap(),
+        },
+    )
+}
+
+/// Mocks a new `Form` with wildcard query
+pub fn new_form(author_id: UserId) -> Form {
+    new_form_with_query(author_id, mock_project_query())
 }
