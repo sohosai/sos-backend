@@ -176,6 +176,7 @@ macro_rules! handler {
     };
 }
 
+pub mod form;
 pub mod health;
 pub mod project;
 pub mod signup;

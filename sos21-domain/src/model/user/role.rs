@@ -21,9 +21,12 @@ impl UserRole {
         match self {
             UserRole::Administrator => Permissions::all(),
             UserRole::CommitteeOperator => {
-                Permissions::READ_ALL_USERS | Permissions::READ_ALL_PROJECTS
+                Permissions::READ_ALL_USERS
+                    | Permissions::READ_ALL_PROJECTS
+                    | Permissions::READ_ALL_FORMS
+                    | Permissions::CREATE_FORMS
             }
-            UserRole::Committee => Permissions::READ_ALL_PROJECTS,
+            UserRole::Committee => Permissions::READ_ALL_PROJECTS | Permissions::READ_ALL_FORMS,
             UserRole::General => Permissions::empty(),
         }
     }
