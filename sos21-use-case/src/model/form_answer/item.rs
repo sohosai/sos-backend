@@ -5,12 +5,6 @@ use crate::model::form::item::{
 use sos21_domain::model::form_answer::item as entity;
 
 #[derive(Debug, Clone)]
-pub struct CheckboxAnswer {
-    pub checkbox_id: CheckboxId,
-    pub value: bool,
-}
-
-#[derive(Debug, Clone)]
 pub struct GridRadioRowAnswer {
     pub row_id: GridRadioRowId,
     pub value: Option<GridRadioColumnId>,

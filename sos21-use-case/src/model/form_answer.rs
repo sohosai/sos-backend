@@ -6,7 +6,7 @@ use chrono::{DateTime, Utc};
 use sos21_domain::model::form_answer as entity;
 use uuid::Uuid;
 
-mod item;
+pub mod item;
 pub use item::FormAnswerItem;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
