@@ -4,13 +4,12 @@ use crate::model::permissions::Permissions;
 use crate::model::project::{Project, ProjectId};
 use crate::model::user::{User, UserId};
 
-use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 pub mod item;
 pub use item::{FormAnswerItem, FormAnswerItems};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct FormAnswerId(Uuid);
 
 impl FormAnswerId {

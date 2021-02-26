@@ -3,7 +3,10 @@ use std::collections::{HashMap, HashSet};
 use crate::model::collection::{self, LengthBoundedVec};
 use crate::model::form_answer::item::{FormAnswerItem, FormAnswerItemBody, FormAnswerItems};
 
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{self, Deserializer},
+    Deserialize, Serialize,
+};
 use thiserror::Error;
 use uuid::Uuid;
 
@@ -24,7 +27,8 @@ pub use name::FormItemName;
 pub use radio::RadioFormItem;
 pub use text::TextFormItem;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(transparent)]
 pub struct FormItems(LengthBoundedVec<typenum::U1, typenum::U64, FormItem>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -165,6 +169,16 @@ impl FormItems {
     }
 }
 
+impl<'de> Deserialize<'de> for FormItems {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        FormItems::from_items(Vec::<FormItem>::deserialize(deserializer)?)
+            .map_err(de::Error::custom)
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CheckAnswerItemErrorKind {
     NotAnsweredWithoutCondition,
@@ -179,7 +193,7 @@ pub enum CheckAnswerItemErrorKind {
     TooBigInteger,
     TooSmallInteger,
     TooManyChecks,
-    TooLittleChecks,
+    TooFewChecks,
     UnknownCheckboxId {
         id: checkbox::CheckboxId,
     },
@@ -242,9 +256,7 @@ impl CheckAnswerItemError {
             checkbox::CheckAnswerErrorKind::TooManyChecks => {
                 CheckAnswerItemErrorKind::TooManyChecks
             }
-            checkbox::CheckAnswerErrorKind::TooLittleChecks => {
-                CheckAnswerItemErrorKind::TooLittleChecks
-            }
+            checkbox::CheckAnswerErrorKind::TooFewChecks => CheckAnswerItemErrorKind::TooFewChecks,
             checkbox::CheckAnswerErrorKind::UnknownCheckboxId { id } => {
                 CheckAnswerItemErrorKind::UnknownCheckboxId { id }
             }
@@ -608,7 +620,7 @@ impl CheckFormItems {
     }
 
     fn check_grid_radio_item(&mut self, item: &GridRadioFormItem) -> Result<(), FromItemsError> {
-        for row in item.rows.rows() {
+        for row in item.rows() {
             if !self.grid_rows.insert(row.id) {
                 return Err(FromItemsError {
                     kind: FromItemsErrorKind::DuplicatedGridRadioRowId(row.id),
@@ -616,7 +628,7 @@ impl CheckFormItems {
             }
         }
 
-        for column in item.columns.columns() {
+        for column in item.columns() {
             if !self.grid_columns.insert(column.id) {
                 return Err(FromItemsError {
                     kind: FromItemsErrorKind::DuplicatedGridRadioColumnId(column.id),
@@ -631,80 +643,23 @@ impl CheckFormItems {
 #[cfg(test)]
 mod tests {
     use super::{
-        radio::{Radio, RadioFormItemButtons, RadioId, RadioLabel},
-        CheckFormItems, FormItem, FormItemBody, FormItemCondition, FormItemConditions,
-        FormItemDescription, FormItemId, FormItemName, FromItemsErrorKind, RadioFormItem,
+        radio::RadioId, CheckFormItems, FormItemCondition, FormItemId, FromItemsErrorKind,
     };
-    use sos21_domain_test::model as test_model;
+    use crate::test::model as test_model;
     use uuid::Uuid;
-
-    // TODO: can't we use sos21_domain_test here directly? related: rust-lang/rust#79381
-
-    fn new_form_item_id() -> FormItemId {
-        FormItemId::from_uuid(Uuid::new_v4())
-    }
-
-    fn new_form_item_with_body(body: FormItemBody) -> FormItem {
-        FormItem {
-            id: new_form_item_id(),
-            name: FormItemName::from_string(test_model::mock_form_item_name().into_string())
-                .unwrap(),
-            description: FormItemDescription::from_string(
-                test_model::mock_form_item_description().into_string(),
-            )
-            .unwrap(),
-            conditions: None,
-            body,
-        }
-    }
-
-    fn new_form_item_with_condition(condition: FormItemCondition) -> FormItem {
-        FormItem {
-            id: new_form_item_id(),
-            name: FormItemName::from_string(test_model::mock_form_item_name().into_string())
-                .unwrap(),
-            description: FormItemDescription::from_string(
-                test_model::mock_form_item_description().into_string(),
-            )
-            .unwrap(),
-            conditions: Some(FormItemConditions::from_conjunctions(vec![vec![condition]]).unwrap()),
-            body: new_radio_form_item_body(),
-        }
-    }
-
-    fn new_form_item() -> FormItem {
-        new_form_item_with_body(new_radio_form_item_body())
-    }
-
-    pub fn new_form_radio_button() -> Radio {
-        Radio {
-            id: RadioId::from_uuid(Uuid::new_v4()),
-            label: RadioLabel::from_string("ボタン").unwrap(),
-        }
-    }
-
-    fn new_radio_form_item_body_with_button(button: Radio) -> FormItemBody {
-        FormItemBody::Radio(RadioFormItem {
-            buttons: RadioFormItemButtons::from_buttons(vec![button]).unwrap(),
-            is_required: true,
-        })
-    }
-
-    fn new_radio_form_item_body() -> FormItemBody {
-        new_radio_form_item_body_with_button(new_form_radio_button())
-    }
 
     #[test]
     fn test_pass() {
         assert!(matches!(
-            CheckFormItems::default().check_items(&[new_form_item(), new_form_item(),]),
+            CheckFormItems::default()
+                .check_items(&[test_model::new_form_item(), test_model::new_form_item(),]),
             Ok(())
         ));
     }
 
     #[test]
     fn test_duplicate_item() {
-        let item = new_form_item();
+        let item = test_model::new_form_item();
         assert_eq!(
             CheckFormItems::default()
                 .check_items(vec![&item, &item])
@@ -716,13 +671,13 @@ mod tests {
 
     #[test]
     fn test_duplicate_radio_id() {
-        let button = new_form_radio_button();
-        let body = new_radio_form_item_body_with_button(button.clone());
+        let button = test_model::new_form_radio_button();
+        let body = test_model::new_radio_form_item_body_with_button(button.clone());
         assert_eq!(
             CheckFormItems::default()
                 .check_items(&[
-                    new_form_item_with_body(body.clone()),
-                    new_form_item_with_body(body),
+                    test_model::new_form_item_with_body(body.clone()),
+                    test_model::new_form_item_with_body(body),
                 ])
                 .unwrap_err()
                 .kind(),
@@ -732,16 +687,16 @@ mod tests {
 
     #[test]
     fn test_unknown_item_id() {
-        let button = new_form_radio_button();
-        let body = new_radio_form_item_body_with_button(button.clone());
-        let item = new_form_item_with_body(body.clone());
+        let button = test_model::new_form_radio_button();
+        let body = test_model::new_radio_form_item_body_with_button(button.clone());
+        let item = test_model::new_form_item_with_body(body.clone());
 
         let item_id = FormItemId::from_uuid(Uuid::new_v4());
         let condition = FormItemCondition::RadioSelected {
             item_id,
             radio_id: button.id,
         };
-        let dangling_item = new_form_item_with_condition(condition);
+        let dangling_item = test_model::new_form_item_with_condition(condition);
         assert_eq!(
             CheckFormItems::default()
                 .check_items(&[item, dangling_item.clone()])
@@ -756,13 +711,13 @@ mod tests {
 
     #[test]
     fn test_unknown_radio_id() {
-        let item = new_form_item();
+        let item = test_model::new_form_item();
         let radio_id = RadioId::from_uuid(Uuid::new_v4());
         let condition = FormItemCondition::RadioSelected {
             item_id: item.id,
             radio_id,
         };
-        let dangling_item = new_form_item_with_condition(condition);
+        let dangling_item = test_model::new_form_item_with_condition(condition);
         assert_eq!(
             CheckFormItems::default()
                 .check_items(&[item, dangling_item.clone()])
@@ -779,13 +734,13 @@ mod tests {
     fn test_mismatched_types() {
         use super::checkbox::CheckboxId;
 
-        let item = new_form_item_with_body(new_radio_form_item_body());
+        let item = test_model::new_form_item_with_body(test_model::new_radio_form_item_body());
         let condition = FormItemCondition::Checkbox {
             item_id: item.id,
             checkbox_id: CheckboxId::from_uuid(Uuid::new_v4()),
             expected: true,
         };
-        let bad_item = new_form_item_with_condition(condition);
+        let bad_item = test_model::new_form_item_with_condition(condition);
         assert_eq!(
             CheckFormItems::default()
                 .check_items(&[item.clone(), bad_item.clone()])

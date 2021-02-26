@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(transparent)]
 pub struct FormItemDescription(LengthLimitedString<Unbounded, Bounded<typenum::U1024>, String>);
 
 #[derive(Debug, Error, Clone)]

@@ -1532,24 +1532,12 @@ dependencies = [
  "async-trait",
  "bitflags",
  "chrono",
+ "futures",
  "maplit",
  "serde",
- "sos21-domain-test",
  "thiserror",
  "tokio",
  "typenum",
- "uuid",
-]
-
-[[package]]
-name = "sos21-domain-test"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "chrono",
- "futures",
- "sos21-domain",
  "uuid",
 ]
 
@@ -1575,7 +1563,6 @@ dependencies = [
  "chrono",
  "csv",
  "sos21-domain",
- "sos21-domain-test",
  "tokio",
  "tracing",
  "tracing-futures",

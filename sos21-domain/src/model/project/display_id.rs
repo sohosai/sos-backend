@@ -143,7 +143,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_unavailable() {
-        use sos21_domain_test as test;
+        use crate::test;
 
         let user = test::model::new_general_user();
         let project = test::model::new_general_project(user.id.clone());
@@ -157,7 +157,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_available() {
-        use sos21_domain_test as test;
+        use crate::test;
 
         let user = test::model::new_general_user();
         let project_id = test::model::new_project_display_id();

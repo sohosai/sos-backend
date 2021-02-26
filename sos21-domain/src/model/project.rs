@@ -110,7 +110,7 @@ impl Project {
 
 #[cfg(test)]
 mod tests {
-    use sos21_domain_test::model as test_model;
+    use crate::test::model as test_model;
 
     #[test]
     fn test_visibility_general_owner() {
@@ -145,12 +145,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_set_display_id_unavailable() {
-        use sos21_domain_test as test;
-
-        let user = test::model::new_general_user();
-        let mut project1 = test::model::new_general_project(user.id.clone());
-        let project2 = test::model::new_general_project(user.id.clone());
-        let app = test::build_mock_app()
+        let user = test_model::new_general_user();
+        let mut project1 = test_model::new_general_project(user.id.clone());
+        let project2 = test_model::new_general_project(user.id.clone());
+        let app = crate::test::build_mock_app()
             .users(vec![user.clone()])
             .projects(vec![project1.clone(), project2.clone()])
             .build();
@@ -166,12 +164,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_set_display_id_available() {
-        use sos21_domain_test as test;
-
-        let user = test::model::new_general_user();
-        let mut project = test::model::new_general_project(user.id.clone());
-        let display_id = test::model::new_project_display_id();
-        let app = test::build_mock_app()
+        let user = test_model::new_general_user();
+        let mut project = test_model::new_general_project(user.id.clone());
+        let display_id = test_model::new_project_display_id();
+        let app = crate::test::build_mock_app()
             .users(vec![user.clone()])
             .projects(vec![project.clone()])
             .build();

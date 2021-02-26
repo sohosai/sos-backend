@@ -33,7 +33,7 @@ where
 mod tests {
     use crate::model::user::UserId;
     use crate::{list_users, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user cannot list users.
     #[tokio::test]

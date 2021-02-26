@@ -43,7 +43,7 @@ where
 mod tests {
     use crate::model::project::ProjectId;
     use crate::{get_project_by_display_id, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user cannot read the others' project.
     #[tokio::test]

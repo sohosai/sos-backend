@@ -42,7 +42,7 @@ where
 mod tests {
     use crate::model::form::FormId;
     use crate::{get_form, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user cannot read others' form.
     #[tokio::test]

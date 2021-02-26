@@ -74,7 +74,7 @@ pub enum AnswerError {
     TooBigInteger,
     TooSmallInteger,
     TooManyChecks,
-    TooLittleChecks,
+    TooFewChecks,
     UnknownCheckboxId {
         id: CheckboxId,
     },
@@ -121,7 +121,7 @@ impl AnswerError {
             form::item::CheckAnswerItemErrorKind::TooBigInteger => AnswerError::TooBigInteger,
             form::item::CheckAnswerItemErrorKind::TooSmallInteger => AnswerError::TooSmallInteger,
             form::item::CheckAnswerItemErrorKind::TooManyChecks => AnswerError::TooManyChecks,
-            form::item::CheckAnswerItemErrorKind::TooLittleChecks => AnswerError::TooLittleChecks,
+            form::item::CheckAnswerItemErrorKind::TooFewChecks => AnswerError::TooFewChecks,
             form::item::CheckAnswerItemErrorKind::NotAnsweredRadio => AnswerError::NotAnsweredRadio,
             form::item::CheckAnswerItemErrorKind::NotAnsweredGridRadioRows => {
                 AnswerError::NotAnsweredGridRadioRows
@@ -337,7 +337,7 @@ fn to_row_answer(answer: GridRadioRowAnswer) -> item::grid_rows::GridRadioRowAns
 mod tests {
     use crate::model::{form::FormId, form_answer::item::FormAnswerItem, project::ProjectId};
     use crate::{create_form_answer, get_project_form_answer, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     #[tokio::test]
     async fn test_create() {

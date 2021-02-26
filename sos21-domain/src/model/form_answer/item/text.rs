@@ -27,8 +27,7 @@ impl FormAnswerItemText {
 
     /// it always stands that `text.len() > 0`.
     pub fn len(&self) -> usize {
-        let s: &str = self.0.as_ref();
-        let len = s.len();
+        let len = self.0.len();
         debug_assert!(len > 0);
         len
     }

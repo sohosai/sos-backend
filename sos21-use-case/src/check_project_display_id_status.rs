@@ -67,7 +67,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate::check_project_display_id_status::{self, DisplayIdStatus};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user can check the display ID status.
     #[tokio::test]

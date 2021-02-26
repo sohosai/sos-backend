@@ -4,7 +4,8 @@ use crate::model::integer::LimitedInteger;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct IntegerFormItemLimit(LimitedInteger<Bounded<typenum::U1>, Unbounded, u64>);
 
 #[derive(Debug, Error, Clone)]

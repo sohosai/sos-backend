@@ -127,7 +127,7 @@ where
 mod tests {
     use crate::model::project::ProjectId;
     use crate::{update_project, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user cannot update projects.
     #[tokio::test]

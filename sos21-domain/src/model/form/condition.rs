@@ -5,7 +5,10 @@ use crate::model::collection::{self, LengthLimitedSet};
 use crate::model::project::{Project, ProjectId};
 use crate::model::project_query::ProjectQuery;
 
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{self, Deserializer},
+    Deserialize, Serialize,
+};
 use thiserror::Error;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -25,7 +28,8 @@ impl FormCondition {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(transparent)]
 pub struct FormConditionProjectSet(LengthLimitedSet<Unbounded, Bounded<typenum::U1024>, ProjectId>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -87,5 +91,15 @@ impl FormConditionProjectSet {
         other: &'a FormConditionProjectSet,
     ) -> impl Iterator<Item = ProjectId> + 'a {
         self.0.difference(&other.0).copied()
+    }
+}
+
+impl<'de> Deserialize<'de> for FormConditionProjectSet {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        FormConditionProjectSet::from_projects(Vec::<ProjectId>::deserialize(deserializer)?)
+            .map_err(de::Error::custom)
     }
 }

@@ -1,49 +1,70 @@
+use std::collections::HashSet;
+
 use crate::model::collection::{self, LengthBoundedVec};
 
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{self, Deserializer},
+    Deserialize, Serialize,
+};
 use thiserror::Error;
 
 #[allow(clippy::module_inception)]
 pub mod radio;
 pub use radio::{Radio, RadioId, RadioLabel};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(transparent)]
 pub struct RadioFormItemButtons(LengthBoundedVec<typenum::U1, typenum::U32, Radio>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LengthErrorKind {
+pub enum FromButtonsErrorKind {
     Empty,
     TooLong,
+    DuplicatedRadioId { id: RadioId },
 }
 
 #[derive(Debug, Error, Clone)]
 #[error("invalid form item radio button list")]
-pub struct LengthError {
-    kind: LengthErrorKind,
+pub struct FromButtonsError {
+    kind: FromButtonsErrorKind,
 }
 
-impl LengthError {
-    pub fn kind(&self) -> LengthErrorKind {
+impl FromButtonsError {
+    pub fn kind(&self) -> FromButtonsErrorKind {
         self.kind
     }
 
     fn from_length_error(e: collection::LengthError) -> Self {
         let kind = match e.kind() {
-            collection::LengthErrorKind::TooLong => LengthErrorKind::TooLong,
-            collection::LengthErrorKind::TooShort => LengthErrorKind::Empty,
+            collection::LengthErrorKind::TooLong => FromButtonsErrorKind::TooLong,
+            collection::LengthErrorKind::TooShort => FromButtonsErrorKind::Empty,
         };
-        LengthError { kind }
+        FromButtonsError { kind }
     }
 }
 
 impl RadioFormItemButtons {
-    pub fn from_buttons<I>(buttons: I) -> Result<Self, LengthError>
+    pub fn from_buttons<I>(buttons: I) -> Result<Self, FromButtonsError>
     where
         I: IntoIterator<Item = Radio>,
     {
-        let buttons = LengthBoundedVec::new(buttons.into_iter().collect())
-            .map_err(LengthError::from_length_error)?;
+        let buttons = buttons.into_iter();
+        let capacity = buttons.size_hint().0;
+
+        let mut known_button_ids = HashSet::with_capacity(capacity);
+        let mut result = Vec::with_capacity(capacity);
+
+        for button in buttons {
+            if !known_button_ids.insert(button.id) {
+                return Err(FromButtonsError {
+                    kind: FromButtonsErrorKind::DuplicatedRadioId { id: button.id },
+                });
+            }
+
+            result.push(button);
+        }
+
+        let buttons = LengthBoundedVec::new(result).map_err(FromButtonsError::from_length_error)?;
         Ok(RadioFormItemButtons(buttons))
     }
 
@@ -55,6 +76,16 @@ impl RadioFormItemButtons {
 
     pub fn into_buttons(self) -> impl Iterator<Item = Radio> {
         self.0.into_inner().into_iter()
+    }
+}
+
+impl<'de> Deserialize<'de> for RadioFormItemButtons {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        RadioFormItemButtons::from_buttons(Vec::<Radio>::deserialize(deserializer)?)
+            .map_err(de::Error::custom)
     }
 }
 

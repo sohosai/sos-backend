@@ -304,7 +304,7 @@ mod tests {
     use crate::{export_projects, UseCaseError};
     use sos21_domain::context::Login;
     use sos21_domain::model as domain;
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     async fn prepare_app(login_user: domain::user::User) -> Login<test::context::MockApp> {
         let other = test::model::new_general_user();

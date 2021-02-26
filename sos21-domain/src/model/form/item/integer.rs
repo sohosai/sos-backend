@@ -23,10 +23,23 @@ pub struct IntegerFormItemContent {
 #[serde(transparent)]
 pub struct IntegerFormItem(IntegerFormItemContent);
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FromContentErrorKind {
+    TooBigPlaceholder,
+    TooSmallPlaceholder,
+    InconsistentLimits,
+}
+
 #[derive(Debug, Error, Clone)]
-#[error("invalid integer form item placeholder value")]
-pub struct PlaceholderError {
-    _priv: (),
+#[error("invalid integer form item")]
+pub struct FromContentError {
+    kind: FromContentErrorKind,
+}
+
+impl FromContentError {
+    pub fn kind(&self) -> FromContentErrorKind {
+        self.kind
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -49,16 +62,29 @@ impl CheckAnswerError {
 }
 
 impl IntegerFormItem {
-    pub fn from_content(content: IntegerFormItemContent) -> Result<Self, PlaceholderError> {
+    pub fn from_content(content: IntegerFormItemContent) -> Result<Self, FromContentError> {
+        match (content.min, content.max) {
+            (Some(min), Some(max)) if min > max => {
+                return Err(FromContentError {
+                    kind: FromContentErrorKind::InconsistentLimits,
+                });
+            }
+            _ => {}
+        }
+
         if let Some(min) = content.min {
-            if content.placeholder > min.to_u64() {
-                return Err(PlaceholderError { _priv: () });
+            if min.to_u64() > content.placeholder {
+                return Err(FromContentError {
+                    kind: FromContentErrorKind::TooSmallPlaceholder,
+                });
             }
         }
 
         if let Some(max) = content.max {
-            if content.placeholder > max.to_u64() {
-                return Err(PlaceholderError { _priv: () });
+            if max.to_u64() < content.placeholder {
+                return Err(FromContentError {
+                    kind: FromContentErrorKind::TooBigPlaceholder,
+                });
             }
         }
 
@@ -88,18 +114,18 @@ impl IntegerFormItem {
             (_, Some(answer)) => answer,
         };
 
-        if let Some(max) = self.0.max {
-            if max.to_u64() < answer {
+        if let Some(min) = self.0.min {
+            if min.to_u64() > answer {
                 return Err(CheckAnswerError {
-                    kind: CheckAnswerErrorKind::TooBig,
+                    kind: CheckAnswerErrorKind::TooSmall,
                 });
             }
         }
 
-        if let Some(min) = self.0.min {
-            if min.to_u64() < answer {
+        if let Some(max) = self.0.max {
+            if max.to_u64() < answer {
                 return Err(CheckAnswerError {
-                    kind: CheckAnswerErrorKind::TooSmall,
+                    kind: CheckAnswerErrorKind::TooBig,
                 });
             }
         }

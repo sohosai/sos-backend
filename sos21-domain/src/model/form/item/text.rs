@@ -25,10 +25,23 @@ pub struct TextFormItemContent {
 #[serde(transparent)]
 pub struct TextFormItem(TextFormItemContent);
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FromContentErrorKind {
+    TooLongPlaceholder,
+    TooShortPlaceholder,
+    InconsistentLengthLimits,
+}
+
 #[derive(Debug, Error, Clone)]
-#[error("invalid text form item placeholder length")]
-pub struct PlaceholderLengthError {
-    _priv: (),
+#[error("invalid text form item")]
+pub struct FromContentError {
+    kind: FromContentErrorKind,
+}
+
+impl FromContentError {
+    pub fn kind(&self) -> FromContentErrorKind {
+        self.kind
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -52,16 +65,29 @@ impl CheckAnswerError {
 }
 
 impl TextFormItem {
-    pub fn from_content(content: TextFormItemContent) -> Result<Self, PlaceholderLengthError> {
+    pub fn from_content(content: TextFormItemContent) -> Result<Self, FromContentError> {
+        match (&content.min_length, &content.max_length) {
+            (Some(min_length), Some(max_length)) if min_length > max_length => {
+                return Err(FromContentError {
+                    kind: FromContentErrorKind::InconsistentLengthLimits,
+                });
+            }
+            _ => {}
+        }
+
         if let Some(min_length) = &content.min_length {
-            if content.placeholder.len() > min_length.to_u64() as usize {
-                return Err(PlaceholderLengthError { _priv: () });
+            if min_length.to_u64() > content.placeholder.len() as u64 {
+                return Err(FromContentError {
+                    kind: FromContentErrorKind::TooShortPlaceholder,
+                });
             }
         }
 
         if let Some(max_length) = &content.max_length {
-            if content.placeholder.len() > max_length.to_u64() as usize {
-                return Err(PlaceholderLengthError { _priv: () });
+            if max_length.to_u64() < content.placeholder.len() as u64 {
+                return Err(FromContentError {
+                    kind: FromContentErrorKind::TooLongPlaceholder,
+                });
             }
         }
 

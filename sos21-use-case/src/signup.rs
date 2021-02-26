@@ -66,7 +66,7 @@ where
 mod tests {
     use crate::model::user::{UserId, UserKanaName, UserName};
     use crate::{signup, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     fn mock_input() -> signup::Input {
         let name = UserName::from_entity(test::model::mock_user_name());

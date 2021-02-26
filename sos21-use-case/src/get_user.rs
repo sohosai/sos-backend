@@ -34,7 +34,7 @@ where
 mod tests {
     use crate::model::user::UserId;
     use crate::{get_user, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user cannot read the others.
     #[tokio::test]

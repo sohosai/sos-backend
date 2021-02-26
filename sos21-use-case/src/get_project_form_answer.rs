@@ -62,7 +62,7 @@ where
 mod tests {
     use crate::model::{form::FormId, form_answer::FormAnswerId, project::ProjectId};
     use crate::{get_project_form_answer, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user cannot read form answers of invisible projects.
     #[tokio::test]

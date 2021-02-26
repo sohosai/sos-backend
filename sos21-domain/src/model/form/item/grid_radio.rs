@@ -3,7 +3,10 @@ use std::collections::HashSet;
 use crate::model::collection::{self, LengthBoundedVec};
 use crate::model::form_answer::item::FormAnswerItemGridRows;
 
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{self, Deserializer},
+    Deserialize, Serialize,
+};
 use thiserror::Error;
 
 pub mod column;
@@ -12,51 +15,66 @@ pub mod row;
 pub use column::{GridRadioColumn, GridRadioColumnId, GridRadioColumnLabel};
 pub use row::{GridRadioRow, GridRadioRowId, GridRadioRowLabel};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum GridRadioFormItemRequired {
     All,
     None,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(transparent)]
 pub struct GridRadioFormItemRows(LengthBoundedVec<typenum::U1, typenum::U32, GridRadioRow>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LengthErrorKind {
+pub enum FromRowsErrorKind {
     Empty,
     TooLong,
+    DuplicatedRowId { id: GridRadioRowId },
 }
 
 #[derive(Debug, Error, Clone)]
 #[error("invalid form item grid radio button row list")]
-pub struct RowsLengthError {
-    kind: LengthErrorKind,
+pub struct FromRowsError {
+    kind: FromRowsErrorKind,
 }
 
-impl RowsLengthError {
-    pub fn kind(&self) -> LengthErrorKind {
+impl FromRowsError {
+    pub fn kind(&self) -> FromRowsErrorKind {
         self.kind
     }
 
     fn from_length_error(e: collection::LengthError) -> Self {
         let kind = match e.kind() {
-            collection::LengthErrorKind::TooLong => LengthErrorKind::TooLong,
-            collection::LengthErrorKind::TooShort => LengthErrorKind::Empty,
+            collection::LengthErrorKind::TooLong => FromRowsErrorKind::TooLong,
+            collection::LengthErrorKind::TooShort => FromRowsErrorKind::Empty,
         };
-        RowsLengthError { kind }
+        FromRowsError { kind }
     }
 }
 
 #[allow(clippy::len_without_is_empty)]
 impl GridRadioFormItemRows {
-    pub fn from_rows<I>(rows: I) -> Result<Self, RowsLengthError>
+    pub fn from_rows<I>(rows: I) -> Result<Self, FromRowsError>
     where
         I: IntoIterator<Item = GridRadioRow>,
     {
-        let rows = rows.into_iter().collect();
-        let rows = LengthBoundedVec::new(rows).map_err(RowsLengthError::from_length_error)?;
+        let rows = rows.into_iter();
+        let capacity = rows.size_hint().0;
+
+        let mut known_row_ids = HashSet::with_capacity(capacity);
+        let mut result = Vec::with_capacity(capacity);
+        for row in rows {
+            if !known_row_ids.insert(row.id) {
+                return Err(FromRowsError {
+                    kind: FromRowsErrorKind::DuplicatedRowId { id: row.id },
+                });
+            }
+
+            result.push(row);
+        }
+
+        let rows = LengthBoundedVec::new(result).map_err(FromRowsError::from_length_error)?;
         Ok(GridRadioFormItemRows(rows))
     }
 
@@ -76,39 +94,77 @@ impl GridRadioFormItemRows {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+impl<'de> Deserialize<'de> for GridRadioFormItemRows {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        GridRadioFormItemRows::from_rows(Vec::<GridRadioRow>::deserialize(deserializer)?)
+            .map_err(de::Error::custom)
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
 #[serde(transparent)]
 pub struct GridRadioFormItemColumns(LengthBoundedVec<typenum::U1, typenum::U32, GridRadioColumn>);
 
-#[derive(Debug, Error, Clone)]
-#[error("invalid form item grid radio button column list")]
-pub struct ColumnsLengthError {
-    kind: LengthErrorKind,
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FromColumnsErrorKind {
+    Empty,
+    TooLong,
+    DuplicatedColumnId { id: GridRadioColumnId },
 }
 
-impl ColumnsLengthError {
-    pub fn kind(&self) -> LengthErrorKind {
+#[derive(Debug, Error, Clone)]
+#[error("invalid form item grid radio button column list")]
+pub struct FromColumnsError {
+    kind: FromColumnsErrorKind,
+}
+
+impl FromColumnsError {
+    pub fn kind(&self) -> FromColumnsErrorKind {
         self.kind
     }
 
     fn from_length_error(e: collection::LengthError) -> Self {
         let kind = match e.kind() {
-            collection::LengthErrorKind::TooLong => LengthErrorKind::TooLong,
-            collection::LengthErrorKind::TooShort => LengthErrorKind::Empty,
+            collection::LengthErrorKind::TooLong => FromColumnsErrorKind::TooLong,
+            collection::LengthErrorKind::TooShort => FromColumnsErrorKind::Empty,
         };
-        ColumnsLengthError { kind }
+        FromColumnsError { kind }
     }
 }
 
+#[allow(clippy::len_without_is_empty)]
 impl GridRadioFormItemColumns {
-    pub fn from_columns<I>(columns: I) -> Result<Self, ColumnsLengthError>
+    pub fn from_columns<I>(columns: I) -> Result<Self, FromColumnsError>
     where
         I: IntoIterator<Item = GridRadioColumn>,
     {
-        let columns = columns.into_iter().collect();
-        let columns =
-            LengthBoundedVec::new(columns).map_err(ColumnsLengthError::from_length_error)?;
+        let columns = columns.into_iter();
+        let capacity = columns.size_hint().0;
+
+        let mut known_column_ids = HashSet::with_capacity(capacity);
+        let mut result = Vec::with_capacity(capacity);
+        for column in columns {
+            if !known_column_ids.insert(column.id) {
+                return Err(FromColumnsError {
+                    kind: FromColumnsErrorKind::DuplicatedColumnId { id: column.id },
+                });
+            }
+
+            result.push(column);
+        }
+
+        let columns = LengthBoundedVec::new(result).map_err(FromColumnsError::from_length_error)?;
         Ok(GridRadioFormItemColumns(columns))
+    }
+
+    /// it always stands that `columns.len() > 0`.
+    pub fn len(&self) -> usize {
+        let len = self.0.len();
+        debug_assert!(len > 0);
+        len
     }
 
     pub fn columns(&self) -> impl Iterator<Item = &'_ GridRadioColumn> {
@@ -120,12 +176,32 @@ impl GridRadioFormItemColumns {
     }
 }
 
+impl<'de> Deserialize<'de> for GridRadioFormItemColumns {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        GridRadioFormItemColumns::from_columns(Vec::<GridRadioColumn>::deserialize(deserializer)?)
+            .map_err(de::Error::custom)
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GridRadioFormItem {
+pub struct GridRadioFormItemContent {
     pub rows: GridRadioFormItemRows,
     pub columns: GridRadioFormItemColumns,
     pub exclusive_column: bool,
     pub required: GridRadioFormItemRequired,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(transparent)]
+pub struct GridRadioFormItem(GridRadioFormItemContent);
+
+#[derive(Debug, Error, Clone)]
+#[error("Columns must be more than rows when exclusive_column = true and required = All")]
+pub struct TooFewColumnsError {
+    _priv: (),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -157,16 +233,31 @@ impl CheckAnswerError {
 }
 
 impl GridRadioFormItem {
+    pub fn from_content(content: GridRadioFormItemContent) -> Result<Self, TooFewColumnsError> {
+        if content.exclusive_column
+            && content.required == GridRadioFormItemRequired::All
+            && content.rows.len() > content.columns.len()
+        {
+            return Err(TooFewColumnsError { _priv: () });
+        }
+
+        Ok(GridRadioFormItem(content))
+    }
+
+    pub fn into_content(self) -> GridRadioFormItemContent {
+        self.0
+    }
+
     pub fn check_answer(&self, answer: &FormAnswerItemGridRows) -> Result<(), CheckAnswerError> {
         let mut checked_columns = HashSet::new();
 
-        if self.rows.len() != answer.len() {
+        if self.0.rows.len() != answer.len() {
             return Err(CheckAnswerError {
                 kind: CheckAnswerErrorKind::MismatchedRowsLength,
             });
         }
 
-        for (row, row_answer) in self.rows.rows().zip(answer.row_answers()) {
+        for (row, row_answer) in self.rows().zip(answer.row_answers()) {
             if row.id != row_answer.row_id {
                 return Err(CheckAnswerError {
                     kind: CheckAnswerErrorKind::MismatchedGridRadioRowId {
@@ -176,7 +267,7 @@ impl GridRadioFormItem {
                 });
             }
 
-            match self.required {
+            match self.0.required {
                 GridRadioFormItemRequired::All if row_answer.value.is_none() => {
                     return Err(CheckAnswerError {
                         kind: CheckAnswerErrorKind::NotAnsweredRows,
@@ -187,7 +278,6 @@ impl GridRadioFormItem {
 
             if let Some(column_id) = row_answer.value {
                 if self
-                    .columns
                     .columns()
                     .find(|column| column.id == column_id)
                     .is_none()
@@ -197,7 +287,7 @@ impl GridRadioFormItem {
                     });
                 }
 
-                if !checked_columns.insert(column_id) && self.exclusive_column {
+                if !checked_columns.insert(column_id) && self.exclusive_column() {
                     return Err(CheckAnswerError {
                         kind: CheckAnswerErrorKind::NotAllowedDuplicatedColumn { id: column_id },
                     });
@@ -209,14 +299,24 @@ impl GridRadioFormItem {
     }
 
     pub fn exclusive_column(&self) -> bool {
-        self.exclusive_column
+        self.0.exclusive_column
     }
 
     pub fn columns(&self) -> impl Iterator<Item = &'_ GridRadioColumn> {
-        self.columns.columns()
+        self.0.columns.columns()
     }
 
     pub fn rows(&self) -> impl Iterator<Item = &'_ GridRadioRow> {
-        self.rows.rows()
+        self.0.rows.rows()
+    }
+}
+
+impl<'de> Deserialize<'de> for GridRadioFormItem {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        GridRadioFormItem::from_content(GridRadioFormItemContent::deserialize(deserializer)?)
+            .map_err(de::Error::custom)
     }
 }

@@ -49,7 +49,7 @@ mod tests {
     use crate::list_project_forms;
     use crate::model::{form::FormId, project::ProjectId};
     use sos21_domain::model::{project, project_query};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     #[tokio::test]
     async fn test_general_any() {

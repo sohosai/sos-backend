@@ -3,10 +3,13 @@ use std::collections::HashSet;
 use crate::model::collection::{self, LengthBoundedVec};
 use crate::model::form::item::grid_radio::{GridRadioColumnId, GridRadioRowId};
 
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{self, Deserializer},
+    Deserialize, Serialize,
+};
 use thiserror::Error;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(transparent)]
 pub struct FormAnswerItemGridRows(LengthBoundedVec<typenum::U1, typenum::U32, GridRadioRowAnswer>);
 
@@ -76,6 +79,18 @@ impl FormAnswerItemGridRows {
 
     pub fn into_row_answers(self) -> impl Iterator<Item = GridRadioRowAnswer> {
         self.0.into_inner().into_iter()
+    }
+}
+
+impl<'de> Deserialize<'de> for FormAnswerItemGridRows {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        FormAnswerItemGridRows::from_row_answers(Vec::<GridRadioRowAnswer>::deserialize(
+            deserializer,
+        )?)
+        .map_err(de::Error::custom)
     }
 }
 

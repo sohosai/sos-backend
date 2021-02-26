@@ -38,14 +38,16 @@ pub enum ItemError {
     InvalidTextMinLength,
     InvalidTextPlaceholder,
     OutOfLimitsTextPlaceholderLength,
+    InconsistentTextLengthLimits,
     InvalidIntegerMaxLimit,
     InvalidIntegerMinLimit,
     InvalidIntegerUnit,
     OutOfLimitsIntegerPlaceholder,
+    InconsistentIntegerLimits,
     InvalidCheckboxMinChecks,
     InvalidCheckboxMaxChecks,
     InvalidCheckboxLabel,
-    OutOfLimitsNumberOfCheckboxes,
+    InconsistentCheckLimits,
     NoCheckboxes,
     TooManyCheckboxes,
     InvalidRadioLabel,
@@ -56,7 +58,12 @@ pub enum ItemError {
     NoGridRadioRows,
     TooManyGridRadioRows,
     NoGridRadioColumns,
+    TooFewGridRadioColumnsWhenExclusiveAndRequired,
     TooManyGridRadioColumns,
+    DuplicatedCheckboxId(CheckboxId),
+    DuplicatedRadioId(RadioId),
+    DuplicatedGridRadioRowId(GridRadioRowId),
+    DuplicatedGridRadioColumnId(GridRadioColumnId),
     MismatchedConditionType(FormItemId),
     UnknownItemIdInConditions(FormItemId),
     UnknownCheckboxIdInConditions(CheckboxId),
@@ -65,43 +72,79 @@ pub enum ItemError {
 }
 
 impl ItemError {
-    fn from_text_content_error(_err: item::text::PlaceholderLengthError) -> Self {
-        ItemError::OutOfLimitsTextPlaceholderLength
-    }
-
-    fn from_integer_content_error(_err: item::integer::PlaceholderError) -> Self {
-        ItemError::OutOfLimitsIntegerPlaceholder
-    }
-
-    fn from_checkboxes_error(err: item::checkbox::LengthError) -> Self {
+    fn from_text_content_error(err: item::text::FromContentError) -> Self {
         match err.kind() {
-            item::checkbox::LengthErrorKind::Empty => ItemError::NoCheckboxes,
-            item::checkbox::LengthErrorKind::TooLong => ItemError::TooManyCheckboxes,
+            item::text::FromContentErrorKind::TooLongPlaceholder => {
+                ItemError::OutOfLimitsTextPlaceholderLength
+            }
+            item::text::FromContentErrorKind::TooShortPlaceholder => {
+                ItemError::OutOfLimitsTextPlaceholderLength
+            }
+            item::text::FromContentErrorKind::InconsistentLengthLimits => {
+                ItemError::InconsistentTextLengthLimits
+            }
         }
     }
 
-    fn from_checkbox_content_error(_err: item::checkbox::LimitError) -> Self {
-        ItemError::OutOfLimitsNumberOfCheckboxes
-    }
-
-    fn from_buttons_error(err: item::radio::LengthError) -> Self {
+    fn from_integer_content_error(err: item::integer::FromContentError) -> Self {
         match err.kind() {
-            item::radio::LengthErrorKind::Empty => ItemError::NoRadioButtons,
-            item::radio::LengthErrorKind::TooLong => ItemError::TooManyRadioButtons,
+            item::integer::FromContentErrorKind::TooBigPlaceholder => {
+                ItemError::OutOfLimitsIntegerPlaceholder
+            }
+            item::integer::FromContentErrorKind::TooSmallPlaceholder => {
+                ItemError::OutOfLimitsIntegerPlaceholder
+            }
+            item::integer::FromContentErrorKind::InconsistentLimits => {
+                ItemError::InconsistentIntegerLimits
+            }
         }
     }
 
-    fn from_grid_rows_error(err: item::grid_radio::RowsLengthError) -> Self {
+    fn from_checkboxes_error(err: item::checkbox::FromBoxesError) -> Self {
         match err.kind() {
-            item::grid_radio::LengthErrorKind::Empty => ItemError::NoGridRadioRows,
-            item::grid_radio::LengthErrorKind::TooLong => ItemError::TooManyGridRadioRows,
+            item::checkbox::FromBoxesErrorKind::Empty => ItemError::NoCheckboxes,
+            item::checkbox::FromBoxesErrorKind::TooLong => ItemError::TooManyCheckboxes,
+            item::checkbox::FromBoxesErrorKind::DuplicatedCheckboxId { id } => {
+                ItemError::DuplicatedCheckboxId(CheckboxId::from_entity(id))
+            }
         }
     }
 
-    fn from_grid_columns_error(err: item::grid_radio::ColumnsLengthError) -> Self {
+    fn from_checkbox_content_error(_err: item::checkbox::InconsistentCheckLimitsError) -> Self {
+        ItemError::InconsistentCheckLimits
+    }
+
+    fn from_grid_radio_content_error(_err: item::grid_radio::TooFewColumnsError) -> Self {
+        ItemError::TooFewGridRadioColumnsWhenExclusiveAndRequired
+    }
+
+    fn from_buttons_error(err: item::radio::FromButtonsError) -> Self {
         match err.kind() {
-            item::grid_radio::LengthErrorKind::Empty => ItemError::NoGridRadioColumns,
-            item::grid_radio::LengthErrorKind::TooLong => ItemError::TooManyGridRadioColumns,
+            item::radio::FromButtonsErrorKind::Empty => ItemError::NoRadioButtons,
+            item::radio::FromButtonsErrorKind::TooLong => ItemError::TooManyRadioButtons,
+            item::radio::FromButtonsErrorKind::DuplicatedRadioId { id } => {
+                ItemError::DuplicatedRadioId(RadioId::from_entity(id))
+            }
+        }
+    }
+
+    fn from_grid_rows_error(err: item::grid_radio::FromRowsError) -> Self {
+        match err.kind() {
+            item::grid_radio::FromRowsErrorKind::Empty => ItemError::NoGridRadioRows,
+            item::grid_radio::FromRowsErrorKind::TooLong => ItemError::TooManyGridRadioRows,
+            item::grid_radio::FromRowsErrorKind::DuplicatedRowId { id } => {
+                ItemError::DuplicatedGridRadioRowId(GridRadioRowId::from_entity(id))
+            }
+        }
+    }
+
+    fn from_grid_columns_error(err: item::grid_radio::FromColumnsError) -> Self {
+        match err.kind() {
+            item::grid_radio::FromColumnsErrorKind::Empty => ItemError::NoGridRadioColumns,
+            item::grid_radio::FromColumnsErrorKind::TooLong => ItemError::TooManyGridRadioColumns,
+            item::grid_radio::FromColumnsErrorKind::DuplicatedColumnId { id } => {
+                ItemError::DuplicatedGridRadioColumnId(GridRadioColumnId::from_entity(id))
+            }
         }
     }
 }
@@ -415,12 +458,14 @@ fn to_form_item(item: FormItem) -> Result<form::FormItem, ItemError> {
                 .collect::<Result<Vec<_>, _>>()?;
             let columns = item::grid_radio::GridRadioFormItemColumns::from_columns(columns)
                 .map_err(ItemError::from_grid_columns_error)?;
-            let grid_item = item::GridRadioFormItem {
-                rows,
-                columns,
-                exclusive_column,
-                required: required.into_entity(),
-            };
+            let grid_item =
+                item::GridRadioFormItem::from_content(item::grid_radio::GridRadioFormItemContent {
+                    rows,
+                    columns,
+                    exclusive_column,
+                    required: required.into_entity(),
+                })
+                .map_err(ItemError::from_grid_radio_content_error)?;
             item::FormItemBody::GridRadio(grid_item)
         }
     };
@@ -523,7 +568,7 @@ mod tests {
         user::UserId,
     };
     use crate::{create_form, get_form, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user cannot create forms.
     #[tokio::test]

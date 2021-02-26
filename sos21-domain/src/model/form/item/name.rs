@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct FormItemName(LengthBoundedString<typenum::U1, typenum::U64, String>);
 
 #[derive(Debug, Error, Clone)]

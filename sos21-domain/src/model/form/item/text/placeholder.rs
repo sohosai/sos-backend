@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct TextFormItemPlaceholder(LengthLimitedString<Unbounded, Bounded<typenum::U1024>, String>);
 
 #[derive(Debug, Error, Clone)]
@@ -21,11 +22,11 @@ impl TextFormItemPlaceholder {
     }
 
     pub fn len(&self) -> usize {
-        self.0.as_ref().len()
+        self.0.len()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.0.as_ref().is_empty()
+        self.0.len() == 0
     }
 
     pub fn into_string(self) -> String {

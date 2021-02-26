@@ -19,6 +19,7 @@ use crate::model::bound::{Bound, Bounded};
 pub struct LengthLimitedString<Lower, Upper, S> {
     _lower: PhantomData<Lower>,
     _upper: PhantomData<Upper>,
+    len: usize,
     inner: S,
 }
 
@@ -50,8 +51,13 @@ impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
         Ok(LengthLimitedString {
             _upper: PhantomData,
             _lower: PhantomData,
+            len,
             inner: s,
         })
+    }
+
+    pub fn len(&self) -> usize {
+        self.len
     }
 
     pub fn into_inner(self) -> S {

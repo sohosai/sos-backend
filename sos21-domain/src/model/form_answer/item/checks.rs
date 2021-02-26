@@ -4,10 +4,13 @@ use crate::model::bound::{Bounded, Unbounded};
 use crate::model::collection::{self, LengthLimitedSet};
 use crate::model::form::item::checkbox::CheckboxId;
 
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{self, Deserializer},
+    Deserialize, Serialize,
+};
 use thiserror::Error;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(transparent)]
 pub struct FormAnswerItemChecks(LengthLimitedSet<Unbounded, Bounded<typenum::U32>, CheckboxId>);
 
@@ -68,5 +71,15 @@ impl FormAnswerItemChecks {
 
     pub fn checked_ids(&self) -> impl Iterator<Item = CheckboxId> + '_ {
         self.0.iter().copied()
+    }
+}
+
+impl<'de> Deserialize<'de> for FormAnswerItemChecks {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        FormAnswerItemChecks::from_checked_ids(Vec::<CheckboxId>::deserialize(deserializer)?)
+            .map_err(de::Error::custom)
     }
 }

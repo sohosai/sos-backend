@@ -94,7 +94,7 @@ where
 mod tests {
     use crate::model::{project::ProjectCategory, user::UserId};
     use crate::{create_project, get_project, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     #[tokio::test]
     async fn test_create() {

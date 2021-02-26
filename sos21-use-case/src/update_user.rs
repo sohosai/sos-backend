@@ -89,7 +89,7 @@ where
 mod tests {
     use crate::model::user::{UserId, UserRole};
     use crate::{update_user, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user cannot update users.
     #[tokio::test]

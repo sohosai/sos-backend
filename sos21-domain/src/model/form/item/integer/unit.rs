@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct IntegerFormItemUnit(LengthBoundedString<typenum::U1, typenum::U16, String>);
 
 #[derive(Debug, Error, Clone)]

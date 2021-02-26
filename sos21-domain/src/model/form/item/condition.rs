@@ -6,10 +6,14 @@ use crate::model::collection::{self, LengthLimitedVec};
 use crate::model::form_answer::item::{FormAnswerItem, FormAnswerItemBody};
 
 use anyhow::bail;
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{self, Deserializer},
+    Deserialize, Serialize,
+};
 use thiserror::Error;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
+#[serde(transparent)]
 pub struct FormItemConditions(
     LengthLimitedVec<
         Unbounded,
@@ -98,6 +102,18 @@ impl FormItemConditions {
 
     pub fn into_conjunctions(self) -> impl Iterator<Item = Vec<FormItemCondition>> {
         self.0.into_inner().into_iter().map(|v| v.into_inner())
+    }
+}
+
+impl<'de> Deserialize<'de> for FormItemConditions {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        FormItemConditions::from_conjunctions(Vec::<Vec<FormItemCondition>>::deserialize(
+            deserializer,
+        )?)
+        .map_err(de::Error::custom)
     }
 }
 

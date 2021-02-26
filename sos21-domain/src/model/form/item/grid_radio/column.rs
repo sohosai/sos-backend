@@ -5,6 +5,7 @@ use thiserror::Error;
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct GridRadioColumnId(Uuid);
 
 impl GridRadioColumnId {
@@ -18,6 +19,7 @@ impl GridRadioColumnId {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct GridRadioColumnLabel(LengthBoundedString<typenum::U1, typenum::U64, String>);
 
 #[derive(Debug, Error, Clone)]

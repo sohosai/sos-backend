@@ -58,7 +58,7 @@ mod tests {
     use crate::model::{form::FormId, project::ProjectId};
     use crate::{get_project_form, UseCaseError};
     use sos21_domain::model::{project, project_query};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     // Checks that the normal user cannot read the form via others' project.
     #[tokio::test]

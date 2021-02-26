@@ -51,7 +51,7 @@ mod tests {
     use crate::{list_form_answers, UseCaseError};
     use sos21_domain::context::Login;
     use sos21_domain::model as domain;
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     async fn prepare_app(
         login_user: domain::user::User,

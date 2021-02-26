@@ -32,6 +32,7 @@ impl ProjectQueryConjunction {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct ProjectQuery(
     LengthLimitedVec<Unbounded, Bounded<typenum::U32>, ProjectQueryConjunction>,
 );

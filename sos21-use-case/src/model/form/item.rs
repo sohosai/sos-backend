@@ -102,6 +102,7 @@ impl FormItemBody {
                 }
             }
             entity::FormItemBody::GridRadio(item) => {
+                let item = item.into_content();
                 let rows = item
                     .rows
                     .into_rows()
