@@ -43,6 +43,21 @@ impl FormAnswerRepository for FormAnswerDatabase {
             .and_then(|opt| opt.map(to_form_answer).transpose())
     }
 
+    async fn get_form_answer_by_form_and_project(
+        &self,
+        form_id: FormId,
+        project_id: ProjectId,
+    ) -> Result<Option<FormAnswer>> {
+        let mut lock = self.0.lock().await;
+        query::find_form_answer_by_form_and_project(
+            &mut *lock,
+            form_id.to_uuid(),
+            project_id.to_uuid(),
+        )
+        .await
+        .and_then(|opt| opt.map(to_form_answer).transpose())
+    }
+
     async fn list_form_answers(&self, form_id: FormId) -> Result<Vec<FormAnswer>> {
         let mut lock = self.0.lock().await;
         query::list_form_answers_by_form(&mut *lock, form_id.to_uuid())

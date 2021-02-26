@@ -9,15 +9,13 @@ pub enum FormItemCondition {
         checkbox_id: CheckboxId,
         expected: bool,
     },
-    Radio {
+    RadioSelected {
         item_id: FormItemId,
         radio_id: RadioId,
-        expected: bool,
     },
-    GridRadio {
+    GridRadioSelected {
         item_id: FormItemId,
         column_id: GridRadioColumnId,
-        expected: bool,
     },
 }
 
@@ -33,24 +31,18 @@ impl FormItemCondition {
                 checkbox_id: CheckboxId::from_entity(checkbox_id),
                 expected,
             },
-            entity::FormItemCondition::Radio {
-                item_id,
-                radio_id,
-                expected,
-            } => FormItemCondition::Radio {
-                item_id: FormItemId::from_entity(item_id),
-                radio_id: RadioId::from_entity(radio_id),
-                expected,
-            },
-            entity::FormItemCondition::GridRadio {
-                item_id,
-                column_id,
-                expected,
-            } => FormItemCondition::GridRadio {
-                item_id: FormItemId::from_entity(item_id),
-                column_id: GridRadioColumnId::from_entity(column_id),
-                expected,
-            },
+            entity::FormItemCondition::RadioSelected { item_id, radio_id } => {
+                FormItemCondition::RadioSelected {
+                    item_id: FormItemId::from_entity(item_id),
+                    radio_id: RadioId::from_entity(radio_id),
+                }
+            }
+            entity::FormItemCondition::GridRadioSelected { item_id, column_id } => {
+                FormItemCondition::GridRadioSelected {
+                    item_id: FormItemId::from_entity(item_id),
+                    column_id: GridRadioColumnId::from_entity(column_id),
+                }
+            }
         }
     }
 
@@ -65,24 +57,18 @@ impl FormItemCondition {
                 checkbox_id: checkbox_id.into_entity(),
                 expected,
             },
-            FormItemCondition::Radio {
-                item_id,
-                radio_id,
-                expected,
-            } => entity::FormItemCondition::Radio {
-                item_id: item_id.into_entity(),
-                radio_id: radio_id.into_entity(),
-                expected,
-            },
-            FormItemCondition::GridRadio {
-                item_id,
-                column_id,
-                expected,
-            } => entity::FormItemCondition::GridRadio {
-                item_id: item_id.into_entity(),
-                column_id: column_id.into_entity(),
-                expected,
-            },
+            FormItemCondition::RadioSelected { item_id, radio_id } => {
+                entity::FormItemCondition::RadioSelected {
+                    item_id: item_id.into_entity(),
+                    radio_id: radio_id.into_entity(),
+                }
+            }
+            FormItemCondition::GridRadioSelected { item_id, column_id } => {
+                entity::FormItemCondition::GridRadioSelected {
+                    item_id: item_id.into_entity(),
+                    column_id: column_id.into_entity(),
+                }
+            }
         }
     }
 }

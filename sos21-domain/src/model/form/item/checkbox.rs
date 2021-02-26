@@ -1,4 +1,5 @@
 use crate::model::collection::{self, LengthBoundedVec};
+use crate::model::form_answer::item::FormAnswerItemChecks;
 
 use serde::{
     de::{self, Deserializer},
@@ -64,7 +65,9 @@ impl CheckboxFormItemBoxes {
 
     /// it always stands that `boxes.len() > 0`.
     pub fn len(&self) -> usize {
-        self.0.len()
+        let len = self.0.len();
+        debug_assert!(len > 0);
+        len
     }
 }
 
@@ -85,21 +88,48 @@ pub struct LimitError {
     _priv: (),
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CheckAnswerErrorKind {
+    TooManyChecks,
+    TooLittleChecks,
+    UnknownCheckboxId { id: CheckboxId },
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("invalid form answer checkbox item")]
+pub struct CheckAnswerError {
+    kind: CheckAnswerErrorKind,
+}
+
+impl CheckAnswerError {
+    pub fn kind(&self) -> CheckAnswerErrorKind {
+        self.kind
+    }
+}
+
 impl CheckboxFormItem {
     pub fn from_content(content: CheckboxFormItemContent) -> Result<Self, LimitError> {
         if let Some(min_checks) = &content.min_checks {
-            if min_checks.to_u64() >= content.boxes.len() as u64 {
+            if min_checks.to_u64() > content.boxes.len() as u64 {
                 return Err(LimitError { _priv: () });
             }
         }
 
         if let Some(max_checks) = &content.max_checks {
-            if max_checks.to_u64() >= content.boxes.len() as u64 {
+            if max_checks.to_u64() < content.boxes.len() as u64 {
                 return Err(LimitError { _priv: () });
             }
         }
 
         Ok(CheckboxFormItem(content))
+    }
+
+    pub fn min_checks(&self) -> Option<u64> {
+        self.0.min_checks.map(CheckboxFormItemLimit::to_u64)
+    }
+
+    pub fn max_checks(&self) -> Option<u64> {
+        self.0.max_checks.map(CheckboxFormItemLimit::to_u64)
     }
 
     pub fn into_content(self) -> CheckboxFormItemContent {
@@ -108,6 +138,38 @@ impl CheckboxFormItem {
 
     pub fn boxes(&self) -> impl Iterator<Item = &'_ Checkbox> {
         self.0.boxes.boxes()
+    }
+
+    pub fn check_answer(&self, answer: &FormAnswerItemChecks) -> Result<(), CheckAnswerError> {
+        if let Some(max_checks) = self.0.max_checks {
+            if max_checks.to_u64() < answer.count_checks() as u64 {
+                return Err(CheckAnswerError {
+                    kind: CheckAnswerErrorKind::TooManyChecks,
+                });
+            }
+        }
+
+        if let Some(min_checks) = self.0.min_checks {
+            if min_checks.to_u64() < answer.count_checks() as u64 {
+                return Err(CheckAnswerError {
+                    kind: CheckAnswerErrorKind::TooLittleChecks,
+                });
+            }
+        }
+
+        for check_id in answer.checked_ids() {
+            if self
+                .boxes()
+                .find(|checkbox| checkbox.id == check_id)
+                .is_none()
+            {
+                return Err(CheckAnswerError {
+                    kind: CheckAnswerErrorKind::UnknownCheckboxId { id: check_id },
+                });
+            }
+        }
+
+        Ok(())
     }
 }
 

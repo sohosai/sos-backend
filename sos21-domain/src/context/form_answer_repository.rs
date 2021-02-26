@@ -1,6 +1,7 @@
 use crate::model::{
     form::FormId,
     form_answer::{FormAnswer, FormAnswerId},
+    project::ProjectId,
 };
 
 use anyhow::Result;
@@ -9,6 +10,11 @@ use anyhow::Result;
 pub trait FormAnswerRepository {
     async fn store_form_answer(&self, answer: FormAnswer) -> Result<()>;
     async fn get_form_answer(&self, id: FormAnswerId) -> Result<Option<FormAnswer>>;
+    async fn get_form_answer_by_form_and_project(
+        &self,
+        form_id: FormId,
+        project_id: ProjectId,
+    ) -> Result<Option<FormAnswer>>;
     async fn list_form_answers(&self, form_id: FormId) -> Result<Vec<FormAnswer>>;
 }
 
@@ -27,11 +33,21 @@ macro_rules! delegate_form_answer_repository {
             }
             async fn get_form_answer(
                 &$sel,
-                id: $crate::model::form_answer::FormAnswerId
+                id: $crate::model::form_answer::FormAnswerId,
             ) -> ::anyhow::Result<
                 Option<$crate::model::form_answer::FormAnswer>
             > {
                 $target.get_form_answer(id).await
+            }
+            async fn get_form_answer_by_form_and_project(
+                &$sel,
+                form_id: $crate::model::form::FormId,
+                project_id: $crate::model::project::ProjectId,
+            ) -> ::anyhow::Result<
+                Option<$crate::model::form_answer::FormAnswer>
+            > {
+                $target.get_form_answer_by_form_and_project(form_id, project_id)
+                    .await
             }
             async fn list_form_answers(
                 &$sel,
@@ -53,6 +69,15 @@ impl<C: FormAnswerRepository + Sync> FormAnswerRepository for &C {
 
     async fn get_form_answer(&self, id: FormAnswerId) -> Result<Option<FormAnswer>> {
         <C as FormAnswerRepository>::get_form_answer(self, id).await
+    }
+
+    async fn get_form_answer_by_form_and_project(
+        &self,
+        form_id: FormId,
+        project_id: ProjectId,
+    ) -> Result<Option<FormAnswer>> {
+        <C as FormAnswerRepository>::get_form_answer_by_form_and_project(self, form_id, project_id)
+            .await
     }
 
     async fn list_form_answers(&self, form_id: FormId) -> Result<Vec<FormAnswer>> {

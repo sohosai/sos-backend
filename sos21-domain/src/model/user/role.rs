@@ -25,8 +25,13 @@ impl UserRole {
                     | Permissions::READ_ALL_PROJECTS
                     | Permissions::READ_ALL_FORMS
                     | Permissions::CREATE_FORMS
+                    | Permissions::READ_ALL_FORM_ANSWERS
             }
-            UserRole::Committee => Permissions::READ_ALL_PROJECTS | Permissions::READ_ALL_FORMS,
+            UserRole::Committee => {
+                Permissions::READ_ALL_PROJECTS
+                    | Permissions::READ_ALL_FORMS
+                    | Permissions::READ_ALL_FORM_ANSWERS
+            }
             UserRole::General => Permissions::empty(),
         }
     }

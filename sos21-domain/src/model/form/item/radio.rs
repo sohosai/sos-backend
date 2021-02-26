@@ -47,7 +47,9 @@ impl RadioFormItemButtons {
         Ok(RadioFormItemButtons(buttons))
     }
 
+    /// it always stands that `xs.buttons().next().is_some()`
     pub fn buttons(&self) -> impl Iterator<Item = &'_ Radio> {
+        debug_assert!(self.0.iter().next().is_some());
         self.0.iter()
     }
 
@@ -60,4 +62,49 @@ impl RadioFormItemButtons {
 pub struct RadioFormItem {
     pub buttons: RadioFormItemButtons,
     pub is_required: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CheckAnswerErrorKind {
+    NotAnswered,
+    UnknownRadioId { id: RadioId },
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("invalid form answer radio item")]
+pub struct CheckAnswerError {
+    kind: CheckAnswerErrorKind,
+}
+
+impl CheckAnswerError {
+    pub fn kind(&self) -> CheckAnswerErrorKind {
+        self.kind
+    }
+}
+
+impl RadioFormItem {
+    pub fn check_answer(&self, answer: Option<RadioId>) -> Result<(), CheckAnswerError> {
+        let answer = match (self.is_required, answer) {
+            (true, None) => {
+                return Err(CheckAnswerError {
+                    kind: CheckAnswerErrorKind::NotAnswered,
+                })
+            }
+            (false, None) => return Ok(()),
+            (_, Some(answer)) => answer,
+        };
+
+        if self
+            .buttons
+            .buttons()
+            .find(|button| button.id == answer)
+            .is_none()
+        {
+            return Err(CheckAnswerError {
+                kind: CheckAnswerErrorKind::UnknownRadioId { id: answer },
+            });
+        }
+
+        Ok(())
+    }
 }

@@ -238,6 +238,20 @@ impl FormAnswerRepository for MockApp {
         Ok(self.answers.lock().await.get(&id).cloned())
     }
 
+    async fn get_form_answer_by_form_and_project(
+        &self,
+        form_id: FormId,
+        project_id: ProjectId,
+    ) -> Result<Option<FormAnswer>> {
+        Ok(self
+            .answers
+            .lock()
+            .await
+            .values()
+            .find(|answer| answer.form_id == form_id && answer.project_id == project_id)
+            .cloned())
+    }
+
     async fn list_form_answers(&self, form_id: FormId) -> Result<Vec<FormAnswer>> {
         Ok(self
             .answers

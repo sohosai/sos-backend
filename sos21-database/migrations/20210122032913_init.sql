@@ -83,5 +83,6 @@ CREATE TABLE form_answers (
     author_id varchar(64) NOT NULL REFERENCES users ON DELETE RESTRICT,
     form_id uuid NOT NULL REFERENCES forms ON DELETE RESTRICT,
     project_id uuid NOT NULL REFERENCES projects ON DELETE RESTRICT,
-    items bytea NOT NULL
+    items bytea NOT NULL,
+    UNIQUE (form_id, project_id)
 );

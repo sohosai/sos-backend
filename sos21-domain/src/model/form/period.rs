@@ -30,4 +30,8 @@ impl FormPeriod {
     pub fn ends_at(&self) -> DateTime {
         self.ends_at
     }
+
+    pub fn contains(&self, time: DateTime) -> bool {
+        self.starts_at() <= time && self.ends_at() > time
+    }
 }

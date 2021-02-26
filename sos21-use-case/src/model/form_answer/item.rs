@@ -62,14 +62,14 @@ impl FormAnswerItemBody {
 #[derive(Debug, Clone)]
 pub struct FormAnswerItem {
     pub item_id: FormItemId,
-    pub body: FormAnswerItemBody,
+    pub body: Option<FormAnswerItemBody>,
 }
 
 impl FormAnswerItem {
     pub fn from_entity(item: entity::FormAnswerItem) -> Self {
         FormAnswerItem {
             item_id: FormItemId::from_entity(item.item_id),
-            body: FormAnswerItemBody::from_entity(item.body),
+            body: item.body.map(FormAnswerItemBody::from_entity),
         }
     }
 }

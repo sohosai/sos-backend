@@ -29,6 +29,25 @@ pub struct PlaceholderError {
     _priv: (),
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CheckAnswerErrorKind {
+    NotAnswered,
+    TooBig,
+    TooSmall,
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("invalid form answer integer item")]
+pub struct CheckAnswerError {
+    kind: CheckAnswerErrorKind,
+}
+
+impl CheckAnswerError {
+    pub fn kind(&self) -> CheckAnswerErrorKind {
+        self.kind
+    }
+}
+
 impl IntegerFormItem {
     pub fn from_content(content: IntegerFormItemContent) -> Result<Self, PlaceholderError> {
         if let Some(min) = content.min {
@@ -46,8 +65,46 @@ impl IntegerFormItem {
         Ok(IntegerFormItem(content))
     }
 
+    pub fn min_limit(&self) -> Option<u64> {
+        self.0.min.map(IntegerFormItemLimit::to_u64)
+    }
+
+    pub fn max_limit(&self) -> Option<u64> {
+        self.0.max.map(IntegerFormItemLimit::to_u64)
+    }
+
     pub fn into_content(self) -> IntegerFormItemContent {
         self.0
+    }
+
+    pub fn check_answer(&self, answer: Option<u64>) -> Result<(), CheckAnswerError> {
+        let answer = match (self.0.is_required, answer) {
+            (true, None) => {
+                return Err(CheckAnswerError {
+                    kind: CheckAnswerErrorKind::NotAnswered,
+                })
+            }
+            (false, None) => return Ok(()),
+            (_, Some(answer)) => answer,
+        };
+
+        if let Some(max) = self.0.max {
+            if max.to_u64() < answer {
+                return Err(CheckAnswerError {
+                    kind: CheckAnswerErrorKind::TooBig,
+                });
+            }
+        }
+
+        if let Some(min) = self.0.min {
+            if min.to_u64() < answer {
+                return Err(CheckAnswerError {
+                    kind: CheckAnswerErrorKind::TooSmall,
+                });
+            }
+        }
+
+        Ok(())
     }
 }
 

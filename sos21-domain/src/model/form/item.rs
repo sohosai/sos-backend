@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 use crate::model::collection::{self, LengthBoundedVec};
+use crate::model::form_answer::item::{FormAnswerItem, FormAnswerItemBody, FormAnswerItems};
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -77,6 +78,35 @@ impl FromItemsError {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CheckAnswerErrorKind {
+    MismatchedItemsLength,
+    MismatchedItemId {
+        expected: FormItemId,
+        got: FormItemId,
+    },
+    Item(FormItemId, CheckAnswerItemErrorKind),
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("invalid form answer")]
+pub struct CheckAnswerError {
+    kind: CheckAnswerErrorKind,
+}
+
+impl CheckAnswerError {
+    pub fn kind(&self) -> CheckAnswerErrorKind {
+        self.kind
+    }
+
+    fn from_item_error(item_id: FormItemId, err: CheckAnswerItemError) -> Self {
+        CheckAnswerError {
+            kind: CheckAnswerErrorKind::Item(item_id, err.kind()),
+        }
+    }
+}
+
+#[allow(clippy::len_without_is_empty)]
 impl FormItems {
     pub fn from_items<I>(items: I) -> Result<Self, FromItemsError>
     where
@@ -88,8 +118,172 @@ impl FormItems {
         Ok(FormItems(items))
     }
 
+    /// it always stands that `items.len() > 0`.
+    pub fn len(&self) -> usize {
+        let len = self.0.len();
+        debug_assert!(len > 0);
+        len
+    }
+
+    pub fn items(&self) -> impl Iterator<Item = &FormItem> {
+        self.0.iter()
+    }
+
     pub fn into_items(self) -> impl Iterator<Item = FormItem> {
         self.0.into_inner().into_iter()
+    }
+
+    pub fn check_answer(
+        &self,
+        answer: &FormAnswerItems,
+    ) -> Result<Result<(), CheckAnswerError>, anyhow::Error> {
+        if self.len() != answer.len() {
+            return Ok(Err(CheckAnswerError {
+                kind: CheckAnswerErrorKind::MismatchedItemsLength,
+            }));
+        }
+
+        let mut known_answers = HashMap::new();
+        for (item, answer_item) in self.items().zip(answer.items()) {
+            if item.id != answer_item.item_id {
+                return Ok(Err(CheckAnswerError {
+                    kind: CheckAnswerErrorKind::MismatchedItemId {
+                        expected: item.id,
+                        got: answer_item.item_id,
+                    },
+                }));
+            }
+
+            if let Err(err) = item.check_answer(&known_answers, answer_item)? {
+                return Ok(Err(CheckAnswerError::from_item_error(item.id, err)));
+            }
+
+            known_answers.insert(answer_item.item_id, answer_item.clone());
+        }
+
+        Ok(Ok(()))
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CheckAnswerItemErrorKind {
+    NotAnsweredWithoutCondition,
+    NotAnsweredWithCondition,
+    UnexpectedAnswer,
+    MismatchedItemType,
+    NotAnsweredText,
+    TooLongText,
+    TooShortText,
+    NotAllowedMultipleLineText,
+    NotAnsweredInteger,
+    TooBigInteger,
+    TooSmallInteger,
+    TooManyChecks,
+    TooLittleChecks,
+    UnknownCheckboxId {
+        id: checkbox::CheckboxId,
+    },
+    NotAnsweredRadio,
+    UnknownRadioId {
+        id: radio::RadioId,
+    },
+    NotAnsweredGridRadioRows,
+    MismatchedGridRadioRowsLength,
+    MismatchedGridRadioRowId {
+        expected: grid_radio::GridRadioRowId,
+        got: grid_radio::GridRadioRowId,
+    },
+    UnknownGridRadioColumnId {
+        id: grid_radio::GridRadioColumnId,
+    },
+    NotAllowedDuplicatedGridRadioColumn {
+        id: grid_radio::GridRadioColumnId,
+    },
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("invalid form answer item")]
+pub struct CheckAnswerItemError {
+    kind: CheckAnswerItemErrorKind,
+}
+
+impl CheckAnswerItemError {
+    pub fn kind(&self) -> CheckAnswerItemErrorKind {
+        self.kind
+    }
+
+    pub fn from_text_item_error(err: text::CheckAnswerError) -> Self {
+        let kind = match err.kind() {
+            text::CheckAnswerErrorKind::NotAnswered => CheckAnswerItemErrorKind::NotAnsweredText,
+            text::CheckAnswerErrorKind::TooLong => CheckAnswerItemErrorKind::TooLongText,
+            text::CheckAnswerErrorKind::TooShort => CheckAnswerItemErrorKind::TooShortText,
+            text::CheckAnswerErrorKind::NotAllowedMultipleLine => {
+                CheckAnswerItemErrorKind::NotAllowedMultipleLineText
+            }
+        };
+
+        CheckAnswerItemError { kind }
+    }
+
+    pub fn from_integer_item_error(err: integer::CheckAnswerError) -> Self {
+        let kind = match err.kind() {
+            integer::CheckAnswerErrorKind::NotAnswered => {
+                CheckAnswerItemErrorKind::NotAnsweredInteger
+            }
+            integer::CheckAnswerErrorKind::TooBig => CheckAnswerItemErrorKind::TooBigInteger,
+            integer::CheckAnswerErrorKind::TooSmall => CheckAnswerItemErrorKind::TooSmallInteger,
+        };
+
+        CheckAnswerItemError { kind }
+    }
+
+    pub fn from_checkbox_item_error(err: checkbox::CheckAnswerError) -> Self {
+        let kind = match err.kind() {
+            checkbox::CheckAnswerErrorKind::TooManyChecks => {
+                CheckAnswerItemErrorKind::TooManyChecks
+            }
+            checkbox::CheckAnswerErrorKind::TooLittleChecks => {
+                CheckAnswerItemErrorKind::TooLittleChecks
+            }
+            checkbox::CheckAnswerErrorKind::UnknownCheckboxId { id } => {
+                CheckAnswerItemErrorKind::UnknownCheckboxId { id }
+            }
+        };
+
+        CheckAnswerItemError { kind }
+    }
+
+    pub fn from_radio_item_error(err: radio::CheckAnswerError) -> Self {
+        let kind = match err.kind() {
+            radio::CheckAnswerErrorKind::NotAnswered => CheckAnswerItemErrorKind::NotAnsweredRadio,
+            radio::CheckAnswerErrorKind::UnknownRadioId { id } => {
+                CheckAnswerItemErrorKind::UnknownRadioId { id }
+            }
+        };
+
+        CheckAnswerItemError { kind }
+    }
+
+    pub fn from_grid_radio_item_error(err: grid_radio::CheckAnswerError) -> Self {
+        let kind = match err.kind() {
+            grid_radio::CheckAnswerErrorKind::NotAnsweredRows => {
+                CheckAnswerItemErrorKind::NotAnsweredGridRadioRows
+            }
+            grid_radio::CheckAnswerErrorKind::MismatchedRowsLength => {
+                CheckAnswerItemErrorKind::MismatchedGridRadioRowsLength
+            }
+            grid_radio::CheckAnswerErrorKind::MismatchedGridRadioRowId { got, expected } => {
+                CheckAnswerItemErrorKind::MismatchedGridRadioRowId { got, expected }
+            }
+            grid_radio::CheckAnswerErrorKind::UnknownGridRadioColumnId { id } => {
+                CheckAnswerItemErrorKind::UnknownGridRadioColumnId { id }
+            }
+            grid_radio::CheckAnswerErrorKind::NotAllowedDuplicatedColumn { id } => {
+                CheckAnswerItemErrorKind::NotAllowedDuplicatedGridRadioColumn { id }
+            }
+        };
+
+        CheckAnswerItemError { kind }
     }
 }
 
@@ -116,6 +310,42 @@ pub struct FormItem {
     pub body: FormItemBody,
 }
 
+impl FormItem {
+    fn check_answer(
+        &self,
+        known_answers: &HashMap<FormItemId, FormAnswerItem>,
+        answer: &FormAnswerItem,
+    ) -> Result<Result<(), CheckAnswerItemError>, anyhow::Error> {
+        let body = match (self.conditions.as_ref(), answer.body.as_ref()) {
+            (None, None) => {
+                return Ok(Err(CheckAnswerItemError {
+                    kind: CheckAnswerItemErrorKind::NotAnsweredWithoutCondition,
+                }))
+            }
+            (None, Some(body)) => body,
+            (Some(conditions), body_opt) => {
+                let is_match = conditions.is_matched_in(known_answers)?;
+                match (is_match, body_opt) {
+                    (true, Some(body)) => body,
+                    (true, None) => {
+                        return Ok(Err(CheckAnswerItemError {
+                            kind: CheckAnswerItemErrorKind::NotAnsweredWithCondition,
+                        }))
+                    }
+                    (false, Some(_)) => {
+                        return Ok(Err(CheckAnswerItemError {
+                            kind: CheckAnswerItemErrorKind::UnexpectedAnswer,
+                        }))
+                    }
+                    (false, None) => return Ok(Ok(())),
+                }
+            }
+        };
+
+        Ok(self.body.check_answer(&body))
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum FormItemBody {
     Text(TextFormItem),
@@ -123,6 +353,31 @@ pub enum FormItemBody {
     Checkbox(CheckboxFormItem),
     Radio(RadioFormItem),
     GridRadio(GridRadioFormItem),
+}
+
+impl FormItemBody {
+    pub fn check_answer(&self, answer: &FormAnswerItemBody) -> Result<(), CheckAnswerItemError> {
+        match (self, answer) {
+            (FormItemBody::Text(item), FormAnswerItemBody::Text(answer)) => item
+                .check_answer(answer.as_ref())
+                .map_err(CheckAnswerItemError::from_text_item_error),
+            (FormItemBody::Integer(item), FormAnswerItemBody::Integer(answer)) => item
+                .check_answer(*answer)
+                .map_err(CheckAnswerItemError::from_integer_item_error),
+            (FormItemBody::Checkbox(item), FormAnswerItemBody::Checkbox(answer)) => item
+                .check_answer(answer)
+                .map_err(CheckAnswerItemError::from_checkbox_item_error),
+            (FormItemBody::Radio(item), FormAnswerItemBody::Radio(answer)) => item
+                .check_answer(*answer)
+                .map_err(CheckAnswerItemError::from_radio_item_error),
+            (FormItemBody::GridRadio(item), FormAnswerItemBody::GridRadio(answer)) => item
+                .check_answer(answer)
+                .map_err(CheckAnswerItemError::from_grid_radio_item_error),
+            (_, _) => Err(CheckAnswerItemError {
+                kind: CheckAnswerItemErrorKind::MismatchedItemType,
+            }),
+        }
+    }
 }
 
 #[derive(Default)]
@@ -184,16 +439,12 @@ impl CheckFormItems {
                 checkbox_id,
                 expected: _,
             } => self.check_checkbox_condition(provenance, *item_id, *checkbox_id),
-            FormItemCondition::Radio {
-                item_id,
-                radio_id,
-                expected: _,
-            } => self.check_radio_condition(provenance, *item_id, *radio_id),
-            FormItemCondition::GridRadio {
-                item_id,
-                column_id,
-                expected: _,
-            } => self.check_grid_radio_condition(provenance, *item_id, *column_id),
+            FormItemCondition::RadioSelected { item_id, radio_id } => {
+                self.check_radio_condition(provenance, *item_id, *radio_id)
+            }
+            FormItemCondition::GridRadioSelected { item_id, column_id } => {
+                self.check_grid_radio_condition(provenance, *item_id, *column_id)
+            }
         }
     }
 
@@ -486,10 +737,9 @@ mod tests {
         let item = new_form_item_with_body(body.clone());
 
         let item_id = FormItemId::from_uuid(Uuid::new_v4());
-        let condition = FormItemCondition::Radio {
+        let condition = FormItemCondition::RadioSelected {
             item_id,
             radio_id: button.id,
-            expected: true,
         };
         let dangling_item = new_form_item_with_condition(condition);
         assert_eq!(
@@ -508,10 +758,9 @@ mod tests {
     fn test_unknown_radio_id() {
         let item = new_form_item();
         let radio_id = RadioId::from_uuid(Uuid::new_v4());
-        let condition = FormItemCondition::Radio {
+        let condition = FormItemCondition::RadioSelected {
             item_id: item.id,
             radio_id,
-            expected: true,
         };
         let dangling_item = new_form_item_with_condition(condition);
         assert_eq!(
