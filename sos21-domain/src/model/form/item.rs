@@ -643,7 +643,9 @@ impl CheckFormItems {
 #[cfg(test)]
 mod tests {
     use super::{
-        radio::RadioId, CheckFormItems, FormItemCondition, FormItemId, FromItemsErrorKind,
+        radio::{RadioFormItem, RadioFormItemButtons, RadioId},
+        CheckAnswerErrorKind, CheckAnswerItemErrorKind, CheckFormItems, FormItemBody,
+        FormItemCondition, FormItemId, FormItems, FromItemsErrorKind,
     };
     use crate::test::model as test_model;
     use uuid::Uuid;
@@ -750,6 +752,149 @@ mod tests {
                 provenance: bad_item.id,
                 id: item.id
             }
+        );
+    }
+
+    #[test]
+    fn test_answer_mismatched_length() {
+        use crate::model::form_answer::FormAnswerItems;
+
+        let item = test_model::new_form_item();
+        let items = FormItems::from_items(vec![item.clone()]).unwrap();
+        let answer_items = FormAnswerItems::from_items(vec![
+            test_model::mock_form_answer_item(&item),
+            test_model::mock_form_answer_item(&item),
+        ])
+        .unwrap();
+        assert_eq!(
+            items
+                .check_answer(&answer_items)
+                .unwrap()
+                .unwrap_err()
+                .kind(),
+            CheckAnswerErrorKind::MismatchedItemsLength
+        );
+    }
+
+    #[test]
+    fn test_answer_mismatched_item_id() {
+        use crate::model::form_answer::FormAnswerItems;
+
+        let item = test_model::new_form_item();
+        let items = FormItems::from_items(vec![item.clone(), test_model::new_form_item()]).unwrap();
+        let answer_items = FormAnswerItems::from_items(vec![
+            test_model::mock_form_answer_item(&item),
+            test_model::mock_form_answer_item(&item),
+        ])
+        .unwrap();
+        assert!(matches!(
+            items
+                .check_answer(&answer_items)
+                .unwrap()
+                .unwrap_err()
+                .kind(),
+            CheckAnswerErrorKind::MismatchedItemId { .. }
+        ));
+    }
+
+    #[test]
+    fn test_answer_not_answered_without_condition() {
+        use crate::model::form_answer::FormAnswerItems;
+
+        let item = test_model::new_form_item();
+        let items = FormItems::from_items(vec![item.clone()]).unwrap();
+        let mut answer_item = test_model::mock_form_answer_item(&item);
+        answer_item.body = None;
+        let answer_items = FormAnswerItems::from_items(vec![answer_item]).unwrap();
+
+        assert_eq!(
+            items
+                .check_answer(&answer_items)
+                .unwrap()
+                .unwrap_err()
+                .kind(),
+            CheckAnswerErrorKind::Item(
+                item.id,
+                CheckAnswerItemErrorKind::NotAnsweredWithoutCondition
+            )
+        );
+    }
+
+    #[test]
+    fn test_answer_not_answered_with_condition() {
+        use crate::model::form_answer::item::{
+            FormAnswerItem, FormAnswerItemBody, FormAnswerItems,
+        };
+
+        let radio = test_model::new_form_radio_button();
+        let item1 = test_model::new_form_item_with_body(
+            test_model::new_radio_form_item_body_with_button(radio.clone()),
+        );
+        let condition = FormItemCondition::RadioSelected {
+            item_id: item1.id,
+            radio_id: radio.id,
+        };
+        let item2 = test_model::new_form_item_with_condition(condition);
+        let items = FormItems::from_items(vec![item1.clone(), item2.clone()]).unwrap();
+
+        let answer_item1 = FormAnswerItem {
+            item_id: item1.id,
+            body: Some(FormAnswerItemBody::Radio(Some(radio.id))),
+        };
+        let mut answer_item2 = test_model::mock_form_answer_item(&item2);
+        answer_item2.body = None;
+        let answer_items = FormAnswerItems::from_items(vec![answer_item1, answer_item2]).unwrap();
+
+        assert_eq!(
+            items
+                .check_answer(&answer_items)
+                .unwrap()
+                .unwrap_err()
+                .kind(),
+            CheckAnswerErrorKind::Item(
+                item2.id,
+                CheckAnswerItemErrorKind::NotAnsweredWithCondition
+            )
+        );
+    }
+
+    #[test]
+    fn test_answer_unexpected_answer() {
+        use crate::model::form_answer::item::{
+            FormAnswerItem, FormAnswerItemBody, FormAnswerItems,
+        };
+
+        let radio1 = test_model::new_form_radio_button();
+        let radio2 = test_model::new_form_radio_button();
+        let item1 = test_model::new_form_item_with_body(FormItemBody::Radio(RadioFormItem {
+            buttons: RadioFormItemButtons::from_buttons(vec![radio1.clone(), radio2.clone()])
+                .unwrap(),
+            is_required: true,
+        }));
+        let condition = FormItemCondition::RadioSelected {
+            item_id: item1.id,
+            radio_id: radio2.id,
+        };
+        let item2 = test_model::new_form_item_with_condition(condition);
+        let items = FormItems::from_items(vec![item1.clone(), item2.clone()]).unwrap();
+
+        let answer_item1 = FormAnswerItem {
+            item_id: item1.id,
+            body: Some(FormAnswerItemBody::Radio(Some(radio1.id))),
+        };
+        let answer_items = FormAnswerItems::from_items(vec![
+            answer_item1,
+            test_model::mock_form_answer_item(&item2),
+        ])
+        .unwrap();
+
+        assert_eq!(
+            items
+                .check_answer(&answer_items)
+                .unwrap()
+                .unwrap_err()
+                .kind(),
+            CheckAnswerErrorKind::Item(item2.id, CheckAnswerItemErrorKind::UnexpectedAnswer)
         );
     }
 }

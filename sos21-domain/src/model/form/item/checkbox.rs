@@ -219,3 +219,187 @@ impl<'de> Deserialize<'de> for CheckboxFormItem {
             .map_err(de::Error::custom)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        CheckAnswerErrorKind, CheckboxFormItem, CheckboxFormItemBoxes, CheckboxFormItemContent,
+        CheckboxFormItemLimit, InconsistentCheckLimitsError,
+    };
+    use crate::test::model as test_model;
+
+    #[test]
+    fn test_pass() {
+        let boxes = CheckboxFormItemBoxes::from_boxes(vec![
+            test_model::new_form_checkbox(),
+            test_model::new_form_checkbox(),
+            test_model::new_form_checkbox(),
+            test_model::new_form_checkbox(),
+        ])
+        .unwrap();
+
+        CheckboxFormItem::from_content(CheckboxFormItemContent {
+            boxes: boxes.clone(),
+            min_checks: None,
+            max_checks: None,
+        })
+        .unwrap();
+
+        CheckboxFormItem::from_content(CheckboxFormItemContent {
+            boxes: boxes.clone(),
+            min_checks: None,
+            max_checks: Some(CheckboxFormItemLimit::from_u64(2).unwrap()),
+        })
+        .unwrap();
+
+        CheckboxFormItem::from_content(CheckboxFormItemContent {
+            boxes: boxes.clone(),
+            min_checks: Some(CheckboxFormItemLimit::from_u64(2).unwrap()),
+            max_checks: Some(CheckboxFormItemLimit::from_u64(2).unwrap()),
+        })
+        .unwrap();
+
+        CheckboxFormItem::from_content(CheckboxFormItemContent {
+            boxes,
+            min_checks: Some(CheckboxFormItemLimit::from_u64(1).unwrap()),
+            max_checks: Some(CheckboxFormItemLimit::from_u64(3).unwrap()),
+        })
+        .unwrap();
+    }
+
+    #[test]
+    fn test_inconsistent() {
+        let boxes = CheckboxFormItemBoxes::from_boxes(vec![
+            test_model::new_form_checkbox(),
+            test_model::new_form_checkbox(),
+            test_model::new_form_checkbox(),
+            test_model::new_form_checkbox(),
+        ])
+        .unwrap();
+
+        assert!(matches!(
+            CheckboxFormItem::from_content(CheckboxFormItemContent {
+                boxes: boxes.clone(),
+                min_checks: Some(CheckboxFormItemLimit::from_u64(2).unwrap()),
+                max_checks: Some(CheckboxFormItemLimit::from_u64(1).unwrap()),
+            })
+            .unwrap_err(),
+            InconsistentCheckLimitsError { .. },
+        ));
+
+        assert!(matches!(
+            CheckboxFormItem::from_content(CheckboxFormItemContent {
+                boxes,
+                min_checks: Some(CheckboxFormItemLimit::from_u64(1).unwrap()),
+                max_checks: Some(CheckboxFormItemLimit::from_u64(4).unwrap()),
+            })
+            .unwrap_err(),
+            InconsistentCheckLimitsError { .. },
+        ));
+    }
+
+    #[test]
+    fn test_answer_pass() {
+        use crate::model::form_answer::item::FormAnswerItemChecks;
+
+        let checkbox1 = test_model::new_form_checkbox();
+        let boxes = CheckboxFormItemBoxes::from_boxes(vec![
+            checkbox1.clone(),
+            test_model::new_form_checkbox(),
+            test_model::new_form_checkbox(),
+        ])
+        .unwrap();
+
+        let item1 = CheckboxFormItem::from_content(CheckboxFormItemContent {
+            boxes: boxes.clone(),
+            min_checks: None,
+            max_checks: None,
+        })
+        .unwrap();
+        assert!(item1
+            .check_answer(&FormAnswerItemChecks::from_checked_ids(vec![]).unwrap())
+            .is_ok());
+
+        let item2 = CheckboxFormItem::from_content(CheckboxFormItemContent {
+            boxes: boxes.clone(),
+            min_checks: Some(CheckboxFormItemLimit::from_u64(1).unwrap()),
+            max_checks: Some(CheckboxFormItemLimit::from_u64(2).unwrap()),
+        })
+        .unwrap();
+        assert!(item2
+            .check_answer(&FormAnswerItemChecks::from_checked_ids(vec![checkbox1.id]).unwrap())
+            .is_ok());
+    }
+
+    #[test]
+    fn test_answer_limits() {
+        use crate::model::form_answer::item::FormAnswerItemChecks;
+
+        let checkbox1 = test_model::new_form_checkbox();
+        let checkbox2 = test_model::new_form_checkbox();
+        let boxes = CheckboxFormItemBoxes::from_boxes(vec![
+            checkbox1.clone(),
+            checkbox2.clone(),
+            test_model::new_form_checkbox(),
+        ])
+        .unwrap();
+
+        let item1 = CheckboxFormItem::from_content(CheckboxFormItemContent {
+            boxes: boxes.clone(),
+            min_checks: Some(CheckboxFormItemLimit::from_u64(1).unwrap()),
+            max_checks: None,
+        })
+        .unwrap();
+        assert_eq!(
+            item1
+                .check_answer(&FormAnswerItemChecks::from_checked_ids(vec![]).unwrap())
+                .unwrap_err()
+                .kind(),
+            CheckAnswerErrorKind::TooFewChecks,
+        );
+
+        let item2 = CheckboxFormItem::from_content(CheckboxFormItemContent {
+            boxes: boxes.clone(),
+            min_checks: None,
+            max_checks: Some(CheckboxFormItemLimit::from_u64(1).unwrap()),
+        })
+        .unwrap();
+        assert_eq!(
+            item2
+                .check_answer(
+                    &FormAnswerItemChecks::from_checked_ids(vec![checkbox1.id, checkbox2.id])
+                        .unwrap(),
+                )
+                .unwrap_err()
+                .kind(),
+            CheckAnswerErrorKind::TooManyChecks,
+        );
+    }
+
+    #[test]
+    fn test_answer_unknown_id() {
+        use crate::model::form_answer::item::FormAnswerItemChecks;
+
+        let checkbox1 = test_model::new_form_checkbox();
+        let checkbox2 = test_model::new_form_checkbox();
+        let boxes = CheckboxFormItemBoxes::from_boxes(vec![
+            checkbox1.clone(),
+            test_model::new_form_checkbox(),
+            test_model::new_form_checkbox(),
+        ])
+        .unwrap();
+
+        let item = CheckboxFormItem::from_content(CheckboxFormItemContent {
+            boxes: boxes.clone(),
+            min_checks: None,
+            max_checks: None,
+        })
+        .unwrap();
+        assert_eq!(
+            item.check_answer(&FormAnswerItemChecks::from_checked_ids(vec![checkbox2.id]).unwrap())
+                .unwrap_err()
+                .kind(),
+            CheckAnswerErrorKind::UnknownCheckboxId { id: checkbox2.id },
+        );
+    }
+}

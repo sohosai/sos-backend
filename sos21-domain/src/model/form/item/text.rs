@@ -155,3 +155,212 @@ impl<'de> Deserialize<'de> for TextFormItem {
             .map_err(de::Error::custom)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        CheckAnswerErrorKind, FromContentErrorKind, TextFormItem, TextFormItemContent,
+        TextFormItemLength, TextFormItemPlaceholder,
+    };
+
+    #[test]
+    fn test_pass() {
+        TextFormItem::from_content(TextFormItemContent {
+            accept_multiple_lines: true,
+            is_required: true,
+            max_length: None,
+            min_length: None,
+            placeholder: TextFormItemPlaceholder::from_string("").unwrap(),
+        })
+        .unwrap();
+
+        TextFormItem::from_content(TextFormItemContent {
+            accept_multiple_lines: true,
+            is_required: true,
+            max_length: None,
+            min_length: None,
+            placeholder: TextFormItemPlaceholder::from_string("あああああ").unwrap(),
+        })
+        .unwrap();
+
+        TextFormItem::from_content(TextFormItemContent {
+            accept_multiple_lines: true,
+            is_required: true,
+            max_length: Some(TextFormItemLength::from_u64(3).unwrap()),
+            min_length: None,
+            placeholder: TextFormItemPlaceholder::from_string("").unwrap(),
+        })
+        .unwrap();
+
+        TextFormItem::from_content(TextFormItemContent {
+            accept_multiple_lines: true,
+            is_required: true,
+            max_length: Some(TextFormItemLength::from_u64(5).unwrap()),
+            min_length: Some(TextFormItemLength::from_u64(1).unwrap()),
+            placeholder: TextFormItemPlaceholder::from_string("あああああ").unwrap(),
+        })
+        .unwrap();
+    }
+
+    #[test]
+    fn test_placeholder() {
+        assert_eq!(
+            TextFormItem::from_content(TextFormItemContent {
+                accept_multiple_lines: true,
+                is_required: true,
+                max_length: Some(TextFormItemLength::from_u64(2).unwrap()),
+                min_length: Some(TextFormItemLength::from_u64(1).unwrap()),
+                placeholder: TextFormItemPlaceholder::from_string("あああ").unwrap(),
+            })
+            .unwrap_err()
+            .kind(),
+            FromContentErrorKind::TooLongPlaceholder,
+        );
+
+        assert_eq!(
+            TextFormItem::from_content(TextFormItemContent {
+                accept_multiple_lines: true,
+                is_required: true,
+                max_length: Some(TextFormItemLength::from_u64(2).unwrap()),
+                min_length: Some(TextFormItemLength::from_u64(1).unwrap()),
+                placeholder: TextFormItemPlaceholder::from_string("").unwrap(),
+            })
+            .unwrap_err()
+            .kind(),
+            FromContentErrorKind::TooShortPlaceholder,
+        );
+    }
+
+    #[test]
+    fn test_inconsistent() {
+        assert_eq!(
+            TextFormItem::from_content(TextFormItemContent {
+                accept_multiple_lines: true,
+                is_required: true,
+                max_length: Some(TextFormItemLength::from_u64(1).unwrap()),
+                min_length: Some(TextFormItemLength::from_u64(2).unwrap()),
+                placeholder: TextFormItemPlaceholder::from_string("あ").unwrap(),
+            })
+            .unwrap_err()
+            .kind(),
+            FromContentErrorKind::InconsistentLengthLimits,
+        );
+    }
+
+    #[test]
+    fn test_answer_pass() {
+        use crate::model::form_answer::item::FormAnswerItemText;
+
+        TextFormItem::from_content(TextFormItemContent {
+            accept_multiple_lines: true,
+            is_required: true,
+            max_length: None,
+            min_length: None,
+            placeholder: TextFormItemPlaceholder::from_string("").unwrap(),
+        })
+        .unwrap()
+        .check_answer(Some(
+            &FormAnswerItemText::from_string("あああ\nあいうえお").unwrap(),
+        ))
+        .unwrap();
+
+        TextFormItem::from_content(TextFormItemContent {
+            accept_multiple_lines: true,
+            is_required: false,
+            max_length: None,
+            min_length: None,
+            placeholder: TextFormItemPlaceholder::from_string("").unwrap(),
+        })
+        .unwrap()
+        .check_answer(None)
+        .unwrap();
+
+        TextFormItem::from_content(TextFormItemContent {
+            accept_multiple_lines: true,
+            is_required: false,
+            max_length: Some(TextFormItemLength::from_u64(2).unwrap()),
+            min_length: Some(TextFormItemLength::from_u64(1).unwrap()),
+            placeholder: TextFormItemPlaceholder::from_string("あ").unwrap(),
+        })
+        .unwrap()
+        .check_answer(Some(&FormAnswerItemText::from_string("い").unwrap()))
+        .unwrap();
+    }
+
+    #[test]
+    fn test_answer_not_answered() {
+        assert_eq!(
+            TextFormItem::from_content(TextFormItemContent {
+                accept_multiple_lines: true,
+                is_required: true,
+                max_length: None,
+                min_length: None,
+                placeholder: TextFormItemPlaceholder::from_string("").unwrap(),
+            })
+            .unwrap()
+            .check_answer(None)
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::NotAnswered,
+        );
+    }
+
+    #[test]
+    fn test_answer_multiple_line() {
+        use crate::model::form_answer::item::FormAnswerItemText;
+
+        assert_eq!(
+            TextFormItem::from_content(TextFormItemContent {
+                accept_multiple_lines: false,
+                is_required: true,
+                max_length: None,
+                min_length: None,
+                placeholder: TextFormItemPlaceholder::from_string("").unwrap(),
+            })
+            .unwrap()
+            .check_answer(Some(
+                &FormAnswerItemText::from_string("あああ\nあいうえお").unwrap()
+            ))
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::NotAllowedMultipleLine,
+        );
+    }
+
+    #[test]
+    fn test_answer_length() {
+        use crate::model::form_answer::item::FormAnswerItemText;
+
+        assert_eq!(
+            TextFormItem::from_content(TextFormItemContent {
+                accept_multiple_lines: true,
+                is_required: true,
+                max_length: None,
+                min_length: Some(TextFormItemLength::from_u64(2).unwrap()),
+                placeholder: TextFormItemPlaceholder::from_string("あい").unwrap(),
+            })
+            .unwrap()
+            .check_answer(Some(&FormAnswerItemText::from_string("あ").unwrap()))
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::TooShort,
+        );
+
+        assert_eq!(
+            TextFormItem::from_content(TextFormItemContent {
+                accept_multiple_lines: true,
+                is_required: true,
+                max_length: Some(TextFormItemLength::from_u64(4).unwrap()),
+                min_length: None,
+                placeholder: TextFormItemPlaceholder::from_string("あ").unwrap(),
+            })
+            .unwrap()
+            .check_answer(Some(
+                &FormAnswerItemText::from_string("あいうえお").unwrap()
+            ))
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::TooLong,
+        );
+    }
+}

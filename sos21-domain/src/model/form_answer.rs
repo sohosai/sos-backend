@@ -46,3 +46,58 @@ impl FormAnswer {
         self.project_id == project.id && project.is_visible_to(user)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::test::model as test_model;
+
+    #[test]
+    fn test_visibility_general() {
+        let user = test_model::new_general_user();
+        let user_project = test_model::new_general_project(user.id.clone());
+        let operator = test_model::new_operator_user();
+        let form = test_model::new_form(operator.id);
+        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id, &form);
+        assert!(!form_answer.is_visible_to(&user));
+    }
+
+    #[test]
+    fn test_visibility_committee() {
+        let user = test_model::new_committee_user();
+        let user_project = test_model::new_general_project(user.id.clone());
+        let operator = test_model::new_operator_user();
+        let form = test_model::new_form(operator.id);
+        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id, &form);
+        assert!(form_answer.is_visible_to(&user));
+    }
+
+    #[test]
+    fn test_visibility_operator() {
+        let user = test_model::new_operator_user();
+        let user_project = test_model::new_general_project(user.id.clone());
+        let operator = test_model::new_operator_user();
+        let form = test_model::new_form(operator.id);
+        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id, &form);
+        assert!(form_answer.is_visible_to(&user));
+    }
+
+    #[test]
+    fn test_visibility_general_via_owning_project() {
+        let user = test_model::new_general_user();
+        let user_project = test_model::new_general_project(user.id.clone());
+        let operator = test_model::new_operator_user();
+        let form = test_model::new_form(operator.id);
+        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id, &form);
+        assert!(form_answer.is_visible_to_with_project(&user, &user_project));
+    }
+
+    #[test]
+    fn test_visibility_general_via_non_owning_project() {
+        let user = test_model::new_general_user();
+        let operator = test_model::new_operator_user();
+        let operator_project = test_model::new_general_project(operator.id.clone());
+        let form = test_model::new_form(operator.id);
+        let form_answer = test_model::new_form_answer(user.id.clone(), operator_project.id, &form);
+        assert!(!form_answer.is_visible_to_with_project(&user, &operator_project));
+    }
+}

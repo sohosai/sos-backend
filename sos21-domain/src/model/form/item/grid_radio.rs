@@ -320,3 +320,358 @@ impl<'de> Deserialize<'de> for GridRadioFormItem {
             .map_err(de::Error::custom)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        CheckAnswerErrorKind, GridRadioFormItem, GridRadioFormItemColumns,
+        GridRadioFormItemContent, GridRadioFormItemRequired, GridRadioFormItemRows,
+        TooFewColumnsError,
+    };
+    use crate::test::model as test_model;
+
+    #[test]
+    fn test_pass() {
+        GridRadioFormItem::from_content(GridRadioFormItemContent {
+            rows: GridRadioFormItemRows::from_rows(vec![
+                test_model::new_form_grid_radio_row(),
+                test_model::new_form_grid_radio_row(),
+                test_model::new_form_grid_radio_row(),
+            ])
+            .unwrap(),
+            columns: GridRadioFormItemColumns::from_columns(vec![
+                test_model::new_form_grid_radio_column(),
+                test_model::new_form_grid_radio_column(),
+            ])
+            .unwrap(),
+            exclusive_column: false,
+            required: GridRadioFormItemRequired::All,
+        })
+        .unwrap();
+
+        GridRadioFormItem::from_content(GridRadioFormItemContent {
+            rows: GridRadioFormItemRows::from_rows(vec![
+                test_model::new_form_grid_radio_row(),
+                test_model::new_form_grid_radio_row(),
+                test_model::new_form_grid_radio_row(),
+            ])
+            .unwrap(),
+            columns: GridRadioFormItemColumns::from_columns(vec![
+                test_model::new_form_grid_radio_column(),
+                test_model::new_form_grid_radio_column(),
+            ])
+            .unwrap(),
+            exclusive_column: true,
+            required: GridRadioFormItemRequired::None,
+        })
+        .unwrap();
+
+        GridRadioFormItem::from_content(GridRadioFormItemContent {
+            rows: GridRadioFormItemRows::from_rows(vec![
+                test_model::new_form_grid_radio_row(),
+                test_model::new_form_grid_radio_row(),
+            ])
+            .unwrap(),
+            columns: GridRadioFormItemColumns::from_columns(vec![
+                test_model::new_form_grid_radio_column(),
+                test_model::new_form_grid_radio_column(),
+            ])
+            .unwrap(),
+            exclusive_column: true,
+            required: GridRadioFormItemRequired::All,
+        })
+        .unwrap();
+    }
+
+    #[test]
+    fn test_too_few_columns_when_exclusive_and_required() {
+        assert!(matches!(
+            GridRadioFormItem::from_content(GridRadioFormItemContent {
+                rows: GridRadioFormItemRows::from_rows(vec![
+                    test_model::new_form_grid_radio_row(),
+                    test_model::new_form_grid_radio_row(),
+                    test_model::new_form_grid_radio_row(),
+                ])
+                .unwrap(),
+                columns: GridRadioFormItemColumns::from_columns(vec![
+                    test_model::new_form_grid_radio_column(),
+                    test_model::new_form_grid_radio_column(),
+                ])
+                .unwrap(),
+                exclusive_column: true,
+                required: GridRadioFormItemRequired::All,
+            }),
+            Err(TooFewColumnsError { .. }),
+        ));
+    }
+
+    #[test]
+    fn test_answer_pass() {
+        use crate::model::form_answer::item::{FormAnswerItemGridRows, GridRadioRowAnswer};
+
+        let row1 = test_model::new_form_grid_radio_row();
+        let row2 = test_model::new_form_grid_radio_row();
+        let column1 = test_model::new_form_grid_radio_column();
+        let column2 = test_model::new_form_grid_radio_column();
+
+        GridRadioFormItem::from_content(GridRadioFormItemContent {
+            rows: GridRadioFormItemRows::from_rows(vec![row1.clone(), row2.clone()]).unwrap(),
+            columns: GridRadioFormItemColumns::from_columns(vec![column1.clone(), column2.clone()])
+                .unwrap(),
+            exclusive_column: true,
+            required: GridRadioFormItemRequired::All,
+        })
+        .unwrap()
+        .check_answer(
+            &FormAnswerItemGridRows::from_row_answers(vec![
+                GridRadioRowAnswer {
+                    row_id: row1.id,
+                    value: Some(column2.id),
+                },
+                GridRadioRowAnswer {
+                    row_id: row2.id,
+                    value: Some(column1.id),
+                },
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+
+        GridRadioFormItem::from_content(GridRadioFormItemContent {
+            rows: GridRadioFormItemRows::from_rows(vec![row1.clone(), row2.clone()]).unwrap(),
+            columns: GridRadioFormItemColumns::from_columns(vec![column1.clone(), column2.clone()])
+                .unwrap(),
+            exclusive_column: false,
+            required: GridRadioFormItemRequired::All,
+        })
+        .unwrap()
+        .check_answer(
+            &FormAnswerItemGridRows::from_row_answers(vec![
+                GridRadioRowAnswer {
+                    row_id: row1.id,
+                    value: Some(column2.id),
+                },
+                GridRadioRowAnswer {
+                    row_id: row2.id,
+                    value: Some(column2.id),
+                },
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+
+        GridRadioFormItem::from_content(GridRadioFormItemContent {
+            rows: GridRadioFormItemRows::from_rows(vec![row1.clone(), row2.clone()]).unwrap(),
+            columns: GridRadioFormItemColumns::from_columns(vec![column1.clone(), column2.clone()])
+                .unwrap(),
+            exclusive_column: true,
+            required: GridRadioFormItemRequired::None,
+        })
+        .unwrap()
+        .check_answer(
+            &FormAnswerItemGridRows::from_row_answers(vec![
+                GridRadioRowAnswer {
+                    row_id: row1.id,
+                    value: Some(column2.id),
+                },
+                GridRadioRowAnswer {
+                    row_id: row2.id,
+                    value: None,
+                },
+            ])
+            .unwrap(),
+        )
+        .unwrap();
+    }
+
+    #[test]
+    fn test_answer_mismatched_length() {
+        use crate::model::form_answer::item::{FormAnswerItemGridRows, GridRadioRowAnswer};
+
+        let row1 = test_model::new_form_grid_radio_row();
+        let row2 = test_model::new_form_grid_radio_row();
+        let column1 = test_model::new_form_grid_radio_column();
+        let column2 = test_model::new_form_grid_radio_column();
+
+        assert_eq!(
+            GridRadioFormItem::from_content(GridRadioFormItemContent {
+                rows: GridRadioFormItemRows::from_rows(vec![row1.clone(), row2.clone()]).unwrap(),
+                columns: GridRadioFormItemColumns::from_columns(vec![
+                    column1.clone(),
+                    column2.clone(),
+                ])
+                .unwrap(),
+                exclusive_column: true,
+                required: GridRadioFormItemRequired::All,
+            })
+            .unwrap()
+            .check_answer(
+                &FormAnswerItemGridRows::from_row_answers(vec![GridRadioRowAnswer {
+                    row_id: row1.id,
+                    value: Some(column2.id),
+                }])
+                .unwrap(),
+            )
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::MismatchedRowsLength,
+        );
+    }
+
+    #[test]
+    fn test_answer_mismatched_row_id() {
+        use crate::model::form_answer::item::{FormAnswerItemGridRows, GridRadioRowAnswer};
+
+        let row1 = test_model::new_form_grid_radio_row();
+        let row2 = test_model::new_form_grid_radio_row();
+        let row3 = test_model::new_form_grid_radio_row();
+        let column1 = test_model::new_form_grid_radio_column();
+        let column2 = test_model::new_form_grid_radio_column();
+
+        assert!(matches!(
+            GridRadioFormItem::from_content(GridRadioFormItemContent {
+                rows: GridRadioFormItemRows::from_rows(vec![row1.clone(), row2.clone()]).unwrap(),
+                columns: GridRadioFormItemColumns::from_columns(vec![
+                    column1.clone(),
+                    column2.clone(),
+                ])
+                .unwrap(),
+                exclusive_column: true,
+                required: GridRadioFormItemRequired::All,
+            })
+            .unwrap()
+            .check_answer(
+                &FormAnswerItemGridRows::from_row_answers(vec![
+                    GridRadioRowAnswer {
+                        row_id: row3.id,
+                        value: Some(column2.id),
+                    },
+                    GridRadioRowAnswer {
+                        row_id: row1.id,
+                        value: Some(column1.id),
+                    },
+                ])
+                .unwrap(),
+            )
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::MismatchedGridRadioRowId { .. },
+        ));
+    }
+
+    #[test]
+    fn test_answer_not_answered_rows() {
+        use crate::model::form_answer::item::{FormAnswerItemGridRows, GridRadioRowAnswer};
+
+        let row1 = test_model::new_form_grid_radio_row();
+        let row2 = test_model::new_form_grid_radio_row();
+        let column1 = test_model::new_form_grid_radio_column();
+        let column2 = test_model::new_form_grid_radio_column();
+
+        assert_eq!(
+            GridRadioFormItem::from_content(GridRadioFormItemContent {
+                rows: GridRadioFormItemRows::from_rows(vec![row1.clone(), row2.clone()]).unwrap(),
+                columns: GridRadioFormItemColumns::from_columns(vec![
+                    column1.clone(),
+                    column2.clone(),
+                ])
+                .unwrap(),
+                exclusive_column: true,
+                required: GridRadioFormItemRequired::All,
+            })
+            .unwrap()
+            .check_answer(
+                &FormAnswerItemGridRows::from_row_answers(vec![
+                    GridRadioRowAnswer {
+                        row_id: row1.id,
+                        value: Some(column2.id),
+                    },
+                    GridRadioRowAnswer {
+                        row_id: row2.id,
+                        value: None,
+                    }
+                ])
+                .unwrap(),
+            )
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::NotAnsweredRows,
+        );
+    }
+
+    #[test]
+    fn test_answer_unknown_column_id() {
+        use crate::model::form_answer::item::{FormAnswerItemGridRows, GridRadioRowAnswer};
+
+        let row1 = test_model::new_form_grid_radio_row();
+        let row2 = test_model::new_form_grid_radio_row();
+        let column1 = test_model::new_form_grid_radio_column();
+        let column2 = test_model::new_form_grid_radio_column();
+
+        assert_eq!(
+            GridRadioFormItem::from_content(GridRadioFormItemContent {
+                rows: GridRadioFormItemRows::from_rows(vec![row1.clone(), row2.clone()]).unwrap(),
+                columns: GridRadioFormItemColumns::from_columns(vec![column1.clone()]).unwrap(),
+                exclusive_column: false,
+                required: GridRadioFormItemRequired::None,
+            })
+            .unwrap()
+            .check_answer(
+                &FormAnswerItemGridRows::from_row_answers(vec![
+                    GridRadioRowAnswer {
+                        row_id: row1.id,
+                        value: Some(column2.id),
+                    },
+                    GridRadioRowAnswer {
+                        row_id: row2.id,
+                        value: None,
+                    }
+                ])
+                .unwrap(),
+            )
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::UnknownGridRadioColumnId { id: column2.id },
+        );
+    }
+
+    #[test]
+    fn test_answer_exclusive() {
+        use crate::model::form_answer::item::{FormAnswerItemGridRows, GridRadioRowAnswer};
+
+        let row1 = test_model::new_form_grid_radio_row();
+        let row2 = test_model::new_form_grid_radio_row();
+        let column1 = test_model::new_form_grid_radio_column();
+        let column2 = test_model::new_form_grid_radio_column();
+
+        assert_eq!(
+            GridRadioFormItem::from_content(GridRadioFormItemContent {
+                rows: GridRadioFormItemRows::from_rows(vec![row1.clone(), row2.clone()]).unwrap(),
+                columns: GridRadioFormItemColumns::from_columns(vec![
+                    column1.clone(),
+                    column2.clone(),
+                ])
+                .unwrap(),
+                exclusive_column: true,
+                required: GridRadioFormItemRequired::All,
+            })
+            .unwrap()
+            .check_answer(
+                &FormAnswerItemGridRows::from_row_answers(vec![
+                    GridRadioRowAnswer {
+                        row_id: row1.id,
+                        value: Some(column2.id),
+                    },
+                    GridRadioRowAnswer {
+                        row_id: row2.id,
+                        value: Some(column2.id),
+                    }
+                ])
+                .unwrap(),
+            )
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::NotAllowedDuplicatedColumn { id: column2.id },
+        );
+    }
+}

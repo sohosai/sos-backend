@@ -143,3 +143,182 @@ impl<'de> Deserialize<'de> for IntegerFormItem {
             .map_err(de::Error::custom)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        CheckAnswerErrorKind, FromContentErrorKind, IntegerFormItem, IntegerFormItemContent,
+        IntegerFormItemLimit,
+    };
+
+    #[test]
+    fn test_pass() {
+        IntegerFormItem::from_content(IntegerFormItemContent {
+            is_required: true,
+            max: None,
+            min: None,
+            placeholder: 0,
+            unit: None,
+        })
+        .unwrap();
+
+        IntegerFormItem::from_content(IntegerFormItemContent {
+            is_required: true,
+            max: Some(IntegerFormItemLimit::from_u64(3).unwrap()),
+            min: Some(IntegerFormItemLimit::from_u64(1).unwrap()),
+            placeholder: 1,
+            unit: None,
+        })
+        .unwrap();
+
+        IntegerFormItem::from_content(IntegerFormItemContent {
+            is_required: true,
+            max: Some(IntegerFormItemLimit::from_u64(3).unwrap()),
+            min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
+            placeholder: 3,
+            unit: None,
+        })
+        .unwrap();
+
+        IntegerFormItem::from_content(IntegerFormItemContent {
+            is_required: true,
+            max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
+            min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
+            placeholder: 3,
+            unit: None,
+        })
+        .unwrap();
+    }
+
+    #[test]
+    fn test_placeholder() {
+        assert_eq!(
+            IntegerFormItem::from_content(IntegerFormItemContent {
+                is_required: true,
+                max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
+                min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
+                placeholder: 1,
+                unit: None,
+            })
+            .unwrap_err()
+            .kind(),
+            FromContentErrorKind::TooSmallPlaceholder,
+        );
+
+        assert_eq!(
+            IntegerFormItem::from_content(IntegerFormItemContent {
+                is_required: true,
+                max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
+                min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
+                placeholder: 5,
+                unit: None,
+            })
+            .unwrap_err()
+            .kind(),
+            FromContentErrorKind::TooBigPlaceholder,
+        );
+    }
+
+    #[test]
+    fn test_inconsistent() {
+        assert_eq!(
+            IntegerFormItem::from_content(IntegerFormItemContent {
+                is_required: true,
+                max: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
+                min: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
+                placeholder: 3,
+                unit: None,
+            })
+            .unwrap_err()
+            .kind(),
+            FromContentErrorKind::InconsistentLimits,
+        );
+    }
+
+    #[test]
+    fn test_answer_pass() {
+        IntegerFormItem::from_content(IntegerFormItemContent {
+            is_required: true,
+            max: None,
+            min: None,
+            placeholder: 0,
+            unit: None,
+        })
+        .unwrap()
+        .check_answer(Some(1000))
+        .unwrap();
+
+        IntegerFormItem::from_content(IntegerFormItemContent {
+            is_required: false,
+            max: None,
+            min: None,
+            placeholder: 0,
+            unit: None,
+        })
+        .unwrap()
+        .check_answer(None)
+        .unwrap();
+
+        IntegerFormItem::from_content(IntegerFormItemContent {
+            is_required: false,
+            max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
+            min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
+            placeholder: 3,
+            unit: None,
+        })
+        .unwrap()
+        .check_answer(Some(3))
+        .unwrap();
+    }
+
+    #[test]
+    fn test_answer_not_answered() {
+        assert_eq!(
+            IntegerFormItem::from_content(IntegerFormItemContent {
+                is_required: true,
+                max: None,
+                min: None,
+                placeholder: 0,
+                unit: None,
+            })
+            .unwrap()
+            .check_answer(None)
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::NotAnswered,
+        );
+    }
+
+    #[test]
+    fn test_answer_quantitiy() {
+        assert_eq!(
+            IntegerFormItem::from_content(IntegerFormItemContent {
+                is_required: true,
+                max: None,
+                min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
+                placeholder: 2,
+                unit: None,
+            })
+            .unwrap()
+            .check_answer(Some(0))
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::TooSmall,
+        );
+
+        assert_eq!(
+            IntegerFormItem::from_content(IntegerFormItemContent {
+                is_required: true,
+                max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
+                min: None,
+                placeholder: 0,
+                unit: None,
+            })
+            .unwrap()
+            .check_answer(Some(5))
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::TooBig,
+        );
+    }
+}

@@ -139,3 +139,68 @@ impl RadioFormItem {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{CheckAnswerErrorKind, RadioFormItem, RadioFormItemButtons};
+    use crate::test::model as test_model;
+
+    #[test]
+    fn test_answer_pass() {
+        let button1 = test_model::new_form_radio_button();
+        let button2 = test_model::new_form_radio_button();
+
+        RadioFormItem {
+            buttons: RadioFormItemButtons::from_buttons(vec![button1.clone(), button2.clone()])
+                .unwrap(),
+            is_required: true,
+        }
+        .check_answer(Some(button1.id))
+        .unwrap();
+
+        RadioFormItem {
+            buttons: RadioFormItemButtons::from_buttons(vec![button1.clone(), button2.clone()])
+                .unwrap(),
+            is_required: false,
+        }
+        .check_answer(None)
+        .unwrap();
+    }
+
+    #[test]
+    fn test_answer_not_answered() {
+        let button1 = test_model::new_form_radio_button();
+        let button2 = test_model::new_form_radio_button();
+
+        assert_eq!(
+            RadioFormItem {
+                buttons: RadioFormItemButtons::from_buttons(vec![button1.clone(), button2.clone()])
+                    .unwrap(),
+                is_required: true,
+            }
+            .check_answer(None)
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::NotAnswered,
+        );
+    }
+
+    #[test]
+    fn test_answer_unknown_id() {
+        let button1 = test_model::new_form_radio_button();
+        let button2 = test_model::new_form_radio_button();
+        let button3 = test_model::new_form_radio_button();
+
+        assert_eq!(
+            RadioFormItem {
+                buttons: RadioFormItemButtons::from_buttons(vec![button1.clone(), button2.clone()])
+                    .unwrap(),
+                is_required: true,
+            }
+            .check_answer(Some(button3.id))
+            .unwrap_err()
+            .kind(),
+            CheckAnswerErrorKind::UnknownRadioId { id: button3.id },
+        );
+    }
+}

@@ -1,4 +1,4 @@
-use sos21_domain::model::{
+use crate::model::{
     date_time::DateTime,
     project::{
         Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,

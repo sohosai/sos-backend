@@ -55,3 +55,50 @@ impl Form {
         self.condition.check(project) && project.is_visible_to(user)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::model::{
+        project::ProjectAttributes,
+        project_query::{ProjectQuery, ProjectQueryConjunction},
+    };
+    use crate::test::model as test_model;
+
+    #[test]
+    fn test_visibility_general() {
+        let user = test_model::new_general_user();
+        let operator = test_model::new_operator_user();
+        let form = test_model::new_form(operator.id);
+        assert!(!form.is_visible_to(&user));
+    }
+
+    #[test]
+    fn test_visibility_committee() {
+        let user = test_model::new_committee_user();
+        let operator = test_model::new_operator_user();
+        let form = test_model::new_form(operator.id);
+        assert!(form.is_visible_to(&user));
+    }
+
+    #[test]
+    fn test_visibility_operator() {
+        let user = test_model::new_operator_user();
+        let operator = test_model::new_operator_user();
+        let form = test_model::new_form(operator.id);
+        assert!(form.is_visible_to(&user));
+    }
+
+    #[test]
+    fn test_visibility_general_via_project() {
+        let user = test_model::new_general_user();
+        let user_project = test_model::new_general_project(user.id.clone());
+        let operator = test_model::new_operator_user();
+        let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
+            category: None,
+            attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
+        }])
+        .unwrap();
+        let form = test_model::new_form_with_query(operator.id, tautology_query);
+        assert!(form.is_visible_to_with_project(&user, &user_project));
+    }
+}
