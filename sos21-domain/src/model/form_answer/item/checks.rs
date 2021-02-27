@@ -31,7 +31,7 @@ impl FromCheckedIdsError {
         self.kind
     }
 
-    fn from_length_error(e: collection::LengthError) -> Self {
+    fn from_length_error(e: collection::LengthError<Unbounded, Bounded<typenum::U32>>) -> Self {
         let kind = match e.kind() {
             collection::LengthErrorKind::TooLong => FromCheckedIdsErrorKind::TooLong,
             // TODO: statically assert unreachability

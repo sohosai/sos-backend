@@ -44,7 +44,7 @@ impl FromRowsError {
         self.kind
     }
 
-    fn from_length_error(e: collection::LengthError) -> Self {
+    fn from_length_error(e: collection::BoundedLengthError<typenum::U1, typenum::U32>) -> Self {
         let kind = match e.kind() {
             collection::LengthErrorKind::TooLong => FromRowsErrorKind::TooLong,
             collection::LengthErrorKind::TooShort => FromRowsErrorKind::Empty,
@@ -126,7 +126,7 @@ impl FromColumnsError {
         self.kind
     }
 
-    fn from_length_error(e: collection::LengthError) -> Self {
+    fn from_length_error(e: collection::BoundedLengthError<typenum::U1, typenum::U32>) -> Self {
         let kind = match e.kind() {
             collection::LengthErrorKind::TooLong => FromColumnsErrorKind::TooLong,
             collection::LengthErrorKind::TooShort => FromColumnsErrorKind::Empty,

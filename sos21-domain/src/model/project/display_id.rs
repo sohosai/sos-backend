@@ -36,7 +36,7 @@ pub struct DisplayIdError {
 }
 
 impl DisplayIdError {
-    fn from_length_error(err: string::LengthError) -> Self {
+    fn from_length_error(err: string::BoundedLengthError<typenum::U3, typenum::U64>) -> Self {
         DisplayIdError {
             kind: DisplayIdErrorKind::from_length_error_kind(err.kind()),
         }

@@ -26,7 +26,7 @@ pub struct LengthLimitedString<Lower, Upper, S> {
 pub type LengthBoundedString<Min, Max, S> = LengthLimitedString<Bounded<Min>, Bounded<Max>, S>;
 
 impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
-    pub fn new(s: S) -> Result<Self, LengthError>
+    pub fn new(s: S) -> Result<Self, LengthError<Lower, Upper>>
     where
         S: AsRef<str>,
         Lower: Bound<usize>,
@@ -37,6 +37,8 @@ impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
             if len < lower {
                 return Err(LengthError {
                     kind: LengthErrorKind::TooShort,
+                    _upper: PhantomData,
+                    _lower: PhantomData,
                 });
             }
         }
@@ -44,6 +46,8 @@ impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
             if len > upper {
                 return Err(LengthError {
                     kind: LengthErrorKind::TooLong,
+                    _upper: PhantomData,
+                    _lower: PhantomData,
                 });
             }
         }
@@ -71,13 +75,25 @@ pub enum LengthErrorKind {
     TooShort,
 }
 
-#[derive(Debug, Error, Clone)]
+pub type BoundedLengthError<Min, Max> = LengthError<Bounded<Min>, Bounded<Max>>;
+
+#[derive(Error, Clone)]
 #[error("the string's length is out of bounds")]
-pub struct LengthError {
+pub struct LengthError<Lower, Upper> {
     kind: LengthErrorKind,
+    _lower: PhantomData<Lower>,
+    _upper: PhantomData<Upper>,
 }
 
-impl LengthError {
+impl<Lower, Upper> Debug for LengthError<Lower, Upper> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("LengthError")
+            .field("kind", &self.kind)
+            .finish()
+    }
+}
+
+impl<Lower, Upper> LengthError<Lower, Upper> {
     pub fn kind(&self) -> LengthErrorKind {
         self.kind
     }
@@ -89,7 +105,7 @@ where
     Lower: Bound<usize>,
     Upper: Bound<usize>,
 {
-    type Error = LengthError;
+    type Error = LengthError<Lower, Upper>;
     fn try_from(s: String) -> Result<Self, Self::Error> {
         LengthLimitedString::new(s)
     }
@@ -125,7 +141,7 @@ where
     Lower: Bound<usize>,
     Upper: Bound<usize>,
 {
-    type Err = LengthError;
+    type Err = LengthError<Lower, Upper>;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.to_owned();
         LengthLimitedString::new(s)

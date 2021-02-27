@@ -39,7 +39,10 @@ impl SizeError {
         self.kind
     }
 
-    fn from_conj_error(e: collection::LengthError, idx: usize) -> Self {
+    fn from_conj_error(
+        e: collection::LengthError<Unbounded, Bounded<typenum::U16>>,
+        idx: usize,
+    ) -> Self {
         let kind = match e.kind() {
             collection::LengthErrorKind::TooLong => SizeErrorKind::TooLongConjunction(idx),
             // TODO: statically assert unreachability
@@ -48,7 +51,7 @@ impl SizeError {
         SizeError { kind }
     }
 
-    fn from_disj_error(e: collection::LengthError) -> Self {
+    fn from_disj_error(e: collection::LengthError<Unbounded, Bounded<typenum::U16>>) -> Self {
         let kind = match e.kind() {
             collection::LengthErrorKind::TooLong => SizeErrorKind::TooLongDisjunction,
             // TODO: statically assert unreachability

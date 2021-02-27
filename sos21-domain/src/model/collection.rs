@@ -23,7 +23,7 @@ macro_rules! length_limited_collection {
 
         #[allow(dead_code)]
         impl<Lower, Upper, T> $name<Lower, Upper, T> {
-            pub fn new(v: $t<T>) -> Result<Self, LengthError>
+            pub fn new(v: $t<T>) -> Result<Self, LengthError<Lower, Upper>>
             where
                 Lower: Bound<usize>,
                 Upper: Bound<usize>,
@@ -33,6 +33,8 @@ macro_rules! length_limited_collection {
                     if len < lower {
                         return Err(LengthError {
                             kind: LengthErrorKind::TooShort,
+                            _upper: PhantomData,
+                            _lower: PhantomData,
                         });
                     }
                 }
@@ -40,6 +42,8 @@ macro_rules! length_limited_collection {
                     if len > upper {
                         return Err(LengthError {
                             kind: LengthErrorKind::TooLong,
+                            _upper: PhantomData,
+                            _lower: PhantomData,
                         });
                     }
                 }
@@ -108,13 +112,25 @@ pub enum LengthErrorKind {
     TooShort,
 }
 
-#[derive(Debug, Error, Clone)]
+pub type BoundedLengthError<Min, Max> = LengthError<Bounded<Min>, Bounded<Max>>;
+
+#[derive(Error, Clone)]
 #[error("the collection's length is out of bounds")]
-pub struct LengthError {
+pub struct LengthError<Lower, Upper> {
     kind: LengthErrorKind,
+    _lower: PhantomData<Lower>,
+    _upper: PhantomData<Upper>,
 }
 
-impl LengthError {
+impl<Lower, Upper> Debug for LengthError<Lower, Upper> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("LengthError")
+            .field("kind", &self.kind)
+            .finish()
+    }
+}
+
+impl<Lower, Upper> LengthError<Lower, Upper> {
     pub fn kind(&self) -> LengthErrorKind {
         self.kind
     }
@@ -144,12 +160,14 @@ where
     Upper: Bound<usize>,
     T: Eq + Hash,
 {
-    pub fn insert(&mut self, value: T) -> Result<bool, LengthError> {
+    pub fn insert(&mut self, value: T) -> Result<bool, LengthError<Lower, Upper>> {
         let is_inserted = self.inner.insert(value);
         if let Some(upper) = Upper::limit() {
             if self.inner.len() > upper {
                 return Err(LengthError {
                     kind: LengthErrorKind::TooLong,
+                    _upper: PhantomData,
+                    _lower: PhantomData,
                 });
             }
         }
