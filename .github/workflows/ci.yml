@@ -14,6 +14,17 @@ jobs:
           name: sos21-backend
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - run: nix-build
+  build-shell:
+    name: Build shell
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: sos21-backend
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: nix-build shell.nix -A nativeBuildInputs
   fmt:
     name: Rustfmt
     runs-on: ubuntu-18.04
