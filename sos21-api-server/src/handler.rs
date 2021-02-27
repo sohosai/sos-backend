@@ -112,7 +112,7 @@ macro_rules! handler {
         $($param:ident : $ty:ty),* $(,)?
     ) -> HandlerResult<$resp:ty, $err:ty> $body:block) => {
         $vis async fn $name(
-            $(, $param: $ty)*
+            $($param: $ty),*
         ) -> Result<impl ::warp::reply::Reply, ::warp::reject::Rejection> {
             let result: HandlerResult<$resp, $err> = $body;
             crate::handler::handle_handler_result(result)

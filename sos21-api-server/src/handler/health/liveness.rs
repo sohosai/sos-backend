@@ -1,7 +1,10 @@
 use crate::handler::{HandlerResponse, HandlerResult};
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use warp::http::StatusCode;
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Request {}
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Response {
@@ -25,6 +28,6 @@ impl HandlerResponse for Response {
 }
 
 #[apply_macro::apply(handler)]
-pub async fn handler() -> HandlerResult<Response, Error> {
+pub async fn handler(_request: Request) -> HandlerResult<Response, Error> {
     Ok(Response { ok: true })
 }
