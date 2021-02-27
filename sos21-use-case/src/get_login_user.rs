@@ -14,7 +14,7 @@ pub async fn run<C>(ctx: &Login<C>) -> UseCaseResult<User, Infallible> {
 mod tests {
     use crate::get_login_user;
     use crate::model::user::{UserId, UserName};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     #[tokio::test]
     async fn test_get() {

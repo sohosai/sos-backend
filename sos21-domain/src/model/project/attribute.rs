@@ -1,15 +1,16 @@
 use std::collections::HashSet;
 
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum ProjectAttribute {
     Academic,
     Artistic,
     Committee,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct ProjectAttributes(HashSet<ProjectAttribute>);
 
 #[derive(Debug, Error, Clone)]
@@ -34,6 +35,10 @@ impl ProjectAttributes {
 
     pub fn contains(&self, attribute: ProjectAttribute) -> bool {
         self.0.contains(&attribute)
+    }
+
+    pub fn is_subset(&self, attributes: &ProjectAttributes) -> bool {
+        self.0.is_subset(&attributes.0)
     }
 
     pub fn attributes(&self) -> impl Iterator<Item = ProjectAttribute> + '_ {

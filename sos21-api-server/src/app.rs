@@ -53,3 +53,15 @@ sos21_domain::delegate_project_repository! {
         self { &self.database }
     }
 }
+
+sos21_domain::delegate_form_repository! {
+    impl FormRepository for Context {
+        self { &self.database }
+    }
+}
+
+sos21_domain::delegate_form_answer_repository! {
+    impl FormAnswerRepository for Context {
+        self { &self.database }
+    }
+}

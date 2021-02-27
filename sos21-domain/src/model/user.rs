@@ -81,7 +81,7 @@ impl User {
 
 #[cfg(test)]
 mod tests {
-    use sos21_domain_test::model as test_model;
+    use crate::test::model as test_model;
 
     #[test]
     fn test_visibility_general_self() {

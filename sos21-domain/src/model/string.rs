@@ -3,10 +3,13 @@ use std::fmt::{self, Debug, Display};
 use std::marker::PhantomData;
 use std::str::FromStr;
 
+use serde::{
+    de::{self, Deserialize, Deserializer},
+    ser::{Serialize, Serializer},
+};
 use thiserror::Error;
 
-mod bound;
-pub use bound::{Bound, Bounded, Unbounded};
+use crate::model::bound::{Bound, Bounded};
 
 /// A length-limited string.
 ///
@@ -16,23 +19,26 @@ pub use bound::{Bound, Bounded, Unbounded};
 pub struct LengthLimitedString<Lower, Upper, S> {
     _lower: PhantomData<Lower>,
     _upper: PhantomData<Upper>,
+    len: usize,
     inner: S,
 }
 
 pub type LengthBoundedString<Min, Max, S> = LengthLimitedString<Bounded<Min>, Bounded<Max>, S>;
 
 impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
-    pub fn new(s: S) -> Result<Self, LengthError>
+    pub fn new(s: S) -> Result<Self, LengthError<Lower, Upper>>
     where
         S: AsRef<str>,
-        Lower: Bound,
-        Upper: Bound,
+        Lower: Bound<usize>,
+        Upper: Bound<usize>,
     {
         let len = s.as_ref().chars().count();
         if let Some(lower) = Lower::limit() {
             if len < lower {
                 return Err(LengthError {
                     kind: LengthErrorKind::TooShort,
+                    _upper: PhantomData,
+                    _lower: PhantomData,
                 });
             }
         }
@@ -40,6 +46,8 @@ impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
             if len > upper {
                 return Err(LengthError {
                     kind: LengthErrorKind::TooLong,
+                    _upper: PhantomData,
+                    _lower: PhantomData,
                 });
             }
         }
@@ -47,8 +55,13 @@ impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
         Ok(LengthLimitedString {
             _upper: PhantomData,
             _lower: PhantomData,
+            len,
             inner: s,
         })
+    }
+
+    pub fn len(&self) -> usize {
+        self.len
     }
 
     pub fn into_inner(self) -> S {
@@ -62,13 +75,25 @@ pub enum LengthErrorKind {
     TooShort,
 }
 
-#[derive(Debug, Error, Clone)]
+pub type BoundedLengthError<Min, Max> = LengthError<Bounded<Min>, Bounded<Max>>;
+
+#[derive(Error, Clone)]
 #[error("the string's length is out of bounds")]
-pub struct LengthError {
+pub struct LengthError<Lower, Upper> {
     kind: LengthErrorKind,
+    _lower: PhantomData<Lower>,
+    _upper: PhantomData<Upper>,
 }
 
-impl LengthError {
+impl<Lower, Upper> Debug for LengthError<Lower, Upper> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("LengthError")
+            .field("kind", &self.kind)
+            .finish()
+    }
+}
+
+impl<Lower, Upper> LengthError<Lower, Upper> {
     pub fn kind(&self) -> LengthErrorKind {
         self.kind
     }
@@ -77,10 +102,10 @@ impl LengthError {
 // This cannot be generic because of the blanket impl `TryFrom<T> for U where U: Into<T>`
 impl<Lower, Upper> TryFrom<String> for LengthLimitedString<Lower, Upper, String>
 where
-    Lower: Bound,
-    Upper: Bound,
+    Lower: Bound<usize>,
+    Upper: Bound<usize>,
 {
-    type Error = LengthError;
+    type Error = LengthError<Lower, Upper>;
     fn try_from(s: String) -> Result<Self, Self::Error> {
         LengthLimitedString::new(s)
     }
@@ -113,13 +138,39 @@ impl<Lower, Upper, S: Debug> Debug for LengthLimitedString<Lower, Upper, S> {
 
 impl<Lower, Upper> FromStr for LengthLimitedString<Lower, Upper, String>
 where
-    Lower: Bound,
-    Upper: Bound,
+    Lower: Bound<usize>,
+    Upper: Bound<usize>,
 {
-    type Err = LengthError;
+    type Err = LengthError<Lower, Upper>;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.to_owned();
         LengthLimitedString::new(s)
+    }
+}
+
+impl<Lower, Upper, S> Serialize for LengthLimitedString<Lower, Upper, S>
+where
+    S: Serialize,
+{
+    fn serialize<Ser>(&self, serializer: Ser) -> Result<Ser::Ok, Ser::Error>
+    where
+        Ser: Serializer,
+    {
+        self.inner.serialize(serializer)
+    }
+}
+
+impl<'de, Lower, Upper, S> Deserialize<'de> for LengthLimitedString<Lower, Upper, S>
+where
+    Lower: Bound<usize>,
+    Upper: Bound<usize>,
+    S: Deserialize<'de> + AsRef<str>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        LengthLimitedString::new(S::deserialize(deserializer)?).map_err(de::Error::custom)
     }
 }
 
@@ -213,7 +264,8 @@ impl FromStr for KanaString<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{Bounded, KanaString, LengthLimitedString, Unbounded};
+    use super::{KanaString, LengthLimitedString};
+    use crate::model::bound::{Bounded, Unbounded};
     use std::str::FromStr;
 
     #[test]

@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["coord.e <me@coord-e.com>"]
 edition = "2018"
 
+[features]
+# TODO: get rid of this confusing flag (related: rust-lang/rust#79381)
+test = ["tokio", "maplit", "futures", "uuid/v4"]
+
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 thiserror = "1"
@@ -12,7 +16,15 @@ uuid = { version = "0.8", features = ["serde"] }
 typenum = "1"
 async-trait = "0.1.42"
 anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+
+# these optional dependencies are used by `test` feature (which is enabled for the use from other crates)
+tokio = { version = "1", optional = true, features = ["macros", "rt-multi-thread"] }
+maplit = { version = "1", optional = true }
+futures = { version = "0.3", optional = true }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-sos21-domain-test = { path = "test" }
+maplit = "1"
+futures = "0.3"
+uuid = { version = "0.8", features = ["v4"] }

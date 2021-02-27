@@ -229,7 +229,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate::{export_users, UseCaseError};
-    use sos21_domain_test as test;
+    use sos21_domain::test;
 
     fn mock_input() -> export_users::Input {
         let field_names = export_users::InputFieldNames {

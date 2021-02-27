@@ -15,4 +15,4 @@ sos21-domain = { path = "../sos21-domain" }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-sos21-domain-test = { path = "../sos21-domain/test" }
+sos21-domain = { path = "../sos21-domain", features = ["test"] }

@@ -36,7 +36,7 @@ pub struct DisplayIdError {
 }
 
 impl DisplayIdError {
-    fn from_length_error(err: string::LengthError) -> Self {
+    fn from_length_error(err: string::BoundedLengthError<typenum::U3, typenum::U64>) -> Self {
         DisplayIdError {
             kind: DisplayIdErrorKind::from_length_error_kind(err.kind()),
         }
@@ -143,7 +143,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_unavailable() {
-        use sos21_domain_test as test;
+        use crate::test;
 
         let user = test::model::new_general_user();
         let project = test::model::new_general_project(user.id.clone());
@@ -157,7 +157,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_available() {
-        use sos21_domain_test as test;
+        use crate::test;
 
         let user = test::model::new_general_user();
         let project_id = test::model::new_project_display_id();

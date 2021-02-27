@@ -9,6 +9,7 @@ anyhow = "1"
 futures = "0.3"
 async-trait = "0.1.42"
 ref-cast = "1"
+bincode = "1"
 sos21-database = { path = "../../sos21-database" }
 sos21-domain = { path = "../../sos21-domain" }
 sqlx = { git = "https://github.com/launchbadge/sqlx", features = ["postgres"] }
