@@ -12,4 +12,4 @@ ref-cast = "1"
 bincode = "1"
 sos21-database = { path = "../../sos21-database" }
 sos21-domain = { path = "../../sos21-domain" }
-sqlx = { git = "https://github.com/launchbadge/sqlx", features = ["postgres"] }
+sqlx = { version = "0.5", features = ["postgres"] }

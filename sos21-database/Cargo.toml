@@ -13,5 +13,5 @@ bitflags = "1"
 bincode = "1"
 
 [dependencies.sqlx]
-git = "https://github.com/launchbadge/sqlx"
+version = "0.5"
 features = ["macros", "postgres", "chrono", "uuid", "bit-vec", "offline", "runtime-tokio-rustls"]
