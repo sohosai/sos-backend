@@ -4,12 +4,15 @@ use crate::app::Context;
 use crate::handler::model::user::User;
 use crate::handler::{HandlerResponse, HandlerResult};
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
 use sos21_use_case::get_login_user;
 use warp::http::StatusCode;
 
 pub mod project;
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Request {}
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Response {
@@ -39,7 +42,7 @@ impl From<Infallible> for Error {
 }
 
 #[apply_macro::apply(handler)]
-pub async fn handler(ctx: Login<Context>) -> HandlerResult<Response, Error> {
+pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
     let user = get_login_user::run(&ctx).await?;
     let user = User::from_use_case(user);
     Ok(Response { user })
