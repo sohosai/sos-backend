@@ -93,7 +93,7 @@ pub fn endpoints(
                 / "export" => GET (handler::form::answer::export),
             }
         },
-        / "form_answer" {
+        / "form-answer" {
             / "get" => GET (handler::form_answer::get),
         },
         / "user" {

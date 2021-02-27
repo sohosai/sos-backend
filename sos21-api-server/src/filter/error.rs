@@ -55,7 +55,7 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
         match err {
             AuthenticationError::Unauthorized => Error {
                 error: ErrorBody::Authentication {
-                    id: AuthenticationErrorId::Unauthrized,
+                    id: AuthenticationErrorId::Unauthorized,
                 },
                 status: StatusCode::UNAUTHORIZED,
             },
