@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use crate::model::collection::{self, LengthBoundedVec};
 use crate::model::form_answer::item::{FormAnswerItem, FormAnswerItemBody, FormAnswerItems};
@@ -36,10 +36,6 @@ pub enum FromItemsErrorKind {
     Empty,
     TooLong,
     DuplicatedFormItemId(FormItemId),
-    DuplicatedCheckboxId(checkbox::CheckboxId),
-    DuplicatedRadioId(radio::RadioId),
-    DuplicatedGridRadioRowId(grid_radio::GridRadioRowId),
-    DuplicatedGridRadioColumnId(grid_radio::GridRadioColumnId),
     MismatchedConditionType {
         provenance: FormItemId,
         id: FormItemId,
@@ -395,10 +391,6 @@ impl FormItemBody {
 #[derive(Default)]
 struct CheckFormItems {
     items: HashMap<FormItemId, FormItem>,
-    boxes: HashSet<checkbox::CheckboxId>,
-    buttons: HashSet<radio::RadioId>,
-    grid_rows: HashSet<grid_radio::GridRadioRowId>,
-    grid_columns: HashSet<grid_radio::GridRadioColumnId>,
 }
 
 impl CheckFormItems {
@@ -423,11 +415,11 @@ impl CheckFormItems {
             self.check_conditions(item.id, conditions)?;
         }
 
-        self.check_body(&item.body)
+        Ok(())
     }
 
     fn check_conditions(
-        &mut self,
+        &self,
         item_id: FormItemId,
         conditions: &FormItemConditions,
     ) -> Result<(), FromItemsError> {
@@ -441,7 +433,7 @@ impl CheckFormItems {
     }
 
     fn check_condition(
-        &mut self,
+        &self,
         provenance: FormItemId,
         condition: &FormItemCondition,
     ) -> Result<(), FromItemsError> {
@@ -461,7 +453,7 @@ impl CheckFormItems {
     }
 
     fn check_checkbox_condition(
-        &mut self,
+        &self,
         provenance: FormItemId,
         target_id: FormItemId,
         checkbox_id: checkbox::CheckboxId,
@@ -478,8 +470,8 @@ impl CheckFormItems {
             }
         };
 
-        match item.body {
-            FormItemBody::Checkbox(_) => {}
+        let item = match &item.body {
+            FormItemBody::Checkbox(item) => item,
             _ => {
                 return Err(FromItemsError {
                     kind: FromItemsErrorKind::MismatchedConditionType {
@@ -488,9 +480,13 @@ impl CheckFormItems {
                     },
                 })
             }
-        }
+        };
 
-        if !self.boxes.contains(&checkbox_id) {
+        if item
+            .boxes()
+            .find(|checkbox| checkbox.id == checkbox_id)
+            .is_none()
+        {
             return Err(FromItemsError {
                 kind: FromItemsErrorKind::UnknownCheckboxIdInConditions {
                     provenance,
@@ -503,7 +499,7 @@ impl CheckFormItems {
     }
 
     fn check_radio_condition(
-        &mut self,
+        &self,
         provenance: FormItemId,
         target_id: FormItemId,
         radio_id: radio::RadioId,
@@ -520,8 +516,8 @@ impl CheckFormItems {
             }
         };
 
-        match item.body {
-            FormItemBody::Radio(_) => {}
+        let item = match &item.body {
+            FormItemBody::Radio(item) => item,
             _ => {
                 return Err(FromItemsError {
                     kind: FromItemsErrorKind::MismatchedConditionType {
@@ -530,9 +526,13 @@ impl CheckFormItems {
                     },
                 })
             }
-        }
+        };
 
-        if !self.buttons.contains(&radio_id) {
+        if item
+            .buttons()
+            .find(|button| button.id == radio_id)
+            .is_none()
+        {
             return Err(FromItemsError {
                 kind: FromItemsErrorKind::UnknownRadioIdInConditions {
                     provenance,
@@ -545,7 +545,7 @@ impl CheckFormItems {
     }
 
     fn check_grid_radio_condition(
-        &mut self,
+        &self,
         provenance: FormItemId,
         target_id: FormItemId,
         column_id: grid_radio::GridRadioColumnId,
@@ -562,8 +562,8 @@ impl CheckFormItems {
             }
         };
 
-        match item.body {
-            FormItemBody::GridRadio(_) => {}
+        let item = match &item.body {
+            FormItemBody::GridRadio(item) => item,
             _ => {
                 return Err(FromItemsError {
                     kind: FromItemsErrorKind::MismatchedConditionType {
@@ -572,68 +572,19 @@ impl CheckFormItems {
                     },
                 })
             }
-        }
+        };
 
-        if !self.grid_columns.contains(&column_id) {
+        if item
+            .columns()
+            .find(|column| column.id == column_id)
+            .is_none()
+        {
             return Err(FromItemsError {
                 kind: FromItemsErrorKind::UnknownGridRadioColumnIdInConditions {
                     provenance,
                     id: column_id,
                 },
             });
-        }
-
-        Ok(())
-    }
-
-    fn check_body(&mut self, body: &FormItemBody) -> Result<(), FromItemsError> {
-        match body {
-            FormItemBody::Text(_) | FormItemBody::Integer(_) => Ok(()),
-            FormItemBody::Checkbox(item) => self.check_checkbox_item(&item),
-            FormItemBody::Radio(item) => self.check_radio_item(&item),
-            FormItemBody::GridRadio(item) => self.check_grid_radio_item(&item),
-        }
-    }
-
-    fn check_checkbox_item(&mut self, item: &CheckboxFormItem) -> Result<(), FromItemsError> {
-        for checkbox in item.boxes() {
-            if !self.boxes.insert(checkbox.id) {
-                return Err(FromItemsError {
-                    kind: FromItemsErrorKind::DuplicatedCheckboxId(checkbox.id),
-                });
-            }
-        }
-
-        Ok(())
-    }
-
-    fn check_radio_item(&mut self, item: &RadioFormItem) -> Result<(), FromItemsError> {
-        for button in item.buttons.buttons() {
-            if !self.buttons.insert(button.id) {
-                return Err(FromItemsError {
-                    kind: FromItemsErrorKind::DuplicatedRadioId(button.id),
-                });
-            }
-        }
-
-        Ok(())
-    }
-
-    fn check_grid_radio_item(&mut self, item: &GridRadioFormItem) -> Result<(), FromItemsError> {
-        for row in item.rows() {
-            if !self.grid_rows.insert(row.id) {
-                return Err(FromItemsError {
-                    kind: FromItemsErrorKind::DuplicatedGridRadioRowId(row.id),
-                });
-            }
-        }
-
-        for column in item.columns() {
-            if !self.grid_columns.insert(column.id) {
-                return Err(FromItemsError {
-                    kind: FromItemsErrorKind::DuplicatedGridRadioColumnId(column.id),
-                });
-            }
         }
 
         Ok(())
@@ -668,22 +619,6 @@ mod tests {
                 .unwrap_err()
                 .kind(),
             FromItemsErrorKind::DuplicatedFormItemId(item.id)
-        );
-    }
-
-    #[test]
-    fn test_duplicate_radio_id() {
-        let button = test_model::new_form_radio_button();
-        let body = test_model::new_radio_form_item_body_with_button(button.clone());
-        assert_eq!(
-            CheckFormItems::default()
-                .check_items(&[
-                    test_model::new_form_item_with_body(body.clone()),
-                    test_model::new_form_item_with_body(body),
-                ])
-                .unwrap_err()
-                .kind(),
-            FromItemsErrorKind::DuplicatedRadioId(button.id)
         );
     }
 

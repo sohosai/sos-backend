@@ -1,5 +1,4 @@
 use crate::app::Context;
-use crate::handler::model::form::item::{CheckboxId, GridRadioColumnId, GridRadioRowId, RadioId};
 use crate::handler::model::form::{Form, FormCondition, FormItem, FormItemId};
 use crate::handler::{HandlerResponse, HandlerResult};
 
@@ -37,10 +36,6 @@ pub enum Error {
     InvalidFormItem { id: FormItemId },
     InvalidFormPeriod,
     DuplicatedFormItemId(FormItemId),
-    DuplicatedCheckboxId(CheckboxId),
-    DuplicatedRadioId(RadioId),
-    DuplicatedGridRadioRowId(GridRadioRowId),
-    DuplicatedGridRadioColumnId(GridRadioColumnId),
     InsufficientPermissions,
 }
 
@@ -51,10 +46,6 @@ impl HandlerResponse for Error {
             Error::InvalidFormItem { .. } => StatusCode::BAD_REQUEST,
             Error::InvalidFormPeriod => StatusCode::BAD_REQUEST,
             Error::DuplicatedFormItemId { .. } => StatusCode::BAD_REQUEST,
-            Error::DuplicatedCheckboxId { .. } => StatusCode::BAD_REQUEST,
-            Error::DuplicatedRadioId { .. } => StatusCode::BAD_REQUEST,
-            Error::DuplicatedGridRadioRowId { .. } => StatusCode::BAD_REQUEST,
-            Error::DuplicatedGridRadioColumnId { .. } => StatusCode::BAD_REQUEST,
             Error::InsufficientPermissions => StatusCode::FORBIDDEN,
         }
     }
@@ -77,18 +68,6 @@ impl From<create_form::Error> for Error {
             create_form::Error::InvalidPeriod => Error::InvalidFormPeriod,
             create_form::Error::DuplicatedItemId(id) => {
                 Error::DuplicatedFormItemId(FormItemId::from_use_case(id))
-            }
-            create_form::Error::DuplicatedCheckboxId(id) => {
-                Error::DuplicatedCheckboxId(CheckboxId::from_use_case(id))
-            }
-            create_form::Error::DuplicatedRadioId(id) => {
-                Error::DuplicatedRadioId(RadioId::from_use_case(id))
-            }
-            create_form::Error::DuplicatedGridRadioRowId(id) => {
-                Error::DuplicatedGridRadioRowId(GridRadioRowId::from_use_case(id))
-            }
-            create_form::Error::DuplicatedGridRadioColumnId(id) => {
-                Error::DuplicatedGridRadioColumnId(GridRadioColumnId::from_use_case(id))
             }
             create_form::Error::InsufficientPermissions => Error::InsufficientPermissions,
         }

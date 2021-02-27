@@ -114,6 +114,10 @@ impl CheckAnswerError {
 }
 
 impl RadioFormItem {
+    pub fn buttons(&self) -> impl Iterator<Item = &'_ Radio> {
+        self.buttons.buttons()
+    }
+
     pub fn check_answer(&self, answer: Option<RadioId>) -> Result<(), CheckAnswerError> {
         let answer = match (self.is_required, answer) {
             (true, None) => {

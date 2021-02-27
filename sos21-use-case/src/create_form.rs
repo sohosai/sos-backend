@@ -203,10 +203,6 @@ pub enum Error {
     NoItems,
     TooManyItems,
     DuplicatedItemId(FormItemId),
-    DuplicatedCheckboxId(CheckboxId),
-    DuplicatedRadioId(RadioId),
-    DuplicatedGridRadioRowId(GridRadioRowId),
-    DuplicatedGridRadioColumnId(GridRadioColumnId),
     InvalidItem(FormItemId, ItemError),
     InvalidCondition(ConditionError),
     InsufficientPermissions,
@@ -219,18 +215,6 @@ impl Error {
             item::FromItemsErrorKind::TooLong => Error::TooManyItems,
             item::FromItemsErrorKind::DuplicatedFormItemId(id) => {
                 Error::DuplicatedItemId(FormItemId::from_entity(id))
-            }
-            item::FromItemsErrorKind::DuplicatedCheckboxId(id) => {
-                Error::DuplicatedCheckboxId(CheckboxId::from_entity(id))
-            }
-            item::FromItemsErrorKind::DuplicatedRadioId(id) => {
-                Error::DuplicatedRadioId(RadioId::from_entity(id))
-            }
-            item::FromItemsErrorKind::DuplicatedGridRadioRowId(id) => {
-                Error::DuplicatedGridRadioRowId(GridRadioRowId::from_entity(id))
-            }
-            item::FromItemsErrorKind::DuplicatedGridRadioColumnId(id) => {
-                Error::DuplicatedGridRadioColumnId(GridRadioColumnId::from_entity(id))
             }
             item::FromItemsErrorKind::MismatchedConditionType { provenance, id } => {
                 Error::InvalidItem(
