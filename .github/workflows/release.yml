@@ -1,0 +1,27 @@
+on:
+  push:
+    tags: ["*"]
+
+name: Release
+
+jobs:
+  push-image:
+    name: Push image
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: sos21-backend
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Build the image
+        run: docker load < $(nix-build nix/image.nix --argstr tag latest --argstr name sos21-backend)
+      - name: Tag the image
+        run: |
+          docker tag sos21-backend:latest "docker.pkg.github.com/sohosai/sos21-backend/sos21-backend:latest"
+          docker tag sos21-backend:latest "docker.pkg.github.com/sohosai/sos21-backend/sos21-backend:${GITHUB_REF#refs/tags/}"
+      - name: Login to the registry
+        run: echo '${{ secrets.GITHUB_TOKEN }}' | docker login docker.pkg.github.com -u '${{ github.actor }}' --password-stdin
+      - name: Push the image
+        run: docker push --all-tags "docker.pkg.github.com/sohosai/sos21-backend/sos21-backend"
