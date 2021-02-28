@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["InvalidProjectDescription",""],["ProjectDescription","A description text of projects, whose length is 1 ..= 1024 chars."]]});

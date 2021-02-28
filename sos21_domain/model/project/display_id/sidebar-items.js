@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["DisplayIdErrorKind",""]],"fn":[["is_valid_display_id_character",""],["validate_display_id",""]],"struct":[["DisplayIdError",""],["ProjectDisplayId","A project's display ID consists of lowercase alphanumeric or '_' characters whose length is 3~64."]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["authentication",""],["form_answer_repository",""],["form_repository",""],["login",""],["project_repository",""],["user_repository",""]],"trait":[["FormAnswerRepository",""],["FormRepository",""],["ProjectRepository",""],["UserRepository",""]]});

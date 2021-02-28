@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["CheckAnswerErrorKind",""],["FromButtonsErrorKind",""]],"mod":[["radio",""]],"struct":[["CheckAnswerError",""],["FromButtonsError",""],["RadioFormItem",""],["RadioFormItemButtons",""]]});

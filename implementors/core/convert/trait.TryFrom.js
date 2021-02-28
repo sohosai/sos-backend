@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["sos21_domain"] = [{"text":"impl&lt;Lower, Upper&gt; TryFrom&lt;String&gt; for LengthLimitedString&lt;Lower, Upper, String&gt; <span class=\"where fmt-newline\">where<br>&nbsp;&nbsp;&nbsp;&nbsp;Lower: Bound&lt;usize&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;Upper: Bound&lt;usize&gt;,&nbsp;</span>","synthetic":false,"types":[]},{"text":"impl TryFrom&lt;String&gt; for KanaString&lt;String&gt;","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

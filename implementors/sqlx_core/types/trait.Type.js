@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["sos21_database"] = [{"text":"impl Type&lt;Postgres&gt; for ProjectCategory","synthetic":false,"types":[]},{"text":"impl Type&lt;Postgres&gt; for ProjectAttributes","synthetic":false,"types":[]},{"text":"impl Type&lt;Postgres&gt; for UserRole","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

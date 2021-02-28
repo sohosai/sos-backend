@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["mock_phone_number",""],["mock_user_affiliation",""],["mock_user_email_address",""],["mock_user_kana_name",""],["mock_user_name",""],["new_admin_user",""],["new_committee_user",""],["new_general_user",""],["new_operator_user",""],["new_user",""],["new_user_id",""]]});
