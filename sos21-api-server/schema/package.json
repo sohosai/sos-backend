@@ -1,0 +1,28 @@
+{
+  "name": "sos21-api-server-schema",
+  "version": "0.1.0",
+  "description": "OpenAPI schema for sos21-api-server",
+  "main": "index.js",
+  "scripts": {
+    "lint:spectral": "spectral lint ./api.yml -F hint",
+    "lint:prettier": "prettier --check .",
+    "lint": "run-p lint:*",
+    "build:doc": "redoc-cli bundle ./api.yml"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sohosai/sos21-backend.git"
+  },
+  "author": "coord_e",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sohosai/sos21-backend/issues"
+  },
+  "homepage": "https://github.com/sohosai/sos21-backend#readme",
+  "devDependencies": {
+    "@stoplight/spectral": "^5.8.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
+    "redoc-cli": "^0.10.2"
+  }
+}

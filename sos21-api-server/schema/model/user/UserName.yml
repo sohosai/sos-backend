@@ -1,0 +1,15 @@
+title: UserName
+type: object
+description: ""
+x-tags:
+  - user
+properties:
+  first:
+    type: string
+    example: 太郎
+  last:
+    type: string
+    example: 雙峰
+required:
+  - first
+  - last

@@ -1,0 +1,34 @@
+title: Form
+type: object
+x-examples: {}
+properties:
+  id:
+    $ref: ./FormId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  author_id:
+    $ref: ../user/UserId.yml
+  name:
+    type: string
+  description:
+    type: string
+  starts_at:
+    $ref: ../DateTime.yml
+  ends_at:
+    $ref: ../DateTime.yml
+  items:
+    type: array
+    items:
+      $ref: ./item/FormItem.yml
+  condition:
+    $ref: ./FormCondition.yml
+required:
+  - id
+  - created_at
+  - author_id
+  - name
+  - description
+  - starts_at
+  - ends_at
+  - items
+  - condition

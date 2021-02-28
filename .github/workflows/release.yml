@@ -25,3 +25,17 @@ jobs:
         run: echo '${{ secrets.GITHUB_TOKEN }}' | docker login docker.pkg.github.com -u '${{ github.actor }}' --password-stdin
       - name: Push the image
         run: docker push --all-tags "docker.pkg.github.com/sohosai/sos21-backend/sos21-backend"
+  generate-api-server-document:
+    name: Generate documentation from OpenAPI schema
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - run: nix-env -f ./nix/pkgs.nix -iA nodejs
+      - run: cd sos21-api-server/schema; npm install
+      - run: cd sos21-api-server/schema; npm run build:doc -- --output dist/api-server.html
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./sos21-api-server/schema/dist
+          keep_files: true

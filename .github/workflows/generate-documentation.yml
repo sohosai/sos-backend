@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+      - develop
+
+name: Generate documentation
+
+jobs:
+  api-server:
+    name: Generate documentation from OpenAPI schema
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - run: nix-env -f ./nix/pkgs.nix -iA nodejs
+      - run: cd sos21-api-server/schema; npm install
+      - run: cd sos21-api-server/schema; npm run build:doc -- --output dist/api-server.html
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./sos21-api-server/schema/dist
+          destination_dir: develop
+          keep_files: true

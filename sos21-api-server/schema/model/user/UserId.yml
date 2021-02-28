@@ -1,0 +1,5 @@
+type: string
+title: UserId
+x-tags:
+  - user
+example: ZNNsHSUYKzhj8dKCocMOEGtkOwTI

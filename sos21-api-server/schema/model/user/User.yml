@@ -1,0 +1,32 @@
+title: User
+type: object
+description: ""
+x-tags:
+  - user
+properties:
+  id:
+    $ref: ./UserId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  name:
+    $ref: ./UserName.yml
+  kana_name:
+    $ref: ./UserKanaName.yml
+  email:
+    type: string
+    format: email
+  phone_number:
+    type: string
+  affiliation:
+    type: string
+  role:
+    $ref: ./UserRole.yml
+required:
+  - id
+  - created_at
+  - name
+  - kana_name
+  - email
+  - phone_number
+  - affiliation
+  - role

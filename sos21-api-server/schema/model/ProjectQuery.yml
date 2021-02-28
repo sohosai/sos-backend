@@ -1,0 +1,17 @@
+title: ProjectQuery
+type: array
+x-examples: {}
+items:
+  type: object
+  properties:
+    category:
+      oneOf:
+        - nullable: true
+        - $ref: ./project/ProjectCategory.yml
+    attributes:
+      type: array
+      items:
+        $ref: ./project/ProjectAttribute.yml
+  required:
+    - category
+    - attributes

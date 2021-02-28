@@ -55,3 +55,12 @@ jobs:
         with:
           token: '${{ secrets.GITHUB_TOKEN }}'
           args: -- -D warnings
+  lint-api-schema:
+    name: Lint OpenAPI schema
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - run: nix-env -f ./nix/pkgs.nix -iA nodejs
+      - run: cd sos21-api-server/schema; npm install
+      - run: cd sos21-api-server/schema; npm run lint

@@ -1,0 +1,15 @@
+title: UserKanaName
+type: object
+description: ""
+x-tags:
+  - user
+properties:
+  first:
+    type: string
+    example: たろう
+  last:
+    type: string
+    example: そうほう
+required:
+  - first
+  - last
