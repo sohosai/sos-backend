@@ -44,7 +44,7 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
             },
             ErasedHandlerError::NotSignedUp => Error {
                 error: ErrorBody::NotSignedUp,
-                status: StatusCode::UNAUTHORIZED,
+                status: StatusCode::FORBIDDEN,
             },
             ErasedHandlerError::Client { status_code, info } => Error {
                 error: ErrorBody::Api { info: info.clone() },

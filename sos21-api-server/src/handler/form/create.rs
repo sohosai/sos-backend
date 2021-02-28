@@ -35,7 +35,7 @@ pub enum Error {
     InvalidField { field: &'static str },
     InvalidFormItem { id: FormItemId },
     InvalidFormPeriod,
-    DuplicatedFormItemId(FormItemId),
+    DuplicatedFormItemId { id: FormItemId },
     InsufficientPermissions,
 }
 
@@ -66,9 +66,9 @@ impl From<create_form::Error> for Error {
             },
             create_form::Error::InvalidCondition(_) => Error::InvalidField { field: "condition" },
             create_form::Error::InvalidPeriod => Error::InvalidFormPeriod,
-            create_form::Error::DuplicatedItemId(id) => {
-                Error::DuplicatedFormItemId(FormItemId::from_use_case(id))
-            }
+            create_form::Error::DuplicatedItemId(id) => Error::DuplicatedFormItemId {
+                id: FormItemId::from_use_case(id),
+            },
             create_form::Error::InsufficientPermissions => Error::InsufficientPermissions,
         }
     }
