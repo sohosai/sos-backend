@@ -5,7 +5,9 @@ info:
   contact:
     name: coord_e
     email: me@coord-e.com
-  description: API server for SOS21.
+  description: |
+    RPC-style HTTP API server for SOS21.
+    We use only `GET` and `POST` methods in our API, for immutable and mutable endpoints respectively.
 servers:
   - url: "http://localhost:3000"
     description: Local server

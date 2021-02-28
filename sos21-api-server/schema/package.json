@@ -2,7 +2,6 @@
   "name": "sos21-api-server-schema",
   "version": "0.1.0",
   "description": "OpenAPI schema for sos21-api-server",
-  "main": "index.js",
   "scripts": {
     "lint:spectral": "spectral lint ./api.yml -F hint",
     "lint:prettier": "prettier --check .",
@@ -14,7 +13,7 @@
     "url": "git+https://github.com/sohosai/sos21-backend.git"
   },
   "author": "coord_e",
-  "license": "MIT",
+  "license": "(MIT OR Apache-2.0)",
   "bugs": {
     "url": "https://github.com/sohosai/sos21-backend/issues"
   },

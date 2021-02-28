@@ -6,6 +6,4 @@ mkShell {
     rustPlatform.rust.cargo
     pkgs.sqlx-cli
   ];
-
-  RUST_BACKTRACE = 1;
 }
