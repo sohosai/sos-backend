@@ -14,7 +14,7 @@
     "url": "git+https://github.com/sohosai/sos21-backend.git"
   },
   "author": "coord_e",
-  "license": "MIT",
+  "license": "(MIT OR Apache-2.0)",
   "bugs": {
     "url": "https://github.com/sohosai/sos21-backend/issues"
   },
