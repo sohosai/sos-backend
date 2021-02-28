@@ -1,0 +1,17 @@
+title: FormCondition
+type: object
+properties:
+  query:
+    $ref: ../ProjectQuery.yml
+  includes:
+    type: array
+    items:
+      $ref: ../project/ProjectId.yml
+  excludes:
+    type: array
+    items:
+      $ref: ../project/ProjectId.yml
+required:
+  - query
+  - includes
+  - excludes

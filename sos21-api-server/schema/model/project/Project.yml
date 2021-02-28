@@ -1,0 +1,47 @@
+title: Project
+type: object
+description: ""
+x-examples: {}
+properties:
+  id:
+    $ref: ./ProjectId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  display_id:
+    type: string
+  owner_id:
+    $ref: ../user/UserId.yml
+  owner_name:
+    $ref: ../user/UserName.yml
+  owner_kana_name:
+    $ref: ../user/UserKanaName.yml
+  name:
+    type: string
+  kana_name:
+    type: string
+  group_name:
+    type: string
+  kana_group_name:
+    type: string
+  description:
+    type: string
+  category:
+    $ref: ./ProjectCategory.yml
+  attributes:
+    type: array
+    items:
+      $ref: ./ProjectAttribute.yml
+required:
+  - id
+  - created_at
+  - display_id
+  - owner_id
+  - owner_name
+  - owner_kana_name
+  - name
+  - kana_name
+  - group_name
+  - kana_group_name
+  - description
+  - category
+  - attributes

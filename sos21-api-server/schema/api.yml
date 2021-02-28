@@ -1,0 +1,1975 @@
+openapi: 3.0.0
+info:
+  title: sos21-api-server
+  version: 0.1.0
+  contact:
+    name: coord_e
+    email: me@coord-e.com
+  description: API server for SOS21.
+servers:
+  - url: "http://localhost:3000"
+    description: Local server
+  - url: "http://localhost:4010"
+    description: Local server (with validation proxy)
+paths:
+  /me:
+    get:
+      summary: me
+      tags:
+        - me
+        - user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: ./model/user/User.yml
+                required:
+                  - user
+              examples: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me
+      description: ログインしているユーザーの情報を返します。
+      parameters: []
+  /signup:
+    post:
+      summary: signup
+      tags:
+        - me
+        - user
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: ./model/user/User.yml
+                required:
+                  - user
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                              - field
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_FIELD
+                              field:
+                                type: string
+                    required:
+                      - status
+                      - error
+              examples: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - ALREADY_SIGNED_UP
+                    required:
+                      - status
+                      - error
+              examples:
+                Already signed up:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: ALREADY_SIGNED_UP
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  $ref: ./model/user/UserName.yml
+                kana_name:
+                  $ref: ./model/user/UserKanaName.yml
+                phone_number:
+                  type: string
+                affiliation:
+                  type: string
+              required:
+                - name
+                - kana_name
+                - phone_number
+                - affiliation
+      description: ユーザー情報を登録します。
+  /user/list:
+    get:
+      summary: user/list
+      tags:
+        - user
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: ./model/user/User.yml
+                required:
+                  - users
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: user/list
+      description: ユーザ一覧を返します。
+    parameters: []
+  /user/export:
+    get:
+      summary: user/export
+      tags:
+        - user
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: string
+                description: カンマ区切り、CRLF 改行の CSV
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: user/export
+      parameters:
+        - schema:
+            type: string
+            example: 内部ID
+          in: query
+          name: field_id
+          description: 与えられた場合、その名前の列でユーザーの ID を出力します。
+        - schema:
+            type: string
+            example: 登録日時
+          in: query
+          name: field_created_at
+          description: 与えられた場合、その名前の列でユーザーの作成日時を出力します。
+        - schema:
+            type: string
+            example: 名
+          in: query
+          name: field_first_name
+          description: 与えられた場合、その名前の列でユーザーの下の名前を出力します。
+        - schema:
+            type: string
+            example: 姓
+          in: query
+          name: field_last_name
+          description: 与えられた場合、その名前の列でユーザーの上の名前を出力します。
+        - schema:
+            type: string
+            example: 名前
+          in: query
+          name: field_full_name
+          description: 与えられた場合、その名前の列でユーザーのフルネームを出力します。
+        - schema:
+            type: string
+            example: 名（よみがな）
+          in: query
+          name: field_kana_first_name
+          description: 与えられた場合、その名前の列でユーザーの下の名前のよみがなを出力します。
+        - schema:
+            type: string
+            example: 姓（よみがな）
+          in: query
+          name: field_kana_last_name
+          description: 与えられた場合、その名前の列でユーザーの上の名前のよみがなを出力します。
+        - schema:
+            type: string
+            example: 名前（よみがな）
+          in: query
+          name: field_kana_full_name
+          description: 与えられた場合、その名前の列でユーザーのフルネームのよみがなを出力します。
+        - schema:
+            type: string
+            example: メールアドレス
+          in: query
+          name: field_email
+          description: 与えられた場合、その名前の列でユーザーのメールアドレスを出力します。
+        - schema:
+            type: string
+            example: 電話番号
+          in: query
+          name: field_phone_number
+          description: 与えられた場合、その名前の列でユーザーの電話番号を出力します。
+        - schema:
+            type: string
+            example: 所属
+          in: query
+          name: field_affiliation
+          description: 与えられた場合、その名前の列でユーザーの所属を出力します。
+        - schema:
+            type: string
+            example: 権限
+          in: query
+          name: field_role
+          description: 与えられた場合、その名前の列でユーザーのロールを出力します。
+        - schema:
+            type: string
+            example: 管理者
+          in: query
+          name: role_administrator
+          required: true
+          description: "`administrator` ロールをどう表示するか指定します。"
+        - schema:
+            type: string
+            example: 実委人（権限あり）
+          in: query
+          name: role_committee_operator
+          required: true
+          description: "`committee_operator` ロールをどう表示するか指定します。"
+        - schema:
+            type: string
+            example: 実委人
+          in: query
+          name: role_committee
+          required: true
+          description: "`committee` ロールをどう表示するか指定します。"
+        - schema:
+            type: string
+            example: 企画者
+          in: query
+          name: role_general
+          required: true
+          description: "`general` ロールをどう表示するか指定します。"
+      description: ユーザ一覧を CSV で出力します。
+    parameters: []
+  /user/get:
+    get:
+      summary: user/get
+      tags:
+        - user
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: ./model/user/User.yml
+                required:
+                  - user
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: user/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: user_id
+          required: true
+      description: 指定されたユーザーの情報を返します。
+    parameters: []
+  /me/project/list:
+    get:
+      summary: me/project/list
+      tags:
+        - me
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: ./model/project/Project.yml
+                required:
+                  - projects
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me/project/list
+      description: ログインしているユーザーの企画一覧を返します。
+    parameters: []
+  /project/create:
+    post:
+      summary: project/create
+      operationId: project/create
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: ./model/project/Project.yml
+                required:
+                  - project
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            oneOf:
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FIELD
+                                  field:
+                                    type: string
+                                required:
+                                  - type
+                                  - field
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - DUPLICATED_PROJECT_ATTRIBUTES
+                                required:
+                                  - type
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Conflict
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 企画を作成します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                display_id:
+                  type: string
+                name:
+                  type: string
+                kana_name:
+                  type: string
+                group_name:
+                  type: string
+                kana_group_name:
+                  type: string
+                description:
+                  type: string
+                category:
+                  $ref: ./model/project/ProjectCategory.yml
+                attributes:
+                  type: array
+                  items:
+                    $ref: ./model/project/ProjectAttribute.yml
+              required:
+                - display_id
+                - name
+                - kana_name
+                - group_name
+                - kana_group_name
+                - description
+                - category
+                - attributes
+      tags:
+        - project
+    parameters: []
+  /project/get:
+    get:
+      summary: project/get
+      tags:
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: ./model/project/Project.yml
+                required:
+                  - project
+              examples: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/get
+      description: 指定された企画の情報を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+    parameters: []
+  /project/list:
+    get:
+      summary: project/list
+      tags:
+        - project
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      $ref: ./model/project/Project.yml
+                required:
+                  - projects
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/list
+      description: 企画一覧を返します。
+    parameters: []
+  /project/export:
+    get:
+      summary: project/export
+      tags:
+        - project
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: string
+                description: カンマ区切り、CRLF 改行の CSV
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/export
+      parameters:
+        - schema:
+            type: string
+            example: 内部ID
+          in: query
+          name: field_id
+          description: 与えられた場合、その名前の列で企画の ID を出力します。
+        - schema:
+            type: string
+            example: 作成日時
+          in: query
+          name: field_created_at
+          description: 与えられた場合、その名前の列で企画の作成日時を出力します。
+        - schema:
+            type: string
+            example: 企画責任者 内部ID
+          in: query
+          name: field_owner_id
+          description: 与えられた場合、その名前の列で企画責任者の ID を出力します。
+        - schema:
+            type: string
+            example: 企画責任者 名
+          in: query
+          name: field_owner_first_name
+          description: 与えられた場合、その名前の列で企画責任者の下の名前を出力します。
+        - schema:
+            type: string
+            example: 企画責任者 姓
+          in: query
+          name: field_owner_last_name
+          description: 与えられた場合、その名前の列で企画責任者の上の名前を出力します。
+        - schema:
+            type: string
+            example: 企画責任者
+          in: query
+          name: field_owner_full_name
+          description: 与えられた場合、その名前の列で企画責任者のフルネームを出力します。
+        - schema:
+            type: string
+            example: 企画責任者 名（よみがな）
+          in: query
+          name: field_owner_kana_first_name
+          description: 与えられた場合、その名前の列で企画責任者の下の名前のよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画責任者 姓（よみがな）
+          in: query
+          name: field_owner_kana_last_name
+          description: 与えられた場合、その名前の列で企画責任者の上の名前のよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画責任者（よみがな）
+          in: query
+          name: field_owner_kana_full_name
+          description: 与えられた場合、その名前の列で企画責任者のフルネームのよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画名
+          in: query
+          name: field_name
+          description: 与えられた場合、その名前の列で企画名を出力します。
+        - schema:
+            type: string
+            example: 企画名（よみがな）
+          in: query
+          name: field_kana_name
+          description: 与えられた場合、その名前の列で企画名のよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画団体名
+          in: query
+          name: field_group_name
+          description: 与えられた場合、その名前の列で企画団体名を出力します。
+        - schema:
+            type: string
+            example: 企画団体名（よみがな）
+          in: query
+          name: field_kana_group_name
+          description: 与えられた場合、その名前の列で企画団体名のよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画説明
+          in: query
+          name: field_description
+          description: 与えられた場合、その名前の列で企画説明を出力します。
+        - schema:
+            type: string
+            example: 企画形態
+          in: query
+          name: field_category
+          description: 与えられた場合、その名前の列で企画形態を出力します。
+        - schema:
+            type: string
+            example: 学術企画
+          in: query
+          name: field_attribute_academic
+          description: 与えられた場合、その名前の列で企画が学術企画かどうかを出力します。
+        - schema:
+            type: string
+            example: 芸術企画
+          in: query
+          name: field_attribute_artistic
+          description: 与えられた場合、その名前の列で企画が芸術企画かどうかを出力します。
+        - schema:
+            type: string
+            example: 委員会企画
+          in: query
+          name: field_attribute_committee
+          description: 与えられた場合、その名前の列で企画が委員会企画かどうかを出力します。
+        - schema:
+            type: string
+            example: 一般
+          in: query
+          name: category_general
+          description: "`general` 企画形態をどう表示するか指定します。"
+          required: true
+        - schema:
+            type: string
+            example: ステージ
+          in: query
+          description: "`stage` 企画形態をどう表示するか指定します。"
+          name: category_stage
+          required: true
+      description: 企画一覧を CSV で出力します。
+    parameters: []
+  /user/update:
+    post:
+      summary: user/update
+      operationId: user/update
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: ./model/user/User.yml
+                required:
+                  - user
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/UserNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      tags:
+        - user
+        - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  $ref: ./model/user/UserId.yml
+                name:
+                  $ref: ./model/user/UserName.yml
+                kana_name:
+                  $ref: ./model/user/UserKanaName.yml
+                phone_number:
+                  type: string
+                affiliation:
+                  type: string
+                role:
+                  $ref: ./model/user/UserRole.yml
+              required:
+                - id
+      description: 指定されたユーザーの情報を更新します。
+    parameters: []
+  /project/update:
+    post:
+      summary: project/update
+      operationId: project/update
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: ./model/project/Project.yml
+                required:
+                  - project
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "409":
+          description: Conflict
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 指定された企画の情報を更新します。
+      tags:
+        - project
+        - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  $ref: ./model/project/ProjectId.yml
+                display_id:
+                  type: string
+                name:
+                  type: string
+                kana_name:
+                  type: string
+                group_name:
+                  type: string
+                kana_group_name:
+                  type: string
+                description:
+                  type: string
+                category:
+                  $ref: ./model/project/ProjectCategory.yml
+                attributes:
+                  type: array
+                  items:
+                    $ref: ./model/project/ProjectAttribute.yml
+              required:
+                - id
+    parameters: []
+  /project/get-by-display-id:
+    get:
+      summary: project/get-by-display-id
+      tags:
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: ./model/project/Project.yml
+                required:
+                  - project
+        "400":
+          description: Bad Request
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/get-by-display-id
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: display_id
+          required: true
+      description: 指定された企画の情報を返します。
+    parameters: []
+  /project/check-display-id:
+    get:
+      summary: project/check-display-id
+      tags:
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - properties:
+                      status:
+                        type: string
+                        enum:
+                          - UNAVAILABLE
+                          - AVAILABLE
+                    required:
+                      - status
+                  - properties:
+                      status:
+                        type: string
+                        enum:
+                          - INVALID
+                      reason:
+                        type: string
+                        enum:
+                          - TOO_LONG
+                          - TOO_SHORT
+                          - CONTAINS_DISALLOWED_CHARACTER
+                          - STARTS_WITH_UNDERSCORE
+                    required:
+                      - status
+                      - reason
+                type: object
+              examples:
+                Invalid:
+                  value:
+                    status: INVALID
+                    reason: TOO_SHORT
+                Available:
+                  value:
+                    status: AVAILABLE
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/check-display-id
+      description: 指定されたIDが企画作成に使えるかどうか返します。
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: display_id
+          required: true
+    parameters: []
+  /project/form/get:
+    get:
+      summary: project/form/get
+      tags:
+        - project
+        - form
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  form:
+                    $ref: ./model/form/Form.yml
+                required:
+                  - form
+              examples: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Form or project Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - FORM_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FORM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/form/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: form_id
+          required: true
+      description: 指定された申請の情報を返します。
+  /project/form/list:
+    get:
+      summary: project/form/list
+      tags:
+        - project
+        - form
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  forms:
+                    type: array
+                    items:
+                      $ref: ./model/form/Form.yml
+                required:
+                  - forms
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/form/list
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+      description: 指定された企画向けの申請の一覧を返します。
+  /project/form/answer:
+    post:
+      summary: project/form/answer
+      operationId: project/form/answer
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    $ref: ./model/form_answer/FormAnswer.yml
+                required:
+                  - answer
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        required:
+                          - type
+                          - info
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            oneOf:
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - OUT_OF_ANSWER_PERIOD
+                                      - NO_FORM_ITEMS
+                                      - TOO_MANY_FORM_ITEMS
+                                      - MISMATCHED_FORM_ITEMS_LENGTH
+                                required:
+                                  - type
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FORM_ITEM
+                                      - INVALID_FORM_ANSWER
+                                  id:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - id
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - MISMATCHED_FORM_ITEM_ID
+                                  got:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                  expected:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - got
+                                  - expected
+                            type: object
+                    required:
+                      - status
+                      - error
+              examples:
+                Out of answer period:
+                  value:
+                    status: 400
+                    error:
+                      type: API
+                      info:
+                        type: OUT_OF_ANSWER_PERIOD
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Form or project Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - FORM_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FORM_NOT_FOUND
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        required:
+                          - type
+                          - info
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - ALREADY_ANSWERED_FORM
+                    required:
+                      - status
+                      - error
+              examples:
+                Already answered form:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: ALREADY_ANSWERED_FORM
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 申請に回答します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  $ref: ./model/project/ProjectId.yml
+                form_id:
+                  $ref: ./model/form/FormId.yml
+                items:
+                  type: array
+                  items:
+                    $ref: ./model/form_answer/FormAnswerItem.yml
+              required:
+                - project_id
+                - form_id
+                - items
+      tags:
+        - form
+        - project
+        - form_answer
+  /project/form/answer/get:
+    get:
+      summary: project/form/answer/get
+      tags:
+        - form
+        - project
+        - form_answer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    $ref: ./model/form_answer/FormAnswer.yml
+                required:
+                  - answer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "Form, project, or the answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - FORM_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                                  - FORM_ANSWER_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FORM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/form/answer/get
+      description: 申請の回答を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: form_id
+          required: true
+  /form/get:
+    get:
+      summary: form/get
+      tags:
+        - form
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  form:
+                    $ref: ./model/form/Form.yml
+                required:
+                  - form
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FormNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: form/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: form_id
+          required: true
+      description: 指定された申請の情報を返します。
+  /form/list:
+    get:
+      summary: form/list
+      tags:
+        - form
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  forms:
+                    type: array
+                    items:
+                      $ref: ./model/form/Form.yml
+                required:
+                  - forms
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: form/list
+      description: 申請一覧を返します。
+  /form/create:
+    post:
+      summary: form/create
+      operationId: form/create
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  form:
+                    $ref: ./model/form/Form.yml
+                required:
+                  - form
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            oneOf:
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FIELD
+                                  field:
+                                    type: string
+                                required:
+                                  - type
+                                  - field
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FORM_ITEM
+                                      - DUPLICATED_FORM_ITEM_ID
+                                  id:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - id
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FORM_PERIOD
+                                required:
+                                  - type
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 申請を作成します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                starts_at:
+                  $ref: ./model/DateTime.yml
+                ends_at:
+                  $ref: ./model/DateTime.yml
+                items:
+                  type: array
+                  items:
+                    $ref: ./model/form/item/FormItem.yml
+                condition:
+                  $ref: ./model/form/FormCondition.yml
+              required:
+                - name
+                - description
+                - starts_at
+                - ends_at
+                - items
+                - condition
+      tags:
+        - form
+        - committee
+  /form/answer/list:
+    get:
+      summary: form/answer/list
+      tags:
+        - form
+        - form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answers:
+                    type: array
+                    items:
+                      $ref: ./model/form_answer/FormAnswer.yml
+                required:
+                  - answers
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FormNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: form/answer/list
+      description: 申請の回答一覧を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: form_id
+          required: true
+  /form/answer/export:
+    get:
+      summary: form/answer/export
+      tags:
+        - form
+        - form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: string
+                description: カンマ区切り、CRLF 改行の CSV
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FormNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: form/answer/export
+      description: 申請の回答一覧を CSV で出力します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: form_id
+          required: true
+          description: 回答一覧を取得する申請の ID を指定します。
+        - schema:
+            type: string
+          in: query
+          name: field_id
+          description: 与えられた場合、その名前の列で回答の ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_created_at
+          description: 与えられた場合、その名前の列で回答日時を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_project_id
+          description: 与えられた場合、その名前の列で回答した企画の ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_author_id
+          description: 与えられた場合、その名前の列で回答したユーザーの ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: checkbox_checked
+          required: true
+          description: チェックボックスにチェックがついている状態をどう表示するか指定します。
+        - schema:
+            type: string
+          in: query
+          name: checkbox_unchecked
+          required: true
+          description: チェックボックスにチェックがついていない状態をどう表示するか指定します。
+  /form-answer/get:
+    get:
+      summary: form-answer/get
+      tags:
+        - form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    $ref: ./model/form_answer/FormAnswer.yml
+                required:
+                  - answer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FormAnswerNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: form-answer/get
+      description: 指定された申請の回答の情報を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: answer_id
+          required: true
+    parameters: []
+  /health/liveness:
+    get:
+      summary: health/liveness
+      tags: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                required:
+                  - ok
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: health/liveness
+      description: 何もしません。稼働の確認に使うことができます。
+      security: []
+components:
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
+      description: "Firebase Authentication が返す `idToken` を渡してください。"
+  responses:
+    ProjectNotFound:
+      description: Project Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - PROJECT_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: PROJECT_NOT_FOUND
+    FormNotFound:
+      description: Form Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - FORM_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: FORM_NOT_FOUND
+    UserNotFound:
+      description: User Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - USER_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: USER_NOT_FOUND
+    FormAnswerNotFound:
+      description: Form Answer Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - FORM_ANSWER_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: FORM_ANSWER_NOT_FOUND
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 500
+                  error:
+                    required:
+                      - type
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - INTERNAL
+                required:
+                  - status
+                  - error
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 401
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - id
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - AUTHENTICATION
+                      id:
+                        type: string
+                        enum:
+                          - UNAUTHORIZED
+                          - INVALID_TOKEN
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 401
+                error:
+                  type: AUTHENTICATION
+                  id: INVALID_TOKEN
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 403
+                  error:
+                    oneOf:
+                      - properties:
+                          type:
+                            type: string
+                            enum:
+                              - AUTHENTICATION
+                          id:
+                            type: string
+                            enum:
+                              - NOT_UNIVERSITY_EMAIL_ADDRESS
+                              - UNVERIFIED_EMAIL_ADDRESS
+                        required:
+                          - type
+                          - id
+                      - properties:
+                          type:
+                            type: string
+                            enum:
+                              - NOT_SIGNED_UP
+                        required:
+                          - type
+                      - properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INSUFFICIENT_PERMISSIONS
+                        required:
+                          - type
+                          - info
+                    type: object
+                required:
+                  - status
+                  - error
+          examples:
+            Unverified email address:
+              value:
+                status: 403
+                error:
+                  type: AUTHENTICATION
+                  id: UNVERIFIED_EMAIL_ADDRESS
+            Not signed up:
+              value:
+                status: 403
+                error:
+                  type: NOT_SIGNED_UP
+            Insufficient permissions:
+              value:
+                status: 403
+                error:
+                  type: API
+                  info:
+                    type: INSUFFICIENT_PERMISSIONS
+tags:
+  - name: me
+  - name: user
+  - name: project
+  - name: form
+  - name: form_answer
+  - name: committee
+  - name: admin
+security:
+  - token: []

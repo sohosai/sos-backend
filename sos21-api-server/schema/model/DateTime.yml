@@ -1,0 +1,4 @@
+type: string
+title: DateTime
+format: date-time
+x-examples: {}

@@ -1,0 +1,57 @@
+title: ErrorBody
+oneOf:
+  - properties:
+      type:
+        type: string
+        enum:
+          - API
+      info: {}
+    required:
+      - type
+      - info
+  - properties:
+      type:
+        type: string
+        enum:
+          - AUTHENTICATION
+      id:
+        type: string
+        enum:
+          - UNAUTHORIZED
+          - INVALID_TOKEN
+          - INVALID_EMAIL_ADDRESS
+          - UNVERIFIED_EMAIL_ADDRESS
+          - NOT_UNIVERSITY_EMAIL_ADDRESS
+          - NO_EMAIL
+    required:
+      - type
+      - id
+  - properties:
+      type:
+        type: string
+        enum:
+          - REQUEST
+      id:
+        type: string
+        enum:
+          - NOT_FOUND
+          - UNSUPPORTED_MEDIA_TYPE
+          - MISSING_HEADER
+          - METHOD_NOT_ALLOWED
+          - INVALID_HEADER
+          - INVALID_QUERY
+          - INVALID_BODY
+    required:
+      - type
+      - id
+  - properties:
+      type:
+        type: string
+        enum:
+          - NOT_SIGNED_UP
+          - INTERNAL
+    required:
+      - type
+x-examples: {}
+description: ""
+type: object

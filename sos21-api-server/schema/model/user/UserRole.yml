@@ -1,0 +1,11 @@
+type: string
+title: UserRole
+enum:
+  - administrator
+  - committee_operator
+  - committee
+  - general
+description: ""
+x-tags:
+  - user
+example: general

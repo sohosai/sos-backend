@@ -1,0 +1,6 @@
+type: string
+title: ProjectAttribute
+enum:
+  - academic
+  - artistic
+  - committee

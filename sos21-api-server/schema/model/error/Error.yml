@@ -1,0 +1,11 @@
+title: Error
+type: object
+x-examples: {}
+properties:
+  status:
+    type: integer
+  error:
+    $ref: ./ErrorBody.yml
+required:
+  - status
+  - error

@@ -1,0 +1,46 @@
+title: FormItemCondition
+oneOf:
+  - properties:
+      type:
+        type: string
+        enum:
+          - checkbox
+      item_id:
+        $ref: ./FormItemId.yml
+      checkbox_id:
+        $ref: ./CheckboxId.yml
+      expected:
+        type: boolean
+    required:
+      - type
+      - item_id
+      - checkbox_id
+      - expected
+  - properties:
+      type:
+        type: string
+        enum:
+          - radio_selected
+      item_id:
+        $ref: ./FormItemId.yml
+      radio_id:
+        $ref: ./RadioId.yml
+    required:
+      - type
+      - item_id
+      - radio_id
+  - properties:
+      type:
+        type: string
+        enum:
+          - grid_radio_selected
+      item_id:
+        $ref: ./FormItemId.yml
+      column_id:
+        $ref: ./GridRadioColumnId.yml
+    required:
+      - type
+      - item_id
+      - column_id
+x-examples: {}
+type: object

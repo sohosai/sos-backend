@@ -1,0 +1,25 @@
+title: FormAnswer
+type: object
+x-examples: {}
+properties:
+  id:
+    $ref: ./FormAnswerId.yml
+  project_id:
+    $ref: ../project/ProjectId.yml
+  form_id:
+    $ref: ../form/FormId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  author_id:
+    $ref: ../user/UserId.yml
+  items:
+    type: array
+    items:
+      $ref: ./FormAnswerItem.yml
+required:
+  - id
+  - project_id
+  - form_id
+  - created_at
+  - author_id
+  - items

@@ -1,0 +1,84 @@
+title: FormAnswerItem
+allOf:
+  - type: object
+    properties:
+      item_id:
+        $ref: ../form/item/FormItemId.yml
+    required:
+      - item_id
+  - nullable: true
+    oneOf:
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - text
+          answer:
+            type: string
+            nullable: true
+        required:
+          - type
+          - answer
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - integer
+          answer:
+            type: integer
+            nullable: true
+        required:
+          - type
+          - answer
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - checkbox
+          answer:
+            type: array
+            items:
+              $ref: ../form/item/CheckboxId.yml
+        required:
+          - type
+          - answer
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - radio
+          answer:
+            oneOf:
+              - nullable: true
+              - $ref: ../form/item/RadioId.yml
+        required:
+          - type
+          - answer
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - grid_radio
+          answer:
+            type: array
+            items:
+              type: object
+              properties:
+                row_id:
+                  $ref: ../form/item/GridRadioRowId.yml
+                value:
+                  oneOf:
+                    - nullable: true
+                    - $ref: ../form/item/GridRadioColumnId.yml
+              required:
+                - row_id
+                - value
+        required:
+          - type
+          - answer
+x-examples: {}

@@ -1,0 +1,172 @@
+title: FormItem
+allOf:
+  - properties:
+      id:
+        $ref: ./FormItemId.yml
+      name:
+        type: string
+      description:
+        type: string
+      conditions:
+        type: array
+        nullable: true
+        items:
+          type: array
+          items:
+            $ref: ./FormItemCondition.yml
+    required:
+      - id
+      - name
+      - description
+      - conditions
+  - oneOf:
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - text
+          accept_multiple_lines:
+            type: boolean
+          is_required:
+            type: boolean
+          max_length:
+            type: integer
+            nullable: true
+          min_length:
+            type: integer
+            nullable: true
+          placeholder:
+            type: string
+        required:
+          - type
+          - accept_multiple_lines
+          - is_required
+          - max_length
+          - min_length
+          - placeholder
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - integer
+          is_required:
+            type: boolean
+          max:
+            type: integer
+            nullable: true
+          min:
+            type: integer
+            nullable: true
+          placeholder:
+            type: integer
+          unit:
+            type: string
+            nullable: true
+        required:
+          - type
+          - is_required
+          - max
+          - min
+          - placeholder
+          - unit
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - checkbox
+          boxes:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  $ref: ./CheckboxId.yml
+                label:
+                  type: string
+              required:
+                - id
+                - label
+          min_checks:
+            type: integer
+            nullable: true
+          max_checks:
+            type: integer
+            nullable: true
+        required:
+          - type
+          - boxes
+          - min_checks
+          - max_checks
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - radio
+          buttons:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  $ref: ./RadioId.yml
+                label:
+                  type: string
+              required:
+                - id
+                - label
+          is_required:
+            type: boolean
+        required:
+          - type
+          - buttons
+          - is_required
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - grid_radio
+          rows:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  $ref: ./GridRadioRowId.yml
+                label:
+                  type: string
+              required:
+                - id
+                - label
+          columns:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  $ref: ./GridRadioColumnId.yml
+                label:
+                  type: string
+              required:
+                - id
+                - label
+          exclusive_column:
+            type: boolean
+          required:
+            type: string
+            enum:
+              - all
+              - none
+        required:
+          - type
+          - rows
+          - columns
+          - exclusive_column
+          - required
+description: ""
+x-examples: {}
+type: object
