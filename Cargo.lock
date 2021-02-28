@@ -1556,6 +1556,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "sos21-run-migrations"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "sos21-database",
+ "sqlx",
+ "structopt",
+ "tokio",
+ "tracing",
+ "tracing-futures",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "sos21-use-case"
 version = "0.1.0"
 dependencies = [

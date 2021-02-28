@@ -1,0 +1,15 @@
+[package]
+name = "sos21-run-migrations"
+version = "0.1.0"
+authors = ["coord.e <me@coord-e.com>"]
+edition = "2018"
+
+[dependencies]
+anyhow = "1"
+sos21-database = { path = "../sos21-database" }
+sqlx = { version = "0.5", features = ["postgres", "runtime-tokio-rustls"] }
+structopt = "0.3"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-futures = "0.2"
+tracing-subscriber = "0.2"
