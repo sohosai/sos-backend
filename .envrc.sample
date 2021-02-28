@@ -1,0 +1,14 @@
+export POSTGRES_PASSWORD=sos21
+export POSTGRES_USER=sos21
+export POSTGRES_DB=sos21
+export POSTGRES_PORT=5432
+
+export DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${POSTGRES_DB}"
+
+export SOS21_API_SERVER_JWT_AUDIENCE=<Firebase project ID>
+export SOS21_API_SERVER_JWT_ISSUER="https://securetoken.google.com/$SOS21_API_SERVER_JWT_AUDIENCE"
+export SOS21_API_SERVER_JWT_KEYS_URL="https://www.googleapis.com/robot/v1/metadata/jwk/securetoken@system.gserviceaccount.com"
+export SOS21_API_SERVER_POSTGRES_URI=$DATABASE_URL
+export SOS21_API_SERVER_BIND=127.0.0.1:3000
+
+export RUST_BACKTRACE=1

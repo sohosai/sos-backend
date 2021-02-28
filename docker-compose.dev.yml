@@ -1,6 +1,12 @@
 version: "3"
 
 services:
+  prism:
+    image: stoplight/prism:4
+    command: proxy /schema/api.yml http://${SOS21_API_SERVER_BIND:?} --errors
+    volumes:
+      - ./sos21-api-server/schema:/schema
+    network_mode: host
   db:
     image: postgres:13.1-alpine
     environment:
@@ -10,7 +16,7 @@ services:
     ports:
       - ${POSTGRES_PORT:?}:5432
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data-dev:/var/lib/postgresql/data
 
 volumes:
-  postgres-data:
+  postgres-data-dev:
