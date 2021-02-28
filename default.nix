@@ -1,8 +1,8 @@
 { pkgs ? import ./nix/pkgs.nix }:
 with pkgs;
 rustPlatform.buildRustPackage {
-  pname = "sos21-api-server";
+  pname = "sos21-backend";
   version = "0.1.0";
   src = ./.;
-  cargoSha256 = "19ll1lnfv9bs960cznh68j2wkg58kxm2qn09chmjr131dyngcnrk";
+  cargoSha256 = "1nlc90sz380hc0113ilk9jlb7d6w6hqw82qb7w0d32xz65hxrxrp";
 }
