@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["GroupNameError",""],["KanaGroupNameError",""],["KanaNameError",""],["NameError",""],["ProjectGroupName",""],["ProjectKanaGroupName",""],["ProjectKanaName",""],["ProjectName",""]]});
