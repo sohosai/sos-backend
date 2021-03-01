@@ -1,0 +1,13 @@
+title: "Null"
+description: |
+  This only accepts `null`.
+  Workaround for <https://github.com/OAI/OpenAPI-Specification/issues/1368>.
+nullable: true
+not:
+  anyOf:
+    - type: string
+    - type: number
+    - type: boolean
+    - type: object
+    - type: array
+      items: {}

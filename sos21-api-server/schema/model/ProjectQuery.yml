@@ -6,7 +6,7 @@ items:
   properties:
     category:
       oneOf:
-        - nullable: true
+        - $ref: ./Null.yml
         - $ref: ./project/ProjectCategory.yml
     attributes:
       type: array

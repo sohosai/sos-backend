@@ -53,7 +53,7 @@ allOf:
               - radio
           answer:
             oneOf:
-              - nullable: true
+              - $ref: ../Null.yml
               - $ref: ../form/item/RadioId.yml
         required:
           - type
@@ -73,7 +73,7 @@ allOf:
                   $ref: ../form/item/GridRadioRowId.yml
                 value:
                   oneOf:
-                    - nullable: true
+                    - $ref: ../Null.yml
                     - $ref: ../form/item/GridRadioColumnId.yml
               required:
                 - row_id
