@@ -69,8 +69,6 @@ pub fn endpoints(
         },
         / "project" {
             / "get" => GET (handler::project::get),
-            / "get-by-display-id" => GET (handler::project::get_by_display_id),
-            / "check-display-id" => GET (handler::project::check_display_id),
             / "create" => POST (handler::project::create),
             / "update" => POST (handler::project::update),
             / "list" => GET (handler::project::list),

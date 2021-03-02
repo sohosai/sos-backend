@@ -11,8 +11,6 @@ use warp::http::StatusCode;
 pub struct Request {
     pub id: ProjectId,
     #[serde(default)]
-    pub display_id: Option<String>,
-    #[serde(default)]
     pub name: Option<String>,
     #[serde(default)]
     pub kana_name: Option<String>,
@@ -44,7 +42,6 @@ impl HandlerResponse for Response {
 pub enum Error {
     ProjectNotFound,
     InsufficientPermissions,
-    UnavailableProjectDisplayId,
     DuplicatedProjectAttributes,
     InvalidField { field: &'static str },
 }
@@ -54,7 +51,6 @@ impl HandlerResponse for Error {
         match self {
             Error::ProjectNotFound => StatusCode::NOT_FOUND,
             Error::InsufficientPermissions => StatusCode::FORBIDDEN,
-            Error::UnavailableProjectDisplayId => StatusCode::CONFLICT,
             Error::DuplicatedProjectAttributes => StatusCode::BAD_REQUEST,
             Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
         }
@@ -66,10 +62,6 @@ impl From<update_project::Error> for Error {
         match err {
             update_project::Error::NotFound => Error::ProjectNotFound,
             update_project::Error::InsufficientPermissions => Error::InsufficientPermissions,
-            update_project::Error::InvalidDisplayId => Error::InvalidField {
-                field: "display_id",
-            },
-            update_project::Error::UnavailableDisplayId => Error::UnavailableProjectDisplayId,
             update_project::Error::InvalidName => Error::InvalidField { field: "name" },
             update_project::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
             update_project::Error::InvalidGroupName => Error::InvalidField {
@@ -90,7 +82,6 @@ impl From<update_project::Error> for Error {
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let input = update_project::Input {
         id: request.id.into_use_case(),
-        display_id: request.display_id,
         name: request.name,
         kana_name: request.kana_name,
         group_name: request.group_name,

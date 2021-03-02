@@ -15,8 +15,6 @@ pub struct Request {
     #[serde(default)]
     pub field_created_at: Option<String>,
     #[serde(default)]
-    pub field_display_id: Option<String>,
-    #[serde(default)]
     pub field_owner_id: Option<String>,
     #[serde(default)]
     pub field_owner_first_name: Option<String>,
@@ -86,7 +84,6 @@ pub async fn handler(
             field_id,
             field_code,
             field_created_at,
-            field_display_id,
             field_owner_id,
             field_owner_first_name,
             field_owner_last_name,
@@ -112,7 +109,6 @@ pub async fn handler(
             id: field_id,
             code: field_code,
             created_at: field_created_at,
-            display_id: field_display_id,
             owner_id: field_owner_id,
             owner_first_name: field_owner_first_name,
             owner_last_name: field_owner_last_name,

@@ -482,7 +482,6 @@ paths:
                               type:
                                 type: string
                                 enum:
-                                  - UNAVAILABLE_PROJECT_DISPLAY_ID
                                   - TOO_MANY_PROJECTS
                             required:
                               - type
@@ -498,8 +497,6 @@ paths:
             schema:
               type: object
               properties:
-                display_id:
-                  type: string
                 name:
                   type: string
                 kana_name:
@@ -517,7 +514,6 @@ paths:
                   items:
                     $ref: ./model/project/ProjectAttribute.yml
               required:
-                - display_id
                 - name
                 - kana_name
                 - group_name
@@ -868,8 +864,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/ProjectNotFound"
-        "409":
-          description: Conflict
         "500":
           $ref: "#/components/responses/InternalServerError"
       description: 指定された企画の情報を更新します。
@@ -884,8 +878,6 @@ paths:
               properties:
                 id:
                   $ref: ./model/project/ProjectId.yml
-                display_id:
-                  type: string
                 name:
                   type: string
                 kana_name:
@@ -904,101 +896,6 @@ paths:
                     $ref: ./model/project/ProjectAttribute.yml
               required:
                 - id
-    parameters: []
-  /project/get-by-display-id:
-    get:
-      summary: project/get-by-display-id
-      tags:
-        - project
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  project:
-                    $ref: ./model/project/Project.yml
-                required:
-                  - project
-        "400":
-          description: Bad Request
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/ProjectNotFound"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-      operationId: project/get-by-display-id
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: display_id
-          required: true
-      description: 指定された企画の情報を返します。
-    parameters: []
-  /project/check-display-id:
-    get:
-      summary: project/check-display-id
-      tags:
-        - project
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - properties:
-                      status:
-                        type: string
-                        enum:
-                          - UNAVAILABLE
-                          - AVAILABLE
-                    required:
-                      - status
-                  - properties:
-                      status:
-                        type: string
-                        enum:
-                          - INVALID
-                      reason:
-                        type: string
-                        enum:
-                          - TOO_LONG
-                          - TOO_SHORT
-                          - CONTAINS_DISALLOWED_CHARACTER
-                          - STARTS_WITH_UNDERSCORE
-                    required:
-                      - status
-                      - reason
-                type: object
-              examples:
-                Invalid:
-                  value:
-                    status: INVALID
-                    reason: TOO_SHORT
-                Available:
-                  value:
-                    status: AVAILABLE
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-      operationId: project/check-display-id
-      description: 指定されたIDが企画作成に使えるかどうか返します。
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: display_id
-          required: true
     parameters: []
   /project/form/get:
     get:

@@ -8,7 +8,6 @@ use sos21_domain::model::{permissions::Permissions, project};
 #[derive(Debug, Clone)]
 pub struct Input {
     pub id: ProjectId,
-    pub display_id: Option<String>,
     pub name: Option<String>,
     pub kana_name: Option<String>,
     pub group_name: Option<String>,
@@ -21,8 +20,6 @@ pub struct Input {
 #[derive(Debug, Clone)]
 pub enum Error {
     NotFound,
-    InvalidDisplayId,
-    UnavailableDisplayId,
     InvalidName,
     InvalidKanaName,
     InvalidGroupName,
@@ -54,18 +51,6 @@ where
         Some(x) => x,
         None => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
-
-    if let Some(display_id) = input.display_id {
-        let display_id = project::ProjectDisplayId::from_string(display_id)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidDisplayId))?;
-
-        use_case_ensure!(display_id.is_visible_to(login_user));
-        project.set_display_id(ctx, display_id).await?.map_err(
-            |_: project::ProjectDisplayIdNotAvailableError| {
-                UseCaseError::UseCase(Error::UnavailableDisplayId)
-            },
-        )?;
-    }
 
     if let Some(name) = input.name {
         let name = project::ProjectName::from_string(name)
@@ -144,7 +129,6 @@ mod tests {
 
         let input = update_project::Input {
             id: ProjectId::from_entity(project.id),
-            display_id: None,
             name: Some("新しい名前".to_string()),
             kana_name: None,
             group_name: None,
@@ -176,7 +160,6 @@ mod tests {
 
         let input = update_project::Input {
             id: ProjectId::from_entity(project.id),
-            display_id: None,
             name: Some("新しい名前".to_string()),
             kana_name: None,
             group_name: None,
@@ -208,7 +191,6 @@ mod tests {
 
         let input = update_project::Input {
             id: ProjectId::from_entity(project.id),
-            display_id: None,
             name: Some("新しい名前".to_string()),
             kana_name: None,
             group_name: None,
@@ -240,7 +222,6 @@ mod tests {
 
         let input = update_project::Input {
             id: ProjectId::from_entity(project.id),
-            display_id: None,
             name: Some("新しい名前".to_string()),
             kana_name: None,
             group_name: None,
@@ -253,39 +234,6 @@ mod tests {
             update_project::run(&app, input).await,
             Ok(got)
             if got.name == "新しい名前"
-        ));
-    }
-
-    // Checks that the administrator cannot update project with the duplicated display ID.
-    #[tokio::test]
-    async fn test_duplicated_display_id() {
-        let user = test::model::new_admin_user();
-        let project1 = test::model::new_general_project(user.id.clone());
-        let project2 = test::model::new_general_project(user.id.clone());
-
-        let app = test::build_mock_app()
-            .users(vec![user.clone()])
-            .projects(vec![project1.clone(), project2.clone()])
-            .build()
-            .login_as(user)
-            .await;
-
-        let input = update_project::Input {
-            id: ProjectId::from_entity(project1.id),
-            display_id: Some(project2.display_id.into_string()),
-            name: None,
-            kana_name: None,
-            group_name: None,
-            kana_group_name: None,
-            description: None,
-            category: None,
-            attributes: None,
-        };
-        assert!(matches!(
-            update_project::run(&app, input).await,
-            Err(UseCaseError::UseCase(
-                update_project::Error::UnavailableDisplayId
-            ))
         ));
     }
 }
