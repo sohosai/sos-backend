@@ -9,12 +9,14 @@ use uuid::Uuid;
 
 pub mod attribute;
 pub mod category;
+pub mod code;
 pub mod description;
 pub mod display_id;
 pub mod index;
 pub mod name;
 pub use attribute::{ProjectAttribute, ProjectAttributes};
 pub use category::ProjectCategory;
+pub use code::{ProjectCode, ProjectKind};
 pub use description::ProjectDescription;
 pub use display_id::ProjectDisplayId;
 pub use index::ProjectIndex;
@@ -64,6 +66,20 @@ impl Project {
         }
 
         user.permissions().contains(Permissions::READ_ALL_PROJECTS)
+    }
+
+    pub fn kind(&self) -> ProjectKind {
+        ProjectKind {
+            is_cooking: self.category == ProjectCategory::Cooking,
+            is_outdoor: self.attributes.contains(ProjectAttribute::Outdoor),
+        }
+    }
+
+    pub fn code(&self) -> ProjectCode {
+        ProjectCode {
+            kind: self.kind(),
+            index: self.index,
+        }
     }
 
     pub fn set_name(&mut self, name: ProjectName) {

@@ -76,6 +76,7 @@ impl ProjectAttribute {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Project {
     pub id: ProjectId,
+    pub code: String,
     pub created_at: DateTime<Utc>,
     pub display_id: String,
     pub owner_id: UserId,
@@ -98,6 +99,7 @@ impl Project {
     ) -> Project {
         Project {
             id: ProjectId::from_entity(project.id),
+            code: project.code().to_string(),
             created_at: project.created_at.utc(),
             display_id: project.display_id.into_string(),
             owner_id: UserId::from_entity(project.owner_id),

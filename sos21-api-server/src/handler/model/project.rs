@@ -80,6 +80,7 @@ impl ProjectAttribute {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Project {
     pub id: ProjectId,
+    pub code: String,
     pub created_at: DateTime<Utc>,
     pub display_id: String,
     pub owner_id: UserId,
@@ -98,6 +99,7 @@ impl Project {
     pub fn from_use_case(project: use_case::Project) -> Project {
         Project {
             id: ProjectId::from_use_case(project.id),
+            code: project.code,
             created_at: project.created_at,
             display_id: project.display_id,
             owner_id: UserId::from_use_case(project.owner_id),

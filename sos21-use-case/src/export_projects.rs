@@ -18,6 +18,7 @@ pub struct Input {
 #[derive(Debug, Clone)]
 pub struct InputFieldNames {
     pub id: Option<String>,
+    pub code: Option<String>,
     pub created_at: Option<String>,
     pub display_id: Option<String>,
     pub owner_id: Option<String>,
@@ -95,6 +96,7 @@ where
 {
     let InputFieldNames {
         id,
+        code,
         created_at,
         display_id,
         owner_id,
@@ -124,6 +126,7 @@ where
     }
 
     write_field!(writer, id);
+    write_field!(writer, code);
     write_field!(writer, created_at);
     write_field!(writer, display_id);
     write_field!(writer, owner_id);
@@ -161,6 +164,7 @@ where
 {
     let InputFieldNames {
         id,
+        code,
         created_at,
         display_id,
         owner_id,
@@ -183,6 +187,10 @@ where
 
     if id.is_some() {
         writer.write_field(project.id.to_uuid().to_hyphenated().to_string())?;
+    }
+
+    if code.is_some() {
+        writer.write_field(project.code().to_string())?;
     }
 
     if created_at.is_some() {
@@ -327,6 +335,7 @@ mod tests {
     fn mock_input() -> export_projects::Input {
         let field_names = export_projects::InputFieldNames {
             id: Some("内部ID".to_string()),
+            code: Some("企画番号".to_string()),
             created_at: Some("作成日時".to_string()),
             display_id: Some("ID".to_string()),
             owner_id: Some("責任者".to_string()),

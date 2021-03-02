@@ -5,6 +5,8 @@ x-examples: {}
 properties:
   id:
     $ref: ./ProjectId.yml
+  code:
+    type: string
   created_at:
     $ref: ../DateTime.yml
   display_id:
@@ -33,6 +35,7 @@ properties:
       $ref: ./ProjectAttribute.yml
 required:
   - id
+  - code
   - created_at
   - display_id
   - owner_id

@@ -11,6 +11,8 @@ pub struct Request {
     #[serde(default)]
     pub field_id: Option<String>,
     #[serde(default)]
+    pub field_code: Option<String>,
+    #[serde(default)]
     pub field_created_at: Option<String>,
     #[serde(default)]
     pub field_display_id: Option<String>,
@@ -82,6 +84,7 @@ pub async fn handler(
     let input = {
         let Request {
             field_id,
+            field_code,
             field_created_at,
             field_display_id,
             field_owner_id,
@@ -107,6 +110,7 @@ pub async fn handler(
         } = request;
         let field_names = export_projects::InputFieldNames {
             id: field_id,
+            code: field_code,
             created_at: field_created_at,
             display_id: field_display_id,
             owner_id: field_owner_id,
