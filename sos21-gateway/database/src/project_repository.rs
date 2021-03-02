@@ -132,6 +132,8 @@ fn from_project(project: Project) -> data::project::Project {
         category: match category {
             ProjectCategory::General => data::project::ProjectCategory::General,
             ProjectCategory::Stage => data::project::ProjectCategory::Stage,
+            ProjectCategory::Cooking => data::project::ProjectCategory::Cooking,
+            ProjectCategory::Food => data::project::ProjectCategory::Food,
         },
         attributes: attributes
             .attributes()
@@ -139,6 +141,7 @@ fn from_project(project: Project) -> data::project::Project {
                 ProjectAttribute::Academic => data::project::ProjectAttributes::ACADEMIC,
                 ProjectAttribute::Artistic => data::project::ProjectAttributes::ARTISTIC,
                 ProjectAttribute::Committee => data::project::ProjectAttributes::COMMITTEE,
+                ProjectAttribute::Outdoor => data::project::ProjectAttributes::OUTDOOR,
             })
             .collect(),
     }
@@ -174,6 +177,10 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         attrs.insert(ProjectAttribute::Committee);
         attributes.remove(data::project::ProjectAttributes::COMMITTEE);
     }
+    if attributes.contains(data::project::ProjectAttributes::OUTDOOR) {
+        attrs.insert(ProjectAttribute::Outdoor);
+        attributes.remove(data::project::ProjectAttributes::OUTDOOR);
+    }
     ensure!(attributes.is_empty());
 
     Ok(Project {
@@ -190,6 +197,8 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         category: match category {
             data::project::ProjectCategory::General => ProjectCategory::General,
             data::project::ProjectCategory::Stage => ProjectCategory::Stage,
+            data::project::ProjectCategory::Cooking => ProjectCategory::Cooking,
+            data::project::ProjectCategory::Food => ProjectCategory::Food,
         },
         attributes: ProjectAttributes::from_attributes(attrs)?,
     })

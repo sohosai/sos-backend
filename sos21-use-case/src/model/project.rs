@@ -21,6 +21,8 @@ impl ProjectId {
 pub enum ProjectCategory {
     General,
     Stage,
+    Cooking,
+    Food,
 }
 
 impl ProjectCategory {
@@ -28,6 +30,8 @@ impl ProjectCategory {
         match category {
             entity::ProjectCategory::General => ProjectCategory::General,
             entity::ProjectCategory::Stage => ProjectCategory::Stage,
+            entity::ProjectCategory::Cooking => ProjectCategory::Cooking,
+            entity::ProjectCategory::Food => ProjectCategory::Food,
         }
     }
 
@@ -35,6 +39,8 @@ impl ProjectCategory {
         match self {
             ProjectCategory::General => entity::ProjectCategory::General,
             ProjectCategory::Stage => entity::ProjectCategory::Stage,
+            ProjectCategory::Cooking => entity::ProjectCategory::Cooking,
+            ProjectCategory::Food => entity::ProjectCategory::Food,
         }
     }
 }
@@ -44,6 +50,7 @@ pub enum ProjectAttribute {
     Academic,
     Artistic,
     Committee,
+    Outdoor,
 }
 
 impl ProjectAttribute {
@@ -52,6 +59,7 @@ impl ProjectAttribute {
             entity::ProjectAttribute::Academic => ProjectAttribute::Academic,
             entity::ProjectAttribute::Artistic => ProjectAttribute::Artistic,
             entity::ProjectAttribute::Committee => ProjectAttribute::Committee,
+            entity::ProjectAttribute::Outdoor => ProjectAttribute::Outdoor,
         }
     }
 
@@ -60,6 +68,7 @@ impl ProjectAttribute {
             ProjectAttribute::Academic => entity::ProjectAttribute::Academic,
             ProjectAttribute::Artistic => entity::ProjectAttribute::Artistic,
             ProjectAttribute::Committee => entity::ProjectAttribute::Committee,
+            ProjectAttribute::Outdoor => entity::ProjectAttribute::Outdoor,
         }
     }
 }

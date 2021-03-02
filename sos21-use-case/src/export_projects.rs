@@ -42,6 +42,8 @@ pub struct InputFieldNames {
 pub struct InputCategoryNames {
     pub general: String,
     pub stage: String,
+    pub cooking: String,
+    pub food: String,
 }
 
 #[derive(Debug, Clone)]
@@ -256,6 +258,8 @@ where
         let category_name = match project.category {
             project::ProjectCategory::General => &input.category_names.general,
             project::ProjectCategory::Stage => &input.category_names.stage,
+            project::ProjectCategory::Cooking => &input.category_names.cooking,
+            project::ProjectCategory::Food => &input.category_names.food,
         };
         writer.write_field(category_name)?;
     }
@@ -345,6 +349,8 @@ mod tests {
         let category_names = export_projects::InputCategoryNames {
             general: "一般".to_string(),
             stage: "ステージ".to_string(),
+            cooking: "調理".to_string(),
+            food: "飲食物取扱".to_string(),
         };
         export_projects::Input {
             field_names,

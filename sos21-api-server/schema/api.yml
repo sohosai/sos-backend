@@ -737,6 +737,20 @@ paths:
           description: "`stage` 企画形態をどう表示するか指定します。"
           name: category_stage
           required: true
+        - schema:
+            type: string
+            example: 調理
+          in: query
+          description: "`cooking` 企画形態をどう表示するか指定します。"
+          name: category_cooking
+          required: true
+        - schema:
+            type: string
+            example: 飲食物取扱
+          in: query
+          description: "`food` 企画形態をどう表示するか指定します。"
+          name: category_food
+          required: true
       description: 企画一覧を CSV で出力します。
     parameters: []
   /user/update:

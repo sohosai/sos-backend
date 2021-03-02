@@ -3,3 +3,5 @@ title: ProjectCategory
 enum:
   - general
   - stage
+  - cooking
+  - food

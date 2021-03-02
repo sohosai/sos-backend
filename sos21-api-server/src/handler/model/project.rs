@@ -24,6 +24,8 @@ impl ProjectId {
 pub enum ProjectCategory {
     General,
     Stage,
+    Cooking,
+    Food,
 }
 
 impl ProjectCategory {
@@ -31,6 +33,8 @@ impl ProjectCategory {
         match category {
             use_case::ProjectCategory::General => ProjectCategory::General,
             use_case::ProjectCategory::Stage => ProjectCategory::Stage,
+            use_case::ProjectCategory::Cooking => ProjectCategory::Cooking,
+            use_case::ProjectCategory::Food => ProjectCategory::Food,
         }
     }
 
@@ -38,6 +42,8 @@ impl ProjectCategory {
         match self {
             ProjectCategory::General => use_case::ProjectCategory::General,
             ProjectCategory::Stage => use_case::ProjectCategory::Stage,
+            ProjectCategory::Cooking => use_case::ProjectCategory::Cooking,
+            ProjectCategory::Food => use_case::ProjectCategory::Food,
         }
     }
 }
@@ -48,6 +54,7 @@ pub enum ProjectAttribute {
     Academic,
     Artistic,
     Committee,
+    Outdoor,
 }
 
 impl ProjectAttribute {
@@ -56,6 +63,7 @@ impl ProjectAttribute {
             use_case::ProjectAttribute::Academic => ProjectAttribute::Academic,
             use_case::ProjectAttribute::Artistic => ProjectAttribute::Artistic,
             use_case::ProjectAttribute::Committee => ProjectAttribute::Committee,
+            use_case::ProjectAttribute::Outdoor => ProjectAttribute::Outdoor,
         }
     }
 
@@ -64,6 +72,7 @@ impl ProjectAttribute {
             ProjectAttribute::Academic => use_case::ProjectAttribute::Academic,
             ProjectAttribute::Artistic => use_case::ProjectAttribute::Artistic,
             ProjectAttribute::Committee => use_case::ProjectAttribute::Committee,
+            ProjectAttribute::Outdoor => use_case::ProjectAttribute::Outdoor,
         }
     }
 }

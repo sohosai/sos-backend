@@ -17,6 +17,10 @@ pub struct Form {
     pub unspecified_query: BitVec,
     pub general_query: BitVec,
     pub stage_query: BitVec,
+    pub cooking_query: BitVec,
+    pub food_query: BitVec,
+    // TODO: Enable to add new attribute in better way
+    pub needs_sync: bool,
 }
 
 #[derive(Debug, Clone, sqlx::FromRow)]

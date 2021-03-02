@@ -48,6 +48,8 @@ pub struct Request {
     pub field_attribute_committee: Option<String>,
     pub category_general: String,
     pub category_stage: String,
+    pub category_cooking: String,
+    pub category_food: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -100,6 +102,8 @@ pub async fn handler(
             field_attribute_committee,
             category_general,
             category_stage,
+            category_cooking,
+            category_food,
         } = request;
         let field_names = export_projects::InputFieldNames {
             id: field_id,
@@ -125,6 +129,8 @@ pub async fn handler(
         let category_names = export_projects::InputCategoryNames {
             general: category_general,
             stage: category_stage,
+            cooking: category_cooking,
+            food: category_food,
         };
         export_projects::Input {
             field_names,

@@ -11,6 +11,8 @@ use uuid::Uuid;
 pub enum ProjectCategory {
     General,
     Stage,
+    Cooking,
+    Food,
 }
 
 bitflags::bitflags! {
@@ -18,6 +20,7 @@ bitflags::bitflags! {
         const ACADEMIC  = 0b00000001;
         const ARTISTIC  = 0b00000010;
         const COMMITTEE = 0b00000100;
+        const OUTDOOR   = 0b00001000;
     }
 }
 

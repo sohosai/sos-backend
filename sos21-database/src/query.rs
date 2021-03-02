@@ -5,6 +5,7 @@ mod find_form_answer_by_form_and_project;
 mod find_project;
 mod find_project_by_display_id;
 mod find_user;
+mod is_healthy;
 mod list_form_answers_by_form;
 mod list_forms;
 mod list_forms_by_project;
@@ -18,6 +19,7 @@ pub use find_form_answer_by_form_and_project::find_form_answer_by_form_and_proje
 pub use find_project::find_project;
 pub use find_project_by_display_id::find_project_by_display_id;
 pub use find_user::find_user;
+pub use is_healthy::is_healthy;
 pub use list_form_answers_by_form::list_form_answers_by_form;
 pub use list_forms::list_forms;
 pub use list_forms_by_project::list_forms_by_project;

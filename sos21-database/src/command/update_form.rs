@@ -15,6 +15,9 @@ pub struct Input {
     pub unspecified_query: BitVec,
     pub general_query: BitVec,
     pub stage_query: BitVec,
+    pub cooking_query: BitVec,
+    pub food_query: BitVec,
+    pub needs_sync: bool,
 }
 
 pub async fn update_form<'a, E>(conn: E, input: Input) -> Result<()>
@@ -33,7 +36,10 @@ UPDATE forms
     condition = $7,
     unspecified_query = $8,
     general_query = $9,
-    stage_query = $10
+    stage_query = $10,
+    cooking_query = $11,
+    food_query = $12,
+    needs_sync = $13
   WHERE id = $1
 "#,
         input.id,
@@ -45,7 +51,10 @@ UPDATE forms
         input.condition,
         input.unspecified_query,
         input.general_query,
-        input.stage_query
+        input.stage_query,
+        input.cooking_query,
+        input.food_query,
+        input.needs_sync,
     )
     .execute(conn)
     .await
