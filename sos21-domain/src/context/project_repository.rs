@@ -13,6 +13,7 @@ pub trait ProjectRepository {
         &self,
         display_id: ProjectDisplayId,
     ) -> Result<Option<(Project, User)>>;
+    async fn count_projects(&self) -> Result<u64>;
     async fn list_projects(&self) -> Result<Vec<(Project, User)>>;
     async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<Project>>;
 }
@@ -52,6 +53,11 @@ macro_rules! delegate_project_repository {
             > {
                 $target.find_project_by_display_id(display_id).await
             }
+            async fn count_projects(
+                &$sel,
+            ) -> ::anyhow::Result<u64> {
+                $target.count_projects().await
+            }
             async fn list_projects(
                 &$sel,
             ) -> ::anyhow::Result<
@@ -87,6 +93,10 @@ impl<C: ProjectRepository + Sync> ProjectRepository for &C {
         display_id: ProjectDisplayId,
     ) -> Result<Option<(Project, User)>> {
         <C as ProjectRepository>::find_project_by_display_id(self, display_id).await
+    }
+
+    async fn count_projects(&self) -> Result<u64> {
+        <C as ProjectRepository>::count_projects(self).await
     }
 
     async fn list_projects(&self) -> Result<Vec<(Project, User)>> {

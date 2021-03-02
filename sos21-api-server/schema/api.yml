@@ -455,6 +455,40 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "409":
           description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - UNAVAILABLE_PROJECT_DISPLAY_ID
+                                  - TOO_MANY_PROJECTS
+                            required:
+                              - type
+                    required:
+                      - status
+                      - error
         "500":
           $ref: "#/components/responses/InternalServerError"
       description: 企画を作成します。

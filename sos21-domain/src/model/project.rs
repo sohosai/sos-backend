@@ -11,11 +11,13 @@ pub mod attribute;
 pub mod category;
 pub mod description;
 pub mod display_id;
+pub mod index;
 pub mod name;
 pub use attribute::{ProjectAttribute, ProjectAttributes};
 pub use category::ProjectCategory;
 pub use description::ProjectDescription;
 pub use display_id::ProjectDisplayId;
+pub use index::ProjectIndex;
 pub use name::{ProjectGroupName, ProjectKanaGroupName, ProjectKanaName, ProjectName};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -35,6 +37,7 @@ impl ProjectId {
 #[derive(Debug, Clone)]
 pub struct Project {
     pub id: ProjectId,
+    pub index: ProjectIndex,
     pub created_at: DateTime,
     // TODO: encupsulate to ensure availability
     pub display_id: ProjectDisplayId,

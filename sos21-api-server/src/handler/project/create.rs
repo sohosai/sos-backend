@@ -36,6 +36,7 @@ pub enum Error {
     InvalidField { field: &'static str },
     UnavailableProjectDisplayId,
     DuplicatedProjectAttributes,
+    TooManyProjects,
 }
 
 impl HandlerResponse for Error {
@@ -44,6 +45,7 @@ impl HandlerResponse for Error {
             Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
             Error::UnavailableProjectDisplayId => StatusCode::CONFLICT,
             Error::DuplicatedProjectAttributes => StatusCode::BAD_REQUEST,
+            Error::TooManyProjects => StatusCode::CONFLICT,
         }
     }
 }
@@ -67,6 +69,7 @@ impl From<create_project::Error> for Error {
                 field: "description",
             },
             create_project::Error::DuplicatedAttributes => Error::DuplicatedProjectAttributes,
+            create_project::Error::TooManyProjects => Error::TooManyProjects,
         }
     }
 }

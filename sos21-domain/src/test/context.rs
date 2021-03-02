@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::convert::TryInto;
 use std::sync::Arc;
 
 use crate::context::{
@@ -176,6 +177,11 @@ impl ProjectRepository for MockApp {
         } else {
             Ok(None)
         }
+    }
+
+    async fn count_projects(&self) -> Result<u64> {
+        let len = self.projects.lock().await.len().try_into()?;
+        Ok(len)
     }
 
     async fn list_projects(&self) -> Result<Vec<(Project, User)>> {

@@ -1,16 +1,28 @@
+use std::sync::atomic::{AtomicU16, Ordering};
+
 use crate::model::{
     date_time::DateTime,
     project::{
         Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
-        ProjectDisplayId, ProjectGroupName, ProjectId, ProjectKanaGroupName, ProjectKanaName,
-        ProjectName,
+        ProjectDisplayId, ProjectGroupName, ProjectId, ProjectIndex, ProjectKanaGroupName,
+        ProjectKanaName, ProjectName,
     },
     user::UserId,
 };
+
+use once_cell::sync::OnceCell;
 use uuid::Uuid;
 
 pub fn new_project_id() -> ProjectId {
     ProjectId::from_uuid(Uuid::new_v4())
+}
+
+static NEXT_PROJECT_INDEX: OnceCell<AtomicU16> = OnceCell::new();
+
+pub fn new_project_index() -> ProjectIndex {
+    let index = NEXT_PROJECT_INDEX.get_or_init(|| AtomicU16::new(0));
+    let index = index.fetch_add(1, Ordering::SeqCst);
+    ProjectIndex::from_u16(index).unwrap()
 }
 
 pub fn new_project_display_id() -> ProjectDisplayId {
@@ -47,6 +59,7 @@ pub fn new_project_with_attributes(
 ) -> Project {
     Project {
         id: new_project_id(),
+        index: new_project_index(),
         created_at: DateTime::now(),
         display_id: new_project_display_id(),
         owner_id,

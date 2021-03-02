@@ -1,3 +1,5 @@
+use std::convert::TryInto;
+
 use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::project::{Project, ProjectAttribute, ProjectCategory};
 
@@ -28,6 +30,17 @@ pub enum Error {
     InvalidKanaGroupName,
     InvalidDescription,
     DuplicatedAttributes,
+    TooManyProjects,
+}
+
+impl Error {
+    fn from_count_integer_error(_err: std::num::TryFromIntError) -> Self {
+        Error::TooManyProjects
+    }
+
+    fn from_index_error(_err: project::index::FromU16Error) -> Self {
+        Error::TooManyProjects
+    }
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -36,6 +49,16 @@ where
     C: ProjectRepository + Send + Sync,
 {
     let login_user = ctx.login_user();
+
+    let count = ctx
+        .count_projects()
+        .await
+        .context("Failed to count projects")?;
+    let count = count
+        .try_into()
+        .map_err(|err| UseCaseError::UseCase(Error::from_count_integer_error(err)))?;
+    let index = project::ProjectIndex::from_u16(count)
+        .map_err(|err| UseCaseError::UseCase(Error::from_index_error(err)))?;
 
     let display_id = project::ProjectDisplayId::from_string(input.display_id)
         .map_err(|_| UseCaseError::UseCase(Error::InvalidDisplayId))?;
@@ -68,6 +91,7 @@ where
 
     let project = project::Project {
         id: project::ProjectId::from_uuid(Uuid::new_v4()),
+        index,
         created_at: DateTime::now(),
         display_id,
         owner_id: login_user.id.clone(),

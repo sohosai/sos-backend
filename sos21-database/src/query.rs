@@ -1,3 +1,4 @@
+mod count_projects;
 mod find_form;
 mod find_form_answer;
 mod find_form_answer_by_form_and_project;
@@ -10,6 +11,7 @@ mod list_forms_by_project;
 mod list_projects;
 mod list_projects_by_owner;
 mod list_users;
+pub use count_projects::count_projects;
 pub use find_form::find_form;
 pub use find_form_answer::find_form_answer;
 pub use find_form_answer_by_form_and_project::find_form_answer_by_form_and_project;

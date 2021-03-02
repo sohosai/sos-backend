@@ -21,6 +21,7 @@ where
         r#"
 SELECT
         projects.id,
+        projects.index,
         projects.created_at,
         display_id,
         owner_id,
@@ -56,6 +57,7 @@ WHERE projects.display_id = $1
     };
     let project = Project {
         id: row.id,
+        index: row.index,
         created_at: row.created_at,
         display_id: row.display_id,
         owner_id: row.owner_id,

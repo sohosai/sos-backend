@@ -20,6 +20,7 @@ where
         r#"
 SELECT
         projects.id as "id!",
+        projects.index as "index!",
         projects.created_at as "created_at!",
         display_id as "display_id!",
         owner_id as "owner_id!",
@@ -49,6 +50,7 @@ INNER JOIN users ON (projects.owner_id = users.id)
         let row = row.context("Failed to select from projects")?;
         let project = Project {
             id: row.id,
+            index: row.index,
             created_at: row.created_at,
             display_id: row.display_id,
             owner_id: row.owner_id,

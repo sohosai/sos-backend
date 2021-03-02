@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::convert::TryInto;
 
 use crate::user_repository::to_user;
 
@@ -12,8 +13,8 @@ use sos21_domain::model::{
     date_time::DateTime,
     project::{
         Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
-        ProjectDisplayId, ProjectGroupName, ProjectId, ProjectKanaGroupName, ProjectKanaName,
-        ProjectName,
+        ProjectDisplayId, ProjectGroupName, ProjectId, ProjectIndex, ProjectKanaGroupName,
+        ProjectKanaName, ProjectName,
     },
     user::{User, UserId},
 };
@@ -71,6 +72,11 @@ impl ProjectRepository for ProjectDatabase {
         to_project_with_owner(result.project, result.owner).map(Some)
     }
 
+    async fn count_projects(&self) -> Result<u64> {
+        let mut lock = self.0.lock().await;
+        query::count_projects(&mut *lock).await
+    }
+
     async fn list_projects(&self) -> Result<Vec<(Project, User)>> {
         let mut lock = self.0.lock().await;
         query::list_projects(&mut *lock)
@@ -100,6 +106,7 @@ fn to_project_with_owner(
 fn from_project(project: Project) -> data::project::Project {
     let Project {
         id,
+        index,
         created_at,
         display_id,
         owner_id,
@@ -113,6 +120,7 @@ fn from_project(project: Project) -> data::project::Project {
     } = project;
     data::project::Project {
         id: id.to_uuid(),
+        index: index.to_i16(),
         created_at: created_at.utc(),
         display_id: display_id.into_string(),
         owner_id: owner_id.0,
@@ -139,6 +147,7 @@ fn from_project(project: Project) -> data::project::Project {
 fn to_project(project: data::project::Project) -> Result<Project> {
     let data::project::Project {
         id,
+        index,
         created_at,
         display_id,
         owner_id,
@@ -169,6 +178,7 @@ fn to_project(project: data::project::Project) -> Result<Project> {
 
     Ok(Project {
         id: ProjectId::from_uuid(id),
+        index: ProjectIndex::from_u16(index.try_into()?)?,
         created_at: DateTime::from_utc(created_at),
         display_id: ProjectDisplayId::from_string(display_id)?,
         owner_id: UserId(owner_id),
