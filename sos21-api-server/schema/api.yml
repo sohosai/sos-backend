@@ -546,6 +546,41 @@ paths:
                 required:
                   - project
               examples: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_PROJECT_CODE
+                            required:
+                              - type
+                    required:
+                      - status
+                      - error
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -555,14 +590,17 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: project/get
-      description: 指定された企画の情報を返します。
+      description: ID か企画番号で指定された企画の情報を返します。
       parameters:
         - schema:
             type: string
             format: uuid
           in: query
           name: project_id
-          required: true
+        - schema:
+            type: string
+          in: query
+          name: project_code
     parameters: []
   /project/list:
     get:

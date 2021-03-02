@@ -8,7 +8,7 @@ use crate::context::{
 use crate::model::{
     form::{Form, FormId},
     form_answer::{FormAnswer, FormAnswerId},
-    project::{Project, ProjectDisplayId, ProjectId},
+    project::{Project, ProjectDisplayId, ProjectId, ProjectIndex},
     user::{User, UserId},
 };
 
@@ -170,6 +170,22 @@ impl ProjectRepository for MockApp {
             .await
             .values()
             .find(|project| project.display_id == display_id)
+            .cloned();
+        if let Some(project) = project {
+            let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
+            Ok(Some((project, owner)))
+        } else {
+            Ok(None)
+        }
+    }
+
+    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<(Project, User)>> {
+        let project = self
+            .projects
+            .lock()
+            .await
+            .values()
+            .find(|project| project.index == index)
             .cloned();
         if let Some(project) = project {
             let owner = self.get_user(project.owner_id.clone()).await?.unwrap();

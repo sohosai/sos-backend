@@ -63,6 +63,17 @@ impl ProjectRepository for ProjectDatabase {
         to_project_with_owner(result.project, result.owner).map(Some)
     }
 
+    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<(Project, User)>> {
+        let mut lock = self.0.lock().await;
+
+        let opt = query::find_project_by_index(&mut *lock, index.to_i16()).await?;
+        let result = match opt {
+            Some(x) => x,
+            None => return Ok(None),
+        };
+        to_project_with_owner(result.project, result.owner).map(Some)
+    }
+
     async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {
         let mut lock = self.0.lock().await;
         let result = match query::find_project(&mut *lock, id.to_uuid()).await? {

@@ -21,6 +21,7 @@ pub mod get_form;
 pub mod get_form_answer;
 pub mod get_login_user;
 pub mod get_project;
+pub mod get_project_by_code;
 pub mod get_project_by_display_id;
 pub mod get_project_form;
 pub mod get_project_form_answer;
