@@ -669,24 +669,6 @@
       "nullable": []
     }
   },
-  "7bc06b220fdb1426f92fc0ecd85017997c3f176eda1633392b91f25485de6582": {
-    "query": "SELECT bool_or(needs_sync) as \"not_in_sync!\" FROM forms",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "not_in_sync!",
-          "type_info": "Bool"
-        }
-      ],
-      "parameters": {
-        "Left": []
-      },
-      "nullable": [
-        null
-      ]
-    }
-  },
   "843923b9a0257cf80f1dff554e7dc8fdfc05f489328e8376513124dfb42996e3": {
     "query": "SELECT * FROM users WHERE id = $1",
     "describe": {
@@ -1358,6 +1340,24 @@
         ]
       },
       "nullable": []
+    }
+  },
+  "dc7c2de4dffa98331c4d891151936edb4df0247af07cdc2635d9888284e4a4cb": {
+    "query": "SELECT coalesce(bool_or(needs_sync), false) as \"not_in_sync!\" FROM forms",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "not_in_sync!",
+          "type_info": "Bool"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        null
+      ]
     }
   },
   "e0fc85e7d86de077c37422aed415a23c1c2c55aac14bcc88e3e9594dda0f4940": {

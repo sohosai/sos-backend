@@ -27,5 +27,6 @@ url = "2"
 structopt = "0.3"
 apply-macro = "1"
 sos21-domain = { path = "../sos21-domain" }
+sos21-database = { path = "../sos21-database" }
 sos21-gateway-database = { path = "../sos21-gateway/database" }
 sos21-use-case = { path = "../sos21-use-case" }

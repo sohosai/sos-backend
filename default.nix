@@ -4,5 +4,5 @@ rustPlatform.buildRustPackage {
   pname = "sos21-backend";
   version = "0.1.0";
   src = ./.;
-  cargoSha256 = "0pv3kh57mnia0w84hpbgwpp1p6d54x7nh0y1p46zxqhy67jalnd8";
+  cargoSha256 = "1d0y79i81jxg7ypsa08z6x896vghbfzkz3q21f6xijw1m48hmj8n";
 }

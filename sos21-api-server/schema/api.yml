@@ -1643,6 +1643,27 @@ paths:
       operationId: health/liveness
       description: 何もしません。稼働の確認に使うことができます。
       security: []
+  /health/database:
+    get:
+      summary: health/database
+      tags: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                required:
+                  - ok
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: health/database
+      description: データベースの状態を確認します。
+      security: []
 components:
   securitySchemes:
     token:
