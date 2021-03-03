@@ -109,6 +109,10 @@
 <span id="106">106</span>
 <span id="107">107</span>
 <span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -129,7 +133,8 @@
     (@<span class="ident">method</span> <span class="ident">POST</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">post</span>().<span class="ident">and</span>(<span class="ident">warp</span>::<span class="ident">body</span>::<span class="ident">json</span>()) };
     (@<span class="ident">path</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">any</span>() };
     (@<span class="ident">path</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">literal</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">path</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>) };
-    (@<span class="ident">options</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, {<span class="ident">noauth</span>}) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">any</span>() };
+    (@<span class="ident">options</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, {<span class="ident">noapp</span>}) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">any</span>() };
+    (@<span class="ident">options</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, {<span class="ident">noauth</span>}) <span class="op">=</span><span class="op">&gt;</span> { <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>.<span class="ident">clone</span>() };
     (@<span class="ident">options</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, {}) <span class="op">=</span><span class="op">&gt;</span> { <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>.<span class="ident">clone</span>().<span class="ident">and</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>.<span class="ident">clone</span>()) };
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, <span class="op">/</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">literal</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner</span>:<span class="ident">tt</span>)<span class="op">+</span> }) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="ident">warp</span>::<span class="ident">path</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>)
@@ -173,7 +178,10 @@
     <span class="kw">let</span> <span class="ident">with_app</span> <span class="op">=</span> <span class="ident">warp</span>::<span class="ident">any</span>().<span class="ident">map</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="ident">app</span>.<span class="ident">clone</span>());
 
     <span class="kw">let</span> <span class="ident">routes</span> <span class="op">=</span> <span class="macro">routes</span><span class="macro">!</span> { <span class="ident">with_auth</span>, <span class="ident">with_app</span>,
-        <span class="op">/</span> <span class="string">&quot;health&quot;</span> <span class="op">/</span> <span class="string">&quot;liveness&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">health</span>::<span class="ident">liveness</span>),
+        <span class="op">/</span> <span class="string">&quot;health&quot;</span> {
+            <span class="op">/</span> <span class="string">&quot;liveness&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noapp</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">health</span>::<span class="ident">liveness</span>),
+            <span class="op">/</span> <span class="string">&quot;database&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">health</span>::<span class="ident">database</span>),
+        },
         <span class="op">/</span> <span class="string">&quot;signup&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">signup</span>),
         <span class="op">/</span> <span class="string">&quot;me&quot;</span> {
             <span class="op">/</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">me</span>),

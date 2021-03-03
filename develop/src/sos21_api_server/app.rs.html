@@ -68,12 +68,29 @@
 <span id="65">65</span>
 <span id="66">66</span>
 <span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">config</span>::<span class="ident">Config</span>;
 
-<span class="kw">use</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span>;
+<span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">sos21_gateway_database</span>::<span class="ident">Database</span>;
-<span class="kw">use</span> <span class="ident">sqlx</span>::<span class="ident">postgres</span>::{<span class="ident">PgPool</span>, <span class="ident">PgPoolOptions</span>};
+<span class="kw">use</span> <span class="ident">sqlx</span>::{
+    <span class="ident">pool</span>::<span class="ident">PoolConnection</span>,
+    <span class="ident">postgres</span>::{<span class="ident">PgPool</span>, <span class="ident">PgPoolOptions</span>, <span class="ident">Postgres</span>},
+};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">App</span> {
@@ -94,8 +111,19 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">config</span>
     }
 
+    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">connection</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PoolConnection</span><span class="op">&lt;</span><span class="ident">Postgres</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">pool</span>
+            .<span class="ident">acquire</span>()
+            .<span class="kw">await</span>
+            .<span class="ident">context</span>(<span class="string">&quot;Failed to acquire a connection from pool&quot;</span>)
+    }
+
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">start_context</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Context</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">connection</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pool</span>.<span class="ident">begin</span>().<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">connection</span> <span class="op">=</span> <span class="self">self</span>
+            .<span class="ident">pool</span>
+            .<span class="ident">begin</span>()
+            .<span class="kw">await</span>
+            .<span class="ident">context</span>(<span class="string">&quot;Failed to acquire a connection from pool&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">database</span> <span class="op">=</span> <span class="ident">Database</span>::<span class="ident">new</span>(<span class="ident">connection</span>);
         <span class="prelude-val">Ok</span>(<span class="ident">Context</span> { <span class="ident">database</span> })
     }
