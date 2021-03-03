@@ -18,8 +18,8 @@ pub struct Input {
 #[derive(Debug, Clone)]
 pub struct InputFieldNames {
     pub id: Option<String>,
+    pub code: Option<String>,
     pub created_at: Option<String>,
-    pub display_id: Option<String>,
     pub owner_id: Option<String>,
     pub owner_first_name: Option<String>,
     pub owner_last_name: Option<String>,
@@ -42,6 +42,8 @@ pub struct InputFieldNames {
 pub struct InputCategoryNames {
     pub general: String,
     pub stage: String,
+    pub cooking: String,
+    pub food: String,
 }
 
 #[derive(Debug, Clone)]
@@ -93,8 +95,8 @@ where
 {
     let InputFieldNames {
         id,
+        code,
         created_at,
-        display_id,
         owner_id,
         owner_first_name,
         owner_last_name,
@@ -122,8 +124,8 @@ where
     }
 
     write_field!(writer, id);
+    write_field!(writer, code);
     write_field!(writer, created_at);
-    write_field!(writer, display_id);
     write_field!(writer, owner_id);
     write_field!(writer, owner_first_name);
     write_field!(writer, owner_last_name);
@@ -159,8 +161,8 @@ where
 {
     let InputFieldNames {
         id,
+        code,
         created_at,
-        display_id,
         owner_id,
         owner_first_name,
         owner_last_name,
@@ -183,13 +185,13 @@ where
         writer.write_field(project.id.to_uuid().to_hyphenated().to_string())?;
     }
 
+    if code.is_some() {
+        writer.write_field(project.code().to_string())?;
+    }
+
     if created_at.is_some() {
         let created_at = project.created_at.jst().format("%F %T").to_string();
         writer.write_field(created_at)?;
-    }
-
-    if display_id.is_some() {
-        writer.write_field(project.display_id.into_string())?;
     }
 
     if owner_id.is_some() {
@@ -256,6 +258,8 @@ where
         let category_name = match project.category {
             project::ProjectCategory::General => &input.category_names.general,
             project::ProjectCategory::Stage => &input.category_names.stage,
+            project::ProjectCategory::Cooking => &input.category_names.cooking,
+            project::ProjectCategory::Food => &input.category_names.food,
         };
         writer.write_field(category_name)?;
     }
@@ -323,8 +327,8 @@ mod tests {
     fn mock_input() -> export_projects::Input {
         let field_names = export_projects::InputFieldNames {
             id: Some("内部ID".to_string()),
+            code: Some("企画番号".to_string()),
             created_at: Some("作成日時".to_string()),
-            display_id: Some("ID".to_string()),
             owner_id: Some("責任者".to_string()),
             owner_first_name: None,
             owner_last_name: None,
@@ -345,6 +349,8 @@ mod tests {
         let category_names = export_projects::InputCategoryNames {
             general: "一般".to_string(),
             stage: "ステージ".to_string(),
+            cooking: "調理".to_string(),
+            food: "飲食物取扱".to_string(),
         };
         export_projects::Input {
             field_names,

@@ -10,10 +10,7 @@ pub struct ProjectWithOwner {
     pub owner: User,
 }
 
-pub async fn find_project_by_display_id<'a, E>(
-    conn: E,
-    display_id: String,
-) -> Result<Option<ProjectWithOwner>>
+pub async fn find_project_by_index<'a, E>(conn: E, index: i16) -> Result<Option<ProjectWithOwner>>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
@@ -21,8 +18,8 @@ where
         r#"
 SELECT
         projects.id,
+        projects.index,
         projects.created_at,
-        display_id,
         owner_id,
         name,
         kana_name,
@@ -43,9 +40,9 @@ SELECT
         role as "role: UserRole"
 FROM projects
 INNER JOIN users ON (projects.owner_id = users.id)
-WHERE projects.display_id = $1
+WHERE projects.index = $1
 "#,
-        display_id
+        index
     )
     .fetch_optional(conn)
     .await
@@ -56,8 +53,8 @@ WHERE projects.display_id = $1
     };
     let project = Project {
         id: row.id,
+        index: row.index,
         created_at: row.created_at,
-        display_id: row.display_id,
         owner_id: row.owner_id,
         name: row.name,
         kana_name: row.kana_name,

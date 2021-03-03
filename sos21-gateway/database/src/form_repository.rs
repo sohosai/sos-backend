@@ -79,6 +79,9 @@ impl FormRepository for FormDatabase {
                 unspecified_query: form.unspecified_query,
                 general_query: form.general_query,
                 stage_query: form.stage_query,
+                cooking_query: form.cooking_query,
+                food_query: form.food_query,
+                needs_sync: false,
             };
             command::update_form(&mut *lock, input).await
         } else {
@@ -176,11 +179,15 @@ fn from_form(form: Form) -> Result<data::form::Form> {
     let mut unspecified_query = BitVec::from_elem(len as usize, false);
     let mut general_query = BitVec::from_elem(len as usize, false);
     let mut stage_query = BitVec::from_elem(len as usize, false);
+    let mut cooking_query = BitVec::from_elem(len as usize, false);
+    let mut food_query = BitVec::from_elem(len as usize, false);
 
     for conj in condition.query.conjunctions() {
         let query = match conj.category() {
             Some(ProjectCategory::Stage) => &mut stage_query,
             Some(ProjectCategory::General) => &mut general_query,
+            Some(ProjectCategory::Cooking) => &mut cooking_query,
+            Some(ProjectCategory::Food) => &mut food_query,
             None => &mut unspecified_query,
         };
 
@@ -190,6 +197,7 @@ fn from_form(form: Form) -> Result<data::form::Form> {
                 ProjectAttribute::Academic => data::project::ProjectAttributes::ACADEMIC,
                 ProjectAttribute::Artistic => data::project::ProjectAttributes::ARTISTIC,
                 ProjectAttribute::Committee => data::project::ProjectAttributes::COMMITTEE,
+                ProjectAttribute::Outdoor => data::project::ProjectAttributes::OUTDOOR,
             })
             .collect::<data::project::ProjectAttributes>();
 
@@ -214,5 +222,8 @@ fn from_form(form: Form) -> Result<data::form::Form> {
         unspecified_query,
         general_query,
         stage_query,
+        cooking_query,
+        food_query,
+        needs_sync: false,
     })
 }

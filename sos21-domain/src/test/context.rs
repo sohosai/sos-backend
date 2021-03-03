@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::convert::TryInto;
 use std::sync::Arc;
 
 use crate::context::{
@@ -7,7 +8,7 @@ use crate::context::{
 use crate::model::{
     form::{Form, FormId},
     form_answer::{FormAnswer, FormAnswerId},
-    project::{Project, ProjectDisplayId, ProjectId},
+    project::{Project, ProjectId, ProjectIndex},
     user::{User, UserId},
 };
 
@@ -159,16 +160,13 @@ impl ProjectRepository for MockApp {
         }
     }
 
-    async fn find_project_by_display_id(
-        &self,
-        display_id: ProjectDisplayId,
-    ) -> Result<Option<(Project, User)>> {
+    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<(Project, User)>> {
         let project = self
             .projects
             .lock()
             .await
             .values()
-            .find(|project| project.display_id == display_id)
+            .find(|project| project.index == index)
             .cloned();
         if let Some(project) = project {
             let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
@@ -176,6 +174,11 @@ impl ProjectRepository for MockApp {
         } else {
             Ok(None)
         }
+    }
+
+    async fn count_projects(&self) -> Result<u64> {
+        let len = self.projects.lock().await.len().try_into()?;
+        Ok(len)
     }
 
     async fn list_projects(&self) -> Result<Vec<(Project, User)>> {

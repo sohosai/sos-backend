@@ -24,6 +24,8 @@ impl ProjectId {
 pub enum ProjectCategory {
     General,
     Stage,
+    Cooking,
+    Food,
 }
 
 impl ProjectCategory {
@@ -31,6 +33,8 @@ impl ProjectCategory {
         match category {
             use_case::ProjectCategory::General => ProjectCategory::General,
             use_case::ProjectCategory::Stage => ProjectCategory::Stage,
+            use_case::ProjectCategory::Cooking => ProjectCategory::Cooking,
+            use_case::ProjectCategory::Food => ProjectCategory::Food,
         }
     }
 
@@ -38,6 +42,8 @@ impl ProjectCategory {
         match self {
             ProjectCategory::General => use_case::ProjectCategory::General,
             ProjectCategory::Stage => use_case::ProjectCategory::Stage,
+            ProjectCategory::Cooking => use_case::ProjectCategory::Cooking,
+            ProjectCategory::Food => use_case::ProjectCategory::Food,
         }
     }
 }
@@ -48,6 +54,7 @@ pub enum ProjectAttribute {
     Academic,
     Artistic,
     Committee,
+    Outdoor,
 }
 
 impl ProjectAttribute {
@@ -56,6 +63,7 @@ impl ProjectAttribute {
             use_case::ProjectAttribute::Academic => ProjectAttribute::Academic,
             use_case::ProjectAttribute::Artistic => ProjectAttribute::Artistic,
             use_case::ProjectAttribute::Committee => ProjectAttribute::Committee,
+            use_case::ProjectAttribute::Outdoor => ProjectAttribute::Outdoor,
         }
     }
 
@@ -64,6 +72,7 @@ impl ProjectAttribute {
             ProjectAttribute::Academic => use_case::ProjectAttribute::Academic,
             ProjectAttribute::Artistic => use_case::ProjectAttribute::Artistic,
             ProjectAttribute::Committee => use_case::ProjectAttribute::Committee,
+            ProjectAttribute::Outdoor => use_case::ProjectAttribute::Outdoor,
         }
     }
 }
@@ -71,8 +80,8 @@ impl ProjectAttribute {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Project {
     pub id: ProjectId,
+    pub code: String,
     pub created_at: DateTime<Utc>,
-    pub display_id: String,
     pub owner_id: UserId,
     pub owner_name: UserName,
     pub owner_kana_name: UserKanaName,
@@ -89,8 +98,8 @@ impl Project {
     pub fn from_use_case(project: use_case::Project) -> Project {
         Project {
             id: ProjectId::from_use_case(project.id),
+            code: project.code,
             created_at: project.created_at,
-            display_id: project.display_id,
             owner_id: UserId::from_use_case(project.owner_id),
             owner_name: UserName::from_use_case(project.owner_name),
             owner_kana_name: UserKanaName::from_use_case(project.owner_kana_name),

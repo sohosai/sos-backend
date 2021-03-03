@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::convert::TryInto;
 
 use crate::user_repository::to_user;
 
@@ -12,7 +13,7 @@ use sos21_domain::model::{
     date_time::DateTime,
     project::{
         Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
-        ProjectDisplayId, ProjectGroupName, ProjectId, ProjectKanaGroupName, ProjectKanaName,
+        ProjectGroupName, ProjectId, ProjectIndex, ProjectKanaGroupName, ProjectKanaName,
         ProjectName,
     },
     user::{User, UserId},
@@ -33,7 +34,6 @@ impl ProjectRepository for ProjectDatabase {
             let input = command::update_project::Input {
                 id: project.id,
                 owner_id: project.owner_id,
-                display_id: project.display_id,
                 name: project.name,
                 kana_name: project.kana_name,
                 group_name: project.group_name,
@@ -48,13 +48,10 @@ impl ProjectRepository for ProjectDatabase {
         }
     }
 
-    async fn find_project_by_display_id(
-        &self,
-        display_id: ProjectDisplayId,
-    ) -> Result<Option<(Project, User)>> {
+    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<(Project, User)>> {
         let mut lock = self.0.lock().await;
 
-        let opt = query::find_project_by_display_id(&mut *lock, display_id.into_string()).await?;
+        let opt = query::find_project_by_index(&mut *lock, index.to_i16()).await?;
         let result = match opt {
             Some(x) => x,
             None => return Ok(None),
@@ -69,6 +66,11 @@ impl ProjectRepository for ProjectDatabase {
             None => return Ok(None),
         };
         to_project_with_owner(result.project, result.owner).map(Some)
+    }
+
+    async fn count_projects(&self) -> Result<u64> {
+        let mut lock = self.0.lock().await;
+        query::count_projects(&mut *lock).await
     }
 
     async fn list_projects(&self) -> Result<Vec<(Project, User)>> {
@@ -100,8 +102,8 @@ fn to_project_with_owner(
 fn from_project(project: Project) -> data::project::Project {
     let Project {
         id,
+        index,
         created_at,
-        display_id,
         owner_id,
         name,
         kana_name,
@@ -113,8 +115,8 @@ fn from_project(project: Project) -> data::project::Project {
     } = project;
     data::project::Project {
         id: id.to_uuid(),
+        index: index.to_i16(),
         created_at: created_at.utc(),
-        display_id: display_id.into_string(),
         owner_id: owner_id.0,
         name: name.into_string(),
         kana_name: kana_name.into_string(),
@@ -124,6 +126,8 @@ fn from_project(project: Project) -> data::project::Project {
         category: match category {
             ProjectCategory::General => data::project::ProjectCategory::General,
             ProjectCategory::Stage => data::project::ProjectCategory::Stage,
+            ProjectCategory::Cooking => data::project::ProjectCategory::Cooking,
+            ProjectCategory::Food => data::project::ProjectCategory::Food,
         },
         attributes: attributes
             .attributes()
@@ -131,6 +135,7 @@ fn from_project(project: Project) -> data::project::Project {
                 ProjectAttribute::Academic => data::project::ProjectAttributes::ACADEMIC,
                 ProjectAttribute::Artistic => data::project::ProjectAttributes::ARTISTIC,
                 ProjectAttribute::Committee => data::project::ProjectAttributes::COMMITTEE,
+                ProjectAttribute::Outdoor => data::project::ProjectAttributes::OUTDOOR,
             })
             .collect(),
     }
@@ -139,8 +144,8 @@ fn from_project(project: Project) -> data::project::Project {
 fn to_project(project: data::project::Project) -> Result<Project> {
     let data::project::Project {
         id,
+        index,
         created_at,
-        display_id,
         owner_id,
         name,
         kana_name,
@@ -165,12 +170,16 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         attrs.insert(ProjectAttribute::Committee);
         attributes.remove(data::project::ProjectAttributes::COMMITTEE);
     }
+    if attributes.contains(data::project::ProjectAttributes::OUTDOOR) {
+        attrs.insert(ProjectAttribute::Outdoor);
+        attributes.remove(data::project::ProjectAttributes::OUTDOOR);
+    }
     ensure!(attributes.is_empty());
 
     Ok(Project {
         id: ProjectId::from_uuid(id),
+        index: ProjectIndex::from_u16(index.try_into()?)?,
         created_at: DateTime::from_utc(created_at),
-        display_id: ProjectDisplayId::from_string(display_id)?,
         owner_id: UserId(owner_id),
         name: ProjectName::from_string(name)?,
         kana_name: ProjectKanaName::from_string(kana_name)?,
@@ -180,6 +189,8 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         category: match category {
             data::project::ProjectCategory::General => ProjectCategory::General,
             data::project::ProjectCategory::Stage => ProjectCategory::Stage,
+            data::project::ProjectCategory::Cooking => ProjectCategory::Cooking,
+            data::project::ProjectCategory::Food => ProjectCategory::Food,
         },
         attributes: ProjectAttributes::from_attributes(attrs)?,
     })

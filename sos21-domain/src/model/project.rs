@@ -1,21 +1,21 @@
-use crate::context::ProjectRepository;
 use crate::model::date_time::DateTime;
 use crate::model::permissions::Permissions;
 use crate::model::user::{User, UserId};
 
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 use uuid::Uuid;
 
 pub mod attribute;
 pub mod category;
+pub mod code;
 pub mod description;
-pub mod display_id;
+pub mod index;
 pub mod name;
 pub use attribute::{ProjectAttribute, ProjectAttributes};
 pub use category::ProjectCategory;
+pub use code::{ProjectCode, ProjectKind};
 pub use description::ProjectDescription;
-pub use display_id::ProjectDisplayId;
+pub use index::ProjectIndex;
 pub use name::{ProjectGroupName, ProjectKanaGroupName, ProjectKanaName, ProjectName};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -35,9 +35,8 @@ impl ProjectId {
 #[derive(Debug, Clone)]
 pub struct Project {
     pub id: ProjectId,
+    pub index: ProjectIndex,
     pub created_at: DateTime,
-    // TODO: encupsulate to ensure availability
-    pub display_id: ProjectDisplayId,
     pub owner_id: UserId,
     pub name: ProjectName,
     pub kana_name: ProjectKanaName,
@@ -48,12 +47,6 @@ pub struct Project {
     pub attributes: ProjectAttributes,
 }
 
-#[derive(Debug, Error, Clone)]
-#[error("the project display id is not available")]
-pub struct ProjectDisplayIdNotAvailableError {
-    _priv: (),
-}
-
 impl Project {
     pub fn is_visible_to(&self, user: &User) -> bool {
         if self.owner_id == user.id {
@@ -61,6 +54,20 @@ impl Project {
         }
 
         user.permissions().contains(Permissions::READ_ALL_PROJECTS)
+    }
+
+    pub fn kind(&self) -> ProjectKind {
+        ProjectKind {
+            is_cooking: self.category == ProjectCategory::Cooking,
+            is_outdoor: self.attributes.contains(ProjectAttribute::Outdoor),
+        }
+    }
+
+    pub fn code(&self) -> ProjectCode {
+        ProjectCode {
+            kind: self.kind(),
+            index: self.index,
+        }
     }
 
     pub fn set_name(&mut self, name: ProjectName) {
@@ -89,22 +96,6 @@ impl Project {
 
     pub fn set_attributes(&mut self, attributes: ProjectAttributes) {
         self.attributes = attributes;
-    }
-
-    pub async fn set_display_id<C>(
-        &mut self,
-        ctx: C,
-        display_id: ProjectDisplayId,
-    ) -> anyhow::Result<Result<(), ProjectDisplayIdNotAvailableError>>
-    where
-        C: ProjectRepository,
-    {
-        if !display_id.is_available(ctx).await? {
-            return Ok(Err(ProjectDisplayIdNotAvailableError { _priv: () }));
-        }
-
-        self.display_id = display_id;
-        Ok(Ok(()))
     }
 }
 
@@ -141,42 +132,5 @@ mod tests {
         let other = test_model::new_general_user();
         let project = test_model::new_general_project(other.id.clone());
         assert!(project.is_visible_to(&user));
-    }
-
-    #[tokio::test]
-    async fn test_set_display_id_unavailable() {
-        let user = test_model::new_general_user();
-        let mut project1 = test_model::new_general_project(user.id.clone());
-        let project2 = test_model::new_general_project(user.id.clone());
-        let app = crate::test::build_mock_app()
-            .users(vec![user.clone()])
-            .projects(vec![project1.clone(), project2.clone()])
-            .build();
-
-        assert!(matches!(
-            project1
-                .set_display_id(app, project2.display_id)
-                .await
-                .unwrap(),
-            Err(_)
-        ));
-    }
-
-    #[tokio::test]
-    async fn test_set_display_id_available() {
-        let user = test_model::new_general_user();
-        let mut project = test_model::new_general_project(user.id.clone());
-        let display_id = test_model::new_project_display_id();
-        let app = crate::test::build_mock_app()
-            .users(vec![user.clone()])
-            .projects(vec![project.clone()])
-            .build();
-
-        assert!(project
-            .set_display_id(app, display_id.clone())
-            .await
-            .unwrap()
-            .is_ok());
-        assert_eq!(project.display_id, display_id);
     }
 }

@@ -21,6 +21,8 @@ impl ProjectId {
 pub enum ProjectCategory {
     General,
     Stage,
+    Cooking,
+    Food,
 }
 
 impl ProjectCategory {
@@ -28,6 +30,8 @@ impl ProjectCategory {
         match category {
             entity::ProjectCategory::General => ProjectCategory::General,
             entity::ProjectCategory::Stage => ProjectCategory::Stage,
+            entity::ProjectCategory::Cooking => ProjectCategory::Cooking,
+            entity::ProjectCategory::Food => ProjectCategory::Food,
         }
     }
 
@@ -35,6 +39,8 @@ impl ProjectCategory {
         match self {
             ProjectCategory::General => entity::ProjectCategory::General,
             ProjectCategory::Stage => entity::ProjectCategory::Stage,
+            ProjectCategory::Cooking => entity::ProjectCategory::Cooking,
+            ProjectCategory::Food => entity::ProjectCategory::Food,
         }
     }
 }
@@ -44,6 +50,7 @@ pub enum ProjectAttribute {
     Academic,
     Artistic,
     Committee,
+    Outdoor,
 }
 
 impl ProjectAttribute {
@@ -52,6 +59,7 @@ impl ProjectAttribute {
             entity::ProjectAttribute::Academic => ProjectAttribute::Academic,
             entity::ProjectAttribute::Artistic => ProjectAttribute::Artistic,
             entity::ProjectAttribute::Committee => ProjectAttribute::Committee,
+            entity::ProjectAttribute::Outdoor => ProjectAttribute::Outdoor,
         }
     }
 
@@ -60,6 +68,7 @@ impl ProjectAttribute {
             ProjectAttribute::Academic => entity::ProjectAttribute::Academic,
             ProjectAttribute::Artistic => entity::ProjectAttribute::Artistic,
             ProjectAttribute::Committee => entity::ProjectAttribute::Committee,
+            ProjectAttribute::Outdoor => entity::ProjectAttribute::Outdoor,
         }
     }
 }
@@ -67,8 +76,8 @@ impl ProjectAttribute {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Project {
     pub id: ProjectId,
+    pub code: String,
     pub created_at: DateTime<Utc>,
-    pub display_id: String,
     pub owner_id: UserId,
     pub owner_name: UserName,
     pub owner_kana_name: UserKanaName,
@@ -89,8 +98,8 @@ impl Project {
     ) -> Project {
         Project {
             id: ProjectId::from_entity(project.id),
+            code: project.code().to_string(),
             created_at: project.created_at.utc(),
-            display_id: project.display_id.into_string(),
             owner_id: UserId::from_entity(project.owner_id),
             owner_name: UserName::from_entity(owner_name),
             owner_kana_name: UserKanaName::from_entity(owner_kana_name),

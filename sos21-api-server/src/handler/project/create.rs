@@ -9,7 +9,6 @@ use warp::http::StatusCode;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {
-    pub display_id: String,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -34,16 +33,16 @@ impl HandlerResponse for Response {
 #[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {
     InvalidField { field: &'static str },
-    UnavailableProjectDisplayId,
     DuplicatedProjectAttributes,
+    TooManyProjects,
 }
 
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
             Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
-            Error::UnavailableProjectDisplayId => StatusCode::CONFLICT,
             Error::DuplicatedProjectAttributes => StatusCode::BAD_REQUEST,
+            Error::TooManyProjects => StatusCode::CONFLICT,
         }
     }
 }
@@ -51,10 +50,6 @@ impl HandlerResponse for Error {
 impl From<create_project::Error> for Error {
     fn from(err: create_project::Error) -> Error {
         match err {
-            create_project::Error::InvalidDisplayId => Error::InvalidField {
-                field: "display_id",
-            },
-            create_project::Error::UnavailableDisplayId => Error::UnavailableProjectDisplayId,
             create_project::Error::InvalidName => Error::InvalidField { field: "name" },
             create_project::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
             create_project::Error::InvalidGroupName => Error::InvalidField {
@@ -67,6 +62,7 @@ impl From<create_project::Error> for Error {
                 field: "description",
             },
             create_project::Error::DuplicatedAttributes => Error::DuplicatedProjectAttributes,
+            create_project::Error::TooManyProjects => Error::TooManyProjects,
         }
     }
 }
@@ -74,7 +70,6 @@ impl From<create_project::Error> for Error {
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let input = create_project::Input {
-        display_id: request.display_id,
         name: request.name,
         kana_name: request.kana_name,
         group_name: request.group_name,

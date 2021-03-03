@@ -11,6 +11,8 @@ use uuid::Uuid;
 pub enum ProjectCategory {
     General,
     Stage,
+    Cooking,
+    Food,
 }
 
 bitflags::bitflags! {
@@ -18,6 +20,7 @@ bitflags::bitflags! {
         const ACADEMIC  = 0b00000001;
         const ARTISTIC  = 0b00000010;
         const COMMITTEE = 0b00000100;
+        const OUTDOOR   = 0b00001000;
     }
 }
 
@@ -55,8 +58,8 @@ impl sqlx::Decode<'_, sqlx::Postgres> for ProjectAttributes {
 #[derive(Debug, Clone, sqlx::FromRow)]
 pub struct Project {
     pub id: Uuid,
+    pub index: i16,
     pub created_at: DateTime<Utc>,
-    pub display_id: String,
     pub owner_id: String,
     pub name: String,
     pub kana_name: String,

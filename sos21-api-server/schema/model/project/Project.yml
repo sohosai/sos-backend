@@ -5,10 +5,10 @@ x-examples: {}
 properties:
   id:
     $ref: ./ProjectId.yml
+  code:
+    type: string
   created_at:
     $ref: ../DateTime.yml
-  display_id:
-    type: string
   owner_id:
     $ref: ../user/UserId.yml
   owner_name:
@@ -33,8 +33,8 @@ properties:
       $ref: ./ProjectAttribute.yml
 required:
   - id
+  - code
   - created_at
-  - display_id
   - owner_id
   - owner_name
   - owner_kana_name

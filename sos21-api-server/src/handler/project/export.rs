@@ -11,9 +11,9 @@ pub struct Request {
     #[serde(default)]
     pub field_id: Option<String>,
     #[serde(default)]
-    pub field_created_at: Option<String>,
+    pub field_code: Option<String>,
     #[serde(default)]
-    pub field_display_id: Option<String>,
+    pub field_created_at: Option<String>,
     #[serde(default)]
     pub field_owner_id: Option<String>,
     #[serde(default)]
@@ -48,6 +48,8 @@ pub struct Request {
     pub field_attribute_committee: Option<String>,
     pub category_general: String,
     pub category_stage: String,
+    pub category_cooking: String,
+    pub category_food: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -80,8 +82,8 @@ pub async fn handler(
     let input = {
         let Request {
             field_id,
+            field_code,
             field_created_at,
-            field_display_id,
             field_owner_id,
             field_owner_first_name,
             field_owner_last_name,
@@ -100,11 +102,13 @@ pub async fn handler(
             field_attribute_committee,
             category_general,
             category_stage,
+            category_cooking,
+            category_food,
         } = request;
         let field_names = export_projects::InputFieldNames {
             id: field_id,
+            code: field_code,
             created_at: field_created_at,
-            display_id: field_display_id,
             owner_id: field_owner_id,
             owner_first_name: field_owner_first_name,
             owner_last_name: field_owner_last_name,
@@ -125,6 +129,8 @@ pub async fn handler(
         let category_names = export_projects::InputCategoryNames {
             general: category_general,
             stage: category_stage,
+            cooking: category_cooking,
+            food: category_food,
         };
         export_projects::Input {
             field_names,

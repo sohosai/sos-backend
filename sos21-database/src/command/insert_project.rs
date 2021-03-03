@@ -8,8 +8,8 @@ where
 {
     let Project {
         id,
+        index,
         created_at,
-        display_id,
         owner_id,
         name,
         kana_name,
@@ -24,8 +24,8 @@ where
         r#"
 INSERT INTO projects (
     id,
+    index,
     created_at,
-    display_id,
     owner_id,
     name,
     kana_name,
@@ -37,8 +37,8 @@ INSERT INTO projects (
 ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )
 "#,
         id,
+        index,
         created_at,
-        display_id,
         owner_id,
         name,
         kana_name,

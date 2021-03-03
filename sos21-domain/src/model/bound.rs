@@ -28,6 +28,12 @@ impl<N: Unsigned> Bound<u64> for Bounded<N> {
     }
 }
 
+impl<N: Unsigned> Bound<u16> for Bounded<N> {
+    fn limit() -> Option<u16> {
+        Some(N::to_u16())
+    }
+}
+
 impl<N: Integer> Bound<i64> for Bounded<N> {
     fn limit() -> Option<i64> {
         Some(N::to_i64())

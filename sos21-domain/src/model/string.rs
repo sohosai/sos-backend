@@ -75,7 +75,7 @@ pub enum LengthErrorKind {
     TooShort,
 }
 
-pub type BoundedLengthError<Min, Max> = LengthError<Bounded<Min>, Bounded<Max>>;
+// pub type BoundedLengthError<Min, Max> = LengthError<Bounded<Min>, Bounded<Max>>;
 
 #[derive(Error, Clone)]
 #[error("the string's length is out of bounds")]

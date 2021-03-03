@@ -28,6 +28,8 @@ WHERE
             OR CASE projects.category
                 WHEN 'general' THEN form_query_match(forms.general_query, projects.attributes)
                 WHEN 'stage'   THEN form_query_match(forms.stage_query, projects.attributes)
+                WHEN 'cooking' THEN form_query_match(forms.cooking_query, projects.attributes)
+                WHEN 'food'    THEN form_query_match(forms.food_query, projects.attributes)
             END
         FROM projects
         WHERE projects.id = $1

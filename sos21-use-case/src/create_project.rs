@@ -1,3 +1,5 @@
+use std::convert::TryInto;
+
 use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::project::{Project, ProjectAttribute, ProjectCategory};
 
@@ -8,7 +10,6 @@ use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub struct Input {
-    pub display_id: String,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -20,14 +21,23 @@ pub struct Input {
 
 #[derive(Debug, Clone)]
 pub enum Error {
-    InvalidDisplayId,
-    UnavailableDisplayId,
     InvalidName,
     InvalidKanaName,
     InvalidGroupName,
     InvalidKanaGroupName,
     InvalidDescription,
     DuplicatedAttributes,
+    TooManyProjects,
+}
+
+impl Error {
+    fn from_count_integer_error(_err: std::num::TryFromIntError) -> Self {
+        Error::TooManyProjects
+    }
+
+    fn from_index_error(_err: project::index::FromU16Error) -> Self {
+        Error::TooManyProjects
+    }
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -37,13 +47,15 @@ where
 {
     let login_user = ctx.login_user();
 
-    let display_id = project::ProjectDisplayId::from_string(input.display_id)
-        .map_err(|_| UseCaseError::UseCase(Error::InvalidDisplayId))?;
-
-    use_case_ensure!(display_id.is_visible_to(login_user));
-    if !display_id.is_available(ctx).await? {
-        return Err(UseCaseError::UseCase(Error::UnavailableDisplayId));
-    }
+    let count = ctx
+        .count_projects()
+        .await
+        .context("Failed to count projects")?;
+    let count = count
+        .try_into()
+        .map_err(|err| UseCaseError::UseCase(Error::from_count_integer_error(err)))?;
+    let index = project::ProjectIndex::from_u16(count)
+        .map_err(|err| UseCaseError::UseCase(Error::from_index_error(err)))?;
 
     let name = project::ProjectName::from_string(input.name)
         .map_err(|_| UseCaseError::UseCase(Error::InvalidName))?;
@@ -68,8 +80,8 @@ where
 
     let project = project::Project {
         id: project::ProjectId::from_uuid(Uuid::new_v4()),
+        index,
         created_at: DateTime::now(),
-        display_id,
         owner_id: login_user.id.clone(),
         name,
         kana_name,
@@ -93,7 +105,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate::model::{project::ProjectCategory, user::UserId};
-    use crate::{create_project, get_project, UseCaseError};
+    use crate::{create_project, get_project};
     use sos21_domain::test;
 
     #[tokio::test]
@@ -105,10 +117,8 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let display_id = "hello_project".to_string();
         let name = "テストテスト".to_string();
         let input = create_project::Input {
-            display_id: display_id.clone(),
             name: name.clone(),
             kana_name: test::model::mock_project_kana_name().into_string(),
             group_name: test::model::mock_project_group_name().into_string(),
@@ -122,41 +132,9 @@ mod tests {
         assert!(result.is_ok());
 
         let got = result.unwrap();
-        assert!(got.display_id == display_id);
         assert!(got.name == name);
         assert!(got.owner_id == UserId::from_entity(user.id));
 
         assert!(matches!(get_project::run(&app, got.id).await, Ok(_)));
-    }
-
-    #[tokio::test]
-    async fn test_duplicated_display_id() {
-        let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id.clone());
-        let app = test::build_mock_app()
-            .users(vec![user.clone()])
-            .projects(vec![project.clone()])
-            .build()
-            .login_as(user.clone())
-            .await;
-
-        let name = "テストテスト".to_string();
-        let input = create_project::Input {
-            display_id: project.display_id.into_string(),
-            name: name.clone(),
-            kana_name: test::model::mock_project_kana_name().into_string(),
-            group_name: test::model::mock_project_group_name().into_string(),
-            kana_group_name: test::model::mock_project_kana_group_name().into_string(),
-            description: test::model::mock_project_description().into_string(),
-            category: ProjectCategory::General,
-            attributes: Vec::new(),
-        };
-
-        assert!(matches!(
-            create_project::run(&app, input).await,
-            Err(UseCaseError::UseCase(
-                create_project::Error::UnavailableDisplayId
-            ))
-        ));
     }
 }

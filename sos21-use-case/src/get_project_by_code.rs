@@ -7,26 +7,36 @@ use sos21_domain::model::project;
 
 #[derive(Debug, Clone)]
 pub enum Error {
-    InvalidDisplayId,
+    InvalidCode,
     NotFound,
 }
 
+impl Error {
+    fn from_code_error(_err: project::code::ParseCodeError) -> Self {
+        Error::InvalidCode
+    }
+}
+
 #[tracing::instrument(skip(ctx))]
-pub async fn run<C>(ctx: &Login<C>, display_id: String) -> UseCaseResult<Project, Error>
+pub async fn run<C>(ctx: &Login<C>, code: String) -> UseCaseResult<Project, Error>
 where
     Login<C>: ProjectRepository,
 {
-    let display_id = project::ProjectDisplayId::from_string(display_id)
-        .map_err(|_| UseCaseError::UseCase(Error::InvalidDisplayId))?;
+    let code = project::ProjectCode::parse(&code)
+        .map_err(|err| UseCaseError::UseCase(Error::from_code_error(err)))?;
 
     let result = ctx
-        .find_project_by_display_id(display_id)
+        .get_project_by_index(code.index)
         .await
         .context("Failed to get a project")?;
     let (project, owner) = match result {
         Some(x) => x,
         None => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
+
+    if project.kind() != code.kind {
+        return Err(UseCaseError::UseCase(Error::NotFound));
+    }
 
     let login_user = ctx.login_user();
     if !project.is_visible_to(login_user)
@@ -42,7 +52,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate::model::project::ProjectId;
-    use crate::{get_project_by_display_id, UseCaseError};
+    use crate::{get_project_by_code, UseCaseError};
     use sos21_domain::test;
 
     // Checks that the normal user cannot read the others' project.
@@ -60,10 +70,8 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_by_display_id::run(&app, project_other.display_id.into_string()).await,
-            Err(UseCaseError::UseCase(
-                get_project_by_display_id::Error::NotFound
-            ))
+            get_project_by_code::run(&app, project_other.code().to_string()).await,
+            Err(UseCaseError::UseCase(get_project_by_code::Error::NotFound))
         ));
     }
 
@@ -81,7 +89,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_by_display_id::run(&app, project.display_id.into_string()).await,
+            get_project_by_code::run(&app, project.code().to_string()).await,
             Ok(got)
             if got.id == ProjectId::from_entity(project.id) && got.name == project.name.into_string()
         ));
@@ -102,7 +110,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_by_display_id::run(&app, project_other.display_id.into_string()).await,
+            get_project_by_code::run(&app, project_other.code().to_string()).await,
             Ok(got)
             if got.id == ProjectId::from_entity(project_other.id) && got.name == project_other.name.into_string()
         ));
@@ -123,7 +131,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_by_display_id::run(&app, project_other.display_id.into_string()).await,
+            get_project_by_code::run(&app, project_other.code().to_string()).await,
             Ok(got)
             if got.id == ProjectId::from_entity(project_other.id) && got.name == project_other.name.into_string()
         ));
@@ -145,10 +153,31 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_by_display_id::run(&app, project_other.display_id.into_string()).await,
-            Err(UseCaseError::UseCase(
-                get_project_by_display_id::Error::NotFound
-            ))
+            get_project_by_code::run(&app, project_other.code().to_string()).await,
+            Err(UseCaseError::UseCase(get_project_by_code::Error::NotFound))
+        ));
+    }
+
+    // Checks that the `NotFound` is returned when the unprivileged committee user
+    // attempt to read the existing others' project by that index but the kind is different.
+    #[tokio::test]
+    async fn test_committee_different_kind_other() {
+        let user = test::model::new_committee_user();
+        let other = test::model::new_general_user();
+        let project_other = test::model::new_general_project(other.id.clone());
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone(), other.clone()])
+            .projects(vec![project_other.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let mut code = project_other.code();
+        code.kind.is_cooking = !code.kind.is_cooking;
+        assert!(matches!(
+            get_project_by_code::run(&app, code.to_string()).await,
+            Err(UseCaseError::UseCase(get_project_by_code::Error::NotFound))
         ));
     }
 }
