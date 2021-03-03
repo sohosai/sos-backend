@@ -765,6 +765,12 @@ paths:
           description: 与えられた場合、その名前の列で企画が委員会企画かどうかを出力します。
         - schema:
             type: string
+            example: 屋外企画
+          in: query
+          name: field_attribute_outdoor
+          description: 与えられた場合、その名前の列で企画が屋外企画かどうかを出力します。
+        - schema:
+            type: string
             example: 一般
           in: query
           name: category_general
