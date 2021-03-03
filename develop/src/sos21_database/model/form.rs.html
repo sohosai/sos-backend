@@ -33,6 +33,10 @@
 <span id="30">30</span>
 <span id="31">31</span>
 <span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">sqlx</span>::<span class="ident">types</span>::<span class="ident">BitVec</span>;
@@ -53,6 +57,10 @@
     <span class="kw">pub</span> <span class="ident">unspecified_query</span>: <span class="ident">BitVec</span>,
     <span class="kw">pub</span> <span class="ident">general_query</span>: <span class="ident">BitVec</span>,
     <span class="kw">pub</span> <span class="ident">stage_query</span>: <span class="ident">BitVec</span>,
+    <span class="kw">pub</span> <span class="ident">cooking_query</span>: <span class="ident">BitVec</span>,
+    <span class="kw">pub</span> <span class="ident">food_query</span>: <span class="ident">BitVec</span>,
+    <span class="comment">// TODO: Enable to add new attribute in better way</span>
+    <span class="kw">pub</span> <span class="ident">needs_sync</span>: <span class="ident">bool</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">sqlx</span>::<span class="ident">FromRow</span>)]</span>

@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["check_display_id",""],["create",""],["export",""],["form",""],["get",""],["get_by_display_id",""],["list",""],["update",""]]});
+initSidebarItems({"mod":[["create",""],["export",""],["form",""],["get",""],["list",""],["update",""]]});

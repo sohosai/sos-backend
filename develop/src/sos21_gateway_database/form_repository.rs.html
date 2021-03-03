@@ -219,6 +219,17 @@
 <span id="216">216</span>
 <span id="217">217</span>
 <span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span>;
 <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">future</span>, <span class="ident">lock</span>::<span class="ident">Mutex</span>, <span class="ident">stream</span>::<span class="ident">TryStreamExt</span>};
@@ -301,6 +312,9 @@
                 <span class="ident">unspecified_query</span>: <span class="ident">form</span>.<span class="ident">unspecified_query</span>,
                 <span class="ident">general_query</span>: <span class="ident">form</span>.<span class="ident">general_query</span>,
                 <span class="ident">stage_query</span>: <span class="ident">form</span>.<span class="ident">stage_query</span>,
+                <span class="ident">cooking_query</span>: <span class="ident">form</span>.<span class="ident">cooking_query</span>,
+                <span class="ident">food_query</span>: <span class="ident">form</span>.<span class="ident">food_query</span>,
+                <span class="ident">needs_sync</span>: <span class="bool-val">false</span>,
             };
             <span class="ident">command</span>::<span class="ident">update_form</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">input</span>).<span class="kw">await</span>
         } <span class="kw">else</span> {
@@ -398,11 +412,15 @@
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">unspecified_query</span> <span class="op">=</span> <span class="ident">BitVec</span>::<span class="ident">from_elem</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="bool-val">false</span>);
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">general_query</span> <span class="op">=</span> <span class="ident">BitVec</span>::<span class="ident">from_elem</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="bool-val">false</span>);
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stage_query</span> <span class="op">=</span> <span class="ident">BitVec</span>::<span class="ident">from_elem</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="bool-val">false</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cooking_query</span> <span class="op">=</span> <span class="ident">BitVec</span>::<span class="ident">from_elem</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="bool-val">false</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">food_query</span> <span class="op">=</span> <span class="ident">BitVec</span>::<span class="ident">from_elem</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="bool-val">false</span>);
 
     <span class="kw">for</span> <span class="ident">conj</span> <span class="kw">in</span> <span class="ident">condition</span>.<span class="ident">query</span>.<span class="ident">conjunctions</span>() {
         <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">conj</span>.<span class="ident">category</span>() {
             <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">stage_query</span>,
             <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">General</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">general_query</span>,
+            <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cooking_query</span>,
+            <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">Food</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">food_query</span>,
             <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">unspecified_query</span>,
         };
 
@@ -412,6 +430,7 @@
                 <span class="ident">ProjectAttribute</span>::<span class="ident">Academic</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectAttributes</span>::<span class="ident">ACADEMIC</span>,
                 <span class="ident">ProjectAttribute</span>::<span class="ident">Artistic</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectAttributes</span>::<span class="ident">ARTISTIC</span>,
                 <span class="ident">ProjectAttribute</span>::<span class="ident">Committee</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectAttributes</span>::<span class="ident">COMMITTEE</span>,
+                <span class="ident">ProjectAttribute</span>::<span class="ident">Outdoor</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectAttributes</span>::<span class="ident">OUTDOOR</span>,
             })
             .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectAttributes</span><span class="op">&gt;</span>();
 
@@ -436,6 +455,9 @@
         <span class="ident">unspecified_query</span>,
         <span class="ident">general_query</span>,
         <span class="ident">stage_query</span>,
+        <span class="ident">cooking_query</span>,
+        <span class="ident">food_query</span>,
+        <span class="ident">needs_sync</span>: <span class="bool-val">false</span>,
     })
 }
 </pre></div>

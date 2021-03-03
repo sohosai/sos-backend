@@ -104,8 +104,8 @@
         <span class="string">r#&quot;
 SELECT
         projects.id,
+        projects.index,
         projects.created_at,
-        display_id,
         owner_id,
         name,
         kana_name,
@@ -139,8 +139,8 @@ WHERE projects.id = $1
     };
     <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">Project</span> {
         <span class="ident">id</span>: <span class="ident">row</span>.<span class="ident">id</span>,
+        <span class="ident">index</span>: <span class="ident">row</span>.<span class="ident">index</span>,
         <span class="ident">created_at</span>: <span class="ident">row</span>.<span class="ident">created_at</span>,
-        <span class="ident">display_id</span>: <span class="ident">row</span>.<span class="ident">display_id</span>,
         <span class="ident">owner_id</span>: <span class="ident">row</span>.<span class="ident">owner_id</span>,
         <span class="ident">name</span>: <span class="ident">row</span>.<span class="ident">name</span>,
         <span class="ident">kana_name</span>: <span class="ident">row</span>.<span class="ident">kana_name</span>,

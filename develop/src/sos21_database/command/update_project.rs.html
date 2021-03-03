@@ -52,9 +52,6 @@
 <span id="49">49</span>
 <span id="50">50</span>
 <span id="51">51</span>
-<span id="52">52</span>
-<span id="53">53</span>
-<span id="54">54</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
 
@@ -65,7 +62,6 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Input</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">Uuid</span>,
     <span class="kw">pub</span> <span class="ident">owner_id</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">display_id</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">group_name</span>: <span class="ident">String</span>,
@@ -84,19 +80,17 @@
 UPDATE projects
   SET
     owner_id = $2,
-    display_id = $3,
-    name = $4,
-    kana_name = $5,
-    group_name = $6,
-    kana_group_name = $7,
-    description = $8,
-    category = $9,
-    attributes = $10
+    name = $3,
+    kana_name = $4,
+    group_name = $5,
+    kana_group_name = $6,
+    description = $7,
+    category = $8,
+    attributes = $9
   WHERE id = $1
 &quot;#</span>,
         <span class="ident">input</span>.<span class="ident">id</span>,
         <span class="ident">input</span>.<span class="ident">owner_id</span>,
-        <span class="ident">input</span>.<span class="ident">display_id</span>,
         <span class="ident">input</span>.<span class="ident">name</span>,
         <span class="ident">input</span>.<span class="ident">kana_name</span>,
         <span class="ident">input</span>.<span class="ident">group_name</span>,

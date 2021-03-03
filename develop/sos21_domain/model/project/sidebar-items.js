@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["attribute",""],["category",""],["description",""],["display_id",""],["name",""]],"struct":[["Project",""],["ProjectDisplayIdNotAvailableError",""],["ProjectId",""]]});
+initSidebarItems({"mod":[["attribute",""],["category",""],["code",""],["description",""],["index",""],["name",""]],"struct":[["Project",""],["ProjectId",""]]});

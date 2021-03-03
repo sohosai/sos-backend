@@ -43,6 +43,8 @@
 <span id="40">40</span>
 <span id="41">41</span>
 <span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::<span class="ident">Form</span>;
 
@@ -74,6 +76,8 @@ WHERE
             OR CASE projects.category
                 WHEN &#39;general&#39; THEN form_query_match(forms.general_query, projects.attributes)
                 WHEN &#39;stage&#39;   THEN form_query_match(forms.stage_query, projects.attributes)
+                WHEN &#39;cooking&#39; THEN form_query_match(forms.cooking_query, projects.attributes)
+                WHEN &#39;food&#39;    THEN form_query_match(forms.food_query, projects.attributes)
             END
         FROM projects
         WHERE projects.id = $1

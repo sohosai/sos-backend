@@ -68,8 +68,8 @@
 {
     <span class="kw">let</span> <span class="ident">Project</span> {
         <span class="ident">id</span>,
+        <span class="ident">index</span>,
         <span class="ident">created_at</span>,
-        <span class="ident">display_id</span>,
         <span class="ident">owner_id</span>,
         <span class="ident">name</span>,
         <span class="ident">kana_name</span>,
@@ -84,8 +84,8 @@
         <span class="string">r#&quot;
 INSERT INTO projects (
     id,
+    index,
     created_at,
-    display_id,
     owner_id,
     name,
     kana_name,
@@ -97,8 +97,8 @@ INSERT INTO projects (
 ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )
 &quot;#</span>,
         <span class="ident">id</span>,
+        <span class="ident">index</span>,
         <span class="ident">created_at</span>,
-        <span class="ident">display_id</span>,
         <span class="ident">owner_id</span>,
         <span class="ident">name</span>,
         <span class="ident">kana_name</span>,

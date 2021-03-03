@@ -267,8 +267,12 @@
 <span id="264">264</span>
 <span id="265">265</span>
 <span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{
@@ -277,7 +281,7 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">form</span>::{<span class="ident">Form</span>, <span class="ident">FormId</span>},
     <span class="ident">form_answer</span>::{<span class="ident">FormAnswer</span>, <span class="ident">FormAnswerId</span>},
-    <span class="ident">project</span>::{<span class="ident">Project</span>, <span class="ident">ProjectDisplayId</span>, <span class="ident">ProjectId</span>},
+    <span class="ident">project</span>::{<span class="ident">Project</span>, <span class="ident">ProjectId</span>, <span class="ident">ProjectIndex</span>},
     <span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserId</span>},
 };
 
@@ -429,16 +433,13 @@
         }
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">find_project_by_display_id</span>(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">display_id</span>: <span class="ident">ProjectDisplayId</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project_by_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">ProjectIndex</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">projects</span>
             .<span class="ident">lock</span>()
             .<span class="kw">await</span>
             .<span class="ident">values</span>()
-            .<span class="ident">find</span>(<span class="op">|</span><span class="ident">project</span><span class="op">|</span> <span class="ident">project</span>.<span class="ident">display_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">display_id</span>)
+            .<span class="ident">find</span>(<span class="op">|</span><span class="ident">project</span><span class="op">|</span> <span class="ident">project</span>.<span class="ident">index</span> <span class="op">=</span><span class="op">=</span> <span class="ident">index</span>)
             .<span class="ident">cloned</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">project</span>) <span class="op">=</span> <span class="ident">project</span> {
             <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_user</span>(<span class="ident">project</span>.<span class="ident">owner_id</span>.<span class="ident">clone</span>()).<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">unwrap</span>();
@@ -446,6 +447,11 @@
         } <span class="kw">else</span> {
             <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
         }
+    }
+
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">count_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">projects</span>.<span class="ident">lock</span>().<span class="kw">await</span>.<span class="ident">len</span>().<span class="ident">try_into</span>()<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="ident">len</span>)
     }
 
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
