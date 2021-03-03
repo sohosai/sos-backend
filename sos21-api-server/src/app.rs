@@ -1,8 +1,11 @@
 use crate::config::Config;
 
-use anyhow::Result;
+use anyhow::{Context as _, Result};
 use sos21_gateway_database::Database;
-use sqlx::postgres::{PgPool, PgPoolOptions};
+use sqlx::{
+    pool::PoolConnection,
+    postgres::{PgPool, PgPoolOptions, Postgres},
+};
 
 #[derive(Debug, Clone)]
 pub struct App {
@@ -23,8 +26,19 @@ impl App {
         &self.config
     }
 
+    pub async fn connection(&self) -> Result<PoolConnection<Postgres>> {
+        self.pool
+            .acquire()
+            .await
+            .context("Failed to acquire a connection from pool")
+    }
+
     pub async fn start_context(&self) -> Result<Context> {
-        let connection = self.pool.begin().await?;
+        let connection = self
+            .pool
+            .begin()
+            .await
+            .context("Failed to acquire a connection from pool")?;
         let database = Database::new(connection);
         Ok(Context { database })
     }

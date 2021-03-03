@@ -1496,6 +1496,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "sos21-database",
  "sos21-domain",
  "sos21-gateway-database",
  "sos21-use-case",

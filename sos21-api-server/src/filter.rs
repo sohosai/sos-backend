@@ -17,7 +17,8 @@ macro_rules! route {
     (@method POST) => { warp::post().and(warp::body::json()) };
     (@path) => { warp::any() };
     (@path $name:literal) => { warp::path($name) };
-    (@options $with_auth:ident, $with_app:ident, {noauth}) => { warp::any() };
+    (@options $with_auth:ident, $with_app:ident, {noapp}) => { warp::any() };
+    (@options $with_auth:ident, $with_app:ident, {noauth}) => { $with_app.clone() };
     (@options $with_auth:ident, $with_app:ident, {}) => { $with_app.clone().and($with_auth.clone()) };
     ($with_auth:ident, $with_app:ident, / $name:literal { $($inner:tt)+ }) => {
         warp::path($name)
@@ -61,7 +62,10 @@ pub fn endpoints(
     let with_app = warp::any().map(move || app.clone());
 
     let routes = routes! { with_auth, with_app,
-        / "health" / "liveness" => {noauth} GET (handler::health::liveness),
+        / "health" {
+            / "liveness" => {noapp} GET (handler::health::liveness),
+            / "database" => {noauth} GET (handler::health::database),
+        },
         / "signup" => POST (handler::signup),
         / "me" {
             / => GET (handler::me),

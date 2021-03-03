@@ -109,6 +109,23 @@ macro_rules! handler {
         }
     };
     ($vis:vis async fn $name:ident (
+        $app:ident: App
+        $(, $param:ident : $ty:ty)* $(,)?
+    ) -> HandlerResult<$resp:ty, $err:ty> $body:block) => {
+        $vis async fn $name(
+            app: App
+            $(, $param: $ty)*
+        ) -> Result<impl ::warp::reply::Reply, ::warp::reject::Rejection> {
+            async fn run(
+                $app: App
+                $(, $param: $ty)*
+            ) -> HandlerResult<$resp, $err> {
+                $body
+            }
+            crate::handler::handle_handler_result(run(app $(, $param)*).await)
+        }
+    };
+    ($vis:vis async fn $name:ident (
         $($param:ident : $ty:ty),* $(,)?
     ) -> HandlerResult<$resp:ty, $err:ty> $body:block) => {
         $vis async fn $name(

@@ -765,6 +765,12 @@ paths:
           description: 与えられた場合、その名前の列で企画が委員会企画かどうかを出力します。
         - schema:
             type: string
+            example: 屋外企画
+          in: query
+          name: field_attribute_outdoor
+          description: 与えられた場合、その名前の列で企画が屋外企画かどうかを出力します。
+        - schema:
+            type: string
             example: 一般
           in: query
           name: category_general
@@ -1636,6 +1642,27 @@ paths:
           $ref: "#/components/responses/InternalServerError"
       operationId: health/liveness
       description: 何もしません。稼働の確認に使うことができます。
+      security: []
+  /health/database:
+    get:
+      summary: health/database
+      tags: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                required:
+                  - ok
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: health/database
+      description: データベースの状態を確認します。
       security: []
 components:
   securitySchemes:

@@ -46,6 +46,8 @@ pub struct Request {
     pub field_attribute_artistic: Option<String>,
     #[serde(default)]
     pub field_attribute_committee: Option<String>,
+    #[serde(default)]
+    pub field_attribute_outdoor: Option<String>,
     pub category_general: String,
     pub category_stage: String,
     pub category_cooking: String,
@@ -100,6 +102,7 @@ pub async fn handler(
             field_attribute_academic,
             field_attribute_artistic,
             field_attribute_committee,
+            field_attribute_outdoor,
             category_general,
             category_stage,
             category_cooking,
@@ -125,6 +128,7 @@ pub async fn handler(
             attribute_academic: field_attribute_academic,
             attribute_artistic: field_attribute_artistic,
             attribute_committee: field_attribute_committee,
+            attribute_outdoor: field_attribute_outdoor,
         };
         let category_names = export_projects::InputCategoryNames {
             general: category_general,
