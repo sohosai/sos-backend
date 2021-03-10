@@ -15,18 +15,6 @@ pub struct Form {
     pub items: Vec<u8>,
 }
 
-#[derive(Debug, Clone, sqlx::FromRow)]
-pub struct FormConditionInclude {
-    pub project_id: Uuid,
-    pub form_id: Uuid,
-}
-
-#[derive(Debug, Clone, sqlx::FromRow)]
-pub struct FormConditionExclude {
-    pub project_id: Uuid,
-    pub form_id: Uuid,
-}
-
 #[derive(Debug, Clone)]
 pub struct FormData {
     pub form: Form,

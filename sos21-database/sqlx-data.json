@@ -638,6 +638,19 @@
       ]
     }
   },
+  "42428fd5434b061010295f08481b7a6d07eed8432ff9d2924df2407007705f76": {
+    "query": "\nDELETE FROM form_condition_excludes\nWHERE project_id = ANY ($2) AND form_id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "UuidArray"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "469efc7df42e813f0f80997ce488f607b71b2e35c4b6c00373b09c123b5513e6": {
     "query": "SELECT * FROM form_answers WHERE form_id = $1 AND project_id = $2",
     "describe": {
@@ -689,40 +702,14 @@
       ]
     }
   },
-  "4d771190ed339a4273677a66699aefaa51398b42cdd9bd48e08e98c8376fae06": {
-    "query": "\nDELETE FROM form_condition_excludes\nWHERE project_id = $1 AND form_id = $2\n",
+  "4d5e18eebf601ef2c81828cb5adb10263f5914e55c57dcc9c537ea8da7db3fd6": {
+    "query": "\nINSERT INTO form_condition_includes (\n    project_id,\n    form_id\n)\nSELECT\n    include_ids.id AS project_id,\n    $1 AS form_id\nFROM unnest($2::uuid[]) AS include_ids( id )\n",
     "describe": {
       "columns": [],
       "parameters": {
         "Left": [
           "Uuid",
-          "Uuid"
-        ]
-      },
-      "nullable": []
-    }
-  },
-  "64a41396436ec85834b566274ed2ac1496a8d50dc10367aded5a1cdb45b500e0": {
-    "query": "\nDELETE FROM form_condition_includes\nWHERE project_id = $1 AND form_id = $2\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Uuid"
-        ]
-      },
-      "nullable": []
-    }
-  },
-  "655cd56faef7a35d39fccd8e9ec9e8962e6639e866e1596400aad7912510e2ab": {
-    "query": "\nINSERT INTO form_condition_includes (\n        project_id,\n        form_id\n) VALUES ( $1, $2 )\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Uuid"
+          "UuidArray"
         ]
       },
       "nullable": []
@@ -1285,19 +1272,6 @@
       "nullable": []
     }
   },
-  "c7f65468e17e820de12100673e821d7ce2ae5a6af006b26743e20cdfe6d1ed74": {
-    "query": "\nINSERT INTO form_condition_excludes (\n        project_id,\n        form_id\n) VALUES ( $1, $2 )\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Uuid"
-        ]
-      },
-      "nullable": []
-    }
-  },
   "d4b494324f9a6588b424355dd1795303da88cd6f22f63a95b5a28c6ea5ad5a3a": {
     "query": "\nINSERT INTO projects (\n    id,\n    index,\n    created_at,\n    owner_id,\n    name,\n    kana_name,\n    group_name,\n    kana_group_name,\n    description,\n    category,\n    attributes\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )\n",
     "describe": {
@@ -1327,6 +1301,19 @@
             }
           },
           "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "d4e9cab5b5002093018372d3b1607fb239baa40eadec7f8219b982d2c910c066": {
+    "query": "\nDELETE FROM form_condition_includes\nWHERE project_id = ANY ($2) AND form_id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "UuidArray"
         ]
       },
       "nullable": []
@@ -1388,6 +1375,19 @@
       "parameters": {
         "Left": [
           "Uuid"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "ef0ec2428a97ecdbbf05eeffa87958fd9f836116945fa299e1ac8c10e221934e": {
+    "query": "\nINSERT INTO form_condition_excludes (\n    project_id,\n    form_id\n)\nSELECT\n    exclude_ids.id AS project_id,\n    $1 AS form_id\nFROM unnest($2::uuid[]) AS exclude_ids( id )\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "UuidArray"
         ]
       },
       "nullable": []

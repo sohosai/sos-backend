@@ -26,7 +26,6 @@ use sqlx::{Postgres, Transaction};
 #[repr(transparent)]
 pub struct FormDatabase(Mutex<Transaction<'static, Postgres>>);
 
-// TODO: reduce the number of queries
 #[async_trait::async_trait]
 impl FormRepository for FormDatabase {
     async fn store_form(&self, form: Form) -> Result<()> {
@@ -41,45 +40,44 @@ impl FormRepository for FormDatabase {
                 old_form.exclude_ids.into_iter().map(ProjectId::from_uuid),
             )?;
 
-            for delete_id in form.condition.includes.difference(&old_includes) {
-                command::delete_form_condition_include(
-                    &mut *lock,
-                    data::form::FormConditionInclude {
-                        project_id: delete_id.to_uuid(),
-                        form_id: form.id.to_uuid(),
-                    },
-                )
-                .await?;
-            }
-            for insert_id in old_includes.difference(&form.condition.includes) {
-                command::insert_form_condition_include(
-                    &mut *lock,
-                    data::form::FormConditionInclude {
-                        project_id: insert_id.to_uuid(),
-                        form_id: form.id.to_uuid(),
-                    },
-                )
-                .await?;
-            }
-
-            for delete_id in form.condition.excludes.difference(&old_excludes) {
-                command::delete_form_condition_exclude(
-                    &mut *lock,
-                    data::form::FormConditionExclude {
-                        project_id: delete_id.to_uuid(),
-                        form_id: form.id.to_uuid(),
-                    },
-                )
-            for insert_id in old_excludes.difference(&form.condition.excludes) {
-                command::insert_form_condition_exclude(
-                    &mut *lock,
-                    data::form::FormConditionExclude {
-                        project_id: insert_id.to_uuid(),
-                        form_id: form.id.to_uuid(),
-                    },
-                )
-                .await?;
-            }
+            command::insert_form_condition_includes(
+                &mut *lock,
+                form_id,
+                form.condition
+                    .includes
+                    .difference(&old_includes)
+                    .map(|id| id.to_uuid())
+                    .collect(),
+            )
+            .await?;
+            command::delete_form_condition_includes(
+                &mut *lock,
+                form_id,
+                old_includes
+                    .difference(&form.condition.includes)
+                    .map(|id| id.to_uuid())
+                    .collect(),
+            )
+            .await?;
+            command::insert_form_condition_excludes(
+                &mut *lock,
+                form_id,
+                form.condition
+                    .excludes
+                    .difference(&old_excludes)
+                    .map(|id| id.to_uuid())
+                    .collect(),
+            )
+            .await?;
+            command::delete_form_condition_excludes(
+                &mut *lock,
+                form_id,
+                old_excludes
+                    .difference(&form.condition.excludes)
+                    .map(|id| id.to_uuid())
+                    .collect(),
+            )
+            .await?;
 
             let query = from_project_query(&form.condition.query);
             command::delete_form_project_query_conjunctions(&mut *lock, form_id).await?;
@@ -96,31 +94,25 @@ impl FormRepository for FormDatabase {
             };
             command::update_form(&mut *lock, input).await?;
         } else {
-            for include_id in form.condition.includes.projects() {
-                command::insert_form_condition_include(
-                    &mut *lock,
-                    data::form::FormConditionInclude {
-                        project_id: include_id.to_uuid(),
-                        form_id: form.id.to_uuid(),
-                    },
-                )
-                .await?;
-            }
-            for exclude_id in form.condition.excludes.projects() {
-                command::insert_form_condition_exclude(
-                    &mut *lock,
-                    data::form::FormConditionExclude {
-                        project_id: exclude_id.to_uuid(),
-                        form_id: form.id.to_uuid(),
-                    },
-                )
-                .await?;
-            }
+            let include_ids = form
+                .condition
+                .includes
+                .projects()
+                .map(|id| id.to_uuid())
+                .collect();
+            let exclude_ids = form
+                .condition
+                .excludes
+                .projects()
+                .map(|id| id.to_uuid())
+                .collect();
             let query = from_project_query(&form.condition.query);
             let form = from_form(form)?;
 
             command::insert_form(&mut *lock, form).await?;
             command::insert_form_project_query_conjunctions(&mut *lock, form_id, query).await?;
+            command::insert_form_condition_includes(&mut *lock, form_id, include_ids).await?;
+            command::insert_form_condition_excludes(&mut *lock, form_id, exclude_ids).await?;
         }
 
         Ok(())
