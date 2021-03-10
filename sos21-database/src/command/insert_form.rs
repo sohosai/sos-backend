@@ -15,13 +15,6 @@ where
         starts_at,
         ends_at,
         items,
-        condition,
-        unspecified_query,
-        general_query,
-        stage_query,
-        cooking_query,
-        food_query,
-        needs_sync,
     } = form;
 
     sqlx::query!(
@@ -34,15 +27,8 @@ INSERT INTO forms (
     description,
     starts_at,
     ends_at,
-    items,
-    condition,
-    unspecified_query,
-    general_query,
-    stage_query,
-    cooking_query,
-    food_query,
-    needs_sync
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15 )
+    items
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
 "#,
         id,
         created_at,
@@ -52,13 +38,6 @@ INSERT INTO forms (
         starts_at,
         ends_at,
         items,
-        condition,
-        unspecified_query,
-        general_query,
-        stage_query,
-        cooking_query,
-        food_query,
-        needs_sync,
     )
     .execute(conn)
     .await

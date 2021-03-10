@@ -123,22 +123,30 @@ fn from_project(project: Project) -> data::project::Project {
         group_name: group_name.into_string(),
         kana_group_name: kana_group_name.into_string(),
         description: description.into_string(),
-        category: match category {
-            ProjectCategory::General => data::project::ProjectCategory::General,
-            ProjectCategory::Stage => data::project::ProjectCategory::Stage,
-            ProjectCategory::Cooking => data::project::ProjectCategory::Cooking,
-            ProjectCategory::Food => data::project::ProjectCategory::Food,
-        },
-        attributes: attributes
-            .attributes()
-            .map(|attr| match attr {
-                ProjectAttribute::Academic => data::project::ProjectAttributes::ACADEMIC,
-                ProjectAttribute::Artistic => data::project::ProjectAttributes::ARTISTIC,
-                ProjectAttribute::Committee => data::project::ProjectAttributes::COMMITTEE,
-                ProjectAttribute::Outdoor => data::project::ProjectAttributes::OUTDOOR,
-            })
-            .collect(),
+        category: from_project_category(category),
+        attributes: from_project_attributes(&attributes),
     }
+}
+
+pub fn from_project_category(category: ProjectCategory) -> data::project::ProjectCategory {
+    match category {
+        ProjectCategory::General => data::project::ProjectCategory::General,
+        ProjectCategory::Stage => data::project::ProjectCategory::Stage,
+        ProjectCategory::Cooking => data::project::ProjectCategory::Cooking,
+        ProjectCategory::Food => data::project::ProjectCategory::Food,
+    }
+}
+
+pub fn from_project_attributes(attributes: &ProjectAttributes) -> data::project::ProjectAttributes {
+    attributes
+        .attributes()
+        .map(|attr| match attr {
+            ProjectAttribute::Academic => data::project::ProjectAttributes::ACADEMIC,
+            ProjectAttribute::Artistic => data::project::ProjectAttributes::ARTISTIC,
+            ProjectAttribute::Committee => data::project::ProjectAttributes::COMMITTEE,
+            ProjectAttribute::Outdoor => data::project::ProjectAttributes::OUTDOOR,
+        })
+        .collect()
 }
 
 fn to_project(project: data::project::Project) -> Result<Project> {
@@ -153,28 +161,8 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         kana_group_name,
         description,
         category,
-        mut attributes,
+        attributes,
     } = project;
-
-    // TODO: better impl
-    let mut attrs = HashSet::new();
-    if attributes.contains(data::project::ProjectAttributes::ACADEMIC) {
-        attrs.insert(ProjectAttribute::Academic);
-        attributes.remove(data::project::ProjectAttributes::ACADEMIC);
-    }
-    if attributes.contains(data::project::ProjectAttributes::ARTISTIC) {
-        attrs.insert(ProjectAttribute::Artistic);
-        attributes.remove(data::project::ProjectAttributes::ARTISTIC);
-    }
-    if attributes.contains(data::project::ProjectAttributes::COMMITTEE) {
-        attrs.insert(ProjectAttribute::Committee);
-        attributes.remove(data::project::ProjectAttributes::COMMITTEE);
-    }
-    if attributes.contains(data::project::ProjectAttributes::OUTDOOR) {
-        attrs.insert(ProjectAttribute::Outdoor);
-        attributes.remove(data::project::ProjectAttributes::OUTDOOR);
-    }
-    ensure!(attributes.is_empty());
 
     Ok(Project {
         id: ProjectId::from_uuid(id),
@@ -186,12 +174,43 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         group_name: ProjectGroupName::from_string(group_name)?,
         kana_group_name: ProjectKanaGroupName::from_string(kana_group_name)?,
         description: ProjectDescription::from_string(description)?,
-        category: match category {
-            data::project::ProjectCategory::General => ProjectCategory::General,
-            data::project::ProjectCategory::Stage => ProjectCategory::Stage,
-            data::project::ProjectCategory::Cooking => ProjectCategory::Cooking,
-            data::project::ProjectCategory::Food => ProjectCategory::Food,
-        },
-        attributes: ProjectAttributes::from_attributes(attrs)?,
+        category: to_project_category(category),
+        attributes: to_project_attributes(attributes)?,
     })
+}
+
+pub fn to_project_category(category: data::project::ProjectCategory) -> ProjectCategory {
+    match category {
+        data::project::ProjectCategory::General => ProjectCategory::General,
+        data::project::ProjectCategory::Stage => ProjectCategory::Stage,
+        data::project::ProjectCategory::Cooking => ProjectCategory::Cooking,
+        data::project::ProjectCategory::Food => ProjectCategory::Food,
+    }
+}
+
+pub fn to_project_attributes(
+    mut attributes: data::project::ProjectAttributes,
+) -> Result<ProjectAttributes> {
+    // TODO: better impl
+    let mut result = HashSet::new();
+    if attributes.contains(data::project::ProjectAttributes::ACADEMIC) {
+        result.insert(ProjectAttribute::Academic);
+        attributes.remove(data::project::ProjectAttributes::ACADEMIC);
+    }
+    if attributes.contains(data::project::ProjectAttributes::ARTISTIC) {
+        result.insert(ProjectAttribute::Artistic);
+        attributes.remove(data::project::ProjectAttributes::ARTISTIC);
+    }
+    if attributes.contains(data::project::ProjectAttributes::COMMITTEE) {
+        result.insert(ProjectAttribute::Committee);
+        attributes.remove(data::project::ProjectAttributes::COMMITTEE);
+    }
+    if attributes.contains(data::project::ProjectAttributes::OUTDOOR) {
+        result.insert(ProjectAttribute::Outdoor);
+        attributes.remove(data::project::ProjectAttributes::OUTDOOR);
+    }
+    ensure!(attributes.is_empty());
+
+    let result = ProjectAttributes::from_attributes(result)?;
+    Ok(result)
 }

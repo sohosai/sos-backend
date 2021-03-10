@@ -1,15 +1,25 @@
+use crate::project_repository::{
+    from_project_attributes, from_project_category, to_project_attributes, to_project_category,
+};
+
 use anyhow::Result;
-use futures::{future, lock::Mutex, stream::TryStreamExt};
+use futures::{
+    future::{self, TryFutureExt},
+    lock::Mutex,
+    stream::TryStreamExt,
+};
 use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
 use sos21_domain::context::FormRepository;
 use sos21_domain::model::{
     date_time::DateTime,
-    form::{Form, FormCondition, FormDescription, FormId, FormName, FormPeriod},
-    project::{ProjectAttribute, ProjectCategory, ProjectId},
+    form::{
+        Form, FormCondition, FormConditionProjectSet, FormDescription, FormId, FormName, FormPeriod,
+    },
+    project::ProjectId,
+    project_query::{ProjectQuery, ProjectQueryConjunction},
     user::UserId,
 };
-use sqlx::types::BitVec;
 use sqlx::{Postgres, Transaction};
 
 #[derive(Debug, RefCast)]
@@ -22,10 +32,16 @@ impl FormRepository for FormDatabase {
     async fn store_form(&self, form: Form) -> Result<()> {
         let mut lock = self.0.lock().await;
 
-        if let Some(old_form) = query::find_form(&mut *lock, form.id.to_uuid()).await? {
-            let condition: FormCondition = bincode::deserialize(&old_form.condition)?;
+        let form_id = form.id.to_uuid();
+        if let Some(old_form) = query::find_form(&mut *lock, form_id).await? {
+            let old_includes = FormConditionProjectSet::from_projects(
+                old_form.include_ids.into_iter().map(ProjectId::from_uuid),
+            )?;
+            let old_excludes = FormConditionProjectSet::from_projects(
+                old_form.exclude_ids.into_iter().map(ProjectId::from_uuid),
+            )?;
 
-            for delete_id in form.condition.includes.difference(&condition.includes) {
+            for delete_id in form.condition.includes.difference(&old_includes) {
                 command::delete_form_condition_include(
                     &mut *lock,
                     data::form::FormConditionInclude {
@@ -35,7 +51,7 @@ impl FormRepository for FormDatabase {
                 )
                 .await?;
             }
-            for insert_id in condition.includes.difference(&form.condition.includes) {
+            for insert_id in old_includes.difference(&form.condition.includes) {
                 command::insert_form_condition_include(
                     &mut *lock,
                     data::form::FormConditionInclude {
@@ -46,7 +62,7 @@ impl FormRepository for FormDatabase {
                 .await?;
             }
 
-            for delete_id in form.condition.excludes.difference(&condition.excludes) {
+            for delete_id in form.condition.excludes.difference(&old_excludes) {
                 command::delete_form_condition_exclude(
                     &mut *lock,
                     data::form::FormConditionExclude {
@@ -54,9 +70,7 @@ impl FormRepository for FormDatabase {
                         form_id: form.id.to_uuid(),
                     },
                 )
-                .await?;
-            }
-            for insert_id in condition.excludes.difference(&form.condition.excludes) {
+            for insert_id in old_excludes.difference(&form.condition.excludes) {
                 command::insert_form_condition_exclude(
                     &mut *lock,
                     data::form::FormConditionExclude {
@@ -67,6 +81,10 @@ impl FormRepository for FormDatabase {
                 .await?;
             }
 
+            let query = from_project_query(&form.condition.query);
+            command::delete_form_project_query_conjunctions(&mut *lock, form_id).await?;
+            command::insert_form_project_query_conjunctions(&mut *lock, form_id, query).await?;
+
             let form = from_form(form)?;
             let input = command::update_form::Input {
                 id: form.id,
@@ -75,15 +93,8 @@ impl FormRepository for FormDatabase {
                 starts_at: form.starts_at,
                 ends_at: form.ends_at,
                 items: form.items,
-                condition: form.condition,
-                unspecified_query: form.unspecified_query,
-                general_query: form.general_query,
-                stage_query: form.stage_query,
-                cooking_query: form.cooking_query,
-                food_query: form.food_query,
-                needs_sync: false,
             };
-            command::update_form(&mut *lock, input).await
+            command::update_form(&mut *lock, input).await?;
         } else {
             for include_id in form.condition.includes.projects() {
                 command::insert_form_condition_include(
@@ -105,22 +116,28 @@ impl FormRepository for FormDatabase {
                 )
                 .await?;
             }
-            command::insert_form(&mut *lock, from_form(form)?).await
+            let query = from_project_query(&form.condition.query);
+            let form = from_form(form)?;
+
+            command::insert_form(&mut *lock, form).await?;
+            command::insert_form_project_query_conjunctions(&mut *lock, form_id, query).await?;
         }
+
+        Ok(())
     }
 
     async fn get_form(&self, id: FormId) -> Result<Option<Form>> {
         let mut lock = self.0.lock().await;
 
         query::find_form(&mut *lock, id.to_uuid())
+            .and_then(|data| future::ready(data.map(to_form).transpose()))
             .await
-            .and_then(|opt| opt.map(to_form).transpose())
     }
 
     async fn list_forms(&self) -> Result<Vec<Form>> {
         let mut lock = self.0.lock().await;
         query::list_forms(&mut *lock)
-            .and_then(|form| future::ready(to_form(form)))
+            .and_then(|data| future::ready(to_form(data)))
             .try_collect()
             .await
     }
@@ -128,13 +145,13 @@ impl FormRepository for FormDatabase {
     async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<Form>> {
         let mut lock = self.0.lock().await;
         query::list_forms_by_project(&mut *lock, id.to_uuid())
-            .and_then(|form| future::ready(to_form(form)))
+            .and_then(|data| future::ready(to_form(data)))
             .try_collect()
             .await
     }
 }
 
-fn to_form(form: data::form::Form) -> Result<Form> {
+fn to_form(data: data::form::FormData) -> Result<Form> {
     let data::form::Form {
         id,
         created_at,
@@ -144,12 +161,33 @@ fn to_form(form: data::form::Form) -> Result<Form> {
         starts_at,
         ends_at,
         items,
-        condition,
-        ..
-    } = form;
+    } = data.form;
 
     let starts_at = DateTime::from_utc(starts_at);
     let ends_at = DateTime::from_utc(ends_at);
+
+    let includes = FormConditionProjectSet::from_projects(
+        data.include_ids.into_iter().map(ProjectId::from_uuid),
+    )?;
+    let excludes = FormConditionProjectSet::from_projects(
+        data.exclude_ids.into_iter().map(ProjectId::from_uuid),
+    )?;
+    let query = data
+        .query
+        .into_iter()
+        .map(|conj| {
+            to_project_attributes(conj.attributes).map(|attributes| ProjectQueryConjunction {
+                category: conj.category.map(to_project_category),
+                attributes,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    let query = ProjectQuery::from_conjunctions(query)?;
+    let condition = FormCondition {
+        query,
+        includes,
+        excludes,
+    };
 
     Ok(Form {
         id: FormId::from_uuid(id),
@@ -159,7 +197,7 @@ fn to_form(form: data::form::Form) -> Result<Form> {
         description: FormDescription::from_string(description)?,
         period: FormPeriod::from_datetime(starts_at, ends_at)?,
         items: bincode::deserialize(&items)?,
-        condition: bincode::deserialize(&condition)?,
+        condition,
     })
 }
 
@@ -172,42 +210,8 @@ fn from_form(form: Form) -> Result<data::form::Form> {
         description,
         period,
         items,
-        condition,
+        condition: _,
     } = form;
-
-    let len = data::project::ProjectAttributes::all().bits() + 1;
-    let mut unspecified_query = BitVec::from_elem(len as usize, false);
-    let mut general_query = BitVec::from_elem(len as usize, false);
-    let mut stage_query = BitVec::from_elem(len as usize, false);
-    let mut cooking_query = BitVec::from_elem(len as usize, false);
-    let mut food_query = BitVec::from_elem(len as usize, false);
-
-    for conj in condition.query.conjunctions() {
-        let query = match conj.category() {
-            Some(ProjectCategory::Stage) => &mut stage_query,
-            Some(ProjectCategory::General) => &mut general_query,
-            Some(ProjectCategory::Cooking) => &mut cooking_query,
-            Some(ProjectCategory::Food) => &mut food_query,
-            None => &mut unspecified_query,
-        };
-
-        let attrs = conj
-            .attributes()
-            .map(|attr| match attr {
-                ProjectAttribute::Academic => data::project::ProjectAttributes::ACADEMIC,
-                ProjectAttribute::Artistic => data::project::ProjectAttributes::ARTISTIC,
-                ProjectAttribute::Committee => data::project::ProjectAttributes::COMMITTEE,
-                ProjectAttribute::Outdoor => data::project::ProjectAttributes::OUTDOOR,
-            })
-            .collect::<data::project::ProjectAttributes>();
-
-        for idx in 0..len {
-            let sample = data::project::ProjectAttributes::from_bits(idx).unwrap();
-            if sample.contains(attrs) {
-                query.set(idx as usize, true);
-            }
-        }
-    }
 
     Ok(data::form::Form {
         id: id.to_uuid(),
@@ -218,12 +222,19 @@ fn from_form(form: Form) -> Result<data::form::Form> {
         starts_at: period.starts_at().utc(),
         ends_at: period.ends_at().utc(),
         items: bincode::serialize(&items)?,
-        condition: bincode::serialize(&condition)?,
-        unspecified_query,
-        general_query,
-        stage_query,
-        cooking_query,
-        food_query,
-        needs_sync: false,
     })
+}
+
+fn from_project_query(
+    query: &ProjectQuery,
+) -> Vec<command::insert_form_project_query_conjunctions::ProjectQueryConjunction> {
+    query
+        .conjunctions()
+        .map(
+            |conj| command::insert_form_project_query_conjunctions::ProjectQueryConjunction {
+                category: conj.category.map(from_project_category),
+                attributes: from_project_attributes(&conj.attributes),
+            },
+        )
+        .collect()
 }
