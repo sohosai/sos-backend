@@ -4,7 +4,7 @@ use uuid::Uuid;
 #[derive(Debug, Clone)]
 pub struct Input {
     pub id: Uuid,
-    pub items: Vec<u8>,
+    pub items: serde_json::Value,
 }
 
 pub async fn update_form_answer<'a, E>(conn: E, input: Input) -> Result<()>

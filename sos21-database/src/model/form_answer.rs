@@ -8,5 +8,5 @@ pub struct FormAnswer {
     pub author_id: String,
     pub form_id: Uuid,
     pub project_id: Uuid,
-    pub items: Vec<u8>,
+    pub items: serde_json::Value,
 }

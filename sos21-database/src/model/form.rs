@@ -12,7 +12,7 @@ pub struct Form {
     pub description: String,
     pub starts_at: DateTime<Utc>,
     pub ends_at: DateTime<Utc>,
-    pub items: Vec<u8>,
+    pub items: serde_json::Value,
 }
 
 #[derive(Debug, Clone)]

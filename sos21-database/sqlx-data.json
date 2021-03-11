@@ -13,7 +13,7 @@
           "Varchar",
           "Timestamptz",
           "Timestamptz",
-          "Bytea"
+          "Jsonb"
         ]
       },
       "nullable": []
@@ -602,7 +602,7 @@
         {
           "ordinal": 7,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         },
         {
           "ordinal": 8,
@@ -683,7 +683,7 @@
         {
           "ordinal": 5,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         }
       ],
       "parameters": {
@@ -790,7 +790,7 @@
         {
           "ordinal": 7,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         },
         {
           "ordinal": 8,
@@ -921,7 +921,7 @@
       "parameters": {
         "Left": [
           "Uuid",
-          "Bytea"
+          "Jsonb"
         ]
       },
       "nullable": []
@@ -971,7 +971,7 @@
           "Varchar",
           "Timestamptz",
           "Timestamptz",
-          "Bytea"
+          "Jsonb"
         ]
       },
       "nullable": []
@@ -1009,7 +1009,7 @@
         {
           "ordinal": 5,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         }
       ],
       "parameters": {
@@ -1059,7 +1059,7 @@
         {
           "ordinal": 5,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         }
       ],
       "parameters": {
@@ -1330,7 +1330,7 @@
           "Varchar",
           "Uuid",
           "Uuid",
-          "Bytea"
+          "Jsonb"
         ]
       },
       "nullable": []
@@ -1435,7 +1435,7 @@
         {
           "ordinal": 7,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         },
         {
           "ordinal": 8,

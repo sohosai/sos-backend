@@ -9,7 +9,7 @@ pub struct Input {
     pub description: String,
     pub starts_at: DateTime<Utc>,
     pub ends_at: DateTime<Utc>,
-    pub items: Vec<u8>,
+    pub items: serde_json::Value,
 }
 
 pub async fn update_form<'a, E>(conn: E, input: Input) -> Result<()>

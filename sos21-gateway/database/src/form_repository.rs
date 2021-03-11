@@ -188,7 +188,7 @@ fn to_form(data: data::form::FormData) -> Result<Form> {
         name: FormName::from_string(name)?,
         description: FormDescription::from_string(description)?,
         period: FormPeriod::from_datetime(starts_at, ends_at)?,
-        items: bincode::deserialize(&items)?,
+        items: serde_json::from_value(items)?,
         condition,
     })
 }
@@ -213,7 +213,7 @@ fn from_form(form: Form) -> Result<data::form::Form> {
         description: description.into_string(),
         starts_at: period.starts_at().utc(),
         ends_at: period.ends_at().utc(),
-        items: bincode::serialize(&items)?,
+        items: serde_json::to_value(&items)?,
     })
 }
 
