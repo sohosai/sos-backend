@@ -1,5 +1,6 @@
+use crate::model::project::{ProjectAttributes, ProjectCategory};
+
 use chrono::{DateTime, Utc};
-use sqlx::types::BitVec;
 use uuid::Uuid;
 
 #[derive(Debug, Clone, sqlx::FromRow)]
@@ -11,26 +12,19 @@ pub struct Form {
     pub description: String,
     pub starts_at: DateTime<Utc>,
     pub ends_at: DateTime<Utc>,
-    pub items: Vec<u8>,
-    pub condition: Vec<u8>,
-    // TODO: u64-based bit vector?
-    pub unspecified_query: BitVec,
-    pub general_query: BitVec,
-    pub stage_query: BitVec,
-    pub cooking_query: BitVec,
-    pub food_query: BitVec,
-    // TODO: Enable to add new attribute in better way
-    pub needs_sync: bool,
+    pub items: serde_json::Value,
 }
 
-#[derive(Debug, Clone, sqlx::FromRow)]
-pub struct FormConditionInclude {
-    pub project_id: Uuid,
-    pub form_id: Uuid,
+#[derive(Debug, Clone)]
+pub struct FormData {
+    pub form: Form,
+    pub include_ids: Vec<Uuid>,
+    pub exclude_ids: Vec<Uuid>,
+    pub query: Vec<FormProjectQueryConjunction>,
 }
 
-#[derive(Debug, Clone, sqlx::FromRow)]
-pub struct FormConditionExclude {
-    pub project_id: Uuid,
-    pub form_id: Uuid,
+#[derive(Debug, Clone)]
+pub struct FormProjectQueryConjunction {
+    pub category: Option<ProjectCategory>,
+    pub attributes: ProjectAttributes,
 }

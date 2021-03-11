@@ -28,7 +28,7 @@ impl FormAnswerRepository for FormAnswerDatabase {
         {
             let input = command::update_form_answer::Input {
                 id: answer.id,
-                items: bincode::serialize(&answer.items)?,
+                items: serde_json::to_value(&answer.items)?,
             };
             command::update_form_answer(&mut *lock, input).await
         } else {
@@ -83,7 +83,7 @@ fn to_form_answer(answer: data::form_answer::FormAnswer) -> Result<FormAnswer> {
         form_id: FormId::from_uuid(form_id),
         created_at: DateTime::from_utc(created_at),
         author_id: UserId(author_id),
-        items: bincode::deserialize(&items)?,
+        items: serde_json::from_value(items)?,
     })
 }
 
@@ -103,6 +103,6 @@ fn from_form_answer(answer: FormAnswer) -> Result<data::form_answer::FormAnswer>
         author_id: author_id.0,
         form_id: form_id.to_uuid(),
         project_id: project_id.to_uuid(),
-        items: bincode::serialize(&items)?,
+        items: serde_json::to_value(&items)?,
     })
 }

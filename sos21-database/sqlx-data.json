@@ -1,5 +1,24 @@
 {
   "db": "PostgreSQL",
+  "00b19f19b20ab3210cd206b240f530a73e1a57149a5512abbfc06970eda8fe31": {
+    "query": "\nINSERT INTO forms (\n    id,\n    created_at,\n    author_id,\n    name,\n    description,\n    starts_at,\n    ends_at,\n    items\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Timestamptz",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Timestamptz",
+          "Timestamptz",
+          "Jsonb"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "0bb322d4dfcd18e50cd8559f10c3775f1d7233e7b921afc32d4440d549c98274": {
     "query": "SELECT count(*) as \"count!\" FROM projects",
     "describe": {
@@ -356,32 +375,6 @@
       ]
     }
   },
-  "277b2dcbbc03852ae80d93108222c9cee549741b90bbfb7c1007dfe34a676f58": {
-    "query": "\nINSERT INTO forms (\n    id,\n    created_at,\n    author_id,\n    name,\n    description,\n    starts_at,\n    ends_at,\n    items,\n    condition,\n    unspecified_query,\n    general_query,\n    stage_query,\n    cooking_query,\n    food_query,\n    needs_sync\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15 )\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Timestamptz",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Timestamptz",
-          "Timestamptz",
-          "Bytea",
-          "Bytea",
-          "Bit",
-          "Bit",
-          "Bit",
-          "Bit",
-          "Bit",
-          "Bool"
-        ]
-      },
-      "nullable": []
-    }
-  },
   "2886e66019ea2c33c9047e542547fb94bc8f35ecff4dca796abd3966feb5cab0": {
     "query": "\nSELECT\n        projects.id,\n        projects.index,\n        projects.created_at,\n        owner_id,\n        name,\n        kana_name,\n        group_name,\n        kana_group_name,\n        description,\n        category as \"category: ProjectCategory\",\n        attributes as \"attributes: ProjectAttributes\",\n        users.id as user_id,\n        users.created_at as user_created_at,\n        first_name,\n        kana_first_name,\n        last_name,\n        kana_last_name,\n        phone_number,\n        affiliation,\n        email,\n        role as \"role: UserRole\"\nFROM projects\nINNER JOIN users ON (projects.owner_id = users.id)\nWHERE projects.index = $1\n",
     "describe": {
@@ -546,6 +539,118 @@
       ]
     }
   },
+  "2d84f85029192e93a83ca7c07379348b8ca28f14de48752e1135c47cd5158191": {
+    "query": "\nWITH grants AS (\n    SELECT\n        array_agg(privilege_type::text) AS privilege_types,\n        table_name::text\n    FROM information_schema.role_table_grants\n    WHERE grantee = current_user AND table_name::text = ANY ($1)\n    GROUP BY table_name\n)\nSELECT\n    (bool_and(grants.privilege_types @> ARRAY['DELETE', 'UPDATE', 'SELECT', 'INSERT'])\n        AND count(grants.table_name) = $2\n    ) AS \"has_grants!\"\nFROM grants\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "has_grants!",
+          "type_info": "Bool"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "TextArray",
+          "Int8"
+        ]
+      },
+      "nullable": [
+        null
+      ]
+    }
+  },
+  "3711b1e67808ed304eb8431a42c28d478f503afce5f9453e9f8fb96d4d09819d": {
+    "query": "\nSELECT\n    forms.*,\n    array_agg(DISTINCT form_condition_includes.project_id)\n        FILTER (WHERE form_condition_includes.project_id IS NOT NULL)\n        AS include_ids,\n    array_agg(DISTINCT form_condition_excludes.project_id)\n        FILTER (WHERE form_condition_excludes.project_id IS NOT NULL)\n        AS exclude_ids,\n    array_agg(DISTINCT (\n            form_project_query_conjunctions.category,\n            form_project_query_conjunctions.attributes\n        ))\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM forms\nLEFT OUTER JOIN form_condition_includes\n    ON forms.id = form_condition_includes.form_id\nLEFT OUTER JOIN form_condition_excludes\n    ON forms.id = form_condition_excludes.form_id\nLEFT OUTER JOIN form_project_query_conjunctions\n    ON forms.id = form_project_query_conjunctions.form_id\nGROUP BY forms.id\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "starts_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 6,
+          "name": "ends_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 7,
+          "name": "items",
+          "type_info": "Jsonb"
+        },
+        {
+          "ordinal": 8,
+          "name": "include_ids",
+          "type_info": "UuidArray"
+        },
+        {
+          "ordinal": 9,
+          "name": "exclude_ids",
+          "type_info": "UuidArray"
+        },
+        {
+          "ordinal": 10,
+          "name": "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
+          "type_info": "RecordArray"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "42428fd5434b061010295f08481b7a6d07eed8432ff9d2924df2407007705f76": {
+    "query": "\nDELETE FROM form_condition_excludes\nWHERE project_id = ANY ($2) AND form_id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "UuidArray"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "469efc7df42e813f0f80997ce488f607b71b2e35c4b6c00373b09c123b5513e6": {
     "query": "SELECT * FROM form_answers WHERE form_id = $1 AND project_id = $2",
     "describe": {
@@ -578,7 +683,7 @@
         {
           "ordinal": 5,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         }
       ],
       "parameters": {
@@ -597,40 +702,14 @@
       ]
     }
   },
-  "4d771190ed339a4273677a66699aefaa51398b42cdd9bd48e08e98c8376fae06": {
-    "query": "\nDELETE FROM form_condition_excludes\nWHERE project_id = $1 AND form_id = $2\n",
+  "4d5e18eebf601ef2c81828cb5adb10263f5914e55c57dcc9c537ea8da7db3fd6": {
+    "query": "\nINSERT INTO form_condition_includes (\n    project_id,\n    form_id\n)\nSELECT\n    include_ids.id AS project_id,\n    $1 AS form_id\nFROM unnest($2::uuid[]) AS include_ids( id )\n",
     "describe": {
       "columns": [],
       "parameters": {
         "Left": [
           "Uuid",
-          "Uuid"
-        ]
-      },
-      "nullable": []
-    }
-  },
-  "64a41396436ec85834b566274ed2ac1496a8d50dc10367aded5a1cdb45b500e0": {
-    "query": "\nDELETE FROM form_condition_includes\nWHERE project_id = $1 AND form_id = $2\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Uuid"
-        ]
-      },
-      "nullable": []
-    }
-  },
-  "655cd56faef7a35d39fccd8e9ec9e8962e6639e866e1596400aad7912510e2ab": {
-    "query": "\nINSERT INTO form_condition_includes (\n        project_id,\n        form_id\n) VALUES ( $1, $2 )\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Uuid"
+          "UuidArray"
         ]
       },
       "nullable": []
@@ -667,6 +746,86 @@
         ]
       },
       "nullable": []
+    }
+  },
+  "7fe7f07a0a796342208ddcfbabf7bd624437ac7f3c079a39556ffa14ea08b10e": {
+    "query": "\nWITH project_forms AS (\n    SELECT forms.id\n    FROM forms\n    LEFT OUTER JOIN form_condition_includes\n        ON form_condition_includes.form_id = forms.id\n    LEFT OUTER JOIN form_condition_excludes\n        ON form_condition_excludes.form_id = forms.id\n    WHERE (\n        (\n            form_condition_excludes.project_id IS NULL\n            OR form_condition_excludes.project_id <> $1\n        )\n        AND (\n            form_condition_includes.project_id = $1\n            OR (\n                SELECT\n                    bool_or((\n                        form_project_query_conjunctions.category = projects.category IS NOT FALSE\n                        AND form_project_query_conjunctions.attributes | projects.attributes = projects.attributes\n                    ))\n                FROM form_project_query_conjunctions, projects\n                WHERE form_project_query_conjunctions.form_id = forms.id AND projects.id = $1\n            )\n        )\n    )\n)\nSELECT\n    forms.*,\n    array_agg(DISTINCT form_condition_includes.project_id)\n        FILTER (WHERE form_condition_includes.project_id IS NOT NULL)\n        AS include_ids,\n    array_agg(DISTINCT form_condition_excludes.project_id)\n        FILTER (WHERE form_condition_excludes.project_id IS NOT NULL)\n        AS exclude_ids,\n    array_agg(DISTINCT (\n            form_project_query_conjunctions.category,\n            form_project_query_conjunctions.attributes\n        ))\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM project_forms\nINNER JOIN forms\n    ON forms.id = project_forms.id\nLEFT OUTER JOIN form_condition_includes\n    ON forms.id = form_condition_includes.form_id\nLEFT OUTER JOIN form_condition_excludes\n    ON forms.id = form_condition_excludes.form_id\nLEFT OUTER JOIN form_project_query_conjunctions\n    ON forms.id = form_project_query_conjunctions.form_id\nGROUP BY forms.id\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "starts_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 6,
+          "name": "ends_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 7,
+          "name": "items",
+          "type_info": "Jsonb"
+        },
+        {
+          "ordinal": 8,
+          "name": "include_ids",
+          "type_info": "UuidArray"
+        },
+        {
+          "ordinal": 9,
+          "name": "exclude_ids",
+          "type_info": "UuidArray"
+        },
+        {
+          "ordinal": 10,
+          "name": "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
+          "type_info": "RecordArray"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
+        null
+      ]
     }
   },
   "843923b9a0257cf80f1dff554e7dc8fdfc05f489328e8376513124dfb42996e3": {
@@ -755,110 +914,6 @@
       ]
     }
   },
-  "891bfe4a8c5ebe17bbb31d006dc8b51908177ee19f46266283b1f8924c9b5886": {
-    "query": "\nSELECT\n    forms.*\nFROM forms\nLEFT OUTER JOIN form_condition_includes\n    ON form_condition_includes.form_id = forms.id\nLEFT OUTER JOIN form_condition_excludes\n    ON form_condition_excludes.form_id = forms.id\nWHERE\n    (form_condition_excludes.project_id IS NULL\n        OR form_condition_excludes.project_id <> $1\n    )\n    AND (form_condition_includes.project_id = $1 OR (SELECT\n            form_query_match(forms.unspecified_query, projects.attributes)\n            OR CASE projects.category\n                WHEN 'general' THEN form_query_match(forms.general_query, projects.attributes)\n                WHEN 'stage'   THEN form_query_match(forms.stage_query, projects.attributes)\n                WHEN 'cooking' THEN form_query_match(forms.cooking_query, projects.attributes)\n                WHEN 'food'    THEN form_query_match(forms.food_query, projects.attributes)\n            END\n        FROM projects\n        WHERE projects.id = $1\n    ))\nGROUP BY forms.id\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 2,
-          "name": "author_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 3,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 4,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "starts_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 6,
-          "name": "ends_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 7,
-          "name": "items",
-          "type_info": "Bytea"
-        },
-        {
-          "ordinal": 8,
-          "name": "condition",
-          "type_info": "Bytea"
-        },
-        {
-          "ordinal": 9,
-          "name": "unspecified_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 10,
-          "name": "general_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 11,
-          "name": "stage_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 12,
-          "name": "food_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 13,
-          "name": "cooking_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 14,
-          "name": "needs_sync",
-          "type_info": "Bool"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ]
-    }
-  },
   "8a47a8d72f8b785fe183855bf435a85359c7bfd47332a93b3367f314b904db09": {
     "query": "\nUPDATE form_answers\n  SET\n    items = $2\n  WHERE id = $1\n",
     "describe": {
@@ -866,7 +921,57 @@
       "parameters": {
         "Left": [
           "Uuid",
-          "Bytea"
+          "Jsonb"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "8c1d7660fa030b16f79e77c223080e98c111d91f0a71cf5ee1367d5bff8b5498": {
+    "query": "\nINSERT INTO form_project_query_conjunctions (\n    form_id,\n    category,\n    attributes\n)\nSELECT\n    $1 AS form_id,\n    query.category,\n    query.attributes\nFROM unnest(\n    $2::project_category[],\n    $3::integer[]\n) AS query(\n    category,\n    attributes\n)\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          {
+            "Custom": {
+              "name": "_project_category",
+              "kind": {
+                "Array": {
+                  "Custom": {
+                    "name": "project_category",
+                    "kind": {
+                      "Enum": [
+                        "general",
+                        "stage",
+                        "cooking",
+                        "food"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "Int4Array"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "8d381aebd53b8ea0cd2818a1cfaf75ac11dac17500372e0e85be2207cff89556": {
+    "query": "\nUPDATE forms\n  SET\n    name = $2,\n    description = $3,\n    starts_at = $4,\n    ends_at = $5,\n    items = $6\n  WHERE id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Varchar",
+          "Varchar",
+          "Timestamptz",
+          "Timestamptz",
+          "Jsonb"
         ]
       },
       "nullable": []
@@ -904,7 +1009,7 @@
         {
           "ordinal": 5,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         }
       ],
       "parameters": {
@@ -954,7 +1059,7 @@
         {
           "ordinal": 5,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         }
       ],
       "parameters": {
@@ -1167,147 +1272,6 @@
       "nullable": []
     }
   },
-  "c02f5fd47bbdd6017d923583076606e59faf385128f7c244899d88bcf7ed7b48": {
-    "query": "SELECT * FROM forms WHERE id = $1",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 2,
-          "name": "author_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 3,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 4,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "starts_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 6,
-          "name": "ends_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 7,
-          "name": "items",
-          "type_info": "Bytea"
-        },
-        {
-          "ordinal": 8,
-          "name": "condition",
-          "type_info": "Bytea"
-        },
-        {
-          "ordinal": 9,
-          "name": "unspecified_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 10,
-          "name": "general_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 11,
-          "name": "stage_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 12,
-          "name": "food_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 13,
-          "name": "cooking_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 14,
-          "name": "needs_sync",
-          "type_info": "Bool"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ]
-    }
-  },
-  "c7f65468e17e820de12100673e821d7ce2ae5a6af006b26743e20cdfe6d1ed74": {
-    "query": "\nINSERT INTO form_condition_excludes (\n        project_id,\n        form_id\n) VALUES ( $1, $2 )\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Uuid"
-        ]
-      },
-      "nullable": []
-    }
-  },
-  "d23d60942a73360f412c62698783a00ab06561158f4d405213a314048bdf6046": {
-    "query": "\nUPDATE forms\n  SET\n    name = $2,\n    description = $3,\n    starts_at = $4,\n    ends_at = $5,\n    items = $6,\n    condition = $7,\n    unspecified_query = $8,\n    general_query = $9,\n    stage_query = $10,\n    cooking_query = $11,\n    food_query = $12,\n    needs_sync = $13\n  WHERE id = $1\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Varchar",
-          "Varchar",
-          "Timestamptz",
-          "Timestamptz",
-          "Bytea",
-          "Bytea",
-          "Bit",
-          "Bit",
-          "Bit",
-          "Bit",
-          "Bit",
-          "Bool"
-        ]
-      },
-      "nullable": []
-    }
-  },
   "d4b494324f9a6588b424355dd1795303da88cd6f22f63a95b5a28c6ea5ad5a3a": {
     "query": "\nINSERT INTO projects (\n    id,\n    index,\n    created_at,\n    owner_id,\n    name,\n    kana_name,\n    group_name,\n    kana_group_name,\n    description,\n    category,\n    attributes\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )\n",
     "describe": {
@@ -1342,22 +1306,17 @@
       "nullable": []
     }
   },
-  "dc7c2de4dffa98331c4d891151936edb4df0247af07cdc2635d9888284e4a4cb": {
-    "query": "SELECT coalesce(bool_or(needs_sync), false) as \"not_in_sync!\" FROM forms",
+  "d4e9cab5b5002093018372d3b1607fb239baa40eadec7f8219b982d2c910c066": {
+    "query": "\nDELETE FROM form_condition_includes\nWHERE project_id = ANY ($2) AND form_id = $1\n",
     "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "not_in_sync!",
-          "type_info": "Bool"
-        }
-      ],
+      "columns": [],
       "parameters": {
-        "Left": []
+        "Left": [
+          "Uuid",
+          "UuidArray"
+        ]
       },
-      "nullable": [
-        null
-      ]
+      "nullable": []
     }
   },
   "e0fc85e7d86de077c37422aed415a23c1c2c55aac14bcc88e3e9594dda0f4940": {
@@ -1371,7 +1330,7 @@
           "Varchar",
           "Uuid",
           "Uuid",
-          "Bytea"
+          "Jsonb"
         ]
       },
       "nullable": []
@@ -1409,8 +1368,33 @@
       "nullable": []
     }
   },
-  "fad1a762147574c9c4869661b760eaf4b044ca98cfb59c3a36be1fe2c70c756c": {
-    "query": "SELECT * FROM forms",
+  "e7888a368a3d948c9c37355ada97f50f0f0e2f37d213f9f800aa0d100c007fdc": {
+    "query": "\nDELETE FROM form_project_query_conjunctions\nWHERE form_id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "ef0ec2428a97ecdbbf05eeffa87958fd9f836116945fa299e1ac8c10e221934e": {
+    "query": "\nINSERT INTO form_condition_excludes (\n    project_id,\n    form_id\n)\nSELECT\n    exclude_ids.id AS project_id,\n    $1 AS form_id\nFROM unnest($2::uuid[]) AS exclude_ids( id )\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "UuidArray"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "fd4e7d0c2c2b07f9543882cb1e18345abbc109ad7ac814f867495a22618e07a5": {
+    "query": "\nSELECT\n    forms.*,\n    (\n        SELECT array_agg(form_condition_includes.project_id)\n        FROM form_condition_includes\n        WHERE form_id = forms.id\n    ) AS include_ids,\n    (\n        SELECT array_agg(form_condition_excludes.project_id)\n        FROM form_condition_excludes\n        WHERE form_id = forms.id\n    ) AS exclude_ids,\n    (\n        SELECT\n            array_agg((\n                form_project_query_conjunctions.category,\n                form_project_query_conjunctions.attributes\n            ))\n        FROM form_project_query_conjunctions\n        WHERE form_id = forms.id\n    ) AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM forms\nWHERE forms.id = $1\n",
     "describe": {
       "columns": [
         {
@@ -1451,46 +1435,28 @@
         {
           "ordinal": 7,
           "name": "items",
-          "type_info": "Bytea"
+          "type_info": "Jsonb"
         },
         {
           "ordinal": 8,
-          "name": "condition",
-          "type_info": "Bytea"
+          "name": "include_ids",
+          "type_info": "UuidArray"
         },
         {
           "ordinal": 9,
-          "name": "unspecified_query",
-          "type_info": "Bit"
+          "name": "exclude_ids",
+          "type_info": "UuidArray"
         },
         {
           "ordinal": 10,
-          "name": "general_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 11,
-          "name": "stage_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 12,
-          "name": "food_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 13,
-          "name": "cooking_query",
-          "type_info": "Bit"
-        },
-        {
-          "ordinal": 14,
-          "name": "needs_sync",
-          "type_info": "Bool"
+          "name": "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
+          "type_info": "RecordArray"
         }
       ],
       "parameters": {
-        "Left": []
+        "Left": [
+          "Uuid"
+        ]
       },
       "nullable": [
         false,
@@ -1501,13 +1467,9 @@
         false,
         false,
         false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
+        null,
+        null,
+        null
       ]
     }
   }
