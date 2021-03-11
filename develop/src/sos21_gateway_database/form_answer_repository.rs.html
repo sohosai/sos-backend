@@ -140,7 +140,7 @@
         {
             <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">command</span>::<span class="ident">update_form_answer</span>::<span class="ident">Input</span> {
                 <span class="ident">id</span>: <span class="ident">answer</span>.<span class="ident">id</span>,
-                <span class="ident">items</span>: <span class="ident">bincode</span>::<span class="ident">serialize</span>(<span class="kw-2">&amp;</span><span class="ident">answer</span>.<span class="ident">items</span>)<span class="question-mark">?</span>,
+                <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">to_value</span>(<span class="kw-2">&amp;</span><span class="ident">answer</span>.<span class="ident">items</span>)<span class="question-mark">?</span>,
             };
             <span class="ident">command</span>::<span class="ident">update_form_answer</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">input</span>).<span class="kw">await</span>
         } <span class="kw">else</span> {
@@ -195,7 +195,7 @@
         <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_uuid</span>(<span class="ident">form_id</span>),
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
         <span class="ident">author_id</span>: <span class="ident">UserId</span>(<span class="ident">author_id</span>),
-        <span class="ident">items</span>: <span class="ident">bincode</span>::<span class="ident">deserialize</span>(<span class="kw-2">&amp;</span><span class="ident">items</span>)<span class="question-mark">?</span>,
+        <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">from_value</span>(<span class="ident">items</span>)<span class="question-mark">?</span>,
     })
 }
 
@@ -215,7 +215,7 @@
         <span class="ident">author_id</span>: <span class="ident">author_id</span>.<span class="number">0</span>,
         <span class="ident">form_id</span>: <span class="ident">form_id</span>.<span class="ident">to_uuid</span>(),
         <span class="ident">project_id</span>: <span class="ident">project_id</span>.<span class="ident">to_uuid</span>(),
-        <span class="ident">items</span>: <span class="ident">bincode</span>::<span class="ident">serialize</span>(<span class="kw-2">&amp;</span><span class="ident">items</span>)<span class="question-mark">?</span>,
+        <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">to_value</span>(<span class="kw-2">&amp;</span><span class="ident">items</span>)<span class="question-mark">?</span>,
     })
 }
 </pre></div>

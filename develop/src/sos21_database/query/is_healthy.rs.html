@@ -16,21 +16,83 @@
 <span id="13">13</span>
 <span id="14">14</span>
 <span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
+
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
 
 <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">is_healthy</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">E</span><span class="op">&gt;</span>(<span class="ident">conn</span>: <span class="ident">E</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">E</span>: <span class="ident">sqlx</span>::<span class="ident">Executor</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Database</span> <span class="op">=</span> <span class="ident">sqlx</span>::<span class="ident">Postgres</span><span class="op">&gt;</span>,
 {
-    <span class="kw">let</span> <span class="ident">not_in_sync</span> <span class="op">=</span> <span class="ident">sqlx</span>::<span class="macro">query_scalar</span><span class="macro">!</span>(
-        <span class="string">r#&quot;SELECT coalesce(bool_or(needs_sync), false) as &quot;not_in_sync!&quot; FROM forms&quot;#</span>
+    <span class="kw">let</span> <span class="ident">table_names</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">str</span>] <span class="op">=</span> [
+        <span class="string">&quot;users&quot;</span>,
+        <span class="string">&quot;projects&quot;</span>,
+        <span class="string">&quot;forms&quot;</span>,
+        <span class="string">&quot;form_condition_includes&quot;</span>,
+        <span class="string">&quot;form_condition_excludes&quot;</span>,
+        <span class="string">&quot;form_project_query_conjunctions&quot;</span>,
+        <span class="string">&quot;form_answers&quot;</span>,
+    ]
+    .<span class="ident">as_ref</span>();
+
+    <span class="kw">let</span> <span class="ident">table_names_len</span>: <span class="ident">i64</span> <span class="op">=</span> <span class="ident">table_names</span>.<span class="ident">len</span>().<span class="ident">try_into</span>()<span class="question-mark">?</span>;
+
+    <span class="kw">let</span> <span class="ident">has_grants</span> <span class="op">=</span> <span class="ident">sqlx</span>::<span class="macro">query_scalar</span><span class="macro">!</span>(
+        <span class="string">r#&quot;
+WITH grants AS (
+    SELECT
+        array_agg(privilege_type::text) AS privilege_types,
+        table_name::text
+    FROM information_schema.role_table_grants
+    WHERE grantee = current_user AND table_name::text = ANY ($1)
+    GROUP BY table_name
+)
+SELECT
+    (bool_and(grants.privilege_types @&gt; ARRAY[&#39;DELETE&#39;, &#39;UPDATE&#39;, &#39;SELECT&#39;, &#39;INSERT&#39;])
+        AND count(grants.table_name) = $2
+    ) AS &quot;has_grants!&quot;
+FROM grants
+&quot;#</span>,
+        <span class="ident">table_names</span> <span class="kw">as</span> <span class="kw">_</span>,
+        <span class="ident">table_names_len</span>
     )
     .<span class="ident">fetch_one</span>(<span class="ident">conn</span>)
     .<span class="kw">await</span>
-    .<span class="ident">context</span>(<span class="string">&quot;Failed to select from forms&quot;</span>)<span class="question-mark">?</span>;
+    .<span class="ident">context</span>(<span class="string">&quot;Failed to select from role_table_grants&quot;</span>)<span class="question-mark">?</span>;
 
-    <span class="prelude-val">Ok</span>(<span class="op">!</span><span class="ident">not_in_sync</span>)
+    <span class="prelude-val">Ok</span>(<span class="ident">has_grants</span>)
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "sos21_database";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

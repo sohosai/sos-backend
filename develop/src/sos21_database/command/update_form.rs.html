@@ -42,32 +42,9 @@
 <span id="39">39</span>
 <span id="40">40</span>
 <span id="41">41</span>
-<span id="42">42</span>
-<span id="43">43</span>
-<span id="44">44</span>
-<span id="45">45</span>
-<span id="46">46</span>
-<span id="47">47</span>
-<span id="48">48</span>
-<span id="49">49</span>
-<span id="50">50</span>
-<span id="51">51</span>
-<span id="52">52</span>
-<span id="53">53</span>
-<span id="54">54</span>
-<span id="55">55</span>
-<span id="56">56</span>
-<span id="57">57</span>
-<span id="58">58</span>
-<span id="59">59</span>
-<span id="60">60</span>
-<span id="61">61</span>
-<span id="62">62</span>
-<span id="63">63</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
-<span class="kw">use</span> <span class="ident">sqlx</span>::<span class="ident">types</span>::<span class="ident">BitVec</span>;
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
@@ -77,14 +54,7 @@
     <span class="kw">pub</span> <span class="ident">description</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">starts_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">ends_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">condition</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">unspecified_query</span>: <span class="ident">BitVec</span>,
-    <span class="kw">pub</span> <span class="ident">general_query</span>: <span class="ident">BitVec</span>,
-    <span class="kw">pub</span> <span class="ident">stage_query</span>: <span class="ident">BitVec</span>,
-    <span class="kw">pub</span> <span class="ident">cooking_query</span>: <span class="ident">BitVec</span>,
-    <span class="kw">pub</span> <span class="ident">food_query</span>: <span class="ident">BitVec</span>,
-    <span class="kw">pub</span> <span class="ident">needs_sync</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">Value</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_form</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">E</span><span class="op">&gt;</span>(<span class="ident">conn</span>: <span class="ident">E</span>, <span class="ident">input</span>: <span class="ident">Input</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
@@ -99,14 +69,7 @@ UPDATE forms
     description = $3,
     starts_at = $4,
     ends_at = $5,
-    items = $6,
-    condition = $7,
-    unspecified_query = $8,
-    general_query = $9,
-    stage_query = $10,
-    cooking_query = $11,
-    food_query = $12,
-    needs_sync = $13
+    items = $6
   WHERE id = $1
 &quot;#</span>,
         <span class="ident">input</span>.<span class="ident">id</span>,
@@ -115,13 +78,6 @@ UPDATE forms
         <span class="ident">input</span>.<span class="ident">starts_at</span>,
         <span class="ident">input</span>.<span class="ident">ends_at</span>,
         <span class="ident">input</span>.<span class="ident">items</span>,
-        <span class="ident">input</span>.<span class="ident">condition</span>,
-        <span class="ident">input</span>.<span class="ident">unspecified_query</span>,
-        <span class="ident">input</span>.<span class="ident">general_query</span>,
-        <span class="ident">input</span>.<span class="ident">stage_query</span>,
-        <span class="ident">input</span>.<span class="ident">cooking_query</span>,
-        <span class="ident">input</span>.<span class="ident">food_query</span>,
-        <span class="ident">input</span>.<span class="ident">needs_sync</span>,
     )
     .<span class="ident">execute</span>(<span class="ident">conn</span>)
     .<span class="kw">await</span>
