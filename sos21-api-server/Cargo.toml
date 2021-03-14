@@ -22,6 +22,9 @@ uuid = { version = "0.8", features = ["v4"] }
 warp = { version = "0.3", default-features = false }
 sqlx = { version = "0.5", features = ["postgres", "runtime-tokio-rustls"] }
 jsonwebtoken = "7"
+rusoto_s3 = { version = "0.46", default-features = false, features = ["rustls"] }
+rusoto_core = { version = "0.46", default-features = false, features = ["rustls"] }
+rusoto_credential = "0.46"
 reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"] }
 url = "2"
 structopt = "0.3"
@@ -29,4 +32,5 @@ apply-macro = "1"
 sos21-domain = { path = "../sos21-domain" }
 sos21-database = { path = "../sos21-database" }
 sos21-gateway-database = { path = "../sos21-gateway/database" }
+sos21-gateway-s3 = { path = "../sos21-gateway/s3" }
 sos21-use-case = { path = "../sos21-use-case" }
