@@ -336,6 +336,17 @@ impl FileRepository for MockApp {
             })
             .sum())
     }
+
+    async fn list_files_by_user(&self, user_id: UserId) -> Result<Vec<File>> {
+        Ok(self
+            .files
+            .lock()
+            .await
+            .values()
+            .filter(|file| file.author_id == user_id)
+            .cloned()
+            .collect())
+    }
 }
 
 #[derive(Debug, Error, Clone)]

@@ -387,6 +387,66 @@ paths:
       operationId: me/project/list
       description: ログインしているユーザーの企画一覧を返します。
     parameters: []
+  /me/file/list:
+    get:
+      summary: me/file/list
+      tags:
+        - me
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      $ref: ./model/file/File.yml
+                required:
+                  - files
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me/file/list
+      description: ログインしているユーザーのファイル一覧を返します。
+    parameters: []
+  /me/file/check-usage:
+    get:
+      summary: me/file/check-usage
+      tags:
+        - me
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usage:
+                    type: integer
+                  quota:
+                    type: integer
+                    nullable: true
+                required:
+                  - usage
+                  - quota
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me/file/check-usage
+      description: ログインしているユーザーのファイルの利用状況を返します。
+    parameters: []
   /project/create:
     post:
       summary: project/create

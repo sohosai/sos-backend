@@ -1,23 +1,20 @@
 use std::convert::Infallible;
 
 use crate::app::Context;
-use crate::handler::model::user::User;
+use crate::handler::model::file::File;
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::get_login_user;
+use sos21_use_case::list_user_files;
 use warp::http::StatusCode;
-
-pub mod file;
-pub mod project;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {}
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Response {
-    pub user: User,
+    pub files: Vec<File>,
 }
 
 impl HandlerResponse for Response {
@@ -44,7 +41,7 @@ impl From<Infallible> for Error {
 
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
-    let user = get_login_user::run(&ctx).await?;
-    let user = User::from_use_case(user);
-    Ok(Response { user })
+    let files = list_user_files::run(&ctx).await?;
+    let files = files.into_iter().map(File::from_use_case).collect();
+    Ok(Response { files })
 }

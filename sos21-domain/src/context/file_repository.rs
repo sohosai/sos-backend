@@ -8,6 +8,7 @@ pub trait FileRepository {
     async fn store_file(&self, file: File) -> Result<()>;
     async fn get_file(&self, id: FileId) -> Result<Option<File>>;
     async fn sum_usage_by_user(&self, user_id: UserId) -> Result<u64>;
+    async fn list_files_by_user(&self, user_id: UserId) -> Result<Vec<File>>;
 }
 
 #[macro_export]
@@ -35,6 +36,12 @@ macro_rules! delegate_file_repository {
             ) -> ::anyhow::Result<u64> {
                 $target.sum_usage_by_user(user_id).await
             }
+            async fn list_files_by_user(
+                &$sel,
+                user_id: $crate::model::user::UserId
+            ) -> ::anyhow::Result<Vec<$crate::model::file::File>> {
+                $target.list_files_by_user(user_id).await
+            }
         }
     }
 }
@@ -51,5 +58,9 @@ impl<C: FileRepository + Sync> FileRepository for &C {
 
     async fn sum_usage_by_user(&self, user_id: UserId) -> Result<u64> {
         <C as FileRepository>::sum_usage_by_user(self, user_id).await
+    }
+
+    async fn list_files_by_user(&self, user_id: UserId) -> Result<Vec<File>> {
+        <C as FileRepository>::list_files_by_user(self, user_id).await
     }
 }

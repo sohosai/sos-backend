@@ -1,7 +1,7 @@
 use std::convert::TryInto;
 
 use anyhow::Result;
-use futures::lock::Mutex;
+use futures::{future, lock::Mutex, stream::TryStreamExt};
 use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
 use sos21_domain::context::FileRepository;
@@ -49,6 +49,14 @@ impl FileRepository for FileDatabase {
         let usage = query::sum_file_size_by_user(&mut *lock, user_id.0).await?;
         let usage = usage.try_into()?;
         Ok(usage)
+    }
+
+    async fn list_files_by_user(&self, user_id: UserId) -> Result<Vec<File>> {
+        let mut lock = self.0.lock().await;
+        query::list_files_by_user(&mut *lock, user_id.0)
+            .and_then(|file| future::ready(to_file(file)))
+            .try_collect()
+            .await
     }
 }
 

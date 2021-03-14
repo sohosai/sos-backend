@@ -80,6 +80,10 @@ pub fn endpoints(
         / "me" {
             / => GET (handler::me),
             / "project" / "list" => GET (handler::me::project::list),
+            / "file" {
+                / "list" => GET (handler::me::file::list),
+                / "check-usage" => GET (handler::me::file::check_usage),
+            }
         },
         / "project" {
             / "get" => GET (handler::project::get),
