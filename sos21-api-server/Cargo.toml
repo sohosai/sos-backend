@@ -22,6 +22,9 @@ uuid = { version = "0.8", features = ["v4"] }
 warp = { version = "0.3", default-features = false }
 sqlx = { version = "0.5", features = ["postgres", "runtime-tokio-rustls"] }
 jsonwebtoken = "7"
+mime = "0.3"
+bytes = "1"
+mpart-async = "0.5"
 rusoto_s3 = { version = "0.46", default-features = false, features = ["rustls"] }
 rusoto_core = { version = "0.46", default-features = false, features = ["rustls"] }
 rusoto_credential = "0.46"

@@ -1622,6 +1622,134 @@ paths:
           name: answer_id
           required: true
     parameters: []
+  /file/create:
+    post:
+      summary: file/create
+      operationId: file/create
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: ファイルを作成するのに用いたパートの `name` ディレクティブの引数
+                        file:
+                          $ref: ./model/file/File.yml
+                      required:
+                        - name
+                        - file
+                required:
+                  - files
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_FILE_NAME
+                                  - NO_BOUNDARY_IN_CONTENT_TYPE
+                                  - NO_NAME_DIRECTIVE_IN_PART
+                                  - INVALID_CONTENT_TYPE_IN_PART
+                            required:
+                              - type
+                    required:
+                      - status
+                      - error
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - OUT_OF_FILE_USAGE_QUOTA
+                    required:
+                      - status
+                      - error
+              examples:
+                Out of file usage quota:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: OUT_OF_FILE_USAGE_QUOTA
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: |
+        ファイルを作成します。同時に複数のファイルをアップロードできます。
+        リクエストボディに含まれる一つのパートにつき一つのファイルを作成します。
+        レスポンスには、それぞれのパートの `name` ディレクティブの引数を含めて、作成したファイルの情報の配列が順序不同で返ります
+        （ `name` はファイル作成自体には影響しません）。
+        また、パートに `filename` ディレクティブが指定された場合、その引数はファイル名としてファイル作成に使用されます。
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+                format: binary
+      tags:
+        - file
   /health/liveness:
     get:
       summary: health/liveness
@@ -1987,6 +2115,7 @@ tags:
   - name: project
   - name: form
   - name: form_answer
+  - name: file
   - name: committee
   - name: admin
 security:

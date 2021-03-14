@@ -1,0 +1,4 @@
+type: string
+title: Mime
+format: mime
+description: RFC7231 の Media Type です。

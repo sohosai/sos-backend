@@ -20,9 +20,14 @@ pub struct App {
 
 impl Debug for App {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // `S3Client` does't implement `Debug`,
+        // so using an unit struct below as a replacement.
+        #[derive(Debug)]
+        struct S3Client;
+
         f.debug_struct("App")
             .field("pool", &self.pool)
-            .field("s3_client", &"S3Client")
+            .field("s3_client", &S3Client)
             .field("config", &self.config)
             .finish()
     }
