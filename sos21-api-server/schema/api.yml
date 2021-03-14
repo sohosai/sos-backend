@@ -1750,6 +1750,65 @@ paths:
                 format: binary
       tags:
         - file
+  /file/get-info:
+    get:
+      summary: file/get-info
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file/get-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: file_id
+          required: true
+      description: 指定されたファイルの情報を返します。
+  /file/get:
+    get:
+      summary: file/get
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: file_id
+          required: true
+      description: 指定されたファイルを返します。
   /health/liveness:
     get:
       summary: health/liveness
@@ -1971,6 +2030,49 @@ components:
                   type: API
                   info:
                     type: FORM_ANSWER_NOT_FOUND
+    FileNotFound:
+      description: File Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - FILE_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: FILE_NOT_FOUND
     InternalServerError:
       description: Internal Server Error
       content:

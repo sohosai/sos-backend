@@ -115,7 +115,9 @@ pub fn endpoints(
             / "update" => POST (handler::user::update),
         },
         / "file" {
-            / "create" => POST_STREAM (handler::file::create)
+            / "create" => POST_STREAM (handler::file::create),
+            / "get" => GET (handler::file::get),
+            / "get-info" => GET (handler::file::get_info),
         }
     };
 

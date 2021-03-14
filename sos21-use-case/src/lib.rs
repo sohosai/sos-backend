@@ -17,6 +17,8 @@ pub mod create_project;
 pub mod export_form_answers;
 pub mod export_projects;
 pub mod export_users;
+pub mod get_file;
+pub mod get_file_object;
 pub mod get_form;
 pub mod get_form_answer;
 pub mod get_login_user;
