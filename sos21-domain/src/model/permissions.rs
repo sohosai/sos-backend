@@ -8,5 +8,6 @@ bitflags::bitflags! {
         const READ_ALL_FORMS        = 0b00010000;
         const CREATE_FORMS          = 0b00100000;
         const READ_ALL_FORM_ANSWERS = 0b01000000;
+        const CREATE_FILES          = 0b10000000;
     }
 }

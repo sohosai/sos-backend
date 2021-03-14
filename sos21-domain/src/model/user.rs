@@ -58,6 +58,10 @@ impl User {
         user.permissions().contains(Permissions::READ_ALL_USERS)
     }
 
+    pub fn file_usage_quota(&self) -> Option<u64> {
+        self.role.file_usage_quota()
+    }
+
     pub fn set_name(&mut self, name: UserName) {
         self.name = name;
     }
