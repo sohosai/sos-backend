@@ -23,6 +23,7 @@ serde = { version = "1", features = ["derive"] }
 bytes = "1"
 mime = "0.3"
 futures = "0.3"
+blake3 = "0.3"
 
 # these optional dependencies are used by `test` feature (which is enabled for the use from other crates)
 tokio = { version = "1", optional = true, features = ["macros", "rt-multi-thread"] }

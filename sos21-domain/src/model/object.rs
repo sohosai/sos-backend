@@ -3,7 +3,7 @@ use crate::model::user::User;
 
 use uuid::Uuid;
 
-mod data;
+pub mod data;
 pub use data::ObjectData;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

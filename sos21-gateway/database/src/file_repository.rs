@@ -7,7 +7,7 @@ use sos21_database::{command, model as data, query};
 use sos21_domain::context::FileRepository;
 use sos21_domain::model::{
     date_time::DateTime,
-    file::{File, FileId, FileName, FileType},
+    file::{File, FileBlake3Digest, FileId, FileName, FileType},
     object::ObjectId,
     user::UserId,
 };
@@ -27,6 +27,7 @@ impl FileRepository for FileDatabase {
             let input = command::update_file::Input {
                 id: file.id,
                 object_id: file.object_id,
+                blake3_digest: file.blake3_digest,
                 name: file.name,
                 type_: file.type_,
                 size: file.size,
@@ -66,6 +67,7 @@ fn from_file(file: File) -> Result<data::file::File> {
         created_at,
         author_id,
         object_id,
+        blake3_digest,
         name,
         type_,
         size,
@@ -76,6 +78,7 @@ fn from_file(file: File) -> Result<data::file::File> {
         created_at: created_at.utc(),
         author_id: author_id.0,
         object_id: object_id.to_uuid(),
+        blake3_digest: blake3_digest.as_slice().to_vec(),
         name: name.map(FileName::into_string),
         type_: type_.into_mime().to_string(),
         size: size.try_into()?,
@@ -88,6 +91,7 @@ fn to_file(file: data::file::File) -> Result<File> {
         created_at,
         author_id,
         object_id,
+        blake3_digest,
         name,
         type_,
         size,
@@ -98,6 +102,7 @@ fn to_file(file: data::file::File) -> Result<File> {
         created_at: DateTime::from_utc(created_at),
         author_id: UserId(author_id),
         object_id: ObjectId::from_uuid(object_id),
+        blake3_digest: FileBlake3Digest::from_vec(blake3_digest)?,
         name: name.map(FileName::from_string).transpose()?,
         type_: FileType::from_mime(type_.parse()?),
         size: size.try_into()?,

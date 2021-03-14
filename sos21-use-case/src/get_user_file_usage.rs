@@ -36,12 +36,9 @@ mod tests {
     async fn test_general() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let (object1, size1) = test::model::new_object();
-        let file1 = test::model::new_file(user.id.clone(), object1.id, size1);
-        let (object2, size2) = test::model::new_object();
-        let file2 = test::model::new_file(user.id.clone(), object2.id, size2);
-        let (object3, size3) = test::model::new_object();
-        let file3 = test::model::new_file(other.id.clone(), object3.id, size3);
+        let (file1, object1) = test::model::new_file(user.id.clone());
+        let (file2, object2) = test::model::new_file(user.id.clone());
+        let (file3, object3) = test::model::new_file(other.id.clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -55,7 +52,7 @@ mod tests {
         assert!(matches!(
             get_user_file_usage::run(&app).await,
             Ok(output)
-            if output.usage == size1 + size2
+            if output.usage == file1.size + file2.size
         ));
     }
 }

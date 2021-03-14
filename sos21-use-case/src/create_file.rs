@@ -82,12 +82,13 @@ where
         .context("Failed to sum usage by user")?;
 
     let object_id = object::ObjectId::from_uuid(Uuid::new_v4());
+    let (data, summary) = object::ObjectData::from_stream_with_summary(input.data);
     let object = object::Object {
         id: object_id,
-        data: object::ObjectData::from_stream(input.data),
+        data,
     };
 
-    let size = if let Some(limit) = login_user.file_usage_quota() {
+    if let Some(limit) = login_user.file_usage_quota() {
         if usage >= limit {
             return Err(UseCaseError::UseCase(Error::OutOfUsageQuota));
         }
@@ -95,18 +96,23 @@ where
         ctx.store_object_with_limit(object, limit - usage)
             .await
             .context("Failed to store an object")?
-            .map_err(|err| UseCaseError::UseCase(Error::from_store_object_error::<C>(err)))?
+            .map_err(|err| UseCaseError::UseCase(Error::from_store_object_error::<C>(err)))?;
     } else {
         ctx.store_object(object)
             .await
-            .context("Failed to store an object")?
+            .context("Failed to store an object")?;
     };
+
+    let summary = summary.await?;
+    let blake3_digest = file::FileBlake3Digest::from_array(summary.blake3_digest);
+    let size = summary.size;
 
     let file = file::File {
         id: file::FileId::from_uuid(Uuid::new_v4()),
         created_at: DateTime::now(),
         author_id: login_user.id.clone(),
         object_id,
+        blake3_digest,
         name,
         type_,
         size,
@@ -157,8 +163,9 @@ mod tests {
         let limit = user.file_usage_quota().unwrap();
         // to avoid too much load
         // let object = test::model::new_object_with_size(limit - 50);
-        let (object, _) = test::model::new_object();
-        let file = test::model::new_file(user.id.clone(), object.id, limit - 50);
+        let (object, digest, _) = test::model::new_object();
+        let file =
+            test::model::new_file_with_object(user.id.clone(), object.id, digest, limit - 50);
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -170,7 +177,7 @@ mod tests {
             .await;
 
         let input = create_file::Input {
-            data: test::model::new_object_data_with_size(100).into_stream(),
+            data: test::model::new_object_data_with_size(100).0.into_stream(),
             name: Some("テストテスト".to_string()),
             content_type: Some(mime::APPLICATION_OCTET_STREAM),
         };
@@ -187,8 +194,9 @@ mod tests {
         let limit = user.file_usage_quota().unwrap();
         // to avoid too much load
         // let object = test::model::new_object_with_size(limit + 10);
-        let (object, _) = test::model::new_object();
-        let file = test::model::new_file(user.id.clone(), object.id, limit + 10);
+        let (object, digest, _) = test::model::new_object();
+        let file =
+            test::model::new_file_with_object(user.id.clone(), object.id, digest, limit + 10);
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -200,7 +208,7 @@ mod tests {
             .await;
 
         let input = create_file::Input {
-            data: test::model::new_object_data_with_size(5).into_stream(),
+            data: test::model::new_object_data_with_size(5).0.into_stream(),
             name: Some("テストテスト".to_string()),
             content_type: Some(mime::APPLICATION_OCTET_STREAM),
         };

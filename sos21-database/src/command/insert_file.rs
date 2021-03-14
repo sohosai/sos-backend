@@ -11,6 +11,7 @@ where
         created_at,
         author_id,
         object_id,
+        blake3_digest,
         name,
         type_,
         size,
@@ -23,15 +24,17 @@ INSERT INTO files (
     created_at,
     author_id,
     object_id,
+    blake3_digest,
     name,
     type_,
     size
-) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
 "#,
         id,
         created_at,
         author_id,
         object_id,
+        blake3_digest,
         name,
         type_,
         size

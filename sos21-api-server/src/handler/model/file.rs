@@ -28,6 +28,8 @@ pub struct File {
     pub name: Option<String>,
     #[serde(with = "serde_mime", rename = "type")]
     pub type_: Mime,
+    #[serde(with = "hex::serde")]
+    pub blake3_digest: [u8; 32],
     pub size: u64,
 }
 
@@ -39,6 +41,7 @@ impl File {
             author_id: UserId::from_use_case(file.author_id),
             name: file.name,
             type_: file.type_,
+            blake3_digest: file.blake3_digest,
             size: file.size,
         }
     }

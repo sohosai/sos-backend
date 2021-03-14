@@ -8,6 +8,8 @@ properties:
     $ref: ../DateTime.yml
   author_id:
     $ref: ../user/UserId.yml
+  blake3_digest:
+    type: string
   name:
     type: string
     nullable: true
@@ -19,6 +21,7 @@ required:
   - id
   - created_at
   - author_id
+  - blake3_digest
   - name
   - type
   - size

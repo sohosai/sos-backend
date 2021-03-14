@@ -5,6 +5,7 @@ use uuid::Uuid;
 pub struct Input {
     pub id: Uuid,
     pub object_id: Uuid,
+    pub blake3_digest: Vec<u8>,
     pub name: Option<String>,
     pub type_: String,
     pub size: i64,
@@ -19,13 +20,15 @@ where
 UPDATE files
   SET
     object_id = $2,
-    name = $3,
-    type_ = $4,
-    size = $5
+    blake3_digest = $3,
+    name = $4,
+    type_ = $5,
+    size = $6
   WHERE id = $1
 "#,
         input.id,
         input.object_id,
+        input.blake3_digest,
         input.name,
         input.type_,
         input.size,

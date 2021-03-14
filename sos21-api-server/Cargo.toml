@@ -31,6 +31,7 @@ rusoto_credential = "0.46"
 reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"] }
 url = "2"
 structopt = "0.3"
+hex = { version = "0.4", features = ["serde"] }
 apply-macro = "1"
 sos21-domain = { path = "../sos21-domain" }
 sos21-database = { path = "../sos21-database" }

@@ -30,6 +30,7 @@ pub struct File {
     pub author_id: UserId,
     pub name: Option<String>,
     pub type_: Mime,
+    pub blake3_digest: [u8; 32],
     pub size: u64,
 }
 
@@ -41,6 +42,7 @@ impl File {
             author_id: UserId::from_entity(file.author_id),
             name: file.name.map(entity::FileName::into_string),
             type_: file.type_.into_mime(),
+            blake3_digest: file.blake3_digest.into_array(),
             size: file.size,
         }
     }

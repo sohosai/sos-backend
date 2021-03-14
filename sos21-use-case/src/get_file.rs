@@ -42,8 +42,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_owner() {
         let user = test::model::new_general_user();
-        let (object, size) = test::model::new_object();
-        let file = test::model::new_file(user.id.clone(), object.id, size);
+        let (file, object) = test::model::new_file(user.id.clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -67,8 +66,7 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let (object, size) = test::model::new_object();
-        let file_other = test::model::new_file(other.id.clone(), object.id, size);
+        let (file_other, object) = test::model::new_file(other.id.clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -90,8 +88,7 @@ mod tests {
     async fn test_committee_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let (object, size) = test::model::new_object();
-        let file_other = test::model::new_file(other.id.clone(), object.id, size);
+        let (file_other, object) = test::model::new_file(other.id.clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -113,8 +110,7 @@ mod tests {
     async fn test_operator_other() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (object, size) = test::model::new_object();
-        let file_other = test::model::new_file(other.id.clone(), object.id, size);
+        let (file_other, object) = test::model::new_file(other.id.clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -136,8 +132,7 @@ mod tests {
     async fn test_admin_other() {
         let user = test::model::new_admin_user();
         let other = test::model::new_general_user();
-        let (object, size) = test::model::new_object();
-        let file_other = test::model::new_file(other.id.clone(), object.id, size);
+        let (file_other, object) = test::model::new_file(other.id.clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])

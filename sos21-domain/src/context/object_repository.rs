@@ -5,7 +5,7 @@ pub trait ObjectRepository {
     type OutOfLimitSizeError: std::error::Error;
 
     /// Stores an object.
-    async fn store_object(&self, object: Object) -> anyhow::Result<u64>;
+    async fn store_object(&self, object: Object) -> anyhow::Result<()>;
     /// Stores an object while specifying the limit of object size.
     ///
     /// When the size of the object is larger than the `limit` ( `size > limit` ),
@@ -14,7 +14,7 @@ pub trait ObjectRepository {
         &self,
         object: Object,
         limit: u64,
-    ) -> anyhow::Result<Result<u64, Self::OutOfLimitSizeError>>;
+    ) -> anyhow::Result<Result<(), Self::OutOfLimitSizeError>>;
     async fn get_object(&self, id: ObjectId) -> anyhow::Result<Option<Object>>;
 }
 
@@ -31,14 +31,14 @@ macro_rules! delegate_object_repository {
             async fn store_object(
                 &$sel,
                 object: $crate::model::object::Object,
-            ) -> ::anyhow::Result<u64> {
+            ) -> ::anyhow::Result<()> {
                 $target.store_object(object).await
             }
             async fn store_object_with_limit(
                 &$sel,
                 object: $crate::model::object::Object,
                 limit: u64,
-            ) -> ::anyhow::Result<Result<u64, Self::OutOfLimitSizeError>> {
+            ) -> ::anyhow::Result<Result<(), Self::OutOfLimitSizeError>> {
                 $target.store_object_with_limit(object, limit).await
             }
             async fn get_object(
@@ -55,7 +55,7 @@ macro_rules! delegate_object_repository {
 impl<C: ObjectRepository + Sync> ObjectRepository for &C {
     type OutOfLimitSizeError = <C as ObjectRepository>::OutOfLimitSizeError;
 
-    async fn store_object(&self, object: Object) -> anyhow::Result<u64> {
+    async fn store_object(&self, object: Object) -> anyhow::Result<()> {
         <C as ObjectRepository>::store_object(self, object).await
     }
 
@@ -63,7 +63,7 @@ impl<C: ObjectRepository + Sync> ObjectRepository for &C {
         &self,
         object: Object,
         limit: u64,
-    ) -> anyhow::Result<Result<u64, Self::OutOfLimitSizeError>> {
+    ) -> anyhow::Result<Result<(), Self::OutOfLimitSizeError>> {
         <C as ObjectRepository>::store_object_with_limit(self, object, limit).await
     }
 

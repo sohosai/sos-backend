@@ -359,23 +359,22 @@ pub struct OutOfLimitSizeError {
 impl ObjectRepository for MockApp {
     type OutOfLimitSizeError = OutOfLimitSizeError;
 
-    async fn store_object(&self, object: Object) -> Result<u64> {
+    async fn store_object(&self, object: Object) -> Result<()> {
         let object_id = object.id;
         let mut buf = BytesMut::new();
         let mut data = object.data.into_stream();
         while let Some(chunk) = data.try_next().await? {
             buf.put(chunk);
         }
-        let len = buf.len().try_into()?;
         self.objects.lock().await.insert(object_id, buf.freeze());
-        Ok(len)
+        Ok(())
     }
 
     async fn store_object_with_limit(
         &self,
         object: Object,
         limit: u64,
-    ) -> Result<std::result::Result<u64, Self::OutOfLimitSizeError>> {
+    ) -> Result<std::result::Result<(), Self::OutOfLimitSizeError>> {
         let object_id = object.id;
         let mut buf = BytesMut::new();
         let mut data = object.data.into_stream();
@@ -385,21 +384,20 @@ impl ObjectRepository for MockApp {
                 return Ok(Err(OutOfLimitSizeError { _priv: () }));
             }
         }
-        let len = buf.len().try_into()?;
         self.objects.lock().await.insert(object_id, buf.freeze());
-        Ok(Ok(len))
+        Ok(Ok(()))
     }
 
     async fn get_object(&self, id: ObjectId) -> Result<Option<Object>> {
-        Ok(self.objects.lock().await.get(&id).cloned().map(|bytes| {
-            let size = bytes.len() as u64;
-            Object {
+        Ok(self
+            .objects
+            .lock()
+            .await
+            .get(&id)
+            .cloned()
+            .map(|bytes| Object {
                 id,
-                data: ObjectData::from_stream_with_size(
-                    stream::once(async move { Ok(bytes) }),
-                    size,
-                ),
-            }
-        }))
+                data: ObjectData::from_stream(stream::once(async move { Ok(bytes) })),
+            }))
     }
 }

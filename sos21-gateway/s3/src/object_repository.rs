@@ -50,20 +50,21 @@ pub struct OutOfLimitSizeError {
 impl ObjectRepository for ObjectS3 {
     type OutOfLimitSizeError = OutOfLimitSizeError;
 
-    async fn store_object(&self, object: Object) -> anyhow::Result<u64> {
-        self.store_object_impl(object, None)
-            .await
-            .map(Option::unwrap)
+    async fn store_object(&self, object: Object) -> anyhow::Result<()> {
+        self.store_object_impl(object, None).await?;
+        Ok(())
     }
 
     async fn store_object_with_limit(
         &self,
         object: Object,
         limit: u64,
-    ) -> anyhow::Result<Result<u64, OutOfLimitSizeError>> {
-        self.store_object_impl(object, Some(limit))
-            .await
-            .map(|opt| opt.ok_or(OutOfLimitSizeError { _priv: () }))
+    ) -> anyhow::Result<Result<(), OutOfLimitSizeError>> {
+        if let StoreObjectResult::OutOfLimit = self.store_object_impl(object, Some(limit)).await? {
+            Ok(Err(OutOfLimitSizeError { _priv: () }))
+        } else {
+            Ok(Ok(()))
+        }
     }
 
     async fn get_object(&self, id: ObjectId) -> anyhow::Result<Option<Object>> {
@@ -84,14 +85,16 @@ impl ObjectRepository for ObjectS3 {
             .context("No body in the response of GetObject")?
             .map_err(anyhow::Error::new);
 
-        let data = if let Some(size) = output.content_length {
-            ObjectData::from_stream_with_size(body, size.try_into()?)
-        } else {
-            ObjectData::from_stream(body)
-        };
-
-        Ok(Some(Object { id, data }))
+        Ok(Some(Object {
+            id,
+            data: ObjectData::from_stream(body),
+        }))
     }
+}
+
+enum StoreObjectResult {
+    OutOfLimit,
+    Stored,
 }
 
 impl ObjectS3 {
@@ -99,7 +102,7 @@ impl ObjectS3 {
         &self,
         object: Object,
         size_limit: Option<u64>,
-    ) -> anyhow::Result<Option<u64>> {
+    ) -> anyhow::Result<StoreObjectResult> {
         let object_key = to_object_key(object.id);
 
         let create_multipart_request = rusoto_s3::CreateMultipartUploadRequest {
@@ -127,7 +130,7 @@ impl ObjectS3 {
 
         let upload_result = upload(input).await;
         match upload_result {
-            Err(_) | Ok(None) => {
+            Err(_) | Ok(StoreObjectResult::OutOfLimit) => {
                 let abort_multipart_request = rusoto_s3::AbortMultipartUploadRequest {
                     bucket: self.bucket.clone(),
                     key: object_key.clone(),
@@ -159,7 +162,7 @@ struct UploadInput<'a, S> {
     data: S,
 }
 
-async fn upload<S>(input: UploadInput<'_, S>) -> anyhow::Result<Option<u64>>
+async fn upload<S>(input: UploadInput<'_, S>) -> anyhow::Result<StoreObjectResult>
 where
     S: Stream<Item = anyhow::Result<Bytes>> + Send + Sync + Unpin + 'static,
 {
@@ -183,7 +186,7 @@ where
 
         if let Some(size_limit) = size_limit {
             if total_size > size_limit {
-                return Ok(None);
+                return Ok(StoreObjectResult::OutOfLimit);
             }
         }
 
@@ -232,7 +235,7 @@ where
     };
     client.complete_multipart_upload(complete_request).await?;
 
-    Ok(Some(total_size))
+    Ok(StoreObjectResult::Stored)
 }
 
 struct UploadPartInput {

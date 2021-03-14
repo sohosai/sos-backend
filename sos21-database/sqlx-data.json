@@ -199,8 +199,8 @@
       ]
     }
   },
-  "197f55e82beed2b10077068a019d579f1d9ff5677275e25b76917808da8baf0c": {
-    "query": "\nINSERT INTO files (\n    id,\n    created_at,\n    author_id,\n    object_id,\n    name,\n    type_,\n    size\n) VALUES ( $1, $2, $3, $4, $5, $6, $7 )\n",
+  "13bac29095f6cca49b0024ff163eaed5ccd4dfefc550c40c5b52df08d764c1c8": {
+    "query": "\nINSERT INTO files (\n    id,\n    created_at,\n    author_id,\n    object_id,\n    blake3_digest,\n    name,\n    type_,\n    size\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )\n",
     "describe": {
       "columns": [],
       "parameters": {
@@ -209,12 +209,75 @@
           "Timestamptz",
           "Varchar",
           "Uuid",
+          "Bytea",
           "Varchar",
           "Varchar",
           "Int8"
         ]
       },
       "nullable": []
+    }
+  },
+  "1c58f812d7aef4d3e4ede6c24d24c09bf79047c7281ca10e49352c26a5c1c595": {
+    "query": "SELECT * FROM files WHERE author_id = $1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "object_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 4,
+          "name": "blake3_digest",
+          "type_info": "Bytea"
+        },
+        {
+          "ordinal": 5,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "type_",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "size",
+          "type_info": "Int8"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      ]
     }
   },
   "1d590755cfdaf09c0e44dca775a2f22b397c319242588480ed307e5e700a36b2": {
@@ -1015,22 +1078,6 @@
       "nullable": []
     }
   },
-  "8f3a5b1eaacc0bbba8a746651d039fdd6f45010e5e7d76ac650a843554803afd": {
-    "query": "\nUPDATE files\n  SET\n    object_id = $2,\n    name = $3,\n    type_ = $4,\n    size = $5\n  WHERE id = $1\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Uuid",
-          "Varchar",
-          "Varchar",
-          "Int8"
-        ]
-      },
-      "nullable": []
-    }
-  },
   "93773a5c02e14df70a4fb1700d268cb51ed8a04f58c48cca948b53d342aa15a5": {
     "query": "SELECT * FROM form_answers WHERE form_id = $1",
     "describe": {
@@ -1326,6 +1373,23 @@
       "nullable": []
     }
   },
+  "cf3d9a3d04c5a4609105171b04ccc41b97b2aa2828bfddb71539ed2e9370b44f": {
+    "query": "\nUPDATE files\n  SET\n    object_id = $2,\n    blake3_digest = $3,\n    name = $4,\n    type_ = $5,\n    size = $6\n  WHERE id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Bytea",
+          "Varchar",
+          "Varchar",
+          "Int8"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "d169c558df910c04f98627f46d1f0ee4fbbab4c51667ccbcee9cf966ba8db9b1": {
     "query": "SELECT * FROM files WHERE id = $1",
     "describe": {
@@ -1352,16 +1416,21 @@
         },
         {
           "ordinal": 4,
+          "name": "blake3_digest",
+          "type_info": "Bytea"
+        },
+        {
+          "ordinal": 5,
           "name": "name",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 5,
+          "ordinal": 6,
           "name": "type_",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 6,
+          "ordinal": 7,
           "name": "size",
           "type_info": "Int8"
         }
@@ -1372,6 +1441,7 @@
         ]
       },
       "nullable": [
+        false,
         false,
         false,
         false,
