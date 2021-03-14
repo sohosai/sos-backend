@@ -79,3 +79,9 @@ sos21_domain::delegate_form_answer_repository! {
         self { &self.database }
     }
 }
+
+sos21_domain::delegate_file_repository! {
+    impl FileRepository for Context {
+        self { &self.database }
+    }
+}
