@@ -62,6 +62,10 @@ impl App {
         &self.config
     }
 
+    pub fn s3_client(&self) -> &S3Client {
+        &self.s3_client
+    }
+
     pub async fn connection(&self) -> Result<PoolConnection<Postgres>> {
         self.pool
             .acquire()

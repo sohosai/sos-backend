@@ -75,6 +75,7 @@ pub fn endpoints(
         / "health" {
             / "liveness" => {noapp} GET (handler::health::liveness),
             / "database" => {noauth} GET (handler::health::database),
+            / "s3" => {noauth} GET (handler::health::s3),
         },
         / "signup" => POST (handler::signup),
         / "me" {

@@ -1911,6 +1911,27 @@ paths:
       operationId: health/database
       description: データベースの状態を確認します。
       security: []
+  /health/s3:
+    get:
+      summary: health/s3
+      tags: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                required:
+                  - ok
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: health/s3
+      description: オブジェクトストレージの状態を確認します。
+      security: []
 components:
   securitySchemes:
     token:
