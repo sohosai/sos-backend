@@ -67,7 +67,7 @@ where
         write_record(&mut writer, &input, user)?;
     }
 
-    let csv = writer.into_inner().map_err(anyhow::Error::msg)?;
+    let csv = writer.into_inner().context("Failed to write CSV data")?;
     Ok(csv)
 }
 
