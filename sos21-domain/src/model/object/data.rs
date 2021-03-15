@@ -15,7 +15,7 @@ use futures::{
 /// Summary of [`ObjectData`].
 #[derive(Debug, Clone)]
 pub struct ObjectDataSummary {
-    pub size: u64,
+    pub number_of_bytes: u64,
     pub blake3_digest: [u8; 32],
 }
 
@@ -68,7 +68,7 @@ impl Stream for ObjectDataStream {
             None => {
                 if let Some(sender) = self.summary_sender.take() {
                     let summary = ObjectDataSummary {
-                        size: self.acc_size,
+                        number_of_bytes: self.acc_size,
                         blake3_digest: self.acc_hasher.finalize().into(),
                     };
                     let _ = sender.send(summary);
@@ -146,7 +146,7 @@ mod tests {
             total_size += chunk.len();
         }
         let summary = receiver.await.unwrap();
-        assert_eq!(summary.size, total_size as u64);
+        assert_eq!(summary.number_of_bytes, total_size as u64);
     }
 
     #[tokio::test]
@@ -155,7 +155,7 @@ mod tests {
         // consume the stream
         data.into_stream().try_collect::<Vec<_>>().await.unwrap();
         let summary = receiver.await.unwrap();
-        assert_eq!(summary.size, expected_size);
+        assert_eq!(summary.number_of_bytes, expected_size);
     }
 
     #[tokio::test]

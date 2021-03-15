@@ -7,9 +7,9 @@ use sos21_database::{command, model as data, query};
 use sos21_domain::context::FileRepository;
 use sos21_domain::model::{
     date_time::DateTime,
-    file::{File, FileBlake3Digest, FileId, FileName, FileType},
+    file::{File, FileBlake3Digest, FileId, FileName, FileSize, FileType},
     object::ObjectId,
-    user::UserId,
+    user::{UserFileUsage, UserId},
 };
 use sqlx::{Postgres, Transaction};
 
@@ -45,11 +45,10 @@ impl FileRepository for FileDatabase {
             .and_then(|opt| opt.map(to_file).transpose())
     }
 
-    async fn sum_usage_by_user(&self, user_id: UserId) -> Result<u64> {
+    async fn sum_file_usage_by_user(&self, user_id: UserId) -> Result<UserFileUsage> {
         let mut lock = self.0.lock().await;
         let usage = query::sum_file_size_by_user(&mut *lock, user_id.0).await?;
-        let usage = usage.try_into()?;
-        Ok(usage)
+        Ok(UserFileUsage::from_number_of_bytes(usage.try_into()?))
     }
 
     async fn list_files_by_user(&self, user_id: UserId) -> Result<Vec<File>> {
@@ -81,7 +80,7 @@ fn from_file(file: File) -> Result<data::file::File> {
         blake3_digest: blake3_digest.as_slice().to_vec(),
         name: name.map(FileName::into_string),
         type_: type_.into_mime().to_string(),
-        size: size.try_into()?,
+        size: size.to_number_of_bytes().try_into()?,
     })
 }
 
@@ -105,6 +104,6 @@ fn to_file(file: data::file::File) -> Result<File> {
         blake3_digest: FileBlake3Digest::from_vec(blake3_digest)?,
         name: name.map(FileName::from_string).transpose()?,
         type_: FileType::from_mime(type_.parse()?),
-        size: size.try_into()?,
+        size: FileSize::from_number_of_bytes(size.try_into()?),
     })
 }

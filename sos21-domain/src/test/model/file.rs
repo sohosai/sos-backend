@@ -1,6 +1,6 @@
 use crate::model::{
     date_time::DateTime,
-    file::{File, FileBlake3Digest, FileId, FileType},
+    file::{File, FileBlake3Digest, FileId, FileSize, FileType},
     object::{Object, ObjectId},
     user::UserId,
 };
@@ -29,7 +29,7 @@ pub fn new_file_with_object(
         blake3_digest: FileBlake3Digest::from_array(object_blake3),
         name: None,
         type_: mock_file_type(),
-        size: object_size,
+        size: FileSize::from_number_of_bytes(object_size),
     }
 }
 

@@ -1,4 +1,5 @@
 use crate::model::permissions::Permissions;
+use crate::model::user::UserFileUsageQuota;
 
 use thiserror::Error;
 
@@ -46,11 +47,15 @@ impl UserRole {
         }
     }
 
-    pub fn file_usage_quota(&self) -> Option<u64> {
+    pub fn file_usage_quota(&self) -> UserFileUsageQuota {
         match self {
-            UserRole::General | UserRole::Committee => Some(256 * 1024 * 1024),
-            UserRole::CommitteeOperator => Some(1024 * 1024 * 1024),
-            UserRole::Administrator => None,
+            UserRole::General | UserRole::Committee => {
+                UserFileUsageQuota::limited_number_of_bytes(256 * 1024 * 1024)
+            }
+            UserRole::CommitteeOperator => {
+                UserFileUsageQuota::limited_number_of_bytes(1024 * 1024 * 1024)
+            }
+            UserRole::Administrator => UserFileUsageQuota::unlimited(),
         }
     }
 }

@@ -19,12 +19,15 @@ where
     let login_user = ctx.login_user();
 
     let quota = login_user.file_usage_quota();
-    let usage = ctx
-        .sum_usage_by_user(login_user.id.clone())
+    let usage = login_user
+        .file_usage(ctx)
         .await
-        .context("Failed to sum file usage")?;
+        .context("Failed to get user's file usage")?;
 
-    Ok(Output { usage, quota })
+    Ok(Output {
+        usage: usage.to_number_of_bytes(),
+        quota: quota.max_number_of_bytes(),
+    })
 }
 
 #[cfg(test)]
@@ -52,7 +55,7 @@ mod tests {
         assert!(matches!(
             get_user_file_usage::run(&app).await,
             Ok(output)
-            if output.usage == file1.size + file2.size
+            if output.usage == file1.size.to_number_of_bytes() + file2.size.to_number_of_bytes()
         ));
     }
 }

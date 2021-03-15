@@ -43,7 +43,7 @@ impl File {
             name: file.name.map(entity::FileName::into_string),
             type_: file.type_.into_mime(),
             blake3_digest: file.blake3_digest.into_array(),
-            size: file.size,
+            size: file.size.to_number_of_bytes(),
         }
     }
 }

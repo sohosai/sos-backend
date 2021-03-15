@@ -1,5 +1,5 @@
 use crate::model::file::{File, FileId};
-use crate::model::user::UserId;
+use crate::model::user::{UserFileUsage, UserId};
 
 use anyhow::Result;
 
@@ -7,7 +7,7 @@ use anyhow::Result;
 pub trait FileRepository {
     async fn store_file(&self, file: File) -> Result<()>;
     async fn get_file(&self, id: FileId) -> Result<Option<File>>;
-    async fn sum_usage_by_user(&self, user_id: UserId) -> Result<u64>;
+    async fn sum_file_usage_by_user(&self, user_id: UserId) -> Result<UserFileUsage>;
     async fn list_files_by_user(&self, user_id: UserId) -> Result<Vec<File>>;
 }
 
@@ -30,11 +30,11 @@ macro_rules! delegate_file_repository {
             ) -> ::anyhow::Result<Option<$crate::model::file::File>> {
                 $target.get_file(id).await
             }
-            async fn sum_usage_by_user(
+            async fn sum_file_usage_by_user(
                 &$sel,
                 user_id: $crate::model::user::UserId
-            ) -> ::anyhow::Result<u64> {
-                $target.sum_usage_by_user(user_id).await
+            ) -> ::anyhow::Result<$crate::model::user::UserFileUsage> {
+                $target.sum_file_usage_by_user(user_id).await
             }
             async fn list_files_by_user(
                 &$sel,
@@ -56,8 +56,8 @@ impl<C: FileRepository + Sync> FileRepository for &C {
         <C as FileRepository>::get_file(self, id).await
     }
 
-    async fn sum_usage_by_user(&self, user_id: UserId) -> Result<u64> {
-        <C as FileRepository>::sum_usage_by_user(self, user_id).await
+    async fn sum_file_usage_by_user(&self, user_id: UserId) -> Result<UserFileUsage> {
+        <C as FileRepository>::sum_file_usage_by_user(self, user_id).await
     }
 
     async fn list_files_by_user(&self, user_id: UserId) -> Result<Vec<File>> {

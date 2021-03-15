@@ -10,6 +10,8 @@ pub mod type_;
 pub use type_::FileType;
 pub mod digest;
 pub use digest::FileBlake3Digest;
+pub mod size;
+pub use size::FileSize;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct FileId(Uuid);
@@ -33,7 +35,7 @@ pub struct File {
     pub blake3_digest: FileBlake3Digest,
     pub name: Option<FileName>,
     pub type_: FileType,
-    pub size: u64,
+    pub size: FileSize,
 }
 
 impl File {

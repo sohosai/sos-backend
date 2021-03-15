@@ -76,11 +76,6 @@ where
         .map(file::FileType::from_mime)
         .unwrap_or_default();
 
-    let usage = ctx
-        .sum_usage_by_user(login_user.id.clone())
-        .await
-        .context("Failed to sum usage by user")?;
-
     let object_id = object::ObjectId::from_uuid(Uuid::new_v4());
     let (data, summary) = object::ObjectData::from_stream_with_summary(input.data);
     let object = object::Object {
@@ -88,24 +83,30 @@ where
         data,
     };
 
-    if let Some(limit) = login_user.file_usage_quota() {
-        if usage >= limit {
+    let usage = login_user
+        .file_usage(ctx)
+        .await
+        .context("Failed to get user's file usage")?;
+    let quota = login_user.file_usage_quota();
+
+    if let Some(remaining) = quota.remaining_number_of_bytes(usage) {
+        if remaining == 0 {
             return Err(UseCaseError::UseCase(Error::OutOfUsageQuota));
         }
 
-        ctx.store_object_with_limit(object, limit - usage)
+        ctx.store_object_with_limit(object, remaining)
             .await
             .context("Failed to store an object")?
             .map_err(|err| UseCaseError::UseCase(Error::from_store_object_error::<C>(err)))?;
     } else {
         ctx.store_object(object)
             .await
-            .context("Failed to store an object")?;
+            .context("Failed to store an object")?
     };
 
     let summary = summary.await?;
     let blake3_digest = file::FileBlake3Digest::from_array(summary.blake3_digest);
-    let size = summary.size;
+    let size = file::FileSize::from_number_of_bytes(summary.number_of_bytes);
 
     let file = file::File {
         id: file::FileId::from_uuid(Uuid::new_v4()),
@@ -160,7 +161,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_out_of_quota_loading() {
         let user = test::model::new_general_user();
-        let limit = user.file_usage_quota().unwrap();
+        let limit = user.file_usage_quota().max_number_of_bytes().unwrap();
         // to avoid too much load
         // let object = test::model::new_object_with_size(limit - 50);
         let (object, digest, _) = test::model::new_object();
@@ -191,7 +192,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_out_of_quota_stored() {
         let user = test::model::new_general_user();
-        let limit = user.file_usage_quota().unwrap();
+        let limit = user.file_usage_quota().max_number_of_bytes().unwrap();
         // to avoid too much load
         // let object = test::model::new_object_with_size(limit + 10);
         let (object, digest, _) = test::model::new_object();

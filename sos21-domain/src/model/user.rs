@@ -1,15 +1,21 @@
+use crate::context::FileRepository;
 use crate::model::date_time::DateTime;
 use crate::model::permissions::Permissions;
 use crate::model::phone_number::PhoneNumber;
 
+use anyhow::Context;
 use thiserror::Error;
 
 pub mod affiliation;
 pub mod email;
+pub mod file_usage;
+pub mod file_usage_quota;
 pub mod name;
 pub mod role;
 pub use affiliation::UserAffiliation;
 pub use email::UserEmailAddress;
+pub use file_usage::UserFileUsage;
+pub use file_usage_quota::UserFileUsageQuota;
 pub use name::{UserKanaName, UserName};
 pub use role::UserRole;
 
@@ -58,7 +64,16 @@ impl User {
         user.permissions().contains(Permissions::READ_ALL_USERS)
     }
 
-    pub fn file_usage_quota(&self) -> Option<u64> {
+    pub async fn file_usage<C>(&self, ctx: C) -> anyhow::Result<UserFileUsage>
+    where
+        C: FileRepository,
+    {
+        ctx.sum_file_usage_by_user(self.id.clone())
+            .await
+            .context("Failed to sum usage by user")
+    }
+
+    pub fn file_usage_quota(&self) -> UserFileUsageQuota {
         self.role.file_usage_quota()
     }
 

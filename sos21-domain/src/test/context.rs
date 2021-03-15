@@ -12,7 +12,7 @@ use crate::model::{
     form_answer::{FormAnswer, FormAnswerId},
     object::{Object, ObjectData, ObjectId},
     project::{Project, ProjectId, ProjectIndex},
-    user::{User, UserId},
+    user::{User, UserFileUsage, UserId},
 };
 
 use anyhow::Result;
@@ -321,20 +321,21 @@ impl FileRepository for MockApp {
         Ok(self.files.lock().await.get(&id).cloned())
     }
 
-    async fn sum_usage_by_user(&self, user_id: UserId) -> Result<u64> {
-        Ok(self
-            .files
-            .lock()
-            .await
-            .values()
-            .filter_map(|file| {
-                if file.author_id == user_id {
-                    Some(file.size)
-                } else {
-                    None
-                }
-            })
-            .sum())
+    async fn sum_file_usage_by_user(&self, user_id: UserId) -> Result<UserFileUsage> {
+        Ok(UserFileUsage::from_number_of_bytes(
+            self.files
+                .lock()
+                .await
+                .values()
+                .filter_map(|file| {
+                    if file.author_id == user_id {
+                        Some(file.size.to_number_of_bytes())
+                    } else {
+                        None
+                    }
+                })
+                .sum(),
+        ))
     }
 
     async fn list_files_by_user(&self, user_id: UserId) -> Result<Vec<File>> {
