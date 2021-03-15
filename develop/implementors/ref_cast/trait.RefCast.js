@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["sos21_gateway_database"] = [{"text":"impl RefCast for ProjectDatabase","synthetic":false,"types":[]},{"text":"impl RefCast for FormDatabase","synthetic":false,"types":[]},{"text":"impl RefCast for FormAnswerDatabase","synthetic":false,"types":[]},{"text":"impl RefCast for UserDatabase","synthetic":false,"types":[]}];
+implementors["sos21_gateway_database"] = [{"text":"impl RefCast for ProjectDatabase","synthetic":false,"types":[]},{"text":"impl RefCast for FormDatabase","synthetic":false,"types":[]},{"text":"impl RefCast for FileDatabase","synthetic":false,"types":[]},{"text":"impl RefCast for FormAnswerDatabase","synthetic":false,"types":[]},{"text":"impl RefCast for UserDatabase","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

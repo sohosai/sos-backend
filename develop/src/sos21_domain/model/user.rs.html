@@ -113,19 +113,44 @@
 <span id="110">110</span>
 <span id="111">111</span>
 <span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::<span class="ident">FileRepository</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">permissions</span>::<span class="ident">Permissions</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">phone_number</span>::<span class="ident">PhoneNumber</span>;
 
+<span class="kw">use</span> <span class="ident">anyhow</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="ident">thiserror</span>::<span class="ident">Error</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">affiliation</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">email</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_usage</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_usage_quota</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">name</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">role</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">affiliation</span>::<span class="ident">UserAffiliation</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">email</span>::<span class="ident">UserEmailAddress</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">file_usage</span>::<span class="ident">UserFileUsage</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">file_usage_quota</span>::<span class="ident">UserFileUsageQuota</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">name</span>::{<span class="ident">UserKanaName</span>, <span class="ident">UserName</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">role</span>::<span class="ident">UserRole</span>;
 
@@ -172,6 +197,19 @@
         }
 
         <span class="ident">user</span>.<span class="ident">permissions</span>().<span class="ident">contains</span>(<span class="ident">Permissions</span>::<span class="ident">READ_ALL_USERS</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">file_usage</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ctx</span>: <span class="ident">C</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">UserFileUsage</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">C</span>: <span class="ident">FileRepository</span>,
+    {
+        <span class="ident">ctx</span>.<span class="ident">sum_file_usage_by_user</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">clone</span>())
+            .<span class="kw">await</span>
+            .<span class="ident">context</span>(<span class="string">&quot;Failed to sum usage by user&quot;</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">file_usage_quota</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UserFileUsageQuota</span> {
+        <span class="self">self</span>.<span class="ident">role</span>.<span class="ident">file_usage_quota</span>()
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_name</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="ident">UserName</span>) {

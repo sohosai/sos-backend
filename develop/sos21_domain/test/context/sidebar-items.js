@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["MockApp",""],["MockAppBuilder",""]]});
+initSidebarItems({"struct":[["MockApp",""],["MockAppBuilder",""],["OutOfLimitSizeError",""]]});

@@ -409,7 +409,7 @@
     <span class="ident">TooShort</span>,
 }
 
-<span class="comment">// pub type BoundedLengthError&lt;Min, Max&gt; = LengthError&lt;Bounded&lt;Min&gt;, Bounded&lt;Max&gt;&gt;;</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">BoundedLengthError</span><span class="op">&lt;</span><span class="ident">Min</span>, <span class="ident">Max</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">LengthError</span><span class="op">&lt;</span><span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">Min</span><span class="op">&gt;</span>, <span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">Max</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Error</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;the string&#39;s length is out of bounds&quot;</span>)]</span>

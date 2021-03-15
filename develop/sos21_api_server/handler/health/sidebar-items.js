@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["database",""],["liveness",""]]});
+initSidebarItems({"mod":[["database",""],["liveness",""],["s3",""]]});

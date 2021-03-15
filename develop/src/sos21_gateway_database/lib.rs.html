@@ -54,6 +54,14 @@
 <span id="51">51</span>
 <span id="52">52</span>
 <span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">lock</span>::<span class="ident">Mutex</span>;
 <span class="kw">use</span> <span class="ident">ref_cast</span>::<span class="ident">RefCast</span>;
@@ -63,6 +71,8 @@
 <span class="kw">use</span> <span class="ident">project_repository</span>::<span class="ident">ProjectDatabase</span>;
 <span class="kw">mod</span> <span class="ident">form_repository</span>;
 <span class="kw">use</span> <span class="ident">form_repository</span>::<span class="ident">FormDatabase</span>;
+<span class="kw">mod</span> <span class="ident">file_repository</span>;
+<span class="kw">use</span> <span class="ident">file_repository</span>::<span class="ident">FileDatabase</span>;
 <span class="kw">mod</span> <span class="ident">form_answer_repository</span>;
 <span class="kw">use</span> <span class="ident">form_answer_repository</span>::<span class="ident">FormAnswerDatabase</span>;
 <span class="kw">mod</span> <span class="ident">user_repository</span>;
@@ -106,6 +116,12 @@
 <span class="ident">sos21_domain</span>::<span class="macro">delegate_form_answer_repository</span><span class="macro">!</span> {
     <span class="kw">impl</span> <span class="ident">FormAnswerRepository</span> <span class="kw">for</span> <span class="ident">Database</span> {
         <span class="self">self</span> { <span class="ident">FormAnswerDatabase</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection</span>) }
+    }
+}
+
+<span class="ident">sos21_domain</span>::<span class="macro">delegate_file_repository</span><span class="macro">!</span> {
+    <span class="kw">impl</span> <span class="ident">FileRepository</span> <span class="kw">for</span> <span class="ident">Database</span> {
+        <span class="self">self</span> { <span class="ident">FileDatabase</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection</span>) }
     }
 }
 </pre></div>
