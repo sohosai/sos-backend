@@ -1,8 +1,8 @@
+use crate::handler::model::date_time::DateTime;
 use crate::handler::model::form::FormId;
 use crate::handler::model::project::ProjectId;
 use crate::handler::model::user::UserId;
 
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sos21_use_case::model::form_answer as use_case;
 use uuid::Uuid;
@@ -29,7 +29,7 @@ pub struct FormAnswer {
     pub id: FormAnswerId,
     pub project_id: ProjectId,
     pub form_id: FormId,
-    pub created_at: DateTime<Utc>,
+    pub created_at: DateTime,
     pub author_id: UserId,
     pub items: Vec<FormAnswerItem>,
 }
@@ -40,7 +40,7 @@ impl FormAnswer {
             id: FormAnswerId::from_use_case(answer.id),
             project_id: ProjectId::from_use_case(answer.project_id),
             form_id: FormId::from_use_case(answer.form_id),
-            created_at: answer.created_at,
+            created_at: DateTime::from_use_case(answer.created_at),
             author_id: UserId::from_use_case(answer.author_id),
             items: answer
                 .items

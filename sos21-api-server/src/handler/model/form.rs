@@ -1,8 +1,8 @@
+use crate::handler::model::date_time::DateTime;
 use crate::handler::model::project::ProjectId;
 use crate::handler::model::project_query::ProjectQuery;
 use crate::handler::model::user::UserId;
 
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sos21_use_case::model::form as use_case;
 use uuid::Uuid;
@@ -72,12 +72,12 @@ impl FormCondition {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Form {
     pub id: FormId,
-    pub created_at: DateTime<Utc>,
+    pub created_at: DateTime,
     pub author_id: UserId,
     pub name: String,
     pub description: String,
-    pub starts_at: DateTime<Utc>,
-    pub ends_at: DateTime<Utc>,
+    pub starts_at: DateTime,
+    pub ends_at: DateTime,
     pub items: Vec<FormItem>,
     pub condition: FormCondition,
 }
@@ -91,12 +91,12 @@ impl Form {
             .collect();
         Form {
             id: FormId::from_use_case(form.id),
-            created_at: form.created_at,
+            created_at: DateTime::from_use_case(form.created_at),
             author_id: UserId::from_use_case(form.author_id),
             name: form.name,
             description: form.description,
-            starts_at: form.starts_at,
-            ends_at: form.ends_at,
+            starts_at: DateTime::from_use_case(form.starts_at),
+            ends_at: DateTime::from_use_case(form.ends_at),
             items,
             condition: FormCondition::from_use_case(form.condition),
         }

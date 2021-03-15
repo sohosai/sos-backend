@@ -6,6 +6,7 @@
 //! the public interface, or specification, of the API server.
 //! In the other words, we want to keep the public interface of the API server self-contained in `sos21-api-server`.
 
+pub mod date_time;
 pub mod file;
 pub mod form;
 pub mod form_answer;

@@ -1,4 +1,4 @@
-type: string
+type: number
 title: DateTime
-format: date-time
+description: January 1, 1970 00:00:00 UTC からの経過ミリ秒で表現された単一の瞬間の時刻
 x-examples: {}

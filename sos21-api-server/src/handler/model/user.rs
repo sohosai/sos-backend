@@ -1,4 +1,5 @@
-use chrono::{DateTime, Utc};
+use crate::handler::model::date_time::DateTime;
+
 use serde::{Deserialize, Serialize};
 use sos21_use_case::model::user as use_case;
 
@@ -92,7 +93,7 @@ impl UserRole {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
     pub id: UserId,
-    pub created_at: DateTime<Utc>,
+    pub created_at: DateTime,
     pub name: UserName,
     pub kana_name: UserKanaName,
     pub email: String,
@@ -105,7 +106,7 @@ impl User {
     pub fn from_use_case(user: use_case::User) -> User {
         User {
             id: UserId::from_use_case(user.id),
-            created_at: user.created_at,
+            created_at: DateTime::from_use_case(user.created_at),
             name: UserName::from_use_case(user.name),
             kana_name: UserKanaName::from_use_case(user.kana_name),
             email: user.email,

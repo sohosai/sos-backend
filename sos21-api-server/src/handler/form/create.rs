@@ -1,8 +1,8 @@
 use crate::app::Context;
+use crate::handler::model::date_time::DateTime;
 use crate::handler::model::form::{Form, FormCondition, FormItem, FormItemId};
 use crate::handler::{HandlerResponse, HandlerResult};
 
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
 use sos21_use_case::create_form;
@@ -12,8 +12,8 @@ use warp::http::StatusCode;
 pub struct Request {
     pub name: String,
     pub description: String,
-    pub starts_at: DateTime<Utc>,
-    pub ends_at: DateTime<Utc>,
+    pub starts_at: DateTime,
+    pub ends_at: DateTime,
     pub items: Vec<FormItem>,
     pub condition: FormCondition,
 }
@@ -79,8 +79,8 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
     let input = create_form::Input {
         name: request.name,
         description: request.description,
-        starts_at: request.starts_at,
-        ends_at: request.ends_at,
+        starts_at: request.starts_at.into_use_case(),
+        ends_at: request.ends_at.into_use_case(),
         items: request
             .items
             .into_iter()

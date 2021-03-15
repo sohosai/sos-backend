@@ -1,6 +1,6 @@
+use crate::handler::model::date_time::DateTime;
 use crate::handler::model::user::{UserId, UserKanaName, UserName};
 
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sos21_use_case::model::project as use_case;
 use uuid::Uuid;
@@ -81,7 +81,7 @@ impl ProjectAttribute {
 pub struct Project {
     pub id: ProjectId,
     pub code: String,
-    pub created_at: DateTime<Utc>,
+    pub created_at: DateTime,
     pub owner_id: UserId,
     pub owner_name: UserName,
     pub owner_kana_name: UserKanaName,
@@ -99,7 +99,7 @@ impl Project {
         Project {
             id: ProjectId::from_use_case(project.id),
             code: project.code,
-            created_at: project.created_at,
+            created_at: DateTime::from_use_case(project.created_at),
             owner_id: UserId::from_use_case(project.owner_id),
             owner_name: UserName::from_use_case(project.owner_name),
             owner_kana_name: UserKanaName::from_use_case(project.owner_kana_name),
