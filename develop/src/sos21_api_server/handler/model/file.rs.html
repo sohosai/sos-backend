@@ -74,9 +74,9 @@
 <span id="71">71</span>
 <span id="72">72</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">UserId</span>;
 
-<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">mime</span>::<span class="ident">Mime</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">sos21_use_case</span>::<span class="ident">model</span>::<span class="ident">file</span> <span class="kw">as</span> <span class="ident">use_case</span>;
@@ -99,7 +99,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">File</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">FileId</span>,
-    <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span>,
     <span class="kw">pub</span> <span class="ident">author_id</span>: <span class="ident">UserId</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">with</span> <span class="op">=</span> <span class="string">&quot;serde_mime&quot;</span>, <span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;type&quot;</span>)]</span>
@@ -113,7 +113,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_use_case</span>(<span class="ident">file</span>: <span class="ident">use_case</span>::<span class="ident">File</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">File</span> {
             <span class="ident">id</span>: <span class="ident">FileId</span>::<span class="ident">from_use_case</span>(<span class="ident">file</span>.<span class="ident">id</span>),
-            <span class="ident">created_at</span>: <span class="ident">file</span>.<span class="ident">created_at</span>,
+            <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_use_case</span>(<span class="ident">file</span>.<span class="ident">created_at</span>),
             <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_use_case</span>(<span class="ident">file</span>.<span class="ident">author_id</span>),
             <span class="ident">name</span>: <span class="ident">file</span>.<span class="ident">name</span>,
             <span class="ident">type_</span>: <span class="ident">file</span>.<span class="ident">type_</span>,
