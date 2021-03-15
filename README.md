@@ -30,7 +30,7 @@
 
 ```shell
 $ export SOS21_FIREBASE_PROJECT_ID=<project ID>
-$ docker-compose -f docker-compose.run.yml
+$ docker-compose -f docker-compose.run.yml up
 ```
 
 `localhost:3000` で API サーバーが、
@@ -44,7 +44,7 @@ $ docker-compose -f docker-compose.run.yml
 ```shell
 $ cp .envrc.sample .envrc  # edit .envrc
 $ source .envrc            # or use direnv
-$ docker-compose up -f docker-compose.dev.yml -d
+$ docker-compose -f docker-compose.dev.yml up -d
 $ nix-shell
 $ cargo run --bin sos21-api-server
 ```
