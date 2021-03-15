@@ -1,7 +1,7 @@
 use crate::model::user::User;
 
-use anyhow::Result;
-use futures::stream::{BoxStream, StreamExt, TryStreamExt};
+use anyhow::{Context, Result};
+use futures::stream::{BoxStream, StreamExt};
 
 pub fn list_users<'a, E>(conn: E) -> BoxStream<'a, Result<User>>
 where
@@ -9,6 +9,6 @@ where
 {
     sqlx::query_as_unchecked!(User, "SELECT * FROM users")
         .fetch(conn)
-        .map_err(anyhow::Error::msg)
+        .map(|result| result.context("Failed to select from users"))
         .boxed()
 }

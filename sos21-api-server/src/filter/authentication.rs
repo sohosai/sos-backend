@@ -59,7 +59,7 @@ async fn handle_validation(
     let claims = match validate_token(&config, key_store, bearer).await {
         Ok(cs) => cs,
         Err(error) => {
-            event!(Level::INFO, %error, "Invalid token");
+            event!(Level::INFO, ?error, "Invalid token");
             return Err(warp::reject::custom(AuthenticationError::InvalidToken));
         }
     };

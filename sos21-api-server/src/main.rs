@@ -46,7 +46,7 @@ fn main() {
     tracing_subscriber::fmt().pretty().init();
 
     if let Err(error) = run(opt) {
-        event!(Level::ERROR, %error);
+        event!(Level::ERROR, ?error);
     }
 }
 

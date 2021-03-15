@@ -1,7 +1,7 @@
 use crate::model::form_answer::FormAnswer;
 
-use anyhow::Result;
-use futures::stream::{BoxStream, StreamExt, TryStreamExt};
+use anyhow::{Context, Result};
+use futures::stream::{BoxStream, StreamExt};
 use uuid::Uuid;
 
 pub fn list_form_answers_by_form<'a, E>(conn: E, form_id: Uuid) -> BoxStream<'a, Result<FormAnswer>>
@@ -14,6 +14,6 @@ where
         form_id
     )
     .fetch(conn)
-    .map_err(anyhow::Error::msg)
+    .map(|result| result.context("Failed to select from form_answers"))
     .boxed()
 }
