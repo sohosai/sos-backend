@@ -2,6 +2,7 @@ use std::convert::Infallible;
 
 use crate::app::App;
 
+use mime::Mime;
 use warp::{reply::Reply, Filter};
 
 mod authentication;
@@ -13,8 +14,13 @@ use error::handle_rejection;
 pub use error::model;
 
 macro_rules! route {
-    (@method GET) => { warp::get().and(warp::query()) };
-    (@method POST) => { warp::post().and(warp::body::json()) };
+    (@way GET) => { warp::get().and(warp::query()) };
+    (@way POST) => { warp::post().and(warp::body::json()) };
+    (@way POST_STREAM) => {
+        warp::post()
+            .and(warp::header::<Mime>("content-type"))
+            .and(warp::body::stream())
+    };
     (@path) => { warp::any() };
     (@path $name:literal) => { warp::path($name) };
     (@options $with_auth:ident, $with_app:ident, {noapp}) => { warp::any() };
@@ -25,30 +31,34 @@ macro_rules! route {
             .and(routes!{ $with_auth, $with_app, $($inner)+ })
     };
     ($with_auth:ident, $with_app:ident,
-       / $name_1:literal $(/ $name_n:literal)+ => {$($options:tt),*} $method:ident ($handler:path)
+       / $name_1:literal $(/ $name_n:literal)+ => {$($options:tt),*} $way:ident ($handler:path)
     ) => {
         warp::path($name_1)
-            .and(route!{ $with_auth, $with_app, $(/ $name_n)+ => {$($options),*} $method ($handler) })
+            .and(route!{ $with_auth, $with_app, $(/ $name_n)+ => {$($options),*} $way ($handler) })
     };
     ($with_auth:ident, $with_app:ident,
-       / $($name:literal)? => {$($options:tt),*} $method:ident ($handler:path)
+       / $($name:literal)? => {$($options:tt),*} $way:ident ($handler:path)
     ) => {
         route!(@path $($name)?)
             .and(warp::path::end()
                 .and(route!(@options $with_auth, $with_app, {$($options),*}))
-                .and(route!(@method $method))
+                .and(route!(@way $way))
                 .and_then($handler))
     };
 }
 
 macro_rules! routes {
     ($with_auth:ident, $with_app:ident,
-       / $($name_1:literal)/ * $({ $($inner_1:tt)+ })? $(=> $({$($option_1:tt),*})? $method_1:ident ($handler_1:path) )?
-         $(, / $($name_n:literal)/ * $({ $($inner_n:tt)+ })? $(=> $({$($option_n:tt),*})? $method_n:ident ($handler_n:path) )? )*
+       / $($name_1:literal)/ * $({ $($inner_1:tt)+ })? $(=> $({$($option_1:tt),*})? $way_1:ident ($handler_1:path) )?
+         $(, / $($name_n:literal)/ * $({ $($inner_n:tt)+ })? $(=> $({$($option_n:tt),*})? $way_n:ident ($handler_n:path) )? )*
          $(,)?
     ) => {
-        route!{ $with_auth, $with_app, / $($name_1)/ * $({ $($inner_1)+ })? $(=> {$($($option_1),*)?} $method_1 ($handler_1))? }
-            $( .or( route!{ $with_auth, $with_app, / $($name_n)/ * $({ $($inner_n)+ })? $(=> {$($($option_n),*)?} $method_n ($handler_n))? } ) )*
+        route!{ $with_auth, $with_app, / $($name_1)/ * $({ $($inner_1)+ })? $(=> {$($($option_1),*)?} $way_1 ($handler_1))? }
+            $( .or(route!{
+                    $with_auth, $with_app, / $($name_n)/ * $({ $($inner_n)+ })? $(=> {$($($option_n),*)?} $way_n ($handler_n))?
+                })
+                .boxed()  // workaround for seanmonstar/warp#811
+            )*
     }
 }
 
@@ -65,11 +75,16 @@ pub fn endpoints(
         / "health" {
             / "liveness" => {noapp} GET (handler::health::liveness),
             / "database" => {noauth} GET (handler::health::database),
+            / "s3" => {noauth} GET (handler::health::s3),
         },
         / "signup" => POST (handler::signup),
         / "me" {
             / => GET (handler::me),
             / "project" / "list" => GET (handler::me::project::list),
+            / "file" {
+                / "list" => GET (handler::me::file::list),
+                / "check-usage" => GET (handler::me::file::check_usage),
+            }
         },
         / "project" {
             / "get" => GET (handler::project::get),
@@ -103,6 +118,11 @@ pub fn endpoints(
             / "list" => GET (handler::user::list),
             / "export" => GET (handler::user::export),
             / "update" => POST (handler::user::update),
+        },
+        / "file" {
+            / "create" => POST_STREAM (handler::file::create),
+            / "get" => GET (handler::file::get),
+            / "get-info" => GET (handler::file::get_info),
         }
     };
 

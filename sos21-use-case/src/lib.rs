@@ -10,12 +10,15 @@ macro_rules! use_case_ensure {
     };
 }
 
+pub mod create_file;
 pub mod create_form;
 pub mod create_form_answer;
 pub mod create_project;
 pub mod export_form_answers;
 pub mod export_projects;
 pub mod export_users;
+pub mod get_file;
+pub mod get_file_object;
 pub mod get_form;
 pub mod get_form_answer;
 pub mod get_login_user;
@@ -24,10 +27,12 @@ pub mod get_project_by_code;
 pub mod get_project_form;
 pub mod get_project_form_answer;
 pub mod get_user;
+pub mod get_user_file_usage;
 pub mod list_all_forms;
 pub mod list_all_projects;
 pub mod list_form_answers;
 pub mod list_project_forms;
+pub mod list_user_files;
 pub mod list_user_projects;
 pub mod list_users;
 pub mod signup;

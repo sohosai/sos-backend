@@ -9,7 +9,7 @@ license = "MIT OR Apache-2.0"
 
 [features]
 # TODO: get rid of this confusing flag (related: rust-lang/rust#79381)
-test = ["tokio", "maplit", "futures", "once_cell", "uuid/v4"]
+test = ["tokio", "maplit", "once_cell", "uuid/v4", "rand"]
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
@@ -20,16 +20,20 @@ typenum = "1"
 async-trait = "0.1.42"
 anyhow = "1"
 serde = { version = "1", features = ["derive"] }
+bytes = "1"
+mime = "0.3"
+futures = "0.3"
+blake3 = "0.3"
 
 # these optional dependencies are used by `test` feature (which is enabled for the use from other crates)
 tokio = { version = "1", optional = true, features = ["macros", "rt-multi-thread"] }
 maplit = { version = "1", optional = true }
-futures = { version = "0.3", optional = true }
 once_cell = { version = "1", optional = true }
+rand = { version = "0.8", optional = true }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 maplit = "1"
-futures = "0.3"
 uuid = { version = "0.8", features = ["v4"] }
 once_cell = "1"
+rand = "0.8"

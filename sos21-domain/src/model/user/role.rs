@@ -1,4 +1,5 @@
 use crate::model::permissions::Permissions;
+use crate::model::user::UserFileUsageQuota;
 
 use thiserror::Error;
 
@@ -21,18 +22,17 @@ impl UserRole {
         match self {
             UserRole::Administrator => Permissions::all(),
             UserRole::CommitteeOperator => {
-                Permissions::READ_ALL_USERS
-                    | Permissions::READ_ALL_PROJECTS
-                    | Permissions::READ_ALL_FORMS
+                UserRole::Committee.permissions()
+                    | Permissions::READ_ALL_USERS
                     | Permissions::CREATE_FORMS
-                    | Permissions::READ_ALL_FORM_ANSWERS
             }
             UserRole::Committee => {
-                Permissions::READ_ALL_PROJECTS
+                UserRole::General.permissions()
+                    | Permissions::READ_ALL_PROJECTS
                     | Permissions::READ_ALL_FORMS
                     | Permissions::READ_ALL_FORM_ANSWERS
             }
-            UserRole::General => Permissions::empty(),
+            UserRole::General => Permissions::CREATE_FILES,
         }
     }
 
@@ -44,6 +44,18 @@ impl UserRole {
             Ok(())
         } else {
             Err(RequirePermissionsError { _priv: () })
+        }
+    }
+
+    pub fn file_usage_quota(&self) -> UserFileUsageQuota {
+        match self {
+            UserRole::General | UserRole::Committee => {
+                UserFileUsageQuota::limited_number_of_bytes(256 * 1024 * 1024)
+            }
+            UserRole::CommitteeOperator => {
+                UserFileUsageQuota::limited_number_of_bytes(1024 * 1024 * 1024)
+            }
+            UserRole::Administrator => UserFileUsageQuota::unlimited(),
         }
     }
 }

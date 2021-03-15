@@ -6,6 +6,8 @@ mod project_repository;
 use project_repository::ProjectDatabase;
 mod form_repository;
 use form_repository::FormDatabase;
+mod file_repository;
+use file_repository::FileDatabase;
 mod form_answer_repository;
 use form_answer_repository::FormAnswerDatabase;
 mod user_repository;
@@ -49,5 +51,11 @@ sos21_domain::delegate_form_repository! {
 sos21_domain::delegate_form_answer_repository! {
     impl FormAnswerRepository for Database {
         self { FormAnswerDatabase::ref_cast(&self.connection) }
+    }
+}
+
+sos21_domain::delegate_file_repository! {
+    impl FileRepository for Database {
+        self { FileDatabase::ref_cast(&self.connection) }
     }
 }

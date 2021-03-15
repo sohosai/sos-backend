@@ -3,21 +3,26 @@ use std::convert::TryInto;
 use std::sync::Arc;
 
 use crate::context::{
-    Authentication, FormAnswerRepository, FormRepository, Login, ProjectRepository, UserRepository,
+    Authentication, FileRepository, FormAnswerRepository, FormRepository, Login, ObjectRepository,
+    ProjectRepository, UserRepository,
 };
 use crate::model::{
+    file::{File, FileId},
     form::{Form, FormId},
     form_answer::{FormAnswer, FormAnswerId},
+    object::{Object, ObjectData, ObjectId},
     project::{Project, ProjectId, ProjectIndex},
-    user::{User, UserId},
+    user::{User, UserFileUsage, UserId},
 };
 
 use anyhow::Result;
+use bytes::{BufMut, Bytes, BytesMut};
 use futures::lock::Mutex;
 use futures::{
-    future::TryFutureExt,
-    stream::{StreamExt, TryStreamExt},
+    future::{self, TryFutureExt},
+    stream::{self, StreamExt, TryStreamExt},
 };
+use thiserror::Error;
 
 #[derive(Default, Debug, Clone)]
 pub struct MockAppBuilder {
@@ -25,6 +30,8 @@ pub struct MockAppBuilder {
     projects: Vec<Project>,
     forms: Vec<Form>,
     answers: Vec<FormAnswer>,
+    files: HashMap<FileId, File>,
+    objects: HashMap<ObjectId, Bytes>,
 }
 
 impl MockAppBuilder {
@@ -64,6 +71,37 @@ impl MockAppBuilder {
         self
     }
 
+    pub fn files<I>(&mut self, files: I) -> &mut Self
+    where
+        I: IntoIterator<Item = File>,
+    {
+        self.files
+            .extend(files.into_iter().map(|file| (file.id, file)));
+        self
+    }
+
+    /// # Panics
+    ///
+    /// This function panics when it failed to read data from the given object.
+    pub async fn objects<I>(&mut self, objects: I) -> &mut Self
+    where
+        I: IntoIterator<Item = Object>,
+    {
+        self.objects.extend(
+            future::join_all(objects.into_iter().map(|object| async move {
+                let object_id = object.id;
+                let mut buf = BytesMut::new();
+                let mut data = object.data.into_stream();
+                while let Some(chunk) = data.try_next().await.unwrap() {
+                    buf.put(chunk);
+                }
+                (object_id, buf.freeze())
+            }))
+            .await,
+        );
+        self
+    }
+
     pub fn build(&self) -> MockApp {
         let users = self
             .users
@@ -95,6 +133,8 @@ impl MockAppBuilder {
             projects: Arc::new(Mutex::new(projects)),
             forms: Arc::new(Mutex::new(forms)),
             answers: Arc::new(Mutex::new(answers)),
+            files: Arc::new(Mutex::new(self.files.clone())),
+            objects: Arc::new(Mutex::new(self.objects.clone())),
         }
     }
 }
@@ -105,6 +145,8 @@ pub struct MockApp {
     projects: Arc<Mutex<HashMap<ProjectId, Project>>>,
     forms: Arc<Mutex<HashMap<FormId, Form>>>,
     answers: Arc<Mutex<HashMap<FormAnswerId, FormAnswer>>>,
+    files: Arc<Mutex<HashMap<FileId, File>>>,
+    objects: Arc<Mutex<HashMap<ObjectId, Bytes>>>,
 }
 
 impl MockApp {
@@ -265,5 +307,98 @@ impl FormAnswerRepository for MockApp {
             .filter(|answer| answer.form_id == form_id)
             .cloned()
             .collect())
+    }
+}
+
+#[async_trait::async_trait]
+impl FileRepository for MockApp {
+    async fn store_file(&self, file: File) -> Result<()> {
+        self.files.lock().await.insert(file.id, file);
+        Ok(())
+    }
+
+    async fn get_file(&self, id: FileId) -> Result<Option<File>> {
+        Ok(self.files.lock().await.get(&id).cloned())
+    }
+
+    async fn sum_file_usage_by_user(&self, user_id: UserId) -> Result<UserFileUsage> {
+        Ok(UserFileUsage::from_number_of_bytes(
+            self.files
+                .lock()
+                .await
+                .values()
+                .filter_map(|file| {
+                    if file.author_id == user_id {
+                        Some(file.size.to_number_of_bytes())
+                    } else {
+                        None
+                    }
+                })
+                .sum(),
+        ))
+    }
+
+    async fn list_files_by_user(&self, user_id: UserId) -> Result<Vec<File>> {
+        Ok(self
+            .files
+            .lock()
+            .await
+            .values()
+            .filter(|file| file.author_id == user_id)
+            .cloned()
+            .collect())
+    }
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("out of limit object size")]
+pub struct OutOfLimitSizeError {
+    _priv: (),
+}
+
+#[async_trait::async_trait]
+impl ObjectRepository for MockApp {
+    type OutOfLimitSizeError = OutOfLimitSizeError;
+
+    async fn store_object(&self, object: Object) -> Result<()> {
+        let object_id = object.id;
+        let mut buf = BytesMut::new();
+        let mut data = object.data.into_stream();
+        while let Some(chunk) = data.try_next().await? {
+            buf.put(chunk);
+        }
+        self.objects.lock().await.insert(object_id, buf.freeze());
+        Ok(())
+    }
+
+    async fn store_object_with_limit(
+        &self,
+        object: Object,
+        limit: u64,
+    ) -> Result<std::result::Result<(), Self::OutOfLimitSizeError>> {
+        let object_id = object.id;
+        let mut buf = BytesMut::new();
+        let mut data = object.data.into_stream();
+        while let Some(chunk) = data.try_next().await? {
+            buf.put(chunk);
+            if buf.len() > limit as usize {
+                return Ok(Err(OutOfLimitSizeError { _priv: () }));
+            }
+        }
+        self.objects.lock().await.insert(object_id, buf.freeze());
+        Ok(Ok(()))
+    }
+
+    async fn get_object(&self, id: ObjectId) -> Result<Option<Object>> {
+        Ok(self
+            .objects
+            .lock()
+            .await
+            .get(&id)
+            .cloned()
+            .map(|bytes| Object {
+                id,
+                data: ObjectData::from_stream(stream::once(async move { Ok(bytes) })),
+            }))
     }
 }

@@ -1,0 +1,27 @@
+title: File
+type: object
+description: ""
+properties:
+  id:
+    $ref: ./FileId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  author_id:
+    $ref: ../user/UserId.yml
+  blake3_digest:
+    type: string
+  name:
+    type: string
+    nullable: true
+  type:
+    $ref: ../Mime.yml
+  size:
+    type: integer
+required:
+  - id
+  - created_at
+  - author_id
+  - blake3_digest
+  - name
+  - type
+  - size

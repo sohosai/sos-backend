@@ -1,0 +1,19 @@
+[package]
+name = "sos21-gateway-s3"
+version = "0.1.0"
+authors = ["coord.e <me@coord-e.com>"]
+edition = "2018"
+readme = "README.md"
+documentation = "https://sohosai.github.io/sos21-backend/sos21_gateway_s3/"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+anyhow = "1"
+async-trait = "0.1.42"
+bytes = "1"
+futures = "0.3"
+rusoto_core = { version = "0.46", default-features = false, features = ["rustls"] }
+rusoto_s3 = { version = "0.46", default-features = false, features = ["rustls"] }
+thiserror = "1"
+tokio = { version = "1", default-features = false, features = ["rt"] }
+sos21-domain = { path = "../../sos21-domain" }

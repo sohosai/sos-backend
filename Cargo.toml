@@ -4,6 +4,7 @@ members = [
   "sos21-use-case",
   "sos21-database",
   "sos21-gateway/database",
+  "sos21-gateway/s3",
   "sos21-run-migrations",
   "sos21-api-server",
 ]

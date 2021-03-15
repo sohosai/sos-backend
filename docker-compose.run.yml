@@ -19,11 +19,18 @@ services:
       SOS21_API_SERVER_JWT_KEYS_URL: "https://www.googleapis.com/robot/v1/metadata/jwk/securetoken@system.gserviceaccount.com"
       SOS21_API_SERVER_POSTGRES_URI: "postgres://sos21:sos21@db:5432/sos21"
       SOS21_API_SERVER_BIND: "0.0.0.0:3000"
+      SOS21_API_SERVER_S3_ACCESS_KEY: sos21
+      SOS21_API_SERVER_S3_ACCESS_SECRET: sos21sos21
+      SOS21_API_SERVER_S3_REGION: ""
+      SOS21_API_SERVER_S3_ENDPOINT: "http://minio:9000"
+      SOS21_API_SERVER_S3_OBJECT_BUCKET: object
     ports:
       - 3000:3000
     depends_on:
       - db
+      - minio
       - run-migrations
+      - create-bucket
   run-migrations:
     image: docker.pkg.github.com/sohosai/sos21-backend/sos21-backend
     command: sos21-run-migrations --wait
@@ -39,6 +46,22 @@ services:
       POSTGRES_DB: sos21
     volumes:
       - postgres-data:/var/lib/postgresql/data
+  minio:
+    image: minio/minio:RELEASE.2021-03-12T00-00-47Z
+    command: server /data
+    environment:
+      MINIO_ROOT_USER: sos21
+      MINIO_ROOT_PASSWORD: sos21sos21
+    volumes:
+      - minio-dev:/data
+  create-bucket:
+    image: minio/mc:RELEASE.2021-03-12T03-36-59Z
+    command: mb -p minio/object
+    environment:
+      MC_HOST_minio: "http://sos21:sos21sos21@minio:9000"
+    depends_on:
+      - minio
 
 volumes:
   postgres-data:
+  minio-data:

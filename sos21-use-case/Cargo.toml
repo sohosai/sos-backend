@@ -9,11 +9,14 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 anyhow = "1"
+bytes = "1"
 chrono = "0.4"
-uuid = { version = "0.8", features = ["v4"] }
 csv = "1"
+futures = "0.3"
+mime = "0.3"
 tracing = "0.1"
 tracing-futures = "0.2"
+uuid = { version = "0.8", features = ["v4"] }
 sos21-domain = { path = "../sos21-domain" }
 
 [dev-dependencies]

@@ -387,6 +387,66 @@ paths:
       operationId: me/project/list
       description: ログインしているユーザーの企画一覧を返します。
     parameters: []
+  /me/file/list:
+    get:
+      summary: me/file/list
+      tags:
+        - me
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      $ref: ./model/file/File.yml
+                required:
+                  - files
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me/file/list
+      description: ログインしているユーザーのファイル一覧を返します。
+    parameters: []
+  /me/file/check-usage:
+    get:
+      summary: me/file/check-usage
+      tags:
+        - me
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usage:
+                    type: integer
+                  quota:
+                    type: integer
+                    nullable: true
+                required:
+                  - usage
+                  - quota
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me/file/check-usage
+      description: ログインしているユーザーのファイルの利用状況を返します。
+    parameters: []
   /project/create:
     post:
       summary: project/create
@@ -1622,6 +1682,193 @@ paths:
           name: answer_id
           required: true
     parameters: []
+  /file/create:
+    post:
+      summary: file/create
+      operationId: file/create
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: ファイルを作成するのに用いたパートの `name` ディレクティブの引数
+                        file:
+                          $ref: ./model/file/File.yml
+                      required:
+                        - name
+                        - file
+                required:
+                  - files
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_FILE_NAME
+                                  - NO_BOUNDARY_IN_CONTENT_TYPE
+                                  - NO_NAME_DIRECTIVE_IN_PART
+                                  - INVALID_CONTENT_TYPE_IN_PART
+                            required:
+                              - type
+                    required:
+                      - status
+                      - error
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - OUT_OF_FILE_USAGE_QUOTA
+                    required:
+                      - status
+                      - error
+              examples:
+                Out of file usage quota:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: OUT_OF_FILE_USAGE_QUOTA
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: |
+        ファイルを作成します。同時に複数のファイルをアップロードできます。
+        リクエストボディに含まれる一つのパートにつき一つのファイルを作成します。
+        レスポンスには、それぞれのパートの `name` ディレクティブの引数を含めて、作成したファイルの情報の配列が順序不同で返ります
+        （ `name` はファイル作成自体には影響しません）。
+        また、パートに `filename` ディレクティブが指定された場合、その引数はファイル名としてファイル作成に使用されます。
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+                format: binary
+      tags:
+        - file
+  /file/get-info:
+    get:
+      summary: file/get-info
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file/get-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: file_id
+          required: true
+      description: 指定されたファイルの情報を返します。
+  /file/get:
+    get:
+      summary: file/get
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: file_id
+          required: true
+      description: 指定されたファイルを返します。
   /health/liveness:
     get:
       summary: health/liveness
@@ -1663,6 +1910,27 @@ paths:
           $ref: "#/components/responses/InternalServerError"
       operationId: health/database
       description: データベースの状態を確認します。
+      security: []
+  /health/s3:
+    get:
+      summary: health/s3
+      tags: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                required:
+                  - ok
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: health/s3
+      description: オブジェクトストレージの状態を確認します。
       security: []
 components:
   securitySchemes:
@@ -1843,6 +2111,49 @@ components:
                   type: API
                   info:
                     type: FORM_ANSWER_NOT_FOUND
+    FileNotFound:
+      description: File Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - FILE_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: FILE_NOT_FOUND
     InternalServerError:
       description: Internal Server Error
       content:
@@ -1987,6 +2298,7 @@ tags:
   - name: project
   - name: form
   - name: form_answer
+  - name: file
   - name: committee
   - name: admin
 security:

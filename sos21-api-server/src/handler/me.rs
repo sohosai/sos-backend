@@ -9,6 +9,7 @@ use sos21_domain::context::Login;
 use sos21_use_case::get_login_user;
 use warp::http::StatusCode;
 
+pub mod file;
 pub mod project;
 
 #[derive(Debug, Clone, Deserialize)]
