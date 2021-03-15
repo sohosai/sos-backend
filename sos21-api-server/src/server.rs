@@ -31,7 +31,7 @@ fn spawn_key_refresh_worker(key_store: KeyStore) -> JoinHandle<Infallible> {
                 Err(error) => {
                     event!(
                         Level::ERROR,
-                        %error,
+                        ?error,
                         retry = FETCH_MINIMUM_INTERVAL,
                         "Failed to refresh JWT keys",
                     );

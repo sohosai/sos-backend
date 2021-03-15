@@ -24,7 +24,7 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
     } else if let Some(err) = err.find::<ErasedHandlerError>() {
         match err {
             ErasedHandlerError::Server(error) => {
-                event!(Level::ERROR, %error, "Unexpected error in handler");
+                event!(Level::ERROR, ?error, "Unexpected error in handler");
                 Error {
                     error: ErrorBody::Internal,
                     status: StatusCode::INTERNAL_SERVER_ERROR,
