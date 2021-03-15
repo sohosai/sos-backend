@@ -1,11 +1,8 @@
-use std::fmt::{self, Debug};
-
 use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::file::File;
+use crate::model::stream::ByteStream;
 
 use anyhow::Context;
-use bytes::Bytes;
-use futures::stream::Stream;
 use mime::Mime;
 use sos21_domain::context::{FileRepository, Login, ObjectRepository};
 use sos21_domain::model::date_time::DateTime;
@@ -13,20 +10,11 @@ use sos21_domain::model::permissions::Permissions;
 use sos21_domain::model::{file, object, user};
 use uuid::Uuid;
 
-pub struct Input<S> {
-    pub data: S,
+#[derive(Debug)]
+pub struct Input {
+    pub data: ByteStream,
     pub name: Option<String>,
     pub content_type: Option<Mime>,
-}
-
-impl<S> Debug for Input<S> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.debug_struct("Input")
-            .field("data", &"..")
-            .field("name", &self.name)
-            .field("content_type", &self.content_type)
-            .finish()
-    }
 }
 
 #[derive(Debug, Clone)]
@@ -54,10 +42,9 @@ impl Error {
 }
 
 #[tracing::instrument(skip(ctx))]
-pub async fn run<C, S>(ctx: &Login<C>, input: Input<S>) -> UseCaseResult<File, Error>
+pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<File, Error>
 where
     C: FileRepository + ObjectRepository + Send + Sync,
-    S: Stream<Item = anyhow::Result<Bytes>> + Send + Sync + 'static,
 {
     let login_user = ctx.login_user();
 
@@ -129,6 +116,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    use crate::model::stream::ByteStream;
     use crate::{create_file, get_file, UseCaseError};
     use sos21_domain::test;
 
@@ -142,8 +130,9 @@ mod tests {
             .await;
 
         let name = "テストテスト".to_string();
+        let data = ByteStream::new(test::model::new_object_data().0.into_stream());
         let input = create_file::Input {
-            data: test::model::new_object_data().0.into_stream(),
+            data,
             name: Some(name.clone()),
             content_type: Some(mime::APPLICATION_OCTET_STREAM),
         };
@@ -177,8 +166,9 @@ mod tests {
             .login_as(user)
             .await;
 
+        let data = ByteStream::new(test::model::new_object_data_with_size(100).0.into_stream());
         let input = create_file::Input {
-            data: test::model::new_object_data_with_size(100).0.into_stream(),
+            data,
             name: Some("テストテスト".to_string()),
             content_type: Some(mime::APPLICATION_OCTET_STREAM),
         };
@@ -208,8 +198,9 @@ mod tests {
             .login_as(user)
             .await;
 
+        let data = ByteStream::new(test::model::new_object_data_with_size(5).0.into_stream());
         let input = create_file::Input {
-            data: test::model::new_object_data_with_size(5).0.into_stream(),
+            data,
             name: Some("テストテスト".to_string()),
             content_type: Some(mime::APPLICATION_OCTET_STREAM),
         };

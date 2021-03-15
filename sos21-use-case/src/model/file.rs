@@ -1,11 +1,7 @@
-use std::fmt::{self, Debug};
-use std::pin::Pin;
-
+use crate::model::stream::ByteStream;
 use crate::model::user::UserId;
 
-use bytes::Bytes;
 use chrono::{DateTime, Utc};
-use futures::stream::Stream;
 use mime::Mime;
 use sos21_domain::model::file as entity;
 use uuid::Uuid;
@@ -48,25 +44,17 @@ impl File {
     }
 }
 
+#[derive(Debug)]
 pub struct FileObject {
     pub file: File,
-    pub object_data: Pin<Box<dyn Stream<Item = anyhow::Result<Bytes>> + Send + Sync + 'static>>,
-}
-
-impl Debug for FileObject {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.debug_struct("FileObject")
-            .field("file", &self.file)
-            .field("object_data", &"..")
-            .finish()
-    }
+    pub object_data: ByteStream,
 }
 
 impl FileObject {
     pub fn from_entity(file: entity::File, object: sos21_domain::model::object::Object) -> Self {
         FileObject {
             file: File::from_entity(file),
-            object_data: Box::pin(object.data.into_stream()),
+            object_data: ByteStream::new(object.data.into_stream()),
         }
     }
 }

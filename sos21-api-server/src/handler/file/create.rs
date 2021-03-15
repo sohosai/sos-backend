@@ -16,6 +16,7 @@ use mpart_async::server::MultipartStream;
 use serde::Serialize;
 use sos21_domain::context::Login;
 use sos21_use_case::create_file;
+use sos21_use_case::model::stream::ByteStream;
 use tokio::sync::Notify;
 use warp::http::StatusCode;
 
@@ -112,7 +113,7 @@ pub async fn handler(
             })
         };
         let input = create_file::Input {
-            data: part.map_err(anyhow::Error::msg).chain(end_notifier),
+            data: ByteStream::new(part.chain(end_notifier)),
             name: filename,
             content_type,
         };
