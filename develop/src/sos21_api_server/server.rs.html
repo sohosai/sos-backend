@@ -121,7 +121,7 @@
                 <span class="prelude-val">Err</span>(<span class="ident">error</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="macro">event</span><span class="macro">!</span>(
                         <span class="ident">Level</span>::<span class="ident">ERROR</span>,
-                        <span class="op">%</span><span class="ident">error</span>,
+                        <span class="question-mark">?</span><span class="ident">error</span>,
                         <span class="ident">retry</span> <span class="op">=</span> <span class="ident">FETCH_MINIMUM_INTERVAL</span>,
                         <span class="string">&quot;Failed to refresh JWT keys&quot;</span>,
                     );

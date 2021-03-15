@@ -162,7 +162,7 @@
     } <span class="kw">else</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">err</span>) <span class="op">=</span> <span class="ident">err</span>.<span class="ident">find</span>::<span class="op">&lt;</span><span class="ident">ErasedHandlerError</span><span class="op">&gt;</span>() {
         <span class="kw">match</span> <span class="ident">err</span> {
             <span class="ident">ErasedHandlerError</span>::<span class="ident">Server</span>(<span class="ident">error</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="macro">event</span><span class="macro">!</span>(<span class="ident">Level</span>::<span class="ident">ERROR</span>, <span class="op">%</span><span class="ident">error</span>, <span class="string">&quot;Unexpected error in handler&quot;</span>);
+                <span class="macro">event</span><span class="macro">!</span>(<span class="ident">Level</span>::<span class="ident">ERROR</span>, <span class="question-mark">?</span><span class="ident">error</span>, <span class="string">&quot;Unexpected error in handler&quot;</span>);
                 <span class="ident">Error</span> {
                     <span class="ident">error</span>: <span class="ident">ErrorBody</span>::<span class="ident">Internal</span>,
                     <span class="ident">status</span>: <span class="ident">StatusCode</span>::<span class="ident">INTERNAL_SERVER_ERROR</span>,
