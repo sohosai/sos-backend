@@ -53,7 +53,7 @@ services:
       MINIO_ROOT_USER: sos21
       MINIO_ROOT_PASSWORD: sos21sos21
     volumes:
-      - minio-dev:/data
+      - minio-data:/data
   create-bucket:
     image: minio/mc:RELEASE.2021-03-12T03-36-59Z
     command: mb -p minio/object
