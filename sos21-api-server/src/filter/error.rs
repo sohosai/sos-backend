@@ -78,6 +78,13 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                 status: StatusCode::FORBIDDEN,
             },
         }
+    } else if err.find::<warp::filters::cors::CorsForbidden>().is_some() {
+        Error {
+            error: ErrorBody::Request {
+                id: RequestErrorId::CorsForbidden,
+            },
+            status: StatusCode::FORBIDDEN,
+        }
     } else if err.find::<warp::reject::UnsupportedMediaType>().is_some() {
         Error {
             error: ErrorBody::Request {

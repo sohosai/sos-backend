@@ -22,6 +22,7 @@ pub enum RequestErrorId {
     InvalidHeader,
     InvalidQuery,
     InvalidBody,
+    CorsForbidden,
 }
 
 #[derive(Debug, Clone, Serialize)]
