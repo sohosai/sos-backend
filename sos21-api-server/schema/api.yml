@@ -1869,10 +1869,11 @@ paths:
           name: file_id
           required: true
       description: 指定されたファイルを返します。
-  /health/liveness:
+  /meta/health/liveness:
     get:
-      summary: health/liveness
-      tags: []
+      summary: meta/health/liveness
+      tags:
+        - meta
       responses:
         "200":
           description: OK
@@ -1887,13 +1888,14 @@ paths:
                   - ok
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: health/liveness
+      operationId: meta/health/liveness
       description: 何もしません。稼働の確認に使うことができます。
       security: []
-  /health/database:
+  /meta/health/database:
     get:
-      summary: health/database
-      tags: []
+      summary: meta/health/database
+      tags:
+        - meta
       responses:
         "200":
           description: OK
@@ -1908,13 +1910,14 @@ paths:
                   - ok
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: health/database
+      operationId: meta/health/database
       description: データベースの状態を確認します。
       security: []
-  /health/s3:
+  /meta/health/s3:
     get:
-      summary: health/s3
-      tags: []
+      summary: meta/health/s3
+      tags:
+        - meta
       responses:
         "200":
           description: OK
@@ -1929,7 +1932,7 @@ paths:
                   - ok
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: health/s3
+      operationId: meta/health/s3
       description: オブジェクトストレージの状態を確認します。
       security: []
 components:
@@ -2301,5 +2304,6 @@ tags:
   - name: file
   - name: committee
   - name: admin
+  - name: meta
 security:
   - token: []
