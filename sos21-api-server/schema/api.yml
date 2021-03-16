@@ -1869,6 +1869,31 @@ paths:
           name: file_id
           required: true
       description: 指定されたファイルを返します。
+  /meta/health:
+    get:
+      summary: meta/health
+      tags:
+        - meta
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  database:
+                    type: boolean
+                  s3:
+                    type: boolean
+                required:
+                  - database
+                  - s3
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: meta/health
+      description: サーバーの状態を確認します。
+      security: []
   /meta/health/liveness:
     get:
       summary: meta/health/liveness
