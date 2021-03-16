@@ -3,7 +3,11 @@ use std::convert::Infallible;
 use crate::app::App;
 
 use mime::Mime;
-use warp::{reply::Reply, Filter};
+use warp::{
+    http::{header, method::Method},
+    reply::Reply,
+    Filter,
+};
 
 mod authentication;
 mod error;
@@ -126,7 +130,16 @@ pub fn endpoints(
         }
     };
 
+    let cors = warp::cors()
+        .allow_any_origin()
+        .allow_method(Method::GET)
+        .allow_method(Method::POST)
+        .allow_header(header::AUTHORIZATION)
+        .allow_header(header::CONTENT_TYPE)
+        .max_age(std::time::Duration::from_secs(30 * 60));
+
     routes
+        .with(cors)
         .recover(handle_rejection)
         .with(warp::trace::request())
 }
