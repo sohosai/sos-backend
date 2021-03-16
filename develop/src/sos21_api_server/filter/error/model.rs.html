@@ -50,6 +50,7 @@
 <span id="47">47</span>
 <span id="48">48</span>
 <span id="49">49</span>
+<span id="50">50</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">ser</span>::<span class="ident">Serializer</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">warp</span>::<span class="ident">http</span>::<span class="ident">StatusCode</span>;
@@ -75,6 +76,7 @@
     <span class="ident">InvalidHeader</span>,
     <span class="ident">InvalidQuery</span>,
     <span class="ident">InvalidBody</span>,
+    <span class="ident">CorsForbidden</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>)]</span>

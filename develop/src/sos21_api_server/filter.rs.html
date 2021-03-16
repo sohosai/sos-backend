@@ -133,13 +133,30 @@
 <span id="130">130</span>
 <span id="131">131</span>
 <span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">App</span>;
 
 <span class="kw">use</span> <span class="ident">mime</span>::<span class="ident">Mime</span>;
-<span class="kw">use</span> <span class="ident">warp</span>::{<span class="ident">reply</span>::<span class="ident">Reply</span>, <span class="ident">Filter</span>};
+<span class="kw">use</span> <span class="ident">warp</span>::{
+    <span class="ident">http</span>::{<span class="ident">header</span>, <span class="ident">method</span>::<span class="ident">Method</span>},
+    <span class="ident">reply</span>::<span class="ident">Reply</span>,
+    <span class="ident">Filter</span>,
+};
 
 <span class="kw">mod</span> <span class="ident">authentication</span>;
 <span class="kw">mod</span> <span class="ident">error</span>;
@@ -262,7 +279,16 @@
         }
     };
 
+    <span class="kw">let</span> <span class="ident">cors</span> <span class="op">=</span> <span class="ident">warp</span>::<span class="ident">cors</span>()
+        .<span class="ident">allow_any_origin</span>()
+        .<span class="ident">allow_method</span>(<span class="ident">Method</span>::<span class="ident">GET</span>)
+        .<span class="ident">allow_method</span>(<span class="ident">Method</span>::<span class="ident">POST</span>)
+        .<span class="ident">allow_header</span>(<span class="ident">header</span>::<span class="ident">AUTHORIZATION</span>)
+        .<span class="ident">allow_header</span>(<span class="ident">header</span>::<span class="ident">CONTENT_TYPE</span>)
+        .<span class="ident">max_age</span>(<span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">30</span> <span class="op">*</span> <span class="number">60</span>));
+
     <span class="ident">routes</span>
+        .<span class="ident">with</span>(<span class="ident">cors</span>)
         .<span class="ident">recover</span>(<span class="ident">handle_rejection</span>)
         .<span class="ident">with</span>(<span class="ident">warp</span>::<span class="ident">trace</span>::<span class="ident">request</span>())
 }
