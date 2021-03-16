@@ -77,6 +77,7 @@ pub fn endpoints(
 
     let routes = routes! { with_auth, with_app,
         / "meta" {
+            / "build-info" => {noapp} GET (handler::meta::build_info),
             / "health" {
                 / => {noauth} GET (handler::meta::health),
                 / "liveness" => {noapp} GET (handler::meta::health::liveness),

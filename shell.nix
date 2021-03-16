@@ -4,6 +4,7 @@ mkShell {
   nativeBuildInputs = [
     rustPlatform.rust.rustc
     rustPlatform.rust.cargo
-    pkgs.sqlx-cli
+    sqlx-cli
+    zlib
   ];
 }

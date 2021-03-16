@@ -1960,6 +1960,48 @@ paths:
       operationId: meta/health/s3
       description: オブジェクトストレージの状態を確認します。
       security: []
+  /meta/build-info:
+    get:
+      summary: meta/build-info
+      tags:
+        - meta
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                  profile:
+                    type: string
+                  out:
+                    type: string
+                    nullable: true
+                  git:
+                    type: object
+                    properties:
+                      commit:
+                        type: string
+                      version:
+                        type: string
+                      branch:
+                        type: string
+                    required:
+                      - commit
+                      - version
+                      - branch
+                required:
+                  - version
+                  - profile
+                  - out
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: meta/build-info
+      description: ビルド時の情報を取得します。
+      security: []
 components:
   securitySchemes:
     token:
