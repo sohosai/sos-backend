@@ -14,6 +14,7 @@ pub enum ErasedHandlerError {
     NotSignedUp,
     InvalidEmailAddress,
     NotUniversityEmailAddress,
+    ServiceUnavailable(anyhow::Error),
     Server(anyhow::Error),
 }
 
@@ -36,6 +37,7 @@ where
             HandlerError::NotUniversityEmailAddress => {
                 ErasedHandlerError::NotUniversityEmailAddress
             }
+            HandlerError::ServiceUnavailable(err) => ErasedHandlerError::ServiceUnavailable(err),
             HandlerError::Server(err) => ErasedHandlerError::Server(err),
         }
     }
@@ -216,6 +218,7 @@ pub enum HandlerError<E> {
     NotSignedUp,
     InvalidEmailAddress,
     NotUniversityEmailAddress,
+    ServiceUnavailable(anyhow::Error),
     Server(anyhow::Error),
 }
 

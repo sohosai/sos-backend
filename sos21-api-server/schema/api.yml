@@ -1877,22 +1877,35 @@ paths:
       responses:
         "200":
           description: OK
+        "504":
+          description: Service Unavailable
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  database:
-                    type: boolean
-                  s3:
-                    type: boolean
-                required:
-                  - database
-                  - s3
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 504
+                      error:
+                        required:
+                          - type
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - SERVICE_UNAVAILABLE
+                    required:
+                      - status
+                      - error
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: meta/health/check
-      description: サーバーの状態を確認します。
+      description: サービスの状態を確認します。
       security: []
   /meta/health/check-liveness:
     get:
@@ -1902,63 +1915,10 @@ paths:
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                required:
-                  - ok
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: meta/health/check-liveness
-      description: 何もしません。稼働の確認に使うことができます。
-      security: []
-  /meta/health/check-database:
-    get:
-      summary: meta/health/check-database
-      tags:
-        - meta
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                required:
-                  - ok
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-      operationId: meta/health/check-database
-      description: データベースの状態を確認します。
-      security: []
-  /meta/health/check-s3:
-    get:
-      summary: meta/health/check-s3
-      tags:
-        - meta
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                required:
-                  - ok
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-      operationId: meta/health/check-s3
-      description: オブジェクトストレージの状態を確認します。
+      description: 何もしません。サーバーの稼働の確認に使います。
       security: []
   /meta/get-build-info:
     get:

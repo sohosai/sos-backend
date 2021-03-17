@@ -30,6 +30,13 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                     status: StatusCode::INTERNAL_SERVER_ERROR,
                 }
             }
+            ErasedHandlerError::ServiceUnavailable(error) => {
+                event!(Level::ERROR, ?error, "Service unavailable");
+                Error {
+                    error: ErrorBody::ServiceUnavailable,
+                    status: StatusCode::SERVICE_UNAVAILABLE,
+                }
+            }
             ErasedHandlerError::InvalidEmailAddress => Error {
                 error: ErrorBody::Authentication {
                     id: AuthenticationErrorId::InvalidEmailAddress,
