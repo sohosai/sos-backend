@@ -1869,9 +1869,9 @@ paths:
           name: file_id
           required: true
       description: 指定されたファイルを返します。
-  /meta/health:
+  /meta/health/check:
     get:
-      summary: meta/health
+      summary: meta/health/check
       tags:
         - meta
       responses:
@@ -1891,12 +1891,12 @@ paths:
                   - s3
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: meta/health
+      operationId: meta/health/check
       description: サーバーの状態を確認します。
       security: []
-  /meta/health/liveness:
+  /meta/health/check-liveness:
     get:
-      summary: meta/health/liveness
+      summary: meta/health/check-liveness
       tags:
         - meta
       responses:
@@ -1913,12 +1913,12 @@ paths:
                   - ok
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: meta/health/liveness
+      operationId: meta/health/check-liveness
       description: 何もしません。稼働の確認に使うことができます。
       security: []
-  /meta/health/database:
+  /meta/health/check-database:
     get:
-      summary: meta/health/database
+      summary: meta/health/check-database
       tags:
         - meta
       responses:
@@ -1935,12 +1935,12 @@ paths:
                   - ok
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: meta/health/database
+      operationId: meta/health/check-database
       description: データベースの状態を確認します。
       security: []
-  /meta/health/s3:
+  /meta/health/check-s3:
     get:
-      summary: meta/health/s3
+      summary: meta/health/check-s3
       tags:
         - meta
       responses:
@@ -1957,12 +1957,12 @@ paths:
                   - ok
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: meta/health/s3
+      operationId: meta/health/check-s3
       description: オブジェクトストレージの状態を確認します。
       security: []
-  /meta/build-info:
+  /meta/get-build-info:
     get:
-      summary: meta/build-info
+      summary: meta/get-build-info
       tags:
         - meta
       responses:
@@ -1999,7 +1999,7 @@ paths:
                   - out
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: meta/build-info
+      operationId: meta/get-build-info
       description: ビルド時の情報を取得します。
       security: []
 components:

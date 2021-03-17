@@ -1,4 +1,3 @@
+pub mod get_build_info;
 pub mod health;
-pub use health::handler as health;
-pub mod build_info;
-pub use build_info::handler as build_info;
+pub use get_build_info::handler as get_build_info;

@@ -77,12 +77,12 @@ pub fn endpoints(
 
     let routes = routes! { with_auth, with_app,
         / "meta" {
-            / "build-info" => {noapp} GET (handler::meta::build_info),
+            / "get-build-info" => {noapp} GET (handler::meta::get_build_info),
             / "health" {
-                / => {noauth} GET (handler::meta::health),
-                / "liveness" => {noapp} GET (handler::meta::health::liveness),
-                / "database" => {noauth} GET (handler::meta::health::database),
-                / "s3" => {noauth} GET (handler::meta::health::s3),
+                / "check" => {noauth} GET (handler::meta::health::check),
+                / "check-liveness" => {noapp} GET (handler::meta::health::check_liveness),
+                / "check-database" => {noauth} GET (handler::meta::health::check_database),
+                / "check-s3" => {noauth} GET (handler::meta::health::check_s3),
             },
         },
         / "signup" => POST (handler::signup),
