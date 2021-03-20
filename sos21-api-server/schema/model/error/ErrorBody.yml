@@ -41,6 +41,7 @@ oneOf:
           - INVALID_HEADER
           - INVALID_QUERY
           - INVALID_BODY
+          - CORS_FORBIDDEN
     required:
       - type
       - id
@@ -50,6 +51,7 @@ oneOf:
         enum:
           - NOT_SIGNED_UP
           - INTERNAL
+          - SERVICE_UNAVAILABLE
     required:
       - type
 x-examples: {}

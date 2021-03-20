@@ -14,9 +14,9 @@ servers:
   - url: "http://localhost:4010"
     description: Local server (with validation proxy)
 paths:
-  /me:
+  /me/get:
     get:
-      summary: me
+      summary: me/get
       tags:
         - me
         - user
@@ -39,7 +39,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: me
+      operationId: me/get
       description: ログインしているユーザーの情報を返します。
       parameters: []
   /signup:
@@ -1877,7 +1877,7 @@ paths:
       responses:
         "200":
           description: OK
-        "504":
+        "503":
           description: Service Unavailable
           content:
             application/json:
@@ -1889,7 +1889,7 @@ paths:
                       status:
                         type: integer
                         enum:
-                          - 504
+                          - 503
                       error:
                         required:
                           - type
@@ -1902,6 +1902,8 @@ paths:
                     required:
                       - status
                       - error
+        "403":
+          $ref: "#/components/responses/CorsForbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: meta/health/check
@@ -1915,6 +1917,8 @@ paths:
       responses:
         "200":
           description: OK
+        "403":
+          $ref: "#/components/responses/CorsForbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: meta/health/check-liveness
@@ -1957,6 +1961,8 @@ paths:
                   - version
                   - profile
                   - out
+        "403":
+          $ref: "#/components/responses/CorsForbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: meta/get-build-info
@@ -2286,6 +2292,18 @@ components:
                           type:
                             type: string
                             enum:
+                              - REQUEST
+                          id:
+                            type: string
+                            enum:
+                              - CORS_FORBIDDEN
+                        required:
+                          - type
+                          - id
+                      - properties:
+                          type:
+                            type: string
+                            enum:
                               - API
                           info:
                             type: object
@@ -2322,6 +2340,36 @@ components:
                   type: API
                   info:
                     type: INSUFFICIENT_PERMISSIONS
+    CorsForbidden:
+      description: Forbidden Cross-Origin Request
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 403
+                  error:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - REQUEST
+                      id:
+                        type: string
+                        enum:
+                          - CORS_FORBIDDEN
+                    required:
+                      - type
+                      - id
+                required:
+                  - status
+                  - error
 tags:
   - name: me
   - name: user
