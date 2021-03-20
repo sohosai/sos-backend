@@ -51,6 +51,7 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
+<span id="51">51</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">ser</span>::<span class="ident">Serializer</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">warp</span>::<span class="ident">http</span>::<span class="ident">StatusCode</span>;
@@ -86,6 +87,7 @@
     <span class="ident">Authentication</span> { <span class="ident">id</span>: <span class="ident">AuthenticationErrorId</span> },
     <span class="ident">Request</span> { <span class="ident">id</span>: <span class="ident">RequestErrorId</span> },
     <span class="ident">NotSignedUp</span>,
+    <span class="ident">ServiceUnavailable</span>,
     <span class="ident">Internal</span>,
 }
 

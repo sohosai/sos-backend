@@ -146,6 +146,8 @@
 <span id="143">143</span>
 <span id="144">144</span>
 <span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -225,10 +227,12 @@
     <span class="kw">let</span> <span class="ident">with_app</span> <span class="op">=</span> <span class="ident">warp</span>::<span class="ident">any</span>().<span class="ident">map</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="ident">app</span>.<span class="ident">clone</span>());
 
     <span class="kw">let</span> <span class="ident">routes</span> <span class="op">=</span> <span class="macro">routes</span><span class="macro">!</span> { <span class="ident">with_auth</span>, <span class="ident">with_app</span>,
-        <span class="op">/</span> <span class="string">&quot;health&quot;</span> {
-            <span class="op">/</span> <span class="string">&quot;liveness&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noapp</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">health</span>::<span class="ident">liveness</span>),
-            <span class="op">/</span> <span class="string">&quot;database&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">health</span>::<span class="ident">database</span>),
-            <span class="op">/</span> <span class="string">&quot;s3&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">health</span>::<span class="ident">s3</span>),
+        <span class="op">/</span> <span class="string">&quot;meta&quot;</span> {
+            <span class="op">/</span> <span class="string">&quot;get-build-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noapp</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">meta</span>::<span class="ident">get_build_info</span>),
+            <span class="op">/</span> <span class="string">&quot;health&quot;</span> {
+                <span class="op">/</span> <span class="string">&quot;check&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">meta</span>::<span class="ident">health</span>::<span class="ident">check</span>),
+                <span class="op">/</span> <span class="string">&quot;check-liveness&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noapp</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">meta</span>::<span class="ident">health</span>::<span class="ident">check_liveness</span>),
+            },
         },
         <span class="op">/</span> <span class="string">&quot;signup&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">signup</span>),
         <span class="op">/</span> <span class="string">&quot;me&quot;</span> {
