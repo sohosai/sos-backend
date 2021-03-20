@@ -2286,6 +2286,18 @@ components:
                           type:
                             type: string
                             enum:
+                              - REQUEST
+                          id:
+                            type: string
+                            enum:
+                              - CORS_FORBIDDEN
+                        required:
+                          - type
+                          - id
+                      - properties:
+                          type:
+                            type: string
+                            enum:
                               - API
                           info:
                             type: object

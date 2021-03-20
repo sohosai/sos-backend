@@ -41,6 +41,7 @@ oneOf:
           - INVALID_HEADER
           - INVALID_QUERY
           - INVALID_BODY
+          - CORS_FORBIDDEN
     required:
       - type
       - id
