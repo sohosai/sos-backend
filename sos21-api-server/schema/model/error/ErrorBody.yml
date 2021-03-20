@@ -51,6 +51,7 @@ oneOf:
         enum:
           - NOT_SIGNED_UP
           - INTERNAL
+          - SERVICE_UNAVAILABLE
     required:
       - type
 x-examples: {}
