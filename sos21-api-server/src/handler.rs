@@ -203,7 +203,6 @@ pub mod signup;
 pub mod user;
 pub use signup::handler as signup;
 pub mod me;
-pub use me::handler as me;
 pub mod meta;
 
 pub trait HandlerResponse: Serialize {
