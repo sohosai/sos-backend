@@ -32,6 +32,7 @@ pub enum ErrorBody {
     Authentication { id: AuthenticationErrorId },
     Request { id: RequestErrorId },
     NotSignedUp,
+    ServiceUnavailable,
     Internal,
 }
 

@@ -1,4 +1,3 @@
-use crate::app::App;
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
@@ -8,8 +7,12 @@ use warp::http::StatusCode;
 pub struct Request {}
 
 #[derive(Debug, Clone, Serialize)]
-pub struct Response {
-    pub ok: bool,
+pub struct Response;
+
+impl HandlerResponse for Response {
+    fn status_code(&self) -> StatusCode {
+        StatusCode::OK
+    }
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -22,14 +25,7 @@ impl HandlerResponse for Error {
     }
 }
 
-impl HandlerResponse for Response {
-    fn status_code(&self) -> StatusCode {
-        StatusCode::OK
-    }
-}
-
 #[apply_macro::apply(handler)]
-pub async fn handler(app: App, _request: Request) -> HandlerResult<Response, Error> {
-    let is_health = sos21_database::query::is_healthy(&mut app.connection().await?).await?;
-    Ok(Response { ok: is_health })
+pub async fn handler(_request: Request) -> HandlerResult<Response, Error> {
+    Ok(Response)
 }

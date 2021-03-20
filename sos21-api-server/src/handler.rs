@@ -14,6 +14,7 @@ pub enum ErasedHandlerError {
     NotSignedUp,
     InvalidEmailAddress,
     NotUniversityEmailAddress,
+    ServiceUnavailable(anyhow::Error),
     Server(anyhow::Error),
 }
 
@@ -36,6 +37,7 @@ where
             HandlerError::NotUniversityEmailAddress => {
                 ErasedHandlerError::NotUniversityEmailAddress
             }
+            HandlerError::ServiceUnavailable(err) => ErasedHandlerError::ServiceUnavailable(err),
             HandlerError::Server(err) => ErasedHandlerError::Server(err),
         }
     }
@@ -196,13 +198,13 @@ macro_rules! handler {
 pub mod file;
 pub mod form;
 pub mod form_answer;
-pub mod health;
 pub mod project;
 pub mod signup;
 pub mod user;
 pub use signup::handler as signup;
 pub mod me;
 pub use me::handler as me;
+pub mod meta;
 
 pub trait HandlerResponse: Serialize {
     /// Server errors are returned as `anyhow::Error`, not as `HandlerResponse`.
@@ -216,6 +218,7 @@ pub enum HandlerError<E> {
     NotSignedUp,
     InvalidEmailAddress,
     NotUniversityEmailAddress,
+    ServiceUnavailable(anyhow::Error),
     Server(anyhow::Error),
 }
 

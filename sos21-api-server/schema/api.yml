@@ -1869,52 +1869,62 @@ paths:
           name: file_id
           required: true
       description: 指定されたファイルを返します。
-  /health/liveness:
+  /meta/health/check:
     get:
-      summary: health/liveness
-      tags: []
+      summary: meta/health/check
+      tags:
+        - meta
       responses:
         "200":
           description: OK
+        "504":
+          description: Service Unavailable
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                required:
-                  - ok
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 504
+                      error:
+                        required:
+                          - type
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - SERVICE_UNAVAILABLE
+                    required:
+                      - status
+                      - error
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: health/liveness
-      description: 何もしません。稼働の確認に使うことができます。
+      operationId: meta/health/check
+      description: サービスの状態を確認します。
       security: []
-  /health/database:
+  /meta/health/check-liveness:
     get:
-      summary: health/database
-      tags: []
+      summary: meta/health/check-liveness
+      tags:
+        - meta
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                required:
-                  - ok
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: health/database
-      description: データベースの状態を確認します。
+      operationId: meta/health/check-liveness
+      description: 何もしません。サーバーの稼働の確認に使います。
       security: []
-  /health/s3:
+  /meta/get-build-info:
     get:
-      summary: health/s3
-      tags: []
+      summary: meta/get-build-info
+      tags:
+        - meta
       responses:
         "200":
           description: OK
@@ -1923,14 +1933,34 @@ paths:
               schema:
                 type: object
                 properties:
-                  ok:
-                    type: boolean
+                  version:
+                    type: string
+                  profile:
+                    type: string
+                  out:
+                    type: string
+                    nullable: true
+                  git:
+                    type: object
+                    properties:
+                      commit:
+                        type: string
+                      version:
+                        type: string
+                      branch:
+                        type: string
+                    required:
+                      - commit
+                      - version
+                      - branch
                 required:
-                  - ok
+                  - version
+                  - profile
+                  - out
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: health/s3
-      description: オブジェクトストレージの状態を確認します。
+      operationId: meta/get-build-info
+      description: ビルド時の情報を取得します。
       security: []
 components:
   securitySchemes:
@@ -2301,5 +2331,6 @@ tags:
   - name: file
   - name: committee
   - name: admin
+  - name: meta
 security:
   - token: []

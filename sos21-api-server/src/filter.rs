@@ -76,10 +76,12 @@ pub fn endpoints(
     let with_app = warp::any().map(move || app.clone());
 
     let routes = routes! { with_auth, with_app,
-        / "health" {
-            / "liveness" => {noapp} GET (handler::health::liveness),
-            / "database" => {noauth} GET (handler::health::database),
-            / "s3" => {noauth} GET (handler::health::s3),
+        / "meta" {
+            / "get-build-info" => {noapp} GET (handler::meta::get_build_info),
+            / "health" {
+                / "check" => {noauth} GET (handler::meta::health::check),
+                / "check-liveness" => {noapp} GET (handler::meta::health::check_liveness),
+            },
         },
         / "signup" => POST (handler::signup),
         / "me" {
