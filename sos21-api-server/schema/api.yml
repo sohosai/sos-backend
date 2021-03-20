@@ -1902,6 +1902,8 @@ paths:
                     required:
                       - status
                       - error
+        "403":
+          $ref: "#/components/responses/CorsForbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: meta/health/check
@@ -1915,6 +1917,8 @@ paths:
       responses:
         "200":
           description: OK
+        "403":
+          $ref: "#/components/responses/CorsForbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: meta/health/check-liveness
@@ -1957,6 +1961,8 @@ paths:
                   - version
                   - profile
                   - out
+        "403":
+          $ref: "#/components/responses/CorsForbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: meta/get-build-info
@@ -2334,6 +2340,36 @@ components:
                   type: API
                   info:
                     type: INSUFFICIENT_PERMISSIONS
+    CorsForbidden:
+      description: Forbidden Cross-Origin Request
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 403
+                  error:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - REQUEST
+                      id:
+                        type: string
+                        enum:
+                          - CORS_FORBIDDEN
+                    required:
+                      - type
+                      - id
+                required:
+                  - status
+                  - error
 tags:
   - name: me
   - name: user
