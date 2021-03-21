@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 ### Security
 
+## [0.2.1] - 2021-03-21
+
+### Fixed
+
+- Bundle the CA certificates in the Docker image ([e704d2d](https://github.com/sohosai/sos21-backend/commit/e704d2dd4ebb11cf6a4c0ebf3c7199d63bfb4a9d))
+
 ## [0.2.0] - 2021-03-21
 
 ### Added

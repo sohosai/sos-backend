@@ -15,6 +15,10 @@ with the HTTP API interface being the "public API".
 ### Fixed
 ### Security
 
+## [0.2.1] - 2021-03-21
+
+No changes in `sos21-api-server`.
+
 ## [0.2.0] - 2021-03-21
 
 ### Added
