@@ -2,10 +2,10 @@
 
 pkgs.rustPlatform.buildRustPackage {
   pname = "sos21-backend";
-  version = "0.2.0";
+  version = "0.2.1";
   src = ./.;
 
-  cargoSha256 = "1dyqh7larb4rm4qc0swp6y4ffrhhv6lzx6nlrmbpkvq5lqb8d18q";
+  cargoSha256 = "1m4l0bmbp4izp69kmaj4ibggasvin40qg9rf7n5chq2nyhm3kqa4";
 
   nativeBuildInputs = with pkgs; [
     zlib
