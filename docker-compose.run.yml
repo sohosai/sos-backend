@@ -11,7 +11,7 @@ services:
     depends_on:
       - api-server
   api-server:
-    image: docker.pkg.github.com/sohosai/sos21-backend/sos21-backend
+    image: docker.pkg.github.com/sohosai/sos21-backend/sos21-backend:v0.2.0
     command: sos21-api-server
     environment:
       SOS21_API_SERVER_JWT_AUDIENCE: ${SOS21_FIREBASE_PROJECT_ID:?}
