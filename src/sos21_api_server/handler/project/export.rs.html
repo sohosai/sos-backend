@@ -140,6 +140,16 @@
 <span id="137">137</span>
 <span id="138">138</span>
 <span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::{<span class="ident">HandlerResponse</span>, <span class="ident">HandlerResult</span>};
@@ -154,9 +164,9 @@
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">field_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">field_created_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">field_code</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">field_display_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">field_created_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">field_owner_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
@@ -189,8 +199,12 @@
     <span class="kw">pub</span> <span class="ident">field_attribute_artistic</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">field_attribute_committee</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">field_attribute_outdoor</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">category_general</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">category_stage</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">category_cooking</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">category_food</span>: <span class="ident">String</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>)]</span>
@@ -223,8 +237,8 @@
     <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> {
         <span class="kw">let</span> <span class="ident">Request</span> {
             <span class="ident">field_id</span>,
+            <span class="ident">field_code</span>,
             <span class="ident">field_created_at</span>,
-            <span class="ident">field_display_id</span>,
             <span class="ident">field_owner_id</span>,
             <span class="ident">field_owner_first_name</span>,
             <span class="ident">field_owner_last_name</span>,
@@ -241,13 +255,16 @@
             <span class="ident">field_attribute_academic</span>,
             <span class="ident">field_attribute_artistic</span>,
             <span class="ident">field_attribute_committee</span>,
+            <span class="ident">field_attribute_outdoor</span>,
             <span class="ident">category_general</span>,
             <span class="ident">category_stage</span>,
+            <span class="ident">category_cooking</span>,
+            <span class="ident">category_food</span>,
         } <span class="op">=</span> <span class="ident">request</span>;
         <span class="kw">let</span> <span class="ident">field_names</span> <span class="op">=</span> <span class="ident">export_projects</span>::<span class="ident">InputFieldNames</span> {
             <span class="ident">id</span>: <span class="ident">field_id</span>,
+            <span class="ident">code</span>: <span class="ident">field_code</span>,
             <span class="ident">created_at</span>: <span class="ident">field_created_at</span>,
-            <span class="ident">display_id</span>: <span class="ident">field_display_id</span>,
             <span class="ident">owner_id</span>: <span class="ident">field_owner_id</span>,
             <span class="ident">owner_first_name</span>: <span class="ident">field_owner_first_name</span>,
             <span class="ident">owner_last_name</span>: <span class="ident">field_owner_last_name</span>,
@@ -264,10 +281,13 @@
             <span class="ident">attribute_academic</span>: <span class="ident">field_attribute_academic</span>,
             <span class="ident">attribute_artistic</span>: <span class="ident">field_attribute_artistic</span>,
             <span class="ident">attribute_committee</span>: <span class="ident">field_attribute_committee</span>,
+            <span class="ident">attribute_outdoor</span>: <span class="ident">field_attribute_outdoor</span>,
         };
         <span class="kw">let</span> <span class="ident">category_names</span> <span class="op">=</span> <span class="ident">export_projects</span>::<span class="ident">InputCategoryNames</span> {
             <span class="ident">general</span>: <span class="ident">category_general</span>,
             <span class="ident">stage</span>: <span class="ident">category_stage</span>,
+            <span class="ident">cooking</span>: <span class="ident">category_cooking</span>,
+            <span class="ident">food</span>: <span class="ident">category_food</span>,
         };
         <span class="ident">export_projects</span>::<span class="ident">Input</span> {
             <span class="ident">field_names</span>,

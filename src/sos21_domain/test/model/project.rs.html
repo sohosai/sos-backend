@@ -74,24 +74,40 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::{<span class="ident">AtomicU16</span>, <span class="ident">Ordering</span>};
+
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
     <span class="ident">project</span>::{
         <span class="ident">Project</span>, <span class="ident">ProjectAttribute</span>, <span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>, <span class="ident">ProjectDescription</span>,
-        <span class="ident">ProjectDisplayId</span>, <span class="ident">ProjectGroupName</span>, <span class="ident">ProjectId</span>, <span class="ident">ProjectKanaGroupName</span>, <span class="ident">ProjectKanaName</span>,
+        <span class="ident">ProjectGroupName</span>, <span class="ident">ProjectId</span>, <span class="ident">ProjectIndex</span>, <span class="ident">ProjectKanaGroupName</span>, <span class="ident">ProjectKanaName</span>,
         <span class="ident">ProjectName</span>,
     },
     <span class="ident">user</span>::<span class="ident">UserId</span>,
 };
+
+<span class="kw">use</span> <span class="ident">once_cell</span>::<span class="ident">sync</span>::<span class="ident">OnceCell</span>;
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_project_id</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectId</span> {
     <span class="ident">ProjectId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>())
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_project_display_id</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectDisplayId</span> {
-    <span class="ident">ProjectDisplayId</span>::<span class="ident">from_string</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>().<span class="ident">to_simple</span>().<span class="ident">to_string</span>()).<span class="ident">unwrap</span>()
+<span class="kw">static</span> <span class="ident">NEXT_PROJECT_INDEX</span>: <span class="ident">OnceCell</span><span class="op">&lt;</span><span class="ident">AtomicU16</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">OnceCell</span>::<span class="ident">new</span>();
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_project_index</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectIndex</span> {
+    <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="ident">NEXT_PROJECT_INDEX</span>.<span class="ident">get_or_init</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">AtomicU16</span>::<span class="ident">new</span>(<span class="number">0</span>));
+    <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="ident">index</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering</span>::<span class="ident">SeqCst</span>);
+    <span class="ident">ProjectIndex</span>::<span class="ident">from_u16</span>(<span class="ident">index</span>).<span class="ident">unwrap</span>()
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mock_project_name</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectName</span> {
@@ -124,8 +140,8 @@
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Project</span> {
     <span class="ident">Project</span> {
         <span class="ident">id</span>: <span class="ident">new_project_id</span>(),
+        <span class="ident">index</span>: <span class="ident">new_project_index</span>(),
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">now</span>(),
-        <span class="ident">display_id</span>: <span class="ident">new_project_display_id</span>(),
         <span class="ident">owner_id</span>,
         <span class="ident">name</span>: <span class="ident">mock_project_name</span>(),
         <span class="ident">kana_name</span>: <span class="ident">mock_project_kana_name</span>(),

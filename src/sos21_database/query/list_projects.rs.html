@@ -102,8 +102,8 @@
         <span class="string">r#&quot;
 SELECT
         projects.id as &quot;id!&quot;,
+        projects.index as &quot;index!&quot;,
         projects.created_at as &quot;created_at!&quot;,
-        display_id as &quot;display_id!&quot;,
         owner_id as &quot;owner_id!&quot;,
         name as &quot;name!&quot;,
         kana_name as &quot;kana_name!&quot;,
@@ -131,8 +131,8 @@ INNER JOIN users ON (projects.owner_id = users.id)
         <span class="kw">let</span> <span class="ident">row</span> <span class="op">=</span> <span class="ident">row</span>.<span class="ident">context</span>(<span class="string">&quot;Failed to select from projects&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">Project</span> {
             <span class="ident">id</span>: <span class="ident">row</span>.<span class="ident">id</span>,
+            <span class="ident">index</span>: <span class="ident">row</span>.<span class="ident">index</span>,
             <span class="ident">created_at</span>: <span class="ident">row</span>.<span class="ident">created_at</span>,
-            <span class="ident">display_id</span>: <span class="ident">row</span>.<span class="ident">display_id</span>,
             <span class="ident">owner_id</span>: <span class="ident">row</span>.<span class="ident">owner_id</span>,
             <span class="ident">name</span>: <span class="ident">row</span>.<span class="ident">name</span>,
             <span class="ident">kana_name</span>: <span class="ident">row</span>.<span class="ident">kana_name</span>,

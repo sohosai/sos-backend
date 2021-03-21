@@ -97,10 +97,10 @@
 <span id="94">94</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">Context</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">form</span>::{<span class="ident">Form</span>, <span class="ident">FormCondition</span>, <span class="ident">FormItem</span>, <span class="ident">FormItemId</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::{<span class="ident">HandlerResponse</span>, <span class="ident">HandlerResult</span>};
 
-<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::<span class="ident">Login</span>;
 <span class="kw">use</span> <span class="ident">sos21_use_case</span>::<span class="ident">create_form</span>;
@@ -110,8 +110,8 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Request</span> {
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">description</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">starts_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">ends_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">starts_at</span>: <span class="ident">DateTime</span>,
+    <span class="kw">pub</span> <span class="ident">ends_at</span>: <span class="ident">DateTime</span>,
     <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FormItem</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">condition</span>: <span class="ident">FormCondition</span>,
 }
@@ -177,8 +177,8 @@
     <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">create_form</span>::<span class="ident">Input</span> {
         <span class="ident">name</span>: <span class="ident">request</span>.<span class="ident">name</span>,
         <span class="ident">description</span>: <span class="ident">request</span>.<span class="ident">description</span>,
-        <span class="ident">starts_at</span>: <span class="ident">request</span>.<span class="ident">starts_at</span>,
-        <span class="ident">ends_at</span>: <span class="ident">request</span>.<span class="ident">ends_at</span>,
+        <span class="ident">starts_at</span>: <span class="ident">request</span>.<span class="ident">starts_at</span>.<span class="ident">into_use_case</span>(),
+        <span class="ident">ends_at</span>: <span class="ident">request</span>.<span class="ident">ends_at</span>.<span class="ident">into_use_case</span>(),
         <span class="ident">items</span>: <span class="ident">request</span>
             .<span class="ident">items</span>
             .<span class="ident">into_iter</span>()

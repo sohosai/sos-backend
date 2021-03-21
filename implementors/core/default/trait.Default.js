@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["sos21_domain"] = [{"text":"impl Default for CheckFormItems","synthetic":false,"types":[]},{"text":"impl Default for Permissions","synthetic":false,"types":[]},{"text":"impl Default for MockAppBuilder","synthetic":false,"types":[]}];
+implementors["sos21_domain"] = [{"text":"impl Default for FileType","synthetic":false,"types":[]},{"text":"impl Default for CheckFormItems","synthetic":false,"types":[]},{"text":"impl Default for Permissions","synthetic":false,"types":[]},{"text":"impl Default for MockAppBuilder","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

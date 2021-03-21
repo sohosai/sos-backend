@@ -106,11 +106,11 @@
 <span id="103">103</span>
 <span id="104">104</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">project</span>::<span class="ident">ProjectId</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">project_query</span>::<span class="ident">ProjectQuery</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">UserId</span>;
 
-<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">sos21_use_case</span>::<span class="ident">model</span>::<span class="ident">form</span> <span class="kw">as</span> <span class="ident">use_case</span>;
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
@@ -180,12 +180,12 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Form</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">FormId</span>,
-    <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span>,
     <span class="kw">pub</span> <span class="ident">author_id</span>: <span class="ident">UserId</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">description</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">starts_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">ends_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">starts_at</span>: <span class="ident">DateTime</span>,
+    <span class="kw">pub</span> <span class="ident">ends_at</span>: <span class="ident">DateTime</span>,
     <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FormItem</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">condition</span>: <span class="ident">FormCondition</span>,
 }
@@ -199,12 +199,12 @@
             .<span class="ident">collect</span>();
         <span class="ident">Form</span> {
             <span class="ident">id</span>: <span class="ident">FormId</span>::<span class="ident">from_use_case</span>(<span class="ident">form</span>.<span class="ident">id</span>),
-            <span class="ident">created_at</span>: <span class="ident">form</span>.<span class="ident">created_at</span>,
+            <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_use_case</span>(<span class="ident">form</span>.<span class="ident">created_at</span>),
             <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_use_case</span>(<span class="ident">form</span>.<span class="ident">author_id</span>),
             <span class="ident">name</span>: <span class="ident">form</span>.<span class="ident">name</span>,
             <span class="ident">description</span>: <span class="ident">form</span>.<span class="ident">description</span>,
-            <span class="ident">starts_at</span>: <span class="ident">form</span>.<span class="ident">starts_at</span>,
-            <span class="ident">ends_at</span>: <span class="ident">form</span>.<span class="ident">ends_at</span>,
+            <span class="ident">starts_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_use_case</span>(<span class="ident">form</span>.<span class="ident">starts_at</span>),
+            <span class="ident">ends_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_use_case</span>(<span class="ident">form</span>.<span class="ident">ends_at</span>),
             <span class="ident">items</span>,
             <span class="ident">condition</span>: <span class="ident">FormCondition</span>::<span class="ident">from_use_case</span>(<span class="ident">form</span>.<span class="ident">condition</span>),
         }

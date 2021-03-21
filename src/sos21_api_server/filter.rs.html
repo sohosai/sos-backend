@@ -111,12 +111,54 @@
 <span id="108">108</span>
 <span id="109">109</span>
 <span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">App</span>;
 
-<span class="kw">use</span> <span class="ident">warp</span>::{<span class="ident">reply</span>::<span class="ident">Reply</span>, <span class="ident">Filter</span>};
+<span class="kw">use</span> <span class="ident">mime</span>::<span class="ident">Mime</span>;
+<span class="kw">use</span> <span class="ident">warp</span>::{
+    <span class="ident">http</span>::{<span class="ident">header</span>, <span class="ident">method</span>::<span class="ident">Method</span>},
+    <span class="ident">reply</span>::<span class="ident">Reply</span>,
+    <span class="ident">Filter</span>,
+};
 
 <span class="kw">mod</span> <span class="ident">authentication</span>;
 <span class="kw">mod</span> <span class="ident">error</span>;
@@ -127,41 +169,51 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">error</span>::<span class="ident">model</span>;
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">route</span> {
-    (@<span class="ident">method</span> <span class="ident">GET</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">get</span>().<span class="ident">and</span>(<span class="ident">warp</span>::<span class="ident">query</span>()) };
-    (@<span class="ident">method</span> <span class="ident">POST</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">post</span>().<span class="ident">and</span>(<span class="ident">warp</span>::<span class="ident">body</span>::<span class="ident">json</span>()) };
+    (@<span class="ident">way</span> <span class="ident">GET</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">get</span>().<span class="ident">and</span>(<span class="ident">warp</span>::<span class="ident">query</span>()) };
+    (@<span class="ident">way</span> <span class="ident">POST</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">post</span>().<span class="ident">and</span>(<span class="ident">warp</span>::<span class="ident">body</span>::<span class="ident">json</span>()) };
+    (@<span class="ident">way</span> <span class="ident">POST_STREAM</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="ident">warp</span>::<span class="ident">post</span>()
+            .<span class="ident">and</span>(<span class="ident">warp</span>::<span class="ident">header</span>::<span class="op">&lt;</span><span class="ident">Mime</span><span class="op">&gt;</span>(<span class="string">&quot;content-type&quot;</span>))
+            .<span class="ident">and</span>(<span class="ident">warp</span>::<span class="ident">body</span>::<span class="ident">stream</span>())
+    };
     (@<span class="ident">path</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">any</span>() };
     (@<span class="ident">path</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">literal</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">path</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>) };
-    (@<span class="ident">options</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, {<span class="ident">noauth</span>}) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">any</span>() };
+    (@<span class="ident">options</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, {<span class="ident">noapp</span>}) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">any</span>() };
+    (@<span class="ident">options</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, {<span class="ident">noauth</span>}) <span class="op">=</span><span class="op">&gt;</span> { <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>.<span class="ident">clone</span>() };
     (@<span class="ident">options</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, {}) <span class="op">=</span><span class="op">&gt;</span> { <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>.<span class="ident">clone</span>().<span class="ident">and</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>.<span class="ident">clone</span>()) };
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>, <span class="op">/</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">literal</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner</span>:<span class="ident">tt</span>)<span class="op">+</span> }) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="ident">warp</span>::<span class="ident">path</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>)
             .<span class="ident">and</span>(<span class="macro">routes</span><span class="macro">!</span>{ <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner</span>)<span class="op">+</span> })
     };
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>,
-       <span class="op">/</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_1</span>:<span class="ident">literal</span> $(<span class="op">/</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_n</span>:<span class="ident">literal</span>)<span class="op">+</span> <span class="op">=</span><span class="op">&gt;</span> {$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">options</span>:<span class="ident">tt</span>),<span class="kw-2">*</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>:<span class="ident">ident</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler</span>:<span class="ident">path</span>)
+       <span class="op">/</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_1</span>:<span class="ident">literal</span> $(<span class="op">/</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_n</span>:<span class="ident">literal</span>)<span class="op">+</span> <span class="op">=</span><span class="op">&gt;</span> {$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">options</span>:<span class="ident">tt</span>),<span class="kw-2">*</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">way</span>:<span class="ident">ident</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler</span>:<span class="ident">path</span>)
     ) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="ident">warp</span>::<span class="ident">path</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_1</span>)
-            .<span class="ident">and</span>(<span class="macro">route</span><span class="macro">!</span>{ <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>, $(<span class="op">/</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_n</span>)<span class="op">+</span> <span class="op">=</span><span class="op">&gt;</span> {$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">options</span>),<span class="kw-2">*</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler</span>) })
+            .<span class="ident">and</span>(<span class="macro">route</span><span class="macro">!</span>{ <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>, $(<span class="op">/</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_n</span>)<span class="op">+</span> <span class="op">=</span><span class="op">&gt;</span> {$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">options</span>),<span class="kw-2">*</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">way</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler</span>) })
     };
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>,
-       <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">literal</span>)<span class="question-mark">?</span> <span class="op">=</span><span class="op">&gt;</span> {$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">options</span>:<span class="ident">tt</span>),<span class="kw-2">*</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>:<span class="ident">ident</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler</span>:<span class="ident">path</span>)
+       <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">literal</span>)<span class="question-mark">?</span> <span class="op">=</span><span class="op">&gt;</span> {$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">options</span>:<span class="ident">tt</span>),<span class="kw-2">*</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">way</span>:<span class="ident">ident</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler</span>:<span class="ident">path</span>)
     ) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">route</span><span class="macro">!</span>(@<span class="ident">path</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>)<span class="question-mark">?</span>)
             .<span class="ident">and</span>(<span class="ident">warp</span>::<span class="ident">path</span>::<span class="ident">end</span>()
                 .<span class="ident">and</span>(<span class="macro">route</span><span class="macro">!</span>(@<span class="ident">options</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>, {$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">options</span>),<span class="kw-2">*</span>}))
-                .<span class="ident">and</span>(<span class="macro">route</span><span class="macro">!</span>(@<span class="ident">method</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method</span>))
+                .<span class="ident">and</span>(<span class="macro">route</span><span class="macro">!</span>(@<span class="ident">way</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">way</span>))
                 .<span class="ident">and_then</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler</span>))
     };
 }
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">routes</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>:<span class="ident">ident</span>,
-       <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_1</span>:<span class="ident">literal</span>)<span class="op">/</span> <span class="op">*</span> $({ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner_1</span>:<span class="ident">tt</span>)<span class="op">+</span> })<span class="question-mark">?</span> $(<span class="op">=</span><span class="op">&gt;</span> $({$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">option_1</span>:<span class="ident">tt</span>),<span class="kw-2">*</span>})<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method_1</span>:<span class="ident">ident</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler_1</span>:<span class="ident">path</span>) )<span class="question-mark">?</span>
-         $(, <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_n</span>:<span class="ident">literal</span>)<span class="op">/</span> <span class="op">*</span> $({ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner_n</span>:<span class="ident">tt</span>)<span class="op">+</span> })<span class="question-mark">?</span> $(<span class="op">=</span><span class="op">&gt;</span> $({$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">option_n</span>:<span class="ident">tt</span>),<span class="kw-2">*</span>})<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method_n</span>:<span class="ident">ident</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler_n</span>:<span class="ident">path</span>) )<span class="question-mark">?</span> )<span class="op">*</span>
+       <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_1</span>:<span class="ident">literal</span>)<span class="op">/</span> <span class="op">*</span> $({ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner_1</span>:<span class="ident">tt</span>)<span class="op">+</span> })<span class="question-mark">?</span> $(<span class="op">=</span><span class="op">&gt;</span> $({$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">option_1</span>:<span class="ident">tt</span>),<span class="kw-2">*</span>})<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">way_1</span>:<span class="ident">ident</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler_1</span>:<span class="ident">path</span>) )<span class="question-mark">?</span>
+         $(, <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_n</span>:<span class="ident">literal</span>)<span class="op">/</span> <span class="op">*</span> $({ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner_n</span>:<span class="ident">tt</span>)<span class="op">+</span> })<span class="question-mark">?</span> $(<span class="op">=</span><span class="op">&gt;</span> $({$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">option_n</span>:<span class="ident">tt</span>),<span class="kw-2">*</span>})<span class="question-mark">?</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">way_n</span>:<span class="ident">ident</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler_n</span>:<span class="ident">path</span>) )<span class="question-mark">?</span> )<span class="op">*</span>
          $(,)<span class="question-mark">?</span>
     ) <span class="op">=</span><span class="op">&gt;</span> {
-        <span class="macro">route</span><span class="macro">!</span>{ <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>, <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_1</span>)<span class="op">/</span> <span class="op">*</span> $({ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner_1</span>)<span class="op">+</span> })<span class="question-mark">?</span> $(<span class="op">=</span><span class="op">&gt;</span> {$($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">option_1</span>),<span class="kw-2">*</span>)<span class="question-mark">?</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method_1</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler_1</span>))<span class="question-mark">?</span> }
-            $( .<span class="ident">or</span>( <span class="macro">route</span><span class="macro">!</span>{ <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>, <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_n</span>)<span class="op">/</span> <span class="op">*</span> $({ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner_n</span>)<span class="op">+</span> })<span class="question-mark">?</span> $(<span class="op">=</span><span class="op">&gt;</span> {$($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">option_n</span>),<span class="kw-2">*</span>)<span class="question-mark">?</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">method_n</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler_n</span>))<span class="question-mark">?</span> } ) )<span class="op">*</span>
+        <span class="macro">route</span><span class="macro">!</span>{ <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>, <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_1</span>)<span class="op">/</span> <span class="op">*</span> $({ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner_1</span>)<span class="op">+</span> })<span class="question-mark">?</span> $(<span class="op">=</span><span class="op">&gt;</span> {$($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">option_1</span>),<span class="kw-2">*</span>)<span class="question-mark">?</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">way_1</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler_1</span>))<span class="question-mark">?</span> }
+            $( .<span class="ident">or</span>(<span class="macro">route</span><span class="macro">!</span>{
+                    <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_auth</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">with_app</span>, <span class="op">/</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name_n</span>)<span class="op">/</span> <span class="op">*</span> $({ $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">inner_n</span>)<span class="op">+</span> })<span class="question-mark">?</span> $(<span class="op">=</span><span class="op">&gt;</span> {$($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">option_n</span>),<span class="kw-2">*</span>)<span class="question-mark">?</span>} <span class="macro-nonterminal">$</span><span class="macro-nonterminal">way_n</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">handler_n</span>))<span class="question-mark">?</span>
+                })
+                .<span class="ident">boxed</span>()  <span class="comment">// workaround for seanmonstar/warp#811</span>
+            )<span class="op">*</span>
     }
 }
 
@@ -175,16 +227,24 @@
     <span class="kw">let</span> <span class="ident">with_app</span> <span class="op">=</span> <span class="ident">warp</span>::<span class="ident">any</span>().<span class="ident">map</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="ident">app</span>.<span class="ident">clone</span>());
 
     <span class="kw">let</span> <span class="ident">routes</span> <span class="op">=</span> <span class="macro">routes</span><span class="macro">!</span> { <span class="ident">with_auth</span>, <span class="ident">with_app</span>,
-        <span class="op">/</span> <span class="string">&quot;health&quot;</span> <span class="op">/</span> <span class="string">&quot;liveness&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">health</span>::<span class="ident">liveness</span>),
+        <span class="op">/</span> <span class="string">&quot;meta&quot;</span> {
+            <span class="op">/</span> <span class="string">&quot;get-build-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noapp</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">meta</span>::<span class="ident">get_build_info</span>),
+            <span class="op">/</span> <span class="string">&quot;health&quot;</span> {
+                <span class="op">/</span> <span class="string">&quot;check&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">meta</span>::<span class="ident">health</span>::<span class="ident">check</span>),
+                <span class="op">/</span> <span class="string">&quot;check-liveness&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noapp</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">meta</span>::<span class="ident">health</span>::<span class="ident">check_liveness</span>),
+            },
+        },
         <span class="op">/</span> <span class="string">&quot;signup&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">signup</span>),
         <span class="op">/</span> <span class="string">&quot;me&quot;</span> {
-            <span class="op">/</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">me</span>),
+            <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">me</span>::<span class="ident">get</span>),
             <span class="op">/</span> <span class="string">&quot;project&quot;</span> <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">me</span>::<span class="ident">project</span>::<span class="ident">list</span>),
+            <span class="op">/</span> <span class="string">&quot;file&quot;</span> {
+                <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">me</span>::<span class="ident">file</span>::<span class="ident">list</span>),
+                <span class="op">/</span> <span class="string">&quot;check-usage&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">me</span>::<span class="ident">file</span>::<span class="ident">check_usage</span>),
+            }
         },
         <span class="op">/</span> <span class="string">&quot;project&quot;</span> {
             <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">get</span>),
-            <span class="op">/</span> <span class="string">&quot;get-by-display-id&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">get_by_display_id</span>),
-            <span class="op">/</span> <span class="string">&quot;check-display-id&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">check_display_id</span>),
             <span class="op">/</span> <span class="string">&quot;create&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">create</span>),
             <span class="op">/</span> <span class="string">&quot;update&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">update</span>),
             <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">list</span>),
@@ -215,10 +275,24 @@
             <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">user</span>::<span class="ident">list</span>),
             <span class="op">/</span> <span class="string">&quot;export&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">user</span>::<span class="ident">export</span>),
             <span class="op">/</span> <span class="string">&quot;update&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">user</span>::<span class="ident">update</span>),
+        },
+        <span class="op">/</span> <span class="string">&quot;file&quot;</span> {
+            <span class="op">/</span> <span class="string">&quot;create&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST_STREAM</span> (<span class="ident">handler</span>::<span class="ident">file</span>::<span class="ident">create</span>),
+            <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file</span>::<span class="ident">get</span>),
+            <span class="op">/</span> <span class="string">&quot;get-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file</span>::<span class="ident">get_info</span>),
         }
     };
 
+    <span class="kw">let</span> <span class="ident">cors</span> <span class="op">=</span> <span class="ident">warp</span>::<span class="ident">cors</span>()
+        .<span class="ident">allow_any_origin</span>()
+        .<span class="ident">allow_method</span>(<span class="ident">Method</span>::<span class="ident">GET</span>)
+        .<span class="ident">allow_method</span>(<span class="ident">Method</span>::<span class="ident">POST</span>)
+        .<span class="ident">allow_header</span>(<span class="ident">header</span>::<span class="ident">AUTHORIZATION</span>)
+        .<span class="ident">allow_header</span>(<span class="ident">header</span>::<span class="ident">CONTENT_TYPE</span>)
+        .<span class="ident">max_age</span>(<span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">30</span> <span class="op">*</span> <span class="number">60</span>));
+
     <span class="ident">routes</span>
+        .<span class="ident">with</span>(<span class="ident">cors</span>)
         .<span class="ident">recover</span>(<span class="ident">handle_rejection</span>)
         .<span class="ident">with</span>(<span class="ident">warp</span>::<span class="ident">trace</span>::<span class="ident">request</span>())
 }

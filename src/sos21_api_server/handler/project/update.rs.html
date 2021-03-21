@@ -102,15 +102,6 @@
 <span id="99"> 99</span>
 <span id="100">100</span>
 <span id="101">101</span>
-<span id="102">102</span>
-<span id="103">103</span>
-<span id="104">104</span>
-<span id="105">105</span>
-<span id="106">106</span>
-<span id="107">107</span>
-<span id="108">108</span>
-<span id="109">109</span>
-<span id="110">110</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">Project</span>, <span class="ident">ProjectAttribute</span>, <span class="ident">ProjectCategory</span>, <span class="ident">ProjectId</span>};
@@ -124,8 +115,6 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Request</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">ProjectId</span>,
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">display_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
@@ -158,7 +147,6 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
     <span class="ident">ProjectNotFound</span>,
     <span class="ident">InsufficientPermissions</span>,
-    <span class="ident">UnavailableProjectDisplayId</span>,
     <span class="ident">DuplicatedProjectAttributes</span>,
     <span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> },
 }
@@ -168,7 +156,6 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Error</span>::<span class="ident">ProjectNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">NOT_FOUND</span>,
             <span class="ident">Error</span>::<span class="ident">InsufficientPermissions</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">FORBIDDEN</span>,
-            <span class="ident">Error</span>::<span class="ident">UnavailableProjectDisplayId</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">CONFLICT</span>,
             <span class="ident">Error</span>::<span class="ident">DuplicatedProjectAttributes</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">BAD_REQUEST</span>,
             <span class="ident">Error</span>::<span class="ident">InvalidField</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">BAD_REQUEST</span>,
         }
@@ -180,10 +167,6 @@
         <span class="kw">match</span> <span class="ident">err</span> {
             <span class="ident">update_project</span>::<span class="ident">Error</span>::<span class="ident">NotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">ProjectNotFound</span>,
             <span class="ident">update_project</span>::<span class="ident">Error</span>::<span class="ident">InsufficientPermissions</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InsufficientPermissions</span>,
-            <span class="ident">update_project</span>::<span class="ident">Error</span>::<span class="ident">InvalidDisplayId</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> {
-                <span class="ident">field</span>: <span class="string">&quot;display_id&quot;</span>,
-            },
-            <span class="ident">update_project</span>::<span class="ident">Error</span>::<span class="ident">UnavailableDisplayId</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">UnavailableProjectDisplayId</span>,
             <span class="ident">update_project</span>::<span class="ident">Error</span>::<span class="ident">InvalidName</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="string">&quot;name&quot;</span> },
             <span class="ident">update_project</span>::<span class="ident">Error</span>::<span class="ident">InvalidKanaName</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="string">&quot;kana_name&quot;</span> },
             <span class="ident">update_project</span>::<span class="ident">Error</span>::<span class="ident">InvalidGroupName</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> {
@@ -204,7 +187,6 @@
 <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">handler</span>(<span class="ident">ctx</span>: <span class="ident">Login</span><span class="op">&lt;</span><span class="ident">Context</span><span class="op">&gt;</span>, <span class="ident">request</span>: <span class="ident">Request</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">HandlerResult</span><span class="op">&lt;</span><span class="ident">Response</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">update_project</span>::<span class="ident">Input</span> {
         <span class="ident">id</span>: <span class="ident">request</span>.<span class="ident">id</span>.<span class="ident">into_use_case</span>(),
-        <span class="ident">display_id</span>: <span class="ident">request</span>.<span class="ident">display_id</span>,
         <span class="ident">name</span>: <span class="ident">request</span>.<span class="ident">name</span>,
         <span class="ident">kana_name</span>: <span class="ident">request</span>.<span class="ident">kana_name</span>,
         <span class="ident">group_name</span>: <span class="ident">request</span>.<span class="ident">group_name</span>,

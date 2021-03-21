@@ -18,8 +18,8 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">User</span>;
 
-<span class="kw">use</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span>;
-<span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">stream</span>::{<span class="ident">BoxStream</span>, <span class="ident">StreamExt</span>, <span class="ident">TryStreamExt</span>};
+<span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">stream</span>::{<span class="ident">BoxStream</span>, <span class="ident">StreamExt</span>};
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">list_users</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">E</span><span class="op">&gt;</span>(<span class="ident">conn</span>: <span class="ident">E</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">BoxStream</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">User</span><span class="op">&gt;</span><span class="op">&gt;</span>
 <span class="kw">where</span>
@@ -27,7 +27,7 @@
 {
     <span class="ident">sqlx</span>::<span class="macro">query_as_unchecked</span><span class="macro">!</span>(<span class="ident">User</span>, <span class="string">&quot;SELECT * FROM users&quot;</span>)
         .<span class="ident">fetch</span>(<span class="ident">conn</span>)
-        .<span class="ident">map_err</span>(<span class="ident">anyhow</span>::<span class="ident">Error</span>::<span class="ident">msg</span>)
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">result</span><span class="op">|</span> <span class="ident">result</span>.<span class="ident">context</span>(<span class="string">&quot;Failed to select from users&quot;</span>))
         .<span class="ident">boxed</span>()
 }
 </pre></div>

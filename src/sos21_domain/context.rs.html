@@ -14,18 +14,26 @@
 <span id="11">11</span>
 <span id="12">12</span>
 <span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">authentication</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">login</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">authentication</span>::<span class="ident">Authentication</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">login</span>::<span class="ident">Login</span>;
 
+<span class="kw">mod</span> <span class="ident">file_repository</span>;
 <span class="kw">mod</span> <span class="ident">form_answer_repository</span>;
 <span class="kw">mod</span> <span class="ident">form_repository</span>;
+<span class="kw">mod</span> <span class="ident">object_repository</span>;
 <span class="kw">mod</span> <span class="ident">project_repository</span>;
 <span class="kw">mod</span> <span class="ident">user_repository</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">file_repository</span>::<span class="ident">FileRepository</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">form_answer_repository</span>::<span class="ident">FormAnswerRepository</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">form_repository</span>::<span class="ident">FormRepository</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">object_repository</span>::<span class="ident">ObjectRepository</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">project_repository</span>::<span class="ident">ProjectRepository</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">user_repository</span>::<span class="ident">UserRepository</span>;
 </pre></div>

@@ -69,6 +69,9 @@
 <span id="66">66</span>
 <span id="67">67</span>
 <span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Display</span>};
@@ -83,6 +86,8 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ProjectCategory</span> {
     <span class="ident">General</span>,
     <span class="ident">Stage</span>,
+    <span class="ident">Cooking</span>,
+    <span class="ident">Food</span>,
 }
 
 <span class="ident">bitflags</span>::<span class="macro">bitflags</span><span class="macro">!</span> {
@@ -90,6 +95,7 @@
         <span class="kw">const</span> <span class="ident">ACADEMIC</span>  <span class="op">=</span> <span class="number">0b00000001</span>;
         <span class="kw">const</span> <span class="ident">ARTISTIC</span>  <span class="op">=</span> <span class="number">0b00000010</span>;
         <span class="kw">const</span> <span class="ident">COMMITTEE</span> <span class="op">=</span> <span class="number">0b00000100</span>;
+        <span class="kw">const</span> <span class="ident">OUTDOOR</span>   <span class="op">=</span> <span class="number">0b00001000</span>;
     }
 }
 
@@ -127,8 +133,8 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">sqlx</span>::<span class="ident">FromRow</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Project</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">Uuid</span>,
+    <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">i16</span>,
     <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">display_id</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">owner_id</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">String</span>,

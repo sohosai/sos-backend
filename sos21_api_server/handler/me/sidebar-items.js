@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error",""]],"fn":[["handler",""]],"mod":[["project",""]],"struct":[["Request",""],["Response",""]]});
+initSidebarItems({"mod":[["file",""],["get",""],["project",""]]});

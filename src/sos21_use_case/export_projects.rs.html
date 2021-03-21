@@ -393,6 +393,28 @@
 <span id="390">390</span>
 <span id="391">391</span>
 <span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 
@@ -414,8 +436,8 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InputFieldNames</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">code</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">display_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">owner_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">owner_first_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">owner_last_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
@@ -432,12 +454,15 @@
     <span class="kw">pub</span> <span class="ident">attribute_academic</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">attribute_artistic</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">attribute_committee</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">attribute_outdoor</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InputCategoryNames</span> {
     <span class="kw">pub</span> <span class="ident">general</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">stage</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">cooking</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">food</span>: <span class="ident">String</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
@@ -478,7 +503,7 @@
         <span class="ident">write_record</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>, <span class="ident">project</span>, <span class="ident">owner</span>.<span class="ident">name</span>, <span class="ident">owner</span>.<span class="ident">kana_name</span>)<span class="question-mark">?</span>;
     }
 
-    <span class="kw">let</span> <span class="ident">csv</span> <span class="op">=</span> <span class="ident">writer</span>.<span class="ident">into_inner</span>().<span class="ident">map_err</span>(<span class="ident">anyhow</span>::<span class="ident">Error</span>::<span class="ident">msg</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">csv</span> <span class="op">=</span> <span class="ident">writer</span>.<span class="ident">into_inner</span>().<span class="ident">context</span>(<span class="string">&quot;Failed to write CSV data&quot;</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(<span class="ident">csv</span>)
 }
 
@@ -489,8 +514,8 @@
 {
     <span class="kw">let</span> <span class="ident">InputFieldNames</span> {
         <span class="ident">id</span>,
+        <span class="ident">code</span>,
         <span class="ident">created_at</span>,
-        <span class="ident">display_id</span>,
         <span class="ident">owner_id</span>,
         <span class="ident">owner_first_name</span>,
         <span class="ident">owner_last_name</span>,
@@ -507,6 +532,7 @@
         <span class="ident">attribute_academic</span>,
         <span class="ident">attribute_artistic</span>,
         <span class="ident">attribute_committee</span>,
+        <span class="ident">attribute_outdoor</span>,
     } <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">field_names</span>;
 
     <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">write_field</span> {
@@ -518,8 +544,8 @@
     }
 
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">id</span>);
+    <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">code</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">created_at</span>);
-    <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">display_id</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">owner_id</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">owner_first_name</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">owner_last_name</span>);
@@ -536,6 +562,7 @@
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">attribute_academic</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">attribute_artistic</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">attribute_committee</span>);
+    <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">attribute_outdoor</span>);
 
     <span class="comment">// this terminates the record (see docs on `csv::Writer::write_record`)</span>
     <span class="ident">writer</span>.<span class="ident">write_record</span>(<span class="ident">std</span>::<span class="ident">iter</span>::<span class="ident">empty</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>())<span class="question-mark">?</span>;
@@ -555,8 +582,8 @@
 {
     <span class="kw">let</span> <span class="ident">InputFieldNames</span> {
         <span class="ident">id</span>,
+        <span class="ident">code</span>,
         <span class="ident">created_at</span>,
-        <span class="ident">display_id</span>,
         <span class="ident">owner_id</span>,
         <span class="ident">owner_first_name</span>,
         <span class="ident">owner_last_name</span>,
@@ -573,19 +600,20 @@
         <span class="ident">attribute_academic</span>,
         <span class="ident">attribute_artistic</span>,
         <span class="ident">attribute_committee</span>,
+        <span class="ident">attribute_outdoor</span>,
     } <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">field_names</span>;
 
     <span class="kw">if</span> <span class="ident">id</span>.<span class="ident">is_some</span>() {
         <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="ident">project</span>.<span class="ident">id</span>.<span class="ident">to_uuid</span>().<span class="ident">to_hyphenated</span>().<span class="ident">to_string</span>())<span class="question-mark">?</span>;
     }
 
+    <span class="kw">if</span> <span class="ident">code</span>.<span class="ident">is_some</span>() {
+        <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="ident">project</span>.<span class="ident">code</span>().<span class="ident">to_string</span>())<span class="question-mark">?</span>;
+    }
+
     <span class="kw">if</span> <span class="ident">created_at</span>.<span class="ident">is_some</span>() {
         <span class="kw">let</span> <span class="ident">created_at</span> <span class="op">=</span> <span class="ident">project</span>.<span class="ident">created_at</span>.<span class="ident">jst</span>().<span class="ident">format</span>(<span class="string">&quot;%F %T&quot;</span>).<span class="ident">to_string</span>();
         <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="ident">created_at</span>)<span class="question-mark">?</span>;
-    }
-
-    <span class="kw">if</span> <span class="ident">display_id</span>.<span class="ident">is_some</span>() {
-        <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="ident">project</span>.<span class="ident">display_id</span>.<span class="ident">into_string</span>())<span class="question-mark">?</span>;
     }
 
     <span class="kw">if</span> <span class="ident">owner_id</span>.<span class="ident">is_some</span>() {
@@ -652,6 +680,8 @@
         <span class="kw">let</span> <span class="ident">category_name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">project</span>.<span class="ident">category</span> {
             <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">general</span>,
             <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">stage</span>,
+            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">cooking</span>,
+            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Food</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">food</span>,
         };
         <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="ident">category_name</span>)<span class="question-mark">?</span>;
     }
@@ -689,6 +719,17 @@
         }
     }
 
+    <span class="kw">if</span> <span class="ident">attribute_outdoor</span>.<span class="ident">is_some</span>() {
+        <span class="kw">if</span> <span class="ident">project</span>
+            .<span class="ident">attributes</span>
+            .<span class="ident">contains</span>(<span class="ident">project</span>::<span class="ident">ProjectAttribute</span>::<span class="ident">Outdoor</span>)
+        {
+            <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="string">b&quot;TRUE&quot;</span>)<span class="question-mark">?</span>;
+        } <span class="kw">else</span> {
+            <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="string">b&quot;FALSE&quot;</span>)<span class="question-mark">?</span>;
+        }
+    }
+
     <span class="comment">// this terminates the record (see docs on `csv::Writer::write_record`)</span>
     <span class="ident">writer</span>.<span class="ident">write_record</span>(<span class="ident">std</span>::<span class="ident">iter</span>::<span class="ident">empty</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>())<span class="question-mark">?</span>;
 
@@ -719,8 +760,8 @@
     <span class="kw">fn</span> <span class="ident">mock_input</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">export_projects</span>::<span class="ident">Input</span> {
         <span class="kw">let</span> <span class="ident">field_names</span> <span class="op">=</span> <span class="ident">export_projects</span>::<span class="ident">InputFieldNames</span> {
             <span class="ident">id</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;内部ID&quot;</span>.<span class="ident">to_string</span>()),
+            <span class="ident">code</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;企画番号&quot;</span>.<span class="ident">to_string</span>()),
             <span class="ident">created_at</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;作成日時&quot;</span>.<span class="ident">to_string</span>()),
-            <span class="ident">display_id</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;ID&quot;</span>.<span class="ident">to_string</span>()),
             <span class="ident">owner_id</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;責任者&quot;</span>.<span class="ident">to_string</span>()),
             <span class="ident">owner_first_name</span>: <span class="prelude-val">None</span>,
             <span class="ident">owner_last_name</span>: <span class="prelude-val">None</span>,
@@ -737,10 +778,13 @@
             <span class="ident">attribute_academic</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;学術企画&quot;</span>.<span class="ident">to_string</span>()),
             <span class="ident">attribute_artistic</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;芸術企画&quot;</span>.<span class="ident">to_string</span>()),
             <span class="ident">attribute_committee</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;委員会企画&quot;</span>.<span class="ident">to_string</span>()),
+            <span class="ident">attribute_outdoor</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;屋外企画&quot;</span>.<span class="ident">to_string</span>()),
         };
         <span class="kw">let</span> <span class="ident">category_names</span> <span class="op">=</span> <span class="ident">export_projects</span>::<span class="ident">InputCategoryNames</span> {
             <span class="ident">general</span>: <span class="string">&quot;一般&quot;</span>.<span class="ident">to_string</span>(),
             <span class="ident">stage</span>: <span class="string">&quot;ステージ&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="ident">cooking</span>: <span class="string">&quot;調理&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="ident">food</span>: <span class="string">&quot;飲食物取扱&quot;</span>.<span class="ident">to_string</span>(),
         };
         <span class="ident">export_projects</span>::<span class="ident">Input</span> {
             <span class="ident">field_names</span>,
