@@ -22,6 +22,8 @@ pub mod get_file_object;
 pub mod get_file_sharing;
 pub mod get_form;
 pub mod get_form_answer;
+pub mod get_form_answer_shared_file;
+pub mod get_form_answer_shared_file_object;
 pub mod get_login_user;
 pub mod get_project;
 pub mod get_project_by_code;

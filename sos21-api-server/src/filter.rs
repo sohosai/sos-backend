@@ -145,6 +145,10 @@ pub fn endpoints(
                 / "get-file" => GET (handler::file_sharing::project::get_file),
                 / "get-file-info" => GET (handler::file_sharing::project::get_file_info),
             },
+            / "form-answer" {
+                / "get-file" => GET (handler::file_sharing::form_answer::get_file),
+                / "get-file-info" => GET (handler::file_sharing::form_answer::get_file_info),
+            }
         }
     };
 
