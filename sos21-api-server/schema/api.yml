@@ -2293,6 +2293,163 @@ paths:
           required: true
       description: 指定されたファイル共有で共有されているファイルの情報を認証無しで返します。
       security: []
+  /file-sharing/project/get-file:
+    get:
+      summary: file-sharing/project/get-file
+      tags:
+        - file
+        - project
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing or Project Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/project/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+      description: 指定されたファイル共有で企画に対して共有されているファイルを返します。
+  /file-sharing/project/get-file-info:
+    get:
+      summary: file-sharing/project/get-file-info
+      tags:
+        - file
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing or Project Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/project/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+      description: 指定されたファイル共有で企画に対して共有されているファイルの情報を返します。
   /meta/health/check:
     get:
       summary: meta/health/check

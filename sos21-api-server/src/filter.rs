@@ -141,6 +141,10 @@ pub fn endpoints(
                 / "get-file" => {noauth} GET (handler::file_sharing::public::get_file),
                 / "get-file-info" => {noauth} GET (handler::file_sharing::public::get_file_info),
             },
+            / "project" {
+                / "get-file" => GET (handler::file_sharing::project::get_file),
+                / "get-file-info" => GET (handler::file_sharing::project::get_file_info),
+            },
         }
     };
 
