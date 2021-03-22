@@ -11,6 +11,8 @@ use sos21_domain::context::Login;
 use sos21_use_case::create_form_answer;
 use warp::http::StatusCode;
 
+pub mod file_sharing;
+
 pub mod get;
 pub use get::handler as get;
 

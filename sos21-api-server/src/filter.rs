@@ -105,6 +105,10 @@ pub fn endpoints(
                 / "answer" {
                     / => POST (handler::project::form::answer),
                     / "get" => GET (handler::project::form::answer::get),
+                    / "file-sharing" {
+                        / "get-file" => GET (handler::project::form::answer::file_sharing::get_file),
+                        / "get-file-info" => GET (handler::project::form::answer::file_sharing::get_file_info),
+                    }
                 }
             }
         },
