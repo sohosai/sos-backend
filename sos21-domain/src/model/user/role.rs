@@ -58,4 +58,12 @@ impl UserRole {
             UserRole::Administrator => UserFileUsageQuota::unlimited(),
         }
     }
+
+    pub fn is_committee(&self) -> bool {
+        matches!(self, UserRole::CommitteeOperator | UserRole::Committee)
+    }
+
+    pub fn is_committee_operator(&self) -> bool {
+        matches!(self, UserRole::CommitteeOperator)
+    }
 }

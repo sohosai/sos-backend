@@ -9,13 +9,13 @@ license = "MIT OR Apache-2.0"
 
 [features]
 # TODO: get rid of this confusing flag (related: rust-lang/rust#79381)
-test = ["tokio", "maplit", "once_cell", "uuid/v4", "rand"]
+test = ["tokio", "maplit", "once_cell", "rand"]
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 thiserror = "1"
 bitflags = "1"
-uuid = { version = "0.8", features = ["serde"] }
+uuid = { version = "0.8", features = ["serde", "v4"] }
 typenum = "1"
 async-trait = "0.1.42"
 anyhow = "1"
@@ -34,6 +34,5 @@ rand = { version = "0.8", optional = true }
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 maplit = "1"
-uuid = { version = "0.8", features = ["v4"] }
 once_cell = "1"
 rand = "0.8"

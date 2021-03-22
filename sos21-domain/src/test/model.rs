@@ -6,6 +6,8 @@ mod form;
 pub use form::*;
 mod file;
 pub use file::*;
+mod file_sharing;
+pub use file_sharing::*;
 mod object;
 pub use object::*;
 mod form_answer;

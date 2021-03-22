@@ -2014,6 +2014,7 @@ dependencies = [
  "sos21-database",
  "sos21-domain",
  "sqlx",
+ "uuid",
 ]
 
 [[package]]

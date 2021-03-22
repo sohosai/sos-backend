@@ -77,6 +77,14 @@ impl User {
         self.role.file_usage_quota()
     }
 
+    pub fn is_committee(&self) -> bool {
+        self.role.is_committee()
+    }
+
+    pub fn is_committee_operator(&self) -> bool {
+        self.role.is_committee_operator()
+    }
+
     pub fn set_name(&mut self, name: UserName) {
         self.name = name;
     }

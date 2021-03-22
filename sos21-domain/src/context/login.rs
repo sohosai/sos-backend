@@ -1,6 +1,6 @@
 use crate::context::{
-    authentication::Authentication, FileRepository, FormAnswerRepository, FormRepository,
-    ObjectRepository, ProjectRepository, UserRepository,
+    authentication::Authentication, FileRepository, FileSharingRepository, FormAnswerRepository,
+    FormRepository, ObjectRepository, ProjectRepository, UserRepository,
 };
 use crate::model::user::User;
 
@@ -80,6 +80,12 @@ crate::delegate_object_repository! {
 
 crate::delegate_file_repository! {
     impl<C: FileRepository + Send + Sync> FileRepository for Login<C> {
+        self { &self.inner }
+    }
+}
+
+crate::delegate_file_sharing_repository! {
+    impl<C: FileSharingRepository + Send + Sync> FileSharingRepository for Login<C> {
         self { &self.inner }
     }
 }
