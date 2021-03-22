@@ -447,6 +447,35 @@ paths:
       operationId: me/file/check-usage
       description: ログインしているユーザーのファイルの利用状況を返します。
     parameters: []
+  /me/file-sharing/list:
+    get:
+      summary: me/file-sharing/list
+      tags:
+        - me
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sharings:
+                    type: array
+                    items:
+                      $ref: ./model/file_sharing/FileSharing.yml
+                required:
+                  - sharings
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me/file-sharing/list
+      parameters: []
+      description: ログインしているユーザーのファイル共有の一覧を返します。
   /project/create:
     post:
       summary: project/create
@@ -2022,6 +2051,40 @@ paths:
               required:
                 - sharing_id
       description: 指定されたファイル共有を無効化します。
+  /file-sharing/get:
+    get:
+      summary: file-sharing/get
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sharing:
+                    $ref: ./model/file_sharing/FileSharing.yml
+                required:
+                  - sharing
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有の情報を返します。
   /meta/health/check:
     get:
       summary: meta/health/check

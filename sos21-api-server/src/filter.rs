@@ -90,7 +90,8 @@ pub fn endpoints(
             / "file" {
                 / "list" => GET (handler::me::file::list),
                 / "check-usage" => GET (handler::me::file::check_usage),
-            }
+            },
+            / "file-sharing" / "list" => GET (handler::me::file_sharing::list),
         },
         / "project" {
             / "get" => GET (handler::project::get),
@@ -132,6 +133,7 @@ pub fn endpoints(
             / "share" => POST (handler::file::share),
         },
         / "file-sharing" {
+            / "get" => GET (handler::file_sharing::get),
             / "revoke" => POST (handler::file_sharing::revoke),
         }
     };
