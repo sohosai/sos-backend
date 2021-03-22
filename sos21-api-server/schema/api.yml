@@ -2144,6 +2144,155 @@ paths:
           name: sharing_id
           required: true
       description: 指定されたファイル共有で共有されているファイルの情報を返します。
+  /file-sharing/public/get-file:
+    get:
+      summary: file-sharing/public/get-file
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 403
+                      error:
+                        oneOf:
+                          - properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REQUEST
+                              id:
+                                type: string
+                                enum:
+                                  - CORS_FORBIDDEN
+                            required:
+                              - type
+                              - id
+                          - properties:
+                              type:
+                                type: string
+                                enum:
+                                  - API
+                              info:
+                                type: object
+                                required:
+                                  - type
+                                properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FILE_SHARING
+                            required:
+                              - type
+                              - info
+                        type: object
+                    required:
+                      - status
+                      - error
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/public/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有で共有されているファイルを認証無しで返します。
+      security: []
+  /file-sharing/public/get-file-info:
+    get:
+      summary: file-sharing/public/get-file-info
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 403
+                      error:
+                        oneOf:
+                          - properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REQUEST
+                              id:
+                                type: string
+                                enum:
+                                  - CORS_FORBIDDEN
+                            required:
+                              - type
+                              - id
+                          - properties:
+                              type:
+                                type: string
+                                enum:
+                                  - API
+                              info:
+                                type: object
+                                required:
+                                  - type
+                                properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FILE_SHARING
+                            required:
+                              - type
+                              - info
+                        type: object
+                    required:
+                      - status
+                      - error
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/public/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有で共有されているファイルの情報を認証無しで返します。
+      security: []
   /meta/health/check:
     get:
       summary: meta/health/check
