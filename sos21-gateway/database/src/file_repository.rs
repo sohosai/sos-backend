@@ -84,7 +84,7 @@ fn from_file(file: File) -> Result<data::file::File> {
     })
 }
 
-fn to_file(file: data::file::File) -> Result<File> {
+pub fn to_file(file: data::file::File) -> Result<File> {
     let data::file::File {
         id,
         created_at,

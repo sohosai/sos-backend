@@ -641,6 +641,123 @@
       ]
     }
   },
+  "2e83527e33479119da8adb5eb2e7a9ff4c37c6dfa743e9d503c5b77de31b4f2c": {
+    "query": "\nSELECT\n    file_sharings.id,\n    file_sharings.created_at,\n    file_sharings.file_id,\n    file_sharings.is_revoked,\n    file_sharings.expires_at,\n    file_sharings.scope AS \"scope: FileSharingScope\",\n    file_sharings.project_id,\n    file_sharings.form_answer_id,\n    files.created_at AS file_created_at,\n    files.author_id AS file_author_id,\n    files.object_id AS file_object_id,\n    files.blake3_digest AS file_blake3_digest,\n    files.name AS file_name,\n    files.type_ AS file_type,\n    files.size AS file_size\nFROM file_sharings\nINNER JOIN files ON (file_sharings.file_id = files.id)\nWHERE files.author_id = $1\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "file_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 3,
+          "name": "is_revoked",
+          "type_info": "Bool"
+        },
+        {
+          "ordinal": 4,
+          "name": "expires_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "scope: FileSharingScope",
+          "type_info": {
+            "Custom": {
+              "name": "file_sharing_scope",
+              "kind": {
+                "Enum": [
+                  "project",
+                  "form_answer",
+                  "committee",
+                  "committee_operator",
+                  "public"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 6,
+          "name": "project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 7,
+          "name": "form_answer_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 8,
+          "name": "file_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 9,
+          "name": "file_author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 10,
+          "name": "file_object_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 11,
+          "name": "file_blake3_digest",
+          "type_info": "Bytea"
+        },
+        {
+          "ordinal": 12,
+          "name": "file_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 13,
+          "name": "file_type",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 14,
+          "name": "file_size",
+          "type_info": "Int8"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      ]
+    }
+  },
   "3711b1e67808ed304eb8431a42c28d478f503afce5f9453e9f8fb96d4d09819d": {
     "query": "\nSELECT\n    forms.*,\n    array_agg(DISTINCT form_condition_includes.project_id)\n        FILTER (WHERE form_condition_includes.project_id IS NOT NULL)\n        AS include_ids,\n    array_agg(DISTINCT form_condition_excludes.project_id)\n        FILTER (WHERE form_condition_excludes.project_id IS NOT NULL)\n        AS exclude_ids,\n    array_agg(DISTINCT (\n            form_project_query_conjunctions.category,\n            form_project_query_conjunctions.attributes\n        ))\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM forms\nLEFT OUTER JOIN form_condition_includes\n    ON forms.id = form_condition_includes.form_id\nLEFT OUTER JOIN form_condition_excludes\n    ON forms.id = form_condition_excludes.form_id\nLEFT OUTER JOIN form_project_query_conjunctions\n    ON forms.id = form_project_query_conjunctions.form_id\nGROUP BY forms.id\n",
     "describe": {
@@ -1078,6 +1195,37 @@
       "nullable": []
     }
   },
+  "8facabd112c4a4184f794e7f38a13a622f228248bbd546e478840d063bdd0e48": {
+    "query": "\nUPDATE file_sharings\n  SET\n    file_id = $2,\n    is_revoked = $3,\n    expires_at = $4,\n    scope = $5,\n    project_id = $6,\n    form_answer_id = $7\n  WHERE id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Bool",
+          "Timestamptz",
+          {
+            "Custom": {
+              "name": "file_sharing_scope",
+              "kind": {
+                "Enum": [
+                  "project",
+                  "form_answer",
+                  "committee",
+                  "committee_operator",
+                  "public"
+                ]
+              }
+            }
+          },
+          "Uuid",
+          "Uuid"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "93773a5c02e14df70a4fb1700d268cb51ed8a04f58c48cca948b53d342aa15a5": {
     "query": "SELECT * FROM form_answers WHERE form_id = $1",
     "describe": {
@@ -1373,6 +1521,38 @@
       "nullable": []
     }
   },
+  "c968ecd681331a5f1bcba7c9bef537803ca2bb855c1bd0fd695d5687af1d9d24": {
+    "query": "\nINSERT INTO file_sharings (\n    id,\n    created_at,\n    file_id,\n    is_revoked,\n    expires_at,\n    scope,\n    project_id,\n    form_answer_id\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Timestamptz",
+          "Uuid",
+          "Bool",
+          "Timestamptz",
+          {
+            "Custom": {
+              "name": "file_sharing_scope",
+              "kind": {
+                "Enum": [
+                  "project",
+                  "form_answer",
+                  "committee",
+                  "committee_operator",
+                  "public"
+                ]
+              }
+            }
+          },
+          "Uuid",
+          "Uuid"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "cf3d9a3d04c5a4609105171b04ccc41b97b2aa2828bfddb71539ed2e9370b44f": {
     "query": "\nUPDATE files\n  SET\n    object_id = $2,\n    blake3_digest = $3,\n    name = $4,\n    type_ = $5,\n    size = $6\n  WHERE id = $1\n",
     "describe": {
@@ -1571,6 +1751,123 @@
         ]
       },
       "nullable": []
+    }
+  },
+  "f3cebfdfab5bc3fe5cacb9d4dc9e99582897f19b4b456971c3ef68c048ec245f": {
+    "query": "\nSELECT\n    file_sharings.id,\n    file_sharings.created_at,\n    file_sharings.file_id,\n    file_sharings.is_revoked,\n    file_sharings.expires_at,\n    file_sharings.scope AS \"scope: FileSharingScope\",\n    file_sharings.project_id,\n    file_sharings.form_answer_id,\n    files.created_at AS file_created_at,\n    files.author_id AS file_author_id,\n    files.object_id AS file_object_id,\n    files.blake3_digest AS file_blake3_digest,\n    files.name AS file_name,\n    files.type_ AS file_type,\n    files.size AS file_size\nFROM file_sharings\nINNER JOIN files ON (file_sharings.file_id = files.id)\nWHERE file_sharings.id = $1\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "file_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 3,
+          "name": "is_revoked",
+          "type_info": "Bool"
+        },
+        {
+          "ordinal": 4,
+          "name": "expires_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "scope: FileSharingScope",
+          "type_info": {
+            "Custom": {
+              "name": "file_sharing_scope",
+              "kind": {
+                "Enum": [
+                  "project",
+                  "form_answer",
+                  "committee",
+                  "committee_operator",
+                  "public"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 6,
+          "name": "project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 7,
+          "name": "form_answer_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 8,
+          "name": "file_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 9,
+          "name": "file_author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 10,
+          "name": "file_object_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 11,
+          "name": "file_blake3_digest",
+          "type_info": "Bytea"
+        },
+        {
+          "ordinal": 12,
+          "name": "file_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 13,
+          "name": "file_type",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 14,
+          "name": "file_size",
+          "type_info": "Int8"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      ]
     }
   },
   "fd4e7d0c2c2b07f9543882cb1e18345abbc109ad7ac814f867495a22618e07a5": {

@@ -8,6 +8,8 @@ mod form_repository;
 use form_repository::FormDatabase;
 mod file_repository;
 use file_repository::FileDatabase;
+mod file_sharing_repository;
+use file_sharing_repository::FileSharingDatabase;
 mod form_answer_repository;
 use form_answer_repository::FormAnswerDatabase;
 mod user_repository;
@@ -57,5 +59,11 @@ sos21_domain::delegate_form_answer_repository! {
 sos21_domain::delegate_file_repository! {
     impl FileRepository for Database {
         self { FileDatabase::ref_cast(&self.connection) }
+    }
+}
+
+sos21_domain::delegate_file_sharing_repository! {
+    impl FileSharingRepository for Database {
+        self { FileSharingDatabase::ref_cast(&self.connection) }
     }
 }
