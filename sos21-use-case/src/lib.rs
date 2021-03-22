@@ -35,6 +35,7 @@ pub mod list_project_forms;
 pub mod list_user_files;
 pub mod list_user_projects;
 pub mod list_users;
+pub mod revoke_file_sharing;
 pub mod share_file;
 pub mod signup;
 pub mod update_project;

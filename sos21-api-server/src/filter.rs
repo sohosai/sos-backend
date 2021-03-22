@@ -130,6 +130,9 @@ pub fn endpoints(
             / "get" => GET (handler::file::get),
             / "get-info" => GET (handler::file::get_info),
             / "share" => POST (handler::file::share),
+        },
+        / "file-sharing" {
+            / "revoke" => POST (handler::file_sharing::revoke),
         }
     };
 

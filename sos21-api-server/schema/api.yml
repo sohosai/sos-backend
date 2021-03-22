@@ -1951,6 +1951,77 @@ paths:
                 - expires_at
                 - scope
       description: 指定されたファイルを共有します。
+  /file-sharing/revoke:
+    post:
+      summary: file-sharing/revoke
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sharing:
+                    $ref: ./model/file_sharing/FileSharing.yml
+                required:
+                  - sharing
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - ALREADY_REVOKED_FILE_SHARING
+                                  - EXPIRED_FILE_SHARING
+                            required:
+                              - type
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/revoke
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sharing_id:
+                  $ref: ./model/file_sharing/FileSharingId.yml
+              required:
+                - sharing_id
+      description: 指定されたファイル共有を無効化します。
   /meta/health/check:
     get:
       summary: meta/health/check
@@ -2272,6 +2343,49 @@ components:
                   type: API
                   info:
                     type: FILE_NOT_FOUND
+    FileSharingNotFound:
+      description: File Sharing Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - FILE_SHARING_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: FILE_SHARING_NOT_FOUND
     InternalServerError:
       description: Internal Server Error
       content:
