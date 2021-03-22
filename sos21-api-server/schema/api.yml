@@ -2085,6 +2085,65 @@ paths:
           name: sharing_id
           required: true
       description: 指定されたファイル共有の情報を返します。
+  /file-sharing/get-file:
+    get:
+      summary: file-sharing/get-file
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有で共有されているファイルを返します。
+  /file-sharing/get-file-info:
+    get:
+      summary: file-sharing/get-file-info
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有で共有されているファイルの情報を返します。
   /meta/health/check:
     get:
       summary: meta/health/check
@@ -2574,6 +2633,7 @@ components:
                                 enum:
                                   - INSUFFICIENT_PERMISSIONS
                                   - NON_SHARABLE_FILE
+                                  - INVALID_FILE_SHARING
                         required:
                           - type
                           - info
