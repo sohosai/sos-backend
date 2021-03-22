@@ -26,7 +26,7 @@ pub struct File {
     pub created_at: DateTime,
     pub author_id: UserId,
     pub name: Option<String>,
-    #[serde(with = "serde_mime", rename = "type")]
+    #[serde(with = "crate::handler::model::serde::mime", rename = "type")]
     pub type_: Mime,
     #[serde(with = "hex::serde")]
     pub blake3_digest: [u8; 32],
@@ -44,29 +44,5 @@ impl File {
             blake3_digest: file.blake3_digest,
             size: file.size,
         }
-    }
-}
-
-mod serde_mime {
-    use mime::Mime;
-    use serde::{
-        de::{self, Deserialize, Deserializer},
-        ser::Serializer,
-    };
-
-    pub fn serialize<S>(mime: &Mime, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.collect_str(mime)
-    }
-
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<Mime, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        String::deserialize(deserializer)?
-            .parse()
-            .map_err(de::Error::custom)
     }
 }

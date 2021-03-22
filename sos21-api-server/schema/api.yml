@@ -1869,6 +1869,88 @@ paths:
           name: file_id
           required: true
       description: 指定されたファイルを返します。
+  /file/share:
+    post:
+      summary: file/share
+      tags:
+        - file
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sharing:
+                    $ref: ./model/file_sharing/FileSharing.yml
+                required:
+                  - sharing
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_FILE_EXPIRATION_DATE
+                            required:
+                              - type
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file/share
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file_id:
+                  $ref: ./model/file/FileId.yml
+                expires_at:
+                  oneOf:
+                    - $ref: ./model/DateTime.yml
+                    - $ref: ./model/Null.yml
+                scope:
+                  type: string
+                  enum:
+                    - committee
+                    - committee_operator
+                    - public
+              required:
+                - file_id
+                - expires_at
+                - scope
+      description: 指定されたファイルを共有します。
   /meta/health/check:
     get:
       summary: meta/health/check
@@ -2314,6 +2396,7 @@ components:
                                 type: string
                                 enum:
                                   - INSUFFICIENT_PERMISSIONS
+                                  - NON_SHARABLE_FILE
                         required:
                           - type
                           - info

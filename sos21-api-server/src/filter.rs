@@ -129,6 +129,7 @@ pub fn endpoints(
             / "create" => POST_STREAM (handler::file::create),
             / "get" => GET (handler::file::get),
             / "get-info" => GET (handler::file::get_info),
+            / "share" => POST (handler::file::share),
         }
     };
 

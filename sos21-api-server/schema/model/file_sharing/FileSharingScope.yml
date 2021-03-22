@@ -1,0 +1,37 @@
+title: FileSharingScope
+oneOf:
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - project
+      id:
+        $ref: ../project/ProjectId.yml
+    required:
+      - type
+      - id
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - form_answer
+      id:
+        $ref: ../form_answer/FormAnswerId.yml
+    required:
+      - type
+      - id
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - committee
+          - committee_operator
+          - public
+    required:
+      - type
+description: ""
+x-examples: {}
+type: object
