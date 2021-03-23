@@ -17,11 +17,14 @@ oneOf:
         type: string
         enum:
           - form_answer
-      id:
-        $ref: ../form_answer/FormAnswerId.yml
+      project_id:
+        $ref: ../project/ProjectId.yml
+      form_id:
+        $ref: ../form/FormId.yml
     required:
       - type
-      - id
+      - project_id
+      - form_id
   - type: object
     properties:
       type:

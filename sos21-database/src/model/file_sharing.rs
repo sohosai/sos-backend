@@ -21,5 +21,6 @@ pub struct FileSharing {
     pub expires_at: Option<DateTime<Utc>>,
     pub scope: FileSharingScope,
     pub project_id: Option<Uuid>,
-    pub form_answer_id: Option<Uuid>,
+    pub form_answer_project_id: Option<Uuid>,
+    pub form_answer_form_id: Option<Uuid>,
 }

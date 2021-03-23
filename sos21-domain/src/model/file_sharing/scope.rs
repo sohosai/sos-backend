@@ -1,11 +1,12 @@
-use crate::model::form_answer::{FormAnswer, FormAnswerId};
+use crate::model::form::FormId;
+use crate::model::form_answer::FormAnswer;
 use crate::model::project::{Project, ProjectId};
 use crate::model::user::User;
 
 #[derive(Debug, Clone, Copy)]
 pub enum FileSharingScope {
     Project(ProjectId),
-    FormAnswer(FormAnswerId),
+    FormAnswer(ProjectId, FormId),
     Committee,
     CommitteeOperator,
     Public,
@@ -23,9 +24,9 @@ impl FileSharingScope {
         }
     }
 
-    pub fn form_answer(&self) -> Option<FormAnswerId> {
+    pub fn form_answer(&self) -> Option<(ProjectId, FormId)> {
         match self {
-            FileSharingScope::FormAnswer(form_answer_id) => Some(*form_answer_id),
+            FileSharingScope::FormAnswer(project_id, form_id) => Some((*project_id, *form_id)),
             _ => None,
         }
     }
@@ -33,7 +34,7 @@ impl FileSharingScope {
     pub fn contains_user(&self, user: &User) -> bool {
         match self {
             FileSharingScope::Project(_) => false,
-            FileSharingScope::FormAnswer(_) => false,
+            FileSharingScope::FormAnswer(_, _) => false,
             FileSharingScope::CommitteeOperator => user.is_committee_operator(),
             FileSharingScope::Committee => user.is_committee(),
             FileSharingScope::Public => true,
@@ -43,7 +44,7 @@ impl FileSharingScope {
     pub fn contains_project(&self, project: &Project) -> bool {
         match self {
             FileSharingScope::Project(project_id) => *project_id == project.id,
-            FileSharingScope::FormAnswer(_)
+            FileSharingScope::FormAnswer(_, _)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,
             FileSharingScope::Public => true,
@@ -52,7 +53,9 @@ impl FileSharingScope {
 
     pub fn contains_form_answer(&self, answer: &FormAnswer) -> bool {
         match self {
-            FileSharingScope::FormAnswer(answer_id) => *answer_id == answer.id,
+            FileSharingScope::FormAnswer(project_id, form_id) => {
+                *project_id == answer.project_id && *form_id == answer.form_id
+            }
             FileSharingScope::Project(_)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,

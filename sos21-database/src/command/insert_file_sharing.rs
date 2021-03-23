@@ -14,7 +14,8 @@ where
         expires_at,
         scope,
         project_id,
-        form_answer_id,
+        form_answer_project_id,
+        form_answer_form_id,
     } = sharing;
 
     sqlx::query!(
@@ -27,8 +28,9 @@ INSERT INTO file_sharings (
     expires_at,
     scope,
     project_id,
-    form_answer_id
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
+    form_answer_project_id,
+    form_answer_form_id
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 )
 "#,
         id,
         created_at,
@@ -37,7 +39,8 @@ INSERT INTO file_sharings (
         expires_at,
         scope as _,
         project_id,
-        form_answer_id,
+        form_answer_project_id,
+        form_answer_form_id,
     )
     .execute(conn)
     .await

@@ -1,5 +1,5 @@
 use crate::model::file::FileId;
-use crate::model::form_answer::FormAnswerId;
+use crate::model::form::FormId;
 use crate::model::project::ProjectId;
 
 use chrono::{DateTime, Utc};
@@ -23,7 +23,7 @@ impl FileSharingId {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FileSharingScope {
     Project(ProjectId),
-    FormAnswer(FormAnswerId),
+    FormAnswer(ProjectId, FormId),
     Committee,
     CommitteeOperator,
     Public,
@@ -35,8 +35,11 @@ impl FileSharingScope {
             entity::FileSharingScope::Project(project_id) => {
                 FileSharingScope::Project(ProjectId::from_entity(project_id))
             }
-            entity::FileSharingScope::FormAnswer(answer_id) => {
-                FileSharingScope::FormAnswer(FormAnswerId::from_entity(answer_id))
+            entity::FileSharingScope::FormAnswer(project_id, form_id) => {
+                FileSharingScope::FormAnswer(
+                    ProjectId::from_entity(project_id),
+                    FormId::from_entity(form_id),
+                )
             }
             entity::FileSharingScope::Committee => FileSharingScope::Committee,
             entity::FileSharingScope::CommitteeOperator => FileSharingScope::CommitteeOperator,
@@ -49,8 +52,11 @@ impl FileSharingScope {
             FileSharingScope::Project(project_id) => {
                 entity::FileSharingScope::Project(project_id.into_entity())
             }
-            FileSharingScope::FormAnswer(answer_id) => {
-                entity::FileSharingScope::FormAnswer(answer_id.into_entity())
+            FileSharingScope::FormAnswer(project_id, form_id) => {
+                entity::FileSharingScope::FormAnswer(
+                    project_id.into_entity(),
+                    form_id.into_entity(),
+                )
             }
             FileSharingScope::Committee => entity::FileSharingScope::Committee,
             FileSharingScope::CommitteeOperator => entity::FileSharingScope::CommitteeOperator,

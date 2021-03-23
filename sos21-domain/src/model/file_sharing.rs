@@ -400,7 +400,7 @@ mod tests {
 
         let sharing = FileSharing::new(
             test_model::new_file_id(),
-            FileSharingScope::FormAnswer(test_model::new_form_answer_id()),
+            FileSharingScope::FormAnswer(test_model::new_project_id(), test_model::new_form_id()),
         );
         let form = test_model::new_form(test_model::new_user_id());
         let answer = test_model::new_form_answer(

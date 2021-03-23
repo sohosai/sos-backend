@@ -8,7 +8,12 @@ CREATE TABLE file_sharings (
     expires_at timestamptz,
     scope file_sharing_scope NOT NULL,
     project_id uuid REFERENCES projects ON DELETE RESTRICT,
-    form_answer_id uuid REFERENCES form_answers ON DELETE RESTRICT,
+    form_answer_project_id uuid REFERENCES projects ON DELETE RESTRICT,
+    form_answer_form_id uuid REFERENCES forms ON DELETE RESTRICT,
+    CONSTRAINT file_sharings_scope_form_answer
+        FOREIGN KEY (form_answer_project_id, form_answer_form_id)
+        REFERENCES form_answers (project_id, form_id),
     CONSTRAINT file_sharings_scope_project_id CHECK ((scope = 'project') = (project_id IS NOT NULL)),
-    CONSTRAINT file_sharings_scope_form_answer_id CHECK ((scope = 'form_answer') = (form_answer_id IS NOT NULL))
+    CONSTRAINT file_sharings_scope_form_answer_project_id CHECK ((scope = 'form_answer') = (form_answer_project_id IS NOT NULL)),
+    CONSTRAINT file_sharings_scope_form_answer_form_id CHECK ((scope = 'form_answer') = (form_answer_form_id IS NOT NULL))
 );

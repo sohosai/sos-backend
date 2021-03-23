@@ -9,7 +9,7 @@ use sos21_domain::model::{
     date_time::DateTime,
     file::{File, FileId},
     file_sharing::{FileSharing, FileSharingContent, FileSharingId, FileSharingScope},
-    form_answer::FormAnswerId,
+    form::FormId,
     project::ProjectId,
     user::UserId,
 };
@@ -37,7 +37,8 @@ impl FileSharingRepository for FileSharingDatabase {
                 expires_at: sharing.expires_at,
                 scope: sharing.scope,
                 project_id: sharing.project_id,
-                form_answer_id: sharing.form_answer_id,
+                form_answer_project_id: sharing.form_answer_project_id,
+                form_answer_form_id: sharing.form_answer_form_id,
             };
             command::update_file_sharing(&mut *lock, input).await
         } else {
@@ -70,6 +71,12 @@ impl FileSharingRepository for FileSharingDatabase {
 
 fn from_file_sharing(sharing: FileSharing) -> data::file_sharing::FileSharing {
     let sharing = sharing.into_content();
+    let (form_answer_project_id, form_answer_form_id) =
+        if let Some((project_id, form_id)) = sharing.scope.form_answer() {
+            (Some(project_id.to_uuid()), Some(form_id.to_uuid()))
+        } else {
+            (None, None)
+        };
     data::file_sharing::FileSharing {
         id: sharing.id.to_uuid(),
         created_at: sharing.created_at.utc(),
@@ -81,17 +88,15 @@ fn from_file_sharing(sharing: FileSharing) -> data::file_sharing::FileSharing {
             .scope
             .project()
             .map(|project_id| project_id.to_uuid()),
-        form_answer_id: sharing
-            .scope
-            .form_answer()
-            .map(|project_id| project_id.to_uuid()),
+        form_answer_project_id,
+        form_answer_form_id,
     }
 }
 
 fn from_file_sharing_scope(scope: FileSharingScope) -> data::file_sharing::FileSharingScope {
     match scope {
         FileSharingScope::Project(_) => data::file_sharing::FileSharingScope::Project,
-        FileSharingScope::FormAnswer(_) => data::file_sharing::FileSharingScope::FormAnswer,
+        FileSharingScope::FormAnswer(_, _) => data::file_sharing::FileSharingScope::FormAnswer,
         FileSharingScope::Committee => data::file_sharing::FileSharingScope::Committee,
         FileSharingScope::CommitteeOperator => {
             data::file_sharing::FileSharingScope::CommitteeOperator
@@ -116,14 +121,20 @@ fn to_file_sharing(sharing: data::file_sharing::FileSharing) -> Result<FileShari
         file_id: FileId::from_uuid(sharing.file_id),
         is_revoked: sharing.is_revoked,
         expires_at: sharing.expires_at.map(DateTime::from_utc),
-        scope: to_file_sharing_scope(sharing.scope, sharing.project_id, sharing.form_answer_id)?,
+        scope: to_file_sharing_scope(
+            sharing.scope,
+            sharing.project_id,
+            sharing.form_answer_project_id,
+            sharing.form_answer_form_id,
+        )?,
     }))
 }
 
 fn to_file_sharing_scope(
     scope: data::file_sharing::FileSharingScope,
     project_id: Option<Uuid>,
-    form_answer_id: Option<Uuid>,
+    form_answer_project_id: Option<Uuid>,
+    form_answer_form_id: Option<Uuid>,
 ) -> Result<FileSharingScope> {
     match scope {
         data::file_sharing::FileSharingScope::Project => {
@@ -131,11 +142,14 @@ fn to_file_sharing_scope(
             Ok(FileSharingScope::Project(ProjectId::from_uuid(project_id)))
         }
         data::file_sharing::FileSharingScope::FormAnswer => {
-            let form_answer_id =
-                form_answer_id.context("scope = 'form_answer' but form_answer_id is null")?;
-            Ok(FileSharingScope::FormAnswer(FormAnswerId::from_uuid(
-                form_answer_id,
-            )))
+            let project_id = form_answer_project_id
+                .context("scope = 'form_answer' but form_answer_project_id is null")?;
+            let form_id = form_answer_form_id
+                .context("scope = 'form_answer' but form_answer_form_id is null")?;
+            Ok(FileSharingScope::FormAnswer(
+                ProjectId::from_uuid(project_id),
+                FormId::from_uuid(form_id),
+            ))
         }
         data::file_sharing::FileSharingScope::Committee => Ok(FileSharingScope::Committee),
         data::file_sharing::FileSharingScope::CommitteeOperator => {

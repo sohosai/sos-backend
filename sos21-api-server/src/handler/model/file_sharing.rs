@@ -1,6 +1,6 @@
 use crate::handler::model::date_time::DateTime;
 use crate::handler::model::file::FileId;
-use crate::handler::model::form_answer::FormAnswerId;
+use crate::handler::model::form::FormId;
 use crate::handler::model::project::ProjectId;
 
 use mime::Mime;
@@ -25,8 +25,13 @@ impl FileSharingId {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case", tag = "type")]
 pub enum FileSharingScope {
-    Project { id: ProjectId },
-    FormAnswer { id: FormAnswerId },
+    Project {
+        id: ProjectId,
+    },
+    FormAnswer {
+        project_id: ProjectId,
+        form_id: FormId,
+    },
     Committee,
     CommitteeOperator,
     Public,
@@ -38,9 +43,10 @@ impl FileSharingScope {
             use_case::FileSharingScope::Project(project_id) => FileSharingScope::Project {
                 id: ProjectId::from_use_case(project_id),
             },
-            use_case::FileSharingScope::FormAnswer(form_answer_id) => {
+            use_case::FileSharingScope::FormAnswer(project_id, form_id) => {
                 FileSharingScope::FormAnswer {
-                    id: FormAnswerId::from_use_case(form_answer_id),
+                    project_id: ProjectId::from_use_case(project_id),
+                    form_id: FormId::from_use_case(form_id),
                 }
             }
             use_case::FileSharingScope::Committee => FileSharingScope::Committee,

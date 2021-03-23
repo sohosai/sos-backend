@@ -26,7 +26,8 @@ SELECT
     file_sharings.expires_at,
     file_sharings.scope AS "scope: FileSharingScope",
     file_sharings.project_id,
-    file_sharings.form_answer_id,
+    file_sharings.form_answer_project_id,
+    file_sharings.form_answer_form_id,
     files.created_at AS file_created_at,
     files.author_id AS file_author_id,
     files.object_id AS file_object_id,
@@ -57,7 +58,8 @@ WHERE file_sharings.id = $1
         expires_at: row.expires_at,
         scope: row.scope,
         project_id: row.project_id,
-        form_answer_id: row.form_answer_id,
+        form_answer_project_id: row.form_answer_project_id,
+        form_answer_form_id: row.form_answer_form_id,
     };
 
     let file = File {
