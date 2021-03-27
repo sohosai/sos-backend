@@ -5,6 +5,7 @@ use crate::handler::{HandlerResponse, HandlerResult};
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
 use sos21_use_case::export_form_answers;
+use uritemplate::UriTemplate;
 use warp::http::StatusCode;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -18,6 +19,7 @@ pub struct Request {
     pub field_project_id: Option<String>,
     #[serde(default)]
     pub field_author_id: Option<String>,
+    pub file_answer_template: String,
     pub checkbox_checked: String,
     pub checkbox_unchecked: String,
 }
@@ -59,9 +61,19 @@ pub async fn handler(
             field_created_at,
             field_project_id,
             field_author_id,
+            file_answer_template,
             checkbox_checked,
             checkbox_unchecked,
         } = request;
+
+        let render_file_answer = move |input: export_form_answers::RenderFileAnswerInput| {
+            // TODO: Prepare outside the closure to prevent duplication of work
+            Ok(UriTemplate::new(&file_answer_template)
+                .set("answer_id", input.answer_id)
+                .set("sharing_ids", input.sharing_ids)
+                .build())
+        };
+
         let field_names = export_form_answers::InputFieldNames {
             id: field_id,
             created_at: field_created_at,
@@ -75,6 +87,7 @@ pub async fn handler(
         export_form_answers::Input {
             form_id: form_id.into_use_case(),
             field_names,
+            render_file_answer,
             checkbox_names,
         }
     };

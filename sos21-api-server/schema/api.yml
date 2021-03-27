@@ -1957,6 +1957,14 @@ paths:
           name: checkbox_unchecked
           required: true
           description: チェックボックスにチェックがついていない状態をどう表示するか指定します。
+        - schema:
+            type: string
+          in: query
+          name: file_answer_template
+          required: true
+          description: |
+            ファイル回答の表示先 URL の形式を [RFC6570](https://tools.ietf.org/html/rfc6570) の Level 4 template で指定します。
+            `answer_id` 変数を回答の ID で、 `sharing_ids` 変数を回答されたファイル共有の ID のリストで展開して CSV に出力します。
   /form-answer/get:
     get:
       summary: form-answer/get
