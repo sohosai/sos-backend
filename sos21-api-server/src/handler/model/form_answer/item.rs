@@ -1,3 +1,4 @@
+use crate::handler::model::file_sharing::FileSharingId;
 use crate::handler::model::form::item::{
     CheckboxId, FormItemId, GridRadioColumnId, GridRadioRowId, RadioId,
 };
@@ -35,6 +36,7 @@ pub enum FormAnswerItemBody {
     Checkbox(Vec<CheckboxId>),
     Radio(Option<RadioId>),
     GridRadio(Vec<GridRadioRowAnswer>),
+    File(Vec<FileSharingId>),
 }
 
 impl FormAnswerItemBody {
@@ -54,6 +56,12 @@ impl FormAnswerItemBody {
                     .map(GridRadioRowAnswer::from_use_case)
                     .collect(),
             ),
+            use_case::FormAnswerItemBody::File(answer) => FormAnswerItemBody::File(
+                answer
+                    .into_iter()
+                    .map(FileSharingId::from_use_case)
+                    .collect(),
+            ),
         }
     }
 
@@ -71,6 +79,12 @@ impl FormAnswerItemBody {
                 answer
                     .into_iter()
                     .map(GridRadioRowAnswer::into_use_case)
+                    .collect(),
+            ),
+            FormAnswerItemBody::File(answer) => use_case::FormAnswerItemBody::File(
+                answer
+                    .into_iter()
+                    .map(FileSharingId::into_use_case)
                     .collect(),
             ),
         }

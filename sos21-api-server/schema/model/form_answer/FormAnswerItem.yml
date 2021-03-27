@@ -81,4 +81,17 @@ allOf:
         required:
           - type
           - answer
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - file
+          answer:
+            type: array
+            items:
+              $ref: ../file_sharing/FileSharingId.yml
+        required:
+          - type
+          - answer
 x-examples: {}

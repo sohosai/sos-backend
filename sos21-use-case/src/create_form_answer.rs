@@ -1,20 +1,23 @@
 use crate::error::{UseCaseError, UseCaseResult};
+use crate::model::file::FileId;
+use crate::model::file_sharing::FileSharingId;
 use crate::model::form::{
     item::{CheckboxId, FormItemId, GridRadioColumnId, GridRadioRowId, RadioId},
     FormId,
 };
-use crate::model::form_answer::{
-    item::{FormAnswerItemBody, GridRadioRowAnswer},
-    FormAnswer, FormAnswerItem,
-};
+use crate::model::form_answer::{item::GridRadioRowAnswer, FormAnswer};
 use crate::model::project::ProjectId;
 
-use anyhow::Context;
-use sos21_domain::context::{FormAnswerRepository, FormRepository, Login, ProjectRepository};
+use anyhow::{ensure, Context};
+use sos21_domain::context::{
+    FileRepository, FileSharingRepository, FormAnswerRepository, FormRepository, Login,
+    ProjectRepository,
+};
 use sos21_domain::model::{
     date_time::DateTime,
-    form,
+    file, file_sharing, form,
     form_answer::{self, item},
+    project,
 };
 use uuid::Uuid;
 
@@ -22,11 +25,39 @@ use uuid::Uuid;
 pub struct Input {
     pub project_id: ProjectId,
     pub form_id: FormId,
-    pub items: Vec<FormAnswerItem>,
+    pub items: Vec<InputFormAnswerItem>,
+}
+
+#[derive(Debug, Clone)]
+pub struct InputFormAnswerItem {
+    pub item_id: FormItemId,
+    pub body: Option<InputFormAnswerItemBody>,
+}
+
+#[derive(Debug, Clone)]
+pub enum InputFormAnswerItemBody {
+    Text(Option<String>),
+    Integer(Option<u64>),
+    Checkbox(Vec<CheckboxId>),
+    Radio(Option<RadioId>),
+    GridRadio(Vec<GridRadioRowAnswer>),
+    File(Vec<InputFormAnswerItemFile>),
+}
+
+#[derive(Debug, Clone)]
+pub enum InputFormAnswerItemFile {
+    Sharing(FileSharingId),
+    File(FileId),
 }
 
 #[derive(Debug, Clone)]
 pub enum ItemError {
+    FileNotFound,
+    FileSharingNotFound,
+    OutOfScopeFileSharing,
+    NonSharableFile,
+    TooManyFiles,
+    DuplicatedFileSharingId { id: FileSharingId },
     InvalidText,
     TooManyChecks,
     NoRowAnswers,
@@ -58,6 +89,21 @@ impl ItemError {
             }
         }
     }
+
+    fn from_share_error(_err: file::NonSharableFileError) -> Self {
+        ItemError::NonSharableFile
+    }
+
+    fn from_sharing_answers_error(err: item::file_sharings::FromSharingsError) -> Self {
+        match err.kind() {
+            item::file_sharings::FromSharingsErrorKind::TooLong => ItemError::TooManyFiles,
+            item::file_sharings::FromSharingsErrorKind::Duplicated(id) => {
+                ItemError::DuplicatedFileSharingId {
+                    id: FileSharingId::from_entity(id),
+                }
+            }
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -75,6 +121,9 @@ pub enum AnswerError {
     TooSmallInteger,
     TooManyChecks,
     TooFewChecks,
+    NotAnsweredFile,
+    NotAllowedMultipleFiles,
+    NotAllowedFileType,
     UnknownCheckboxId {
         id: CheckboxId,
     },
@@ -125,6 +174,13 @@ impl AnswerError {
             form::item::CheckAnswerItemErrorKind::NotAnsweredRadio => AnswerError::NotAnsweredRadio,
             form::item::CheckAnswerItemErrorKind::NotAnsweredGridRadioRows => {
                 AnswerError::NotAnsweredGridRadioRows
+            }
+            form::item::CheckAnswerItemErrorKind::NotAnsweredFile => AnswerError::NotAnsweredFile,
+            form::item::CheckAnswerItemErrorKind::NotAllowedMultipleFiles => {
+                AnswerError::NotAllowedMultipleFiles
+            }
+            form::item::CheckAnswerItemErrorKind::NotAllowedFileType => {
+                AnswerError::NotAllowedFileType
             }
             form::item::CheckAnswerItemErrorKind::UnknownCheckboxId { id } => {
                 AnswerError::UnknownCheckboxId {
@@ -204,21 +260,15 @@ impl Error {
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<FormAnswer, Error>
 where
-    C: ProjectRepository + FormRepository + FormAnswerRepository + Send + Sync,
+    C: ProjectRepository
+        + FormRepository
+        + FormAnswerRepository
+        + FileRepository
+        + FileSharingRepository
+        + Send
+        + Sync,
 {
     let login_user = ctx.login_user();
-
-    let items = input
-        .items
-        .into_iter()
-        .map(|item| {
-            let item_id = item.item_id;
-            to_form_answer_item(item)
-                .map_err(|err| UseCaseError::UseCase(Error::InvalidItem(item_id, err)))
-        })
-        .collect::<Result<Vec<_>, _>>()?;
-    let items = form_answer::FormAnswerItems::from_items(items)
-        .map_err(|err| UseCaseError::UseCase(Error::from_items_error(err)))?;
 
     let result = ctx
         .get_project(input.project_id.into_entity())
@@ -245,6 +295,19 @@ where
     if !form.condition.check(&project) || !form.is_visible_to_with_project(login_user, &project) {
         return Err(UseCaseError::UseCase(Error::FormNotFound));
     }
+
+    let mut items = Vec::new();
+    for item in input.items {
+        let item_id = item.item_id;
+        let item = match to_form_answer_item(ctx, &project, &form, item).await? {
+            Ok(item) => item,
+            Err(err) => return Err(UseCaseError::UseCase(Error::InvalidItem(item_id, err))),
+        };
+        items.push(item);
+    }
+
+    let items = form_answer::FormAnswerItems::from_items(items)
+        .map_err(|err| UseCaseError::UseCase(Error::from_items_error(err)))?;
 
     let created_at = DateTime::now();
     if !form.period.contains(created_at) {
@@ -280,50 +343,150 @@ where
     Ok(FormAnswer::from_entity(answer))
 }
 
-fn to_form_answer_item(item: FormAnswerItem) -> Result<form_answer::FormAnswerItem, ItemError> {
+async fn to_form_answer_item<C>(
+    ctx: &Login<C>,
+    project: &project::Project,
+    form: &form::Form,
+    item: InputFormAnswerItem,
+) -> Result<Result<form_answer::FormAnswerItem, ItemError>, anyhow::Error>
+where
+    C: FileRepository + FileSharingRepository + Send + Sync,
+{
     let item_id = item.item_id.into_entity();
 
     let body = match item.body {
         Some(body) => body,
         None => {
-            return Ok(form_answer::FormAnswerItem {
+            return Ok(Ok(form_answer::FormAnswerItem {
                 item_id,
                 body: None,
-            })
+            }))
         }
     };
 
     let body = match body {
-        FormAnswerItemBody::Text(answer) => {
-            let answer = answer
-                .map(item::FormAnswerItemText::from_string)
-                .transpose()
-                .map_err(|_| ItemError::InvalidText)?;
+        InputFormAnswerItemBody::Text(answer) => {
+            let answer = if let Some(answer) = answer {
+                match item::FormAnswerItemText::from_string(answer) {
+                    Ok(answer) => Some(answer),
+                    Err(_err) => return Ok(Err(ItemError::InvalidText)),
+                }
+            } else {
+                None
+            };
             item::FormAnswerItemBody::Text(answer)
         }
-        FormAnswerItemBody::Integer(answer) => item::FormAnswerItemBody::Integer(answer),
-        FormAnswerItemBody::Checkbox(checks) => {
-            let checks = item::FormAnswerItemChecks::from_checked_ids(
-                checks.into_iter().map(CheckboxId::into_entity),
-            )
-            .map_err(ItemError::from_checks_error)?;
+        InputFormAnswerItemBody::Integer(answer) => item::FormAnswerItemBody::Integer(answer),
+        InputFormAnswerItemBody::Checkbox(checks) => {
+            let checks = checks.into_iter().map(CheckboxId::into_entity);
+            let checks = match item::FormAnswerItemChecks::from_checked_ids(checks) {
+                Ok(checks) => checks,
+                Err(err) => return Ok(Err(ItemError::from_checks_error(err))),
+            };
             item::FormAnswerItemBody::Checkbox(checks)
         }
-        FormAnswerItemBody::Radio(answer) => {
+        InputFormAnswerItemBody::Radio(answer) => {
             item::FormAnswerItemBody::Radio(answer.map(RadioId::into_entity))
         }
-        FormAnswerItemBody::GridRadio(rows) => {
-            let rows =
-                item::FormAnswerItemGridRows::from_row_answers(rows.into_iter().map(to_row_answer))
-                    .map_err(ItemError::from_row_answers_error)?;
+        InputFormAnswerItemBody::GridRadio(rows) => {
+            let rows = rows.into_iter().map(to_row_answer);
+            let rows = match item::FormAnswerItemGridRows::from_row_answers(rows) {
+                Ok(rows) => rows,
+                Err(err) => {
+                    return Ok(Err(ItemError::from_row_answers_error(err)));
+                }
+            };
             item::FormAnswerItemBody::GridRadio(rows)
+        }
+        InputFormAnswerItemBody::File(files) => {
+            let mut sharings = Vec::new();
+            for file in files {
+                let sharing = match to_file_sharing_answer(ctx, project, form, file).await? {
+                    Ok(sharing) => sharing,
+                    Err(err) => {
+                        return Ok(Err(err));
+                    }
+                };
+                sharings.push(sharing);
+            }
+            let sharings = match item::FormAnswerItemFileSharings::from_sharing_answers(sharings) {
+                Ok(sharings) => sharings,
+                Err(err) => {
+                    return Ok(Err(ItemError::from_sharing_answers_error(err)));
+                }
+            };
+            item::FormAnswerItemBody::File(sharings)
         }
     };
 
-    Ok(form_answer::FormAnswerItem {
+    Ok(Ok(form_answer::FormAnswerItem {
         item_id,
         body: Some(body),
-    })
+    }))
+}
+
+async fn to_file_sharing_answer<C>(
+    ctx: &Login<C>,
+    project: &project::Project,
+    form: &form::Form,
+    file: InputFormAnswerItemFile,
+) -> Result<Result<item::FileSharingAnswer, ItemError>, anyhow::Error>
+where
+    C: FileRepository + FileSharingRepository + Send + Sync,
+{
+    let login_user = ctx.login_user();
+
+    match file {
+        InputFormAnswerItemFile::File(file_id) => {
+            let result = ctx
+                .get_file(file_id.into_entity())
+                .await
+                .context("Failed to get a file")?;
+            let file = match result {
+                Some(file) if file.is_visible_to(login_user) => file,
+                _ => return Ok(Err(ItemError::FileNotFound)),
+            };
+
+            let scope = file_sharing::FileSharingScope::FormAnswer(project.id, form.id);
+            let sharing = match file.share_by(login_user, scope) {
+                Ok(sharing) => sharing,
+                Err(err) => {
+                    return Ok(Err(ItemError::from_share_error(err)));
+                }
+            };
+
+            ctx.store_file_sharing(sharing.clone())
+                .await
+                .context("Failed to store a file sharing")?;
+
+            ensure!(sharing.scope().contains_project_form_answer(project, form));
+            Ok(Ok(item::FileSharingAnswer {
+                sharing_id: sharing.id(),
+                type_: file.type_,
+            }))
+        }
+        InputFormAnswerItemFile::Sharing(sharing_id) => {
+            let result = ctx
+                .get_file_sharing(sharing_id.into_entity())
+                .await
+                .context("Failed to get a file sharing")?;
+            let (sharing, file) = match result {
+                Some((sharing, file)) if sharing.is_visible_to_with_file(login_user, &file) => {
+                    (sharing, file)
+                }
+                _ => return Ok(Err(ItemError::FileSharingNotFound)),
+            };
+
+            if !sharing.scope().contains_project_form_answer(project, form) {
+                return Ok(Err(ItemError::OutOfScopeFileSharing));
+            }
+
+            Ok(Ok(item::FileSharingAnswer {
+                sharing_id: sharing.id(),
+                type_: file.type_,
+            }))
+        }
+    }
 }
 
 fn to_row_answer(answer: GridRadioRowAnswer) -> item::grid_rows::GridRadioRowAnswer {
@@ -335,9 +498,82 @@ fn to_row_answer(answer: GridRadioRowAnswer) -> item::grid_rows::GridRadioRowAns
 
 #[cfg(test)]
 mod tests {
-    use crate::model::{form::FormId, form_answer::item::FormAnswerItem, project::ProjectId};
-    use crate::{create_form_answer, get_project_form_answer, UseCaseError};
+    use crate::model::{
+        file::FileId,
+        file_sharing::FileSharingId,
+        form::{
+            item::{CheckboxId, FormItemId, RadioId},
+            FormId,
+        },
+        form_answer::item::{FormAnswerItemBody, GridRadioRowAnswer},
+        project::ProjectId,
+    };
+    use crate::{
+        create_form_answer, get_project_form_answer, get_project_form_answer_shared_file,
+        UseCaseError,
+    };
+
+    use sos21_domain::model::form::item;
     use sos21_domain::test;
+
+    fn mock_input_form_answer_item_body(
+        body: &item::FormItemBody,
+    ) -> create_form_answer::InputFormAnswerItemBody {
+        match body {
+            item::FormItemBody::Text(item) => create_form_answer::InputFormAnswerItemBody::Text(
+                test::model::mock_form_answer_item_text(item).map(|text| text.into_string()),
+            ),
+            item::FormItemBody::Integer(item) => {
+                create_form_answer::InputFormAnswerItemBody::Integer(
+                    test::model::mock_form_answer_item_integer(item),
+                )
+            }
+            item::FormItemBody::Checkbox(item) => {
+                create_form_answer::InputFormAnswerItemBody::Checkbox(
+                    test::model::mock_form_answer_item_checkbox(item)
+                        .checked_ids()
+                        .map(CheckboxId::from_entity)
+                        .collect(),
+                )
+            }
+            item::FormItemBody::Radio(item) => create_form_answer::InputFormAnswerItemBody::Radio(
+                test::model::mock_form_answer_item_radio(item).map(RadioId::from_entity),
+            ),
+            item::FormItemBody::GridRadio(item) => {
+                create_form_answer::InputFormAnswerItemBody::GridRadio(
+                    test::model::mock_form_answer_item_grid_radio(item)
+                        .into_row_answers()
+                        .map(GridRadioRowAnswer::from_entity)
+                        .collect(),
+                )
+            }
+            item::FormItemBody::File(item) => create_form_answer::InputFormAnswerItemBody::File(
+                test::model::mock_form_answer_item_file(item)
+                    .sharing_answers()
+                    .map(|answer| {
+                        create_form_answer::InputFormAnswerItemFile::Sharing(
+                            FileSharingId::from_entity(answer.sharing_id),
+                        )
+                    })
+                    .collect(),
+            ),
+        }
+    }
+
+    fn mock_input_form_answer_item(
+        item: &item::FormItem,
+    ) -> create_form_answer::InputFormAnswerItem {
+        create_form_answer::InputFormAnswerItem {
+            item_id: FormItemId::from_entity(item.id),
+            body: Some(mock_input_form_answer_item_body(&item.body)),
+        }
+    }
+
+    fn mock_input_form_answer_items(
+        items: &item::FormItems,
+    ) -> Vec<create_form_answer::InputFormAnswerItem> {
+        items.items().map(mock_input_form_answer_item).collect()
+    }
 
     #[tokio::test]
     async fn test_create() {
@@ -359,10 +595,7 @@ mod tests {
         let input = create_form_answer::Input {
             form_id,
             project_id,
-            items: test::model::mock_form_answer_items(&form.items)
-                .into_items()
-                .map(FormAnswerItem::from_entity)
-                .collect(),
+            items: mock_input_form_answer_items(&form.items),
         };
 
         let result = create_form_answer::run(&app, input).await;
@@ -396,9 +629,7 @@ mod tests {
 
         let form_id = FormId::from_entity(form.id);
         let project_id = ProjectId::from_entity(project.id);
-        let item = FormAnswerItem::from_entity(test::model::mock_form_answer_item(
-            form.items.items().next().unwrap(),
-        ));
+        let item = mock_input_form_answer_item(form.items.items().next().unwrap());
         let input = create_form_answer::Input {
             form_id,
             project_id,
@@ -408,6 +639,75 @@ mod tests {
         assert!(matches!(
             create_form_answer::run(&app, input).await,
             Err(UseCaseError::UseCase(_))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_file_share() {
+        let user = test::model::new_committee_user();
+        let other = test::model::new_general_user();
+        let project = test::model::new_general_project(user.id.clone());
+
+        let (form, item_id) = {
+            let body = item::FormItemBody::File(item::FileFormItem {
+                types: None,
+                accept_multiple_files: false,
+                is_required: true,
+            });
+            let item = test::model::new_form_item_with_body(body);
+            let item_id = item.id;
+            let items = item::FormItems::from_items(vec![item]).unwrap();
+            let form = test::model::new_form_with_items(other.id.clone(), items);
+            (form, item_id)
+        };
+        let (file, object) = test::model::new_file(user.id.clone());
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone(), other.clone()])
+            .projects(vec![project.clone()])
+            .forms(vec![form.clone()])
+            .files(vec![file.clone()])
+            .objects(vec![object])
+            .await
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let answer_item = create_form_answer::InputFormAnswerItem {
+            item_id: FormItemId::from_entity(item_id),
+            body: Some(create_form_answer::InputFormAnswerItemBody::File(vec![
+                create_form_answer::InputFormAnswerItemFile::File(FileId::from_entity(file.id)),
+            ])),
+        };
+        let form_id = FormId::from_entity(form.id);
+        let project_id = ProjectId::from_entity(project.id);
+        let input = create_form_answer::Input {
+            form_id,
+            project_id,
+            items: vec![answer_item],
+        };
+
+        let got = create_form_answer::run(&app, input).await.unwrap();
+        assert_eq!(got.form_id, form_id);
+        assert_eq!(got.project_id, project_id);
+
+        let answer = get_project_form_answer::run(&app, project_id, form_id)
+            .await
+            .unwrap();
+        assert_eq!(answer.id, got.id);
+        let sharing_id = match &answer.items[0].body {
+            Some(FormAnswerItemBody::File(sharings)) => sharings[0],
+            _ => panic!("created form answer item is not file"),
+        };
+
+        assert!(matches!(
+            get_project_form_answer_shared_file::run(&app, get_project_form_answer_shared_file::Input {
+                project_id,
+                form_id,
+                sharing_id
+            }).await,
+            Ok(got)
+            if got.id == FileId::from_entity(file.id)
         ));
     }
 }

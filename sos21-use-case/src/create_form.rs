@@ -14,6 +14,7 @@ use sos21_domain::context::{FormRepository, Login};
 use sos21_domain::model::permissions::Permissions;
 use sos21_domain::model::{
     date_time::DateTime,
+    file,
     form::{self, item},
     project, project_query,
 };
@@ -60,6 +61,9 @@ pub enum ItemError {
     NoGridRadioColumns,
     TooFewGridRadioColumnsWhenExclusiveAndRequired,
     TooManyGridRadioColumns,
+    TooManyFileTypes,
+    NoFileTypes,
+    DuplicatedFileType,
     DuplicatedCheckboxId(CheckboxId),
     DuplicatedRadioId(RadioId),
     DuplicatedGridRadioRowId(GridRadioRowId),
@@ -145,6 +149,14 @@ impl ItemError {
             item::grid_radio::FromColumnsErrorKind::DuplicatedColumnId { id } => {
                 ItemError::DuplicatedGridRadioColumnId(GridRadioColumnId::from_entity(id))
             }
+        }
+    }
+
+    fn from_file_types_error(err: item::file::types::FromTypesError) -> Self {
+        match err.kind() {
+            item::file::types::FromTypesErrorKind::TooLong => ItemError::TooManyFileTypes,
+            item::file::types::FromTypesErrorKind::Empty => ItemError::NoFileTypes,
+            item::file::types::FromTypesErrorKind::Duplicated => ItemError::DuplicatedFileType,
         }
     }
 }
@@ -451,6 +463,26 @@ fn to_form_item(item: FormItem) -> Result<form::FormItem, ItemError> {
                 })
                 .map_err(ItemError::from_grid_radio_content_error)?;
             item::FormItemBody::GridRadio(grid_item)
+        }
+        FormItemBody::File {
+            types,
+            accept_multiple_files,
+            is_required,
+        } => {
+            let types = types
+                .map(|types| {
+                    item::file::FileFormItemTypes::from_types(
+                        types.into_iter().map(file::FileType::from_mime),
+                    )
+                })
+                .transpose()
+                .map_err(ItemError::from_file_types_error)?;
+            let file_item = item::FileFormItem {
+                types,
+                accept_multiple_files,
+                is_required,
+            };
+            item::FormItemBody::File(file_item)
         }
     };
 

@@ -1307,7 +1307,112 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: ./model/form_answer/FormAnswerItem.yml
+                    allOf:
+                      - type: object
+                        properties:
+                          item_id:
+                            $ref: ./model/form/item/FormItemId.yml
+                        required:
+                          - item_id
+                      - nullable: true
+                        oneOf:
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - text
+                              answer:
+                                type: string
+                                nullable: true
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - integer
+                              answer:
+                                type: integer
+                                nullable: true
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - checkbox
+                              answer:
+                                type: array
+                                items:
+                                  $ref: ./model/form/item/CheckboxId.yml
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - radio
+                              answer:
+                                oneOf:
+                                  - $ref: ./model/Null.yml
+                                  - $ref: ./model/form/item/RadioId.yml
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - grid_radio
+                              answer:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    row_id:
+                                      $ref: ./model/form/item/GridRadioRowId.yml
+                                    value:
+                                      oneOf:
+                                        - $ref: ./model/Null.yml
+                                        - $ref: ./model/form/item/GridRadioColumnId.yml
+                                  required:
+                                    - row_id
+                                    - value
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - file
+                              answer:
+                                type: array
+                                items:
+                                  type: object
+                                  oneOf:
+                                    - properties:
+                                        file_id:
+                                          $ref: ./model/file/FileId.yml
+                                      required:
+                                        - file_id
+                                    - properties:
+                                        sharing_id:
+                                          $ref: ./model/file_sharing/FileSharingId.yml
+                                      required:
+                                        - sharing_id
+                            required:
+                              - type
+                              - answer
               required:
                 - project_id
                 - form_id

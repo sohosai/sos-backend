@@ -167,6 +167,26 @@ allOf:
           - columns
           - exclusive_column
           - required
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - file
+          accepted_types:
+            nullable: true
+            type: array
+            items:
+              $ref: ../../Mime.yml
+          is_required:
+            type: boolean
+          accept_multiple_files:
+            type: boolean
+        required:
+          - type
+          - accepted_types
+          - is_required
+          - accept_multiple_files
 description: ""
 x-examples: {}
 type: object
