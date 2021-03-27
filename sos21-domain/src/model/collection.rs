@@ -191,7 +191,7 @@ where
 }
 
 pub type LengthBoundedVec<Min, Max, T> = LengthLimitedVec<Bounded<Min>, Bounded<Max>, T>;
-// pub type LengthBoundedSet<Min, Max, T> = LengthLimitedSet<Bounded<Min>, Bounded<Max>, T>;
+pub type LengthBoundedSet<Min, Max, T> = LengthLimitedSet<Bounded<Min>, Bounded<Max>, T>;
 
 #[cfg(test)]
 mod tests {

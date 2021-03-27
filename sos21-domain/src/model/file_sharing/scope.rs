@@ -1,4 +1,4 @@
-use crate::model::form::FormId;
+use crate::model::form::{Form, FormId};
 use crate::model::form_answer::FormAnswer;
 use crate::model::project::{Project, ProjectId};
 use crate::model::user::User;
@@ -55,6 +55,18 @@ impl FileSharingScope {
         match self {
             FileSharingScope::FormAnswer(project_id, form_id) => {
                 *project_id == answer.project_id && *form_id == answer.form_id
+            }
+            FileSharingScope::Project(_)
+            | FileSharingScope::Committee
+            | FileSharingScope::CommitteeOperator => false,
+            FileSharingScope::Public => true,
+        }
+    }
+
+    pub fn contains_project_form_answer(&self, project: &Project, form: &Form) -> bool {
+        match self {
+            FileSharingScope::FormAnswer(project_id, form_id) => {
+                *project_id == project.id && *form_id == form.id
             }
             FileSharingScope::Project(_)
             | FileSharingScope::Committee

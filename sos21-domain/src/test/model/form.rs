@@ -1,7 +1,8 @@
 use crate::model::{
     date_time::DateTime,
     form::{
-        Form, FormCondition, FormConditionProjectSet, FormDescription, FormId, FormName, FormPeriod,
+        Form, FormCondition, FormConditionProjectSet, FormDescription, FormId, FormItems, FormName,
+        FormPeriod,
     },
     project::ProjectAttributes,
     project_query::{ProjectQuery, ProjectQueryConjunction},
@@ -43,6 +44,19 @@ pub fn mock_form_condition() -> FormCondition {
         query: mock_project_query(),
         includes: FormConditionProjectSet::from_projects(Vec::new()).unwrap(),
         excludes: FormConditionProjectSet::from_projects(Vec::new()).unwrap(),
+    }
+}
+
+pub fn new_form_with_items(author_id: UserId, items: FormItems) -> Form {
+    Form {
+        id: new_form_id(),
+        created_at: DateTime::now(),
+        author_id,
+        name: mock_form_name(),
+        description: mock_form_description(),
+        period: mock_form_period(),
+        items,
+        condition: mock_form_condition(),
     }
 }
 

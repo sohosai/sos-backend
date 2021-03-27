@@ -6,9 +6,11 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 pub mod checks;
+pub mod file_sharings;
 pub mod grid_rows;
 pub mod text;
 pub use checks::FormAnswerItemChecks;
+pub use file_sharings::{FileSharingAnswer, FormAnswerItemFileSharings};
 pub use grid_rows::{FormAnswerItemGridRows, GridRadioRowAnswer};
 pub use text::FormAnswerItemText;
 
@@ -82,4 +84,5 @@ pub enum FormAnswerItemBody {
     Checkbox(FormAnswerItemChecks),
     Radio(Option<RadioId>),
     GridRadio(FormAnswerItemGridRows),
+    File(FormAnswerItemFileSharings),
 }

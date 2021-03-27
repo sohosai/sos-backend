@@ -4,6 +4,7 @@ use crate::model::form_answer::FormAnswer;
 use crate::model::project::Project;
 use crate::model::user::User;
 
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use uuid::Uuid;
 
@@ -12,7 +13,8 @@ pub use scope::FileSharingScope;
 mod state;
 pub use state::FileSharingState;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct FileSharingId(Uuid);
 
 impl FileSharingId {
@@ -136,6 +138,10 @@ impl FileSharing {
 
     pub fn file_id(&self) -> FileId {
         self.0.file_id
+    }
+
+    pub fn scope(&self) -> FileSharingScope {
+        self.0.scope
     }
 
     /// Equivalent to `sharing.state_at(DateTime::now())`
