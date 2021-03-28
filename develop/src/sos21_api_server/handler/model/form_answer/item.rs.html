@@ -102,7 +102,22 @@
 <span id="99"> 99</span>
 <span id="100">100</span>
 <span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">file_sharing</span>::<span class="ident">FileSharingId</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">form</span>::<span class="ident">item</span>::{
     <span class="ident">CheckboxId</span>, <span class="ident">FormItemId</span>, <span class="ident">GridRadioColumnId</span>, <span class="ident">GridRadioRowId</span>, <span class="ident">RadioId</span>,
 };
@@ -140,6 +155,7 @@
     <span class="ident">Checkbox</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">CheckboxId</span><span class="op">&gt;</span>),
     <span class="ident">Radio</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RadioId</span><span class="op">&gt;</span>),
     <span class="ident">GridRadio</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">GridRadioRowAnswer</span><span class="op">&gt;</span>),
+    <span class="ident">File</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FileSharingId</span><span class="op">&gt;</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">FormAnswerItemBody</span> {
@@ -159,6 +175,12 @@
                     .<span class="ident">map</span>(<span class="ident">GridRadioRowAnswer</span>::<span class="ident">from_use_case</span>)
                     .<span class="ident">collect</span>(),
             ),
+            <span class="ident">use_case</span>::<span class="ident">FormAnswerItemBody</span>::<span class="ident">File</span>(<span class="ident">answer</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">FormAnswerItemBody</span>::<span class="ident">File</span>(
+                <span class="ident">answer</span>
+                    .<span class="ident">into_iter</span>()
+                    .<span class="ident">map</span>(<span class="ident">FileSharingId</span>::<span class="ident">from_use_case</span>)
+                    .<span class="ident">collect</span>(),
+            ),
         }
     }
 
@@ -176,6 +198,12 @@
                 <span class="ident">answer</span>
                     .<span class="ident">into_iter</span>()
                     .<span class="ident">map</span>(<span class="ident">GridRadioRowAnswer</span>::<span class="ident">into_use_case</span>)
+                    .<span class="ident">collect</span>(),
+            ),
+            <span class="ident">FormAnswerItemBody</span>::<span class="ident">File</span>(<span class="ident">answer</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">FormAnswerItemBody</span>::<span class="ident">File</span>(
+                <span class="ident">answer</span>
+                    .<span class="ident">into_iter</span>()
+                    .<span class="ident">map</span>(<span class="ident">FileSharingId</span>::<span class="ident">into_use_case</span>)
                     .<span class="ident">collect</span>(),
             ),
         }
@@ -205,4 +233,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../../../";window.currentCrate = "sos21_api_server";</script><script src="../../../../../main.js"></script><script src="../../../../../source-script.js"></script><script src="../../../../../source-files.js"></script><script defer src="../../../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../../" data-current-crate="sos21_api_server"></div>
+    <script src="../../../../../main.js"></script><script src="../../../../../source-script.js"></script><script src="../../../../../source-files.js"></script><script defer src="../../../../../search-index.js"></script></body></html>

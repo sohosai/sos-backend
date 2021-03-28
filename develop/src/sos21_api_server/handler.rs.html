@@ -265,6 +265,50 @@
 <span id="262">262</span>
 <span id="263">263</span>
 <span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">Serialize</span>;
 <span class="kw">use</span> <span class="ident">sos21_use_case</span>::<span class="ident">UseCaseError</span>;
@@ -357,6 +401,27 @@
               <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">handle_raw_handler_result</span>
         }
     };
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">vis</span>:<span class="ident">vis</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span> (
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ctx</span>:<span class="ident">ident</span>: <span class="ident">Context</span>
+        $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>:<span class="ident">ident</span> : <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ty</span>)<span class="op">*</span> $(,)<span class="question-mark">?</span>
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">HandlerResult</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">warp</span>::<span class="ident">Reply</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">err</span>:<span class="ident">ty</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">body</span>:<span class="ident">block</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">vis</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>(
+            <span class="ident">app</span>: <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">App</span>
+            $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>)<span class="op">*</span>
+        ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw">impl</span> ::<span class="ident">warp</span>::<span class="ident">reply</span>::<span class="ident">Reply</span>, ::<span class="ident">warp</span>::<span class="ident">reject</span>::<span class="ident">Rejection</span><span class="op">&gt;</span> {
+            <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">run</span>(
+                <span class="ident">app</span>: <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">App</span>
+                $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>)<span class="op">*</span>
+            ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">HandlerResult</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">warp</span>::<span class="ident">Reply</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">err</span><span class="op">&gt;</span> {
+                <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ctx</span>: <span class="ident">Context</span> <span class="op">=</span> <span class="ident">app</span>.<span class="ident">start_context</span>().<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">result</span>: <span class="ident">HandlerResult</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">err</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">body</span>;
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ctx</span>.<span class="ident">commit_changes</span>().<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="ident">result</span>
+            }
+
+            <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">handle_raw_handler_result</span>(<span class="ident">run</span>(<span class="ident">app</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span>).<span class="kw">await</span>)
+        }
+    };
 }
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">handler</span> {
@@ -376,6 +441,27 @@
         <span class="macro">handler</span><span class="macro">!</span> {
                 @<span class="ident">impl_login</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">vis</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ctx</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>),<span class="kw-2">*</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">resp</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">err</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">body</span>;
               <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">handle_handler_result</span>
+        }
+    };
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">vis</span>:<span class="ident">vis</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span> (
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ctx</span>:<span class="ident">ident</span>: <span class="ident">Context</span>
+        $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>:<span class="ident">ident</span> : <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ty</span>)<span class="op">*</span> $(,)<span class="question-mark">?</span>
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">HandlerResult</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">resp</span>:<span class="ident">ty</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">err</span>:<span class="ident">ty</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">body</span>:<span class="ident">block</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">vis</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>(
+            <span class="ident">app</span>: <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">App</span>
+            $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>)<span class="op">*</span>
+        ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw">impl</span> ::<span class="ident">warp</span>::<span class="ident">reply</span>::<span class="ident">Reply</span>, ::<span class="ident">warp</span>::<span class="ident">reject</span>::<span class="ident">Rejection</span><span class="op">&gt;</span> {
+            <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">run</span>(
+                <span class="ident">app</span>: <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">App</span>
+                $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>)<span class="op">*</span>
+            ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">HandlerResult</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">resp</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">err</span><span class="op">&gt;</span> {
+                <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ctx</span>: <span class="ident">Context</span> <span class="op">=</span> <span class="ident">app</span>.<span class="ident">start_context</span>().<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let</span> <span class="ident">result</span>: <span class="ident">HandlerResult</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">err</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">body</span>;
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ctx</span>.<span class="ident">commit_changes</span>().<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="ident">result</span>
+            }
+
+            <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">handle_handler_result</span>(<span class="ident">run</span>(<span class="ident">app</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span>).<span class="kw">await</span>)
         }
     };
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">vis</span>:<span class="ident">vis</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span> (
@@ -470,6 +556,8 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">signup</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">user</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">signup</span>::<span class="ident">handler</span> <span class="kw">as</span> <span class="ident">signup</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_distribution</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_sharing</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">me</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">meta</span>;
 
@@ -531,4 +619,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "sos21_api_server";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="sos21_api_server"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

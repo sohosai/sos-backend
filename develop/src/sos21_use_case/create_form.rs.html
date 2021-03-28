@@ -656,6 +656,38 @@
 <span id="653">653</span>
 <span id="654">654</span>
 <span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+<span id="666">666</span>
+<span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
+<span id="672">672</span>
+<span id="673">673</span>
+<span id="674">674</span>
+<span id="675">675</span>
+<span id="676">676</span>
+<span id="677">677</span>
+<span id="678">678</span>
+<span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
+<span id="684">684</span>
+<span id="685">685</span>
+<span id="686">686</span>
+<span id="687">687</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::{
@@ -673,6 +705,7 @@
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::<span class="ident">permissions</span>::<span class="ident">Permissions</span>;
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
+    <span class="ident">file</span>,
     <span class="ident">form</span>::{<span class="self">self</span>, <span class="ident">item</span>},
     <span class="ident">project</span>, <span class="ident">project_query</span>,
 };
@@ -719,6 +752,9 @@
     <span class="ident">NoGridRadioColumns</span>,
     <span class="ident">TooFewGridRadioColumnsWhenExclusiveAndRequired</span>,
     <span class="ident">TooManyGridRadioColumns</span>,
+    <span class="ident">TooManyFileTypes</span>,
+    <span class="ident">NoFileTypes</span>,
+    <span class="ident">DuplicatedFileType</span>,
     <span class="ident">DuplicatedCheckboxId</span>(<span class="ident">CheckboxId</span>),
     <span class="ident">DuplicatedRadioId</span>(<span class="ident">RadioId</span>),
     <span class="ident">DuplicatedGridRadioRowId</span>(<span class="ident">GridRadioRowId</span>),
@@ -804,6 +840,14 @@
             <span class="ident">item</span>::<span class="ident">grid_radio</span>::<span class="ident">FromColumnsErrorKind</span>::<span class="ident">DuplicatedColumnId</span> { <span class="ident">id</span> } <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">ItemError</span>::<span class="ident">DuplicatedGridRadioColumnId</span>(<span class="ident">GridRadioColumnId</span>::<span class="ident">from_entity</span>(<span class="ident">id</span>))
             }
+        }
+    }
+
+    <span class="kw">fn</span> <span class="ident">from_file_types_error</span>(<span class="ident">err</span>: <span class="ident">item</span>::<span class="ident">file</span>::<span class="ident">types</span>::<span class="ident">FromTypesError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="kw">match</span> <span class="ident">err</span>.<span class="ident">kind</span>() {
+            <span class="ident">item</span>::<span class="ident">file</span>::<span class="ident">types</span>::<span class="ident">FromTypesErrorKind</span>::<span class="ident">TooLong</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ItemError</span>::<span class="ident">TooManyFileTypes</span>,
+            <span class="ident">item</span>::<span class="ident">file</span>::<span class="ident">types</span>::<span class="ident">FromTypesErrorKind</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ItemError</span>::<span class="ident">NoFileTypes</span>,
+            <span class="ident">item</span>::<span class="ident">file</span>::<span class="ident">types</span>::<span class="ident">FromTypesErrorKind</span>::<span class="ident">Duplicated</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ItemError</span>::<span class="ident">DuplicatedFileType</span>,
         }
     }
 }
@@ -1111,6 +1155,26 @@
                 .<span class="ident">map_err</span>(<span class="ident">ItemError</span>::<span class="ident">from_grid_radio_content_error</span>)<span class="question-mark">?</span>;
             <span class="ident">item</span>::<span class="ident">FormItemBody</span>::<span class="ident">GridRadio</span>(<span class="ident">grid_item</span>)
         }
+        <span class="ident">FormItemBody</span>::<span class="ident">File</span> {
+            <span class="ident">types</span>,
+            <span class="ident">accept_multiple_files</span>,
+            <span class="ident">is_required</span>,
+        } <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">let</span> <span class="ident">types</span> <span class="op">=</span> <span class="ident">types</span>
+                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">types</span><span class="op">|</span> {
+                    <span class="ident">item</span>::<span class="ident">file</span>::<span class="ident">FileFormItemTypes</span>::<span class="ident">from_types</span>(
+                        <span class="ident">types</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="ident">file</span>::<span class="ident">FileType</span>::<span class="ident">from_mime</span>),
+                    )
+                })
+                .<span class="ident">transpose</span>()
+                .<span class="ident">map_err</span>(<span class="ident">ItemError</span>::<span class="ident">from_file_types_error</span>)<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">file_item</span> <span class="op">=</span> <span class="ident">item</span>::<span class="ident">FileFormItem</span> {
+                <span class="ident">types</span>,
+                <span class="ident">accept_multiple_files</span>,
+                <span class="ident">is_required</span>,
+            };
+            <span class="ident">item</span>::<span class="ident">FormItemBody</span>::<span class="ident">File</span>(<span class="ident">file_item</span>)
+        }
     };
 
     <span class="prelude-val">Ok</span>(<span class="ident">form</span>::<span class="ident">FormItem</span> {
@@ -1313,4 +1377,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "sos21_use_case";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="sos21_use_case"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

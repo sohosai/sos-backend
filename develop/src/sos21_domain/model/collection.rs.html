@@ -280,9 +280,46 @@
 <span id="277">277</span>
 <span id="278">278</span>
 <span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Borrow</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::{<span class="ident">HashMap</span>, <span class="ident">HashSet</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">hash</span>::<span class="ident">Hash</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
@@ -296,17 +333,17 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">bound</span>::{<span class="ident">Bound</span>, <span class="ident">Bounded</span>};
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">length_limited_collection</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ident</span> <span class="op">&lt;</span> $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>:<span class="ident">ident</span> ),<span class="op">*</span> <span class="op">&gt;</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
-        <span class="kw">pub</span> <span class="kw">struct</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">struct</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span> $(,<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span><span class="op">&gt;</span> {
             <span class="ident">_lower</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">Lower</span><span class="op">&gt;</span>,
             <span class="ident">_upper</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">Upper</span><span class="op">&gt;</span>,
-            <span class="ident">inner</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+            <span class="ident">inner</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>),<span class="kw-2">*</span><span class="op">&gt;</span>,
         }
 
         <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> {
-            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">v</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">LengthError</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span><span class="op">&gt;</span><span class="op">&gt;</span>
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span> $(,<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span> $(,<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span><span class="op">&gt;</span> {
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">v</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>),<span class="kw-2">*</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">LengthError</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span><span class="op">&gt;</span><span class="op">&gt;</span>
             <span class="kw">where</span>
                 <span class="ident">Lower</span>: <span class="ident">Bound</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
                 <span class="ident">Upper</span>: <span class="ident">Bound</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
@@ -342,28 +379,24 @@
                 <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">len</span>()
             }
 
-            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">T</span><span class="op">&gt;</span> {
-                <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">iter</span>()
-            }
-
-            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_inner</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_inner</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>),<span class="kw-2">*</span><span class="op">&gt;</span> {
                 <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>
             }
 
-            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_inner</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+            <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_inner</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>),<span class="kw-2">*</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">inner</span>
             }
         }
 
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span>: <span class="ident">Debug</span><span class="op">&gt;</span> <span class="ident">Debug</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>: <span class="ident">Debug</span>)<span class="kw-2">*</span><span class="op">&gt;</span> <span class="ident">Debug</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span><span class="op">&gt;</span> {
             <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-                <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">Debug</span><span class="op">&gt;</span>::<span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>, <span class="ident">f</span>)
+                <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>),<span class="kw-2">*</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">Debug</span><span class="op">&gt;</span>::<span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>, <span class="ident">f</span>)
             }
         }
 
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Serialize</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span>
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span><span class="op">&gt;</span> <span class="ident">Serialize</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span><span class="op">&gt;</span>
         <span class="kw">where</span>
-            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">Serialize</span>,
+            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>),<span class="kw-2">*</span><span class="op">&gt;</span>: <span class="ident">Serialize</span>,
         {
             <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serializer</span>: <span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">S</span>::<span class="prelude-val">Ok</span>, <span class="ident">S</span>::<span class="ident">Error</span><span class="op">&gt;</span>
             <span class="kw">where</span>
@@ -373,17 +406,17 @@
             }
         }
 
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span>
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">Lower</span>, <span class="ident">Upper</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span><span class="op">&gt;</span> <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>)<span class="kw-2">*</span><span class="op">&gt;</span>
         <span class="kw">where</span>
             <span class="ident">Lower</span>: <span class="ident">Bound</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
             <span class="ident">Upper</span>: <span class="ident">Bound</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
-            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span><span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>),<span class="kw-2">*</span><span class="op">&gt;</span>: <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
         {
             <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>(<span class="ident">deserializer</span>: <span class="ident">D</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">D</span>::<span class="ident">Error</span><span class="op">&gt;</span>
             <span class="kw">where</span>
                 <span class="ident">D</span>: <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
             {
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>::<span class="ident">new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>::<span class="ident">deserialize</span>(<span class="ident">deserializer</span>)<span class="question-mark">?</span>).<span class="ident">map_err</span>(<span class="ident">de</span>::<span class="ident">Error</span>::<span class="ident">custom</span>)
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>::<span class="ident">new</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>::<span class="op">&lt;</span>$(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">param</span>),<span class="kw-2">*</span><span class="op">&gt;</span>::<span class="ident">deserialize</span>(<span class="ident">deserializer</span>)<span class="question-mark">?</span>).<span class="ident">map_err</span>(<span class="ident">de</span>::<span class="ident">Error</span>::<span class="ident">custom</span>)
             }
         }
     };
@@ -419,8 +452,15 @@
     }
 }
 
-<span class="macro">length_limited_collection</span><span class="macro">!</span> { <span class="ident">LengthLimitedVec</span>, <span class="ident">Vec</span> }
-<span class="macro">length_limited_collection</span><span class="macro">!</span> { <span class="ident">LengthLimitedSet</span>, <span class="ident">HashSet</span> }
+<span class="macro">length_limited_collection</span><span class="macro">!</span> { <span class="ident">LengthLimitedVec</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> }
+<span class="macro">length_limited_collection</span><span class="macro">!</span> { <span class="ident">LengthLimitedSet</span>, <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> }
+<span class="macro">length_limited_collection</span><span class="macro">!</span> { <span class="ident">LengthLimitedMap</span>, <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> }
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">LengthLimitedVec</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;_</span> <span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">iter</span>()
+    }
+}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span>: <span class="ident">PartialEq</span><span class="op">&gt;</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">LengthLimitedVec</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
@@ -437,6 +477,12 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span>: <span class="ident">Eq</span> <span class="op">+</span> <span class="ident">Hash</span><span class="op">&gt;</span> <span class="ident">Eq</span> <span class="kw">for</span> <span class="ident">LengthLimitedSet</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> {}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">LengthLimitedSet</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;_</span> <span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">iter</span>()
+    }
+}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">LengthLimitedSet</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
@@ -473,8 +519,36 @@
     }
 }
 
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> <span class="ident">LengthBoundedMap</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (<span class="kw-2">&amp;</span><span class="lifetime">&#39;_</span> <span class="ident">K</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;_</span> <span class="ident">V</span>)<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">iter</span>()
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> <span class="ident">LengthBoundedMap</span><span class="op">&lt;</span><span class="ident">Lower</span>, <span class="ident">Upper</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">K</span>: <span class="ident">Eq</span> <span class="op">+</span> <span class="ident">Hash</span>,
+{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains_key</span><span class="op">&lt;</span><span class="ident">Q</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">Q</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>
+    <span class="kw">where</span>
+        <span class="ident">Q</span>: <span class="ident">Hash</span> <span class="op">+</span> <span class="ident">Eq</span>,
+        <span class="ident">K</span>: <span class="ident">Borrow</span><span class="op">&lt;</span><span class="ident">Q</span><span class="op">&gt;</span>,
+    {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">contains_key</span>(<span class="ident">key</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="ident">Q</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">Q</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">V</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">Q</span>: <span class="ident">Hash</span> <span class="op">+</span> <span class="ident">Eq</span>,
+        <span class="ident">K</span>: <span class="ident">Borrow</span><span class="op">&lt;</span><span class="ident">Q</span><span class="op">&gt;</span>,
+    {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">get</span>(<span class="ident">key</span>)
+    }
+}
+
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">LengthBoundedVec</span><span class="op">&lt;</span><span class="ident">Min</span>, <span class="ident">Max</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">LengthLimitedVec</span><span class="op">&lt;</span><span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">Min</span><span class="op">&gt;</span>, <span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">Max</span><span class="op">&gt;</span>, <span class="ident">T</span><span class="op">&gt;</span>;
-<span class="comment">// pub type LengthBoundedSet&lt;Min, Max, T&gt; = LengthLimitedSet&lt;Bounded&lt;Min&gt;, Bounded&lt;Max&gt;, T&gt;;</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">LengthBoundedSet</span><span class="op">&lt;</span><span class="ident">Min</span>, <span class="ident">Max</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">LengthLimitedSet</span><span class="op">&lt;</span><span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">Min</span><span class="op">&gt;</span>, <span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">Max</span><span class="op">&gt;</span>, <span class="ident">T</span><span class="op">&gt;</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">LengthBoundedMap</span><span class="op">&lt;</span><span class="ident">Min</span>, <span class="ident">Max</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">LengthLimitedMap</span><span class="op">&lt;</span><span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">Min</span><span class="op">&gt;</span>, <span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">Max</span><span class="op">&gt;</span>, <span class="ident">K</span>, <span class="ident">V</span><span class="op">&gt;</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
@@ -561,4 +635,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "sos21_domain";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="sos21_domain"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

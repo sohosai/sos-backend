@@ -157,7 +157,21 @@
 <span id="154">154</span>
 <span id="155">155</span>
 <span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="ident">mime</span>::<span class="ident">Mime</span>;
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::<span class="ident">form</span>::<span class="ident">item</span> <span class="kw">as</span> <span class="ident">entity</span>;
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
 
@@ -215,6 +229,11 @@
         <span class="ident">columns</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">GridRadioColumn</span><span class="op">&gt;</span>,
         <span class="ident">exclusive_column</span>: <span class="ident">bool</span>,
         <span class="ident">required</span>: <span class="ident">GridRadioRequired</span>,
+    },
+    <span class="ident">File</span> {
+        <span class="ident">types</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Mime</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">accept_multiple_files</span>: <span class="ident">bool</span>,
+        <span class="ident">is_required</span>: <span class="ident">bool</span>,
     },
 }
 
@@ -280,6 +299,13 @@
                     <span class="ident">exclusive_column</span>: <span class="ident">item</span>.<span class="ident">exclusive_column</span>,
                 }
             }
+            <span class="ident">entity</span>::<span class="ident">FormItemBody</span>::<span class="ident">File</span>(<span class="ident">item</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">FormItemBody</span>::<span class="ident">File</span> {
+                <span class="ident">types</span>: <span class="ident">item</span>
+                    .<span class="ident">types</span>
+                    .<span class="ident">map</span>(<span class="op">|</span><span class="ident">types</span><span class="op">|</span> <span class="ident">types</span>.<span class="ident">into_types</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">type_</span><span class="op">|</span> <span class="ident">type_</span>.<span class="ident">into_mime</span>()).<span class="ident">collect</span>()),
+                <span class="ident">accept_multiple_files</span>: <span class="ident">item</span>.<span class="ident">accept_multiple_files</span>,
+                <span class="ident">is_required</span>: <span class="ident">item</span>.<span class="ident">is_required</span>,
+            },
         }
     }
 }
@@ -315,4 +341,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../../";window.currentCrate = "sos21_use_case";</script><script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="sos21_use_case"></div>
+    <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>

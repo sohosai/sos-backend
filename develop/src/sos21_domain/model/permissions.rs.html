@@ -14,19 +14,26 @@
 <span id="11">11</span>
 <span id="12">12</span>
 <span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="ident">bitflags</span>::<span class="macro">bitflags</span><span class="macro">!</span> {
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Permissions</span>: <span class="ident">u32</span> {
-        <span class="kw">const</span> <span class="ident">READ_ALL_USERS</span>        <span class="op">=</span> <span class="number">0b00000001</span>;
-        <span class="kw">const</span> <span class="ident">READ_ALL_PROJECTS</span>     <span class="op">=</span> <span class="number">0b00000010</span>;
-        <span class="kw">const</span> <span class="ident">UPDATE_ALL_USERS</span>      <span class="op">=</span> <span class="number">0b00000100</span>;
-        <span class="kw">const</span> <span class="ident">UPDATE_ALL_PROJECTS</span>   <span class="op">=</span> <span class="number">0b00001000</span>;
-        <span class="kw">const</span> <span class="ident">READ_ALL_FORMS</span>        <span class="op">=</span> <span class="number">0b00010000</span>;
-        <span class="kw">const</span> <span class="ident">CREATE_FORMS</span>          <span class="op">=</span> <span class="number">0b00100000</span>;
-        <span class="kw">const</span> <span class="ident">READ_ALL_FORM_ANSWERS</span> <span class="op">=</span> <span class="number">0b01000000</span>;
-        <span class="kw">const</span> <span class="ident">CREATE_FILES</span>          <span class="op">=</span> <span class="number">0b10000000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_USERS</span>              <span class="op">=</span> <span class="number">0b0000000000000001</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_PROJECTS</span>           <span class="op">=</span> <span class="number">0b0000000000000010</span>;
+        <span class="kw">const</span> <span class="ident">UPDATE_ALL_USERS</span>            <span class="op">=</span> <span class="number">0b0000000000000100</span>;
+        <span class="kw">const</span> <span class="ident">UPDATE_ALL_PROJECTS</span>         <span class="op">=</span> <span class="number">0b0000000000001000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_FORMS</span>              <span class="op">=</span> <span class="number">0b0000000000010000</span>;
+        <span class="kw">const</span> <span class="ident">CREATE_FORMS</span>                <span class="op">=</span> <span class="number">0b0000000000100000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_FORM_ANSWERS</span>       <span class="op">=</span> <span class="number">0b0000000001000000</span>;
+        <span class="kw">const</span> <span class="ident">CREATE_FILES</span>                <span class="op">=</span> <span class="number">0b0000000010000000</span>;
+        <span class="kw">const</span> <span class="ident">SHARE_FILES</span>                 <span class="op">=</span> <span class="number">0b0000000100000000</span>;
+        <span class="kw">const</span> <span class="ident">DISTRIBUTE_FILES</span>            <span class="op">=</span> <span class="number">0b0000001000000000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_FILE_DISTRIBUTIONS</span> <span class="op">=</span> <span class="number">0b0000010000000000</span>;
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "sos21_domain";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="sos21_domain"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

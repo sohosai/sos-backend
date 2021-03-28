@@ -62,6 +62,16 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">permissions</span>::<span class="ident">Permissions</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">UserFileUsageQuota</span>;
@@ -90,14 +100,16 @@
                 <span class="ident">UserRole</span>::<span class="ident">Committee</span>.<span class="ident">permissions</span>()
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_USERS</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">CREATE_FORMS</span>
+                    <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">DISTRIBUTE_FILES</span>
             }
             <span class="ident">UserRole</span>::<span class="ident">Committee</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">UserRole</span>::<span class="ident">General</span>.<span class="ident">permissions</span>()
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_PROJECTS</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_FORMS</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_FORM_ANSWERS</span>
+                    <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_FILE_DISTRIBUTIONS</span>
             }
-            <span class="ident">UserRole</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Permissions</span>::<span class="ident">CREATE_FILES</span>,
+            <span class="ident">UserRole</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Permissions</span>::<span class="ident">CREATE_FILES</span> <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">SHARE_FILES</span>,
         }
     }
 
@@ -123,6 +135,15 @@
             <span class="ident">UserRole</span>::<span class="ident">Administrator</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserFileUsageQuota</span>::<span class="ident">unlimited</span>(),
         }
     }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_committee</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">UserRole</span>::<span class="ident">CommitteeOperator</span> <span class="op">|</span> <span class="ident">UserRole</span>::<span class="ident">Committee</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_committee_operator</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>, <span class="ident">UserRole</span>::<span class="ident">CommitteeOperator</span>)
+    }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../../";window.currentCrate = "sos21_domain";</script><script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="sos21_domain"></div>
+    <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>

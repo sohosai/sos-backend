@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["LengthErrorKind",""]],"struct":[["LengthError",""],["LengthLimitedSet",""],["LengthLimitedVec",""]],"type":[["BoundedLengthError",""],["LengthBoundedVec",""]]});
+initSidebarItems({"enum":[["LengthErrorKind",""]],"struct":[["LengthError",""],["LengthLimitedMap",""],["LengthLimitedSet",""],["LengthLimitedVec",""]],"type":[["BoundedLengthError",""],["LengthBoundedMap",""],["LengthBoundedSet",""],["LengthBoundedVec",""]]});

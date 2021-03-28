@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["date_time",""],["file",""],["form",""],["form_answer",""],["project",""],["project_query",""],["user",""]]});
+initSidebarItems({"mod":[["date_time",""],["distributed_file",""],["file",""],["file_distribution",""],["file_sharing",""],["form",""],["form_answer",""],["project",""],["project_query",""],["serde",""],["user",""]]});
