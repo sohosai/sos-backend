@@ -153,6 +153,9 @@ pub fn endpoints(
                 / "get-file" => GET (handler::file_sharing::form_answer::get_file),
                 / "get-file-info" => GET (handler::file_sharing::form_answer::get_file_info),
             }
+        },
+        / "file-distribution" {
+            / "create" => POST (handler::file_distribution::create),
         }
     };
 

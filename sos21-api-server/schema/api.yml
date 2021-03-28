@@ -2897,6 +2897,148 @@ paths:
           name: answer_id
           required: true
       description: 指定されたファイル共有で申請の回答に対して共有されているファイルの情報を返します。
+  /file-distribution/create:
+    post:
+      summary: file-distribution/create
+      tags:
+        - file_distribution
+        - committee
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distribution:
+                    $ref: ./model/file_distribution/FileDistribution.yml
+                required:
+                  - distribution
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_FIELD
+                              field:
+                                type: string
+                            required:
+                              - type
+                              - field
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing, File, or Project Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - FILE_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-distribution/create
+      description: ファイルを企画に配布します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                files:
+                  type: array
+                  items:
+                    type: object
+                    oneOf:
+                      - properties:
+                          project_id:
+                            $ref: ./model/project/ProjectId.yml
+                          sharing_id:
+                            $ref: ./model/file_sharing/FileSharingId.yml
+                        required:
+                          - project_id
+                          - sharing_id
+                      - properties:
+                          project_id:
+                            $ref: ./model/project/ProjectId.yml
+                          file_id:
+                            $ref: ./model/file/FileId.yml
+                        required:
+                          - project_id
+                          - file_id
+              required:
+                - name
+                - description
+                - files
   /meta/health/check:
     get:
       summary: meta/health/check
@@ -3386,6 +3528,7 @@ components:
                                 enum:
                                   - INSUFFICIENT_PERMISSIONS
                                   - NON_SHARABLE_FILE
+                                  - OUT_OF_SCOPE_FILE_SHARING
                                   - INVALID_FILE_SHARING
                         required:
                           - type
@@ -3453,5 +3596,6 @@ tags:
   - name: committee
   - name: admin
   - name: meta
+  - name: file_distribution
 security:
   - token: []

@@ -244,6 +244,7 @@ pub mod project;
 pub mod signup;
 pub mod user;
 pub use signup::handler as signup;
+pub mod file_distribution;
 pub mod file_sharing;
 pub mod me;
 pub mod meta;

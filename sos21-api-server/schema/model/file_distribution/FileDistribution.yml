@@ -1,0 +1,32 @@
+title: FileDistribution
+type: object
+properties:
+  id:
+    $ref: ./FileDistributionId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  author_id:
+    $ref: ../user/UserId.yml
+  name:
+    type: string
+  description:
+    type: string
+  files:
+    type: array
+    items:
+      type: object
+      properties:
+        project_id:
+          $ref: ../project/ProjectId.yml
+        sharing_id:
+          $ref: ../file_sharing/FileSharingId.yml
+      required:
+        - project_id
+        - sharing_id
+required:
+  - id
+  - created_at
+  - author_id
+  - name
+  - description
+  - files
