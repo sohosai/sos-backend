@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - Adjust file usage quota ([#43](https://github.com/sohosai/sos21-backend/pull/43))
+- Accept all email address with 'tsukuba.ac.jp' suffix as university email address ([#45](https://github.com/sohosai/sos21-backend/pull/45))
 
 ### Deprecated
 ### Removed

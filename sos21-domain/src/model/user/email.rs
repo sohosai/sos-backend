@@ -50,7 +50,7 @@ impl UserEmailAddress {
         let email = EmailAddress::from_string(s.into()).map_err(|err| EmailAddressError {
             inner: EmailAddressErrorInner::InvalidEmailAddress(err),
         })?;
-        if email.ends_with("@s.tsukuba.ac.jp") || email.ends_with("@u.tsukuba.ac.jp") {
+        if email.ends_with("tsukuba.ac.jp") {
             Ok(UserEmailAddress(email))
         } else {
             Err(EmailAddressError {
@@ -73,7 +73,7 @@ mod tests {
         assert!(UserEmailAddress::from_string("a@b.c").is_err());
         assert!(UserEmailAddress::from_string("a.b.c@de.fg").is_err());
         assert!(UserEmailAddress::from_string("ab.c@d-e.fg").is_err());
-        assert!(UserEmailAddress::from_string("ab.c@coins.tsukuba.ac.jp").is_err());
+        assert!(UserEmailAddress::from_string("a@s.tsukuba.ac.jp.com").is_err());
     }
 
     #[test]
@@ -81,5 +81,7 @@ mod tests {
         assert!(UserEmailAddress::from_string("a@s.tsukuba.ac.jp").is_ok());
         assert!(UserEmailAddress::from_string("a.b.c@u.tsukuba.ac.jp").is_ok());
         assert!(UserEmailAddress::from_string("a-c@s.tsukuba.ac.jp").is_ok());
+        assert!(UserEmailAddress::from_string("abcde@su.tsukuba.ac.jp").is_ok());
+        assert!(UserEmailAddress::from_string("ab.c@coins.tsukuba.ac.jp").is_ok());
     }
 }
