@@ -156,6 +156,8 @@ pub fn endpoints(
         },
         / "file-distribution" {
             / "create" => POST (handler::file_distribution::create),
+            / "list" => GET (handler::file_distribution::list),
+            / "get" => GET (handler::file_distribution::get),
         }
     };
 

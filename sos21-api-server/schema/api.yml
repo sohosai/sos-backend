@@ -3039,6 +3039,70 @@ paths:
                 - name
                 - description
                 - files
+  /file-distribution/get:
+    get:
+      summary: file-distribution/get
+      tags:
+        - file_distribution
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distribution:
+                    $ref: ./model/file_distribution/FileDistribution.yml
+                required:
+                  - distribution
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileDistributionNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-distribution/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: distribution_id
+          required: true
+      description: 指定されたファイル配布の情報を返します。
+  /file-distribution/list:
+    get:
+      summary: file-distribution/list
+      tags:
+        - file_distribution
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distributions:
+                    type: array
+                    items:
+                      $ref: ./model/file_distribution/FileDistribution.yml
+                required:
+                  - distributions
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-distribution/list
+      parameters: []
+      description: ファイル配布の一覧を返します。
   /meta/health/check:
     get:
       summary: meta/health/check
@@ -3403,6 +3467,49 @@ components:
                   type: API
                   info:
                     type: FILE_SHARING_NOT_FOUND
+    FileDistributionNotFound:
+      description: File Distribution Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - FILE_DISTRIBUTION_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: FILE_DISTRIBUTION_NOT_FOUND
     InternalServerError:
       description: Internal Server Error
       content:
