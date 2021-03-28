@@ -14,3 +14,18 @@ CREATE TABLE file_sharings (
     CONSTRAINT file_sharings_scope_form_answer_project_id CHECK ((scope = 'form_answer') = (form_answer_project_id IS NOT NULL)),
     CONSTRAINT file_sharings_scope_form_answer_form_id CHECK ((scope = 'form_answer') = (form_answer_form_id IS NOT NULL))
 );
+
+CREATE TABLE file_distributions (
+    id uuid PRIMARY KEY,
+    created_at timestamptz NOT NULL,
+    author_id varchar(64) NOT NULL REFERENCES users ON DELETE RESTRICT,
+    name varchar(64) NOT NULL,
+    description varchar(1024) NOT NULL
+);
+
+CREATE TABLE file_distribution_files (
+    distribution_id uuid NOT NULL REFERENCES file_distributions ON DELETE RESTRICT,
+    project_id uuid NOT NULL REFERENCES projects ON DELETE RESTRICT,
+    sharing_id uuid NOT NULL REFERENCES file_sharings ON DELETE RESTRICT,
+    UNIQUE (distribution_id, project_id)
+);
