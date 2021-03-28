@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.3.0] - 2021-03-29
+
+### Added
 
 - File sharings ([#42](https://github.com/sohosai/sos21-backend/pull/42))
 
@@ -15,7 +24,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Adjust file usage quota ([#43](https://github.com/sohosai/sos21-backend/pull/43))
 - Accept all email address with 'tsukuba.ac.jp' suffix as university email address ([#45](https://github.com/sohosai/sos21-backend/pull/45))
 
-### Deprecated
 ### Removed
 
 - Options to specify how the checkbox answers are displayed when exporting form answers ([#48](https://github.com/sohosai/sos21-backend/pull/48))

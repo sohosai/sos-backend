@@ -9,11 +9,18 @@ with the HTTP API interface being the "public API".
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.3.0] - 2021-03-29
+
+### Added
 
 - File sharings ([#42](https://github.com/sohosai/sos21-backend/pull/42))
 
-### Changed
-### Deprecated
 ### Removed
 
 - Options to specify how the checkbox answers are displayed when exporting form answers ([#48](https://github.com/sohosai/sos21-backend/pull/48))
