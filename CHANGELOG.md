@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Security
 
+- Update dependencies ([#47](https://github.com/sohosai/sos21-backend/pull/47))
+
 ## [0.2.1] - 2021-03-21
 
 ### Fixed
