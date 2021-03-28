@@ -22,6 +22,8 @@ with the HTTP API interface being the "public API".
 
 ### Security
 
+- Update dependencies ([#47](https://github.com/sohosai/sos21-backend/pull/47))
+
 ## [0.2.1] - 2021-03-21
 
 No changes in `sos21-api-server`.

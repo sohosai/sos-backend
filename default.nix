@@ -5,7 +5,7 @@ pkgs.rustPlatform.buildRustPackage {
   version = "0.2.1";
   src = ./.;
 
-  cargoSha256 = "020252zd06g1vl24zh0z86xd50x8cknyrw3ibg5bbmh1z0x6qv7f";
+  cargoSha256 = "03f69nvcx63kcxdr1cvcwn48fgjbwvs3hxh8jdj0mf2a0khxh6r7";
 
   nativeBuildInputs = with pkgs; [
     zlib
