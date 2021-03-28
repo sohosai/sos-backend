@@ -52,12 +52,14 @@ impl UserRole {
     pub fn file_usage_quota(&self) -> UserFileUsageQuota {
         match self {
             UserRole::General | UserRole::Committee => {
-                UserFileUsageQuota::limited_number_of_bytes(256 * 1024 * 1024)
+                UserFileUsageQuota::limited_number_of_bytes(512 * 1024 * 1024)
             }
             UserRole::CommitteeOperator => {
-                UserFileUsageQuota::limited_number_of_bytes(1024 * 1024 * 1024)
+                UserFileUsageQuota::limited_number_of_bytes(15 * 1024 * 1024 * 1024)
             }
-            UserRole::Administrator => UserFileUsageQuota::unlimited(),
+            UserRole::Administrator => {
+                UserFileUsageQuota::limited_number_of_bytes(256 * 1024 * 1024 * 1024)
+            }
         }
     }
 
