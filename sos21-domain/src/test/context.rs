@@ -3,11 +3,14 @@ use std::convert::TryInto;
 use std::sync::Arc;
 
 use crate::context::{
-    Authentication, FileRepository, FormAnswerRepository, FormRepository, Login, ObjectRepository,
-    ProjectRepository, UserRepository,
+    Authentication, FileDistributionRepository, FileRepository, FileSharingRepository,
+    FormAnswerRepository, FormRepository, Login, ObjectRepository, ProjectRepository,
+    UserRepository,
 };
 use crate::model::{
     file::{File, FileId},
+    file_distribution::{FileDistribution, FileDistributionId},
+    file_sharing::{FileSharing, FileSharingId},
     form::{Form, FormId},
     form_answer::{FormAnswer, FormAnswerId},
     object::{Object, ObjectData, ObjectId},
@@ -32,6 +35,8 @@ pub struct MockAppBuilder {
     answers: Vec<FormAnswer>,
     files: HashMap<FileId, File>,
     objects: HashMap<ObjectId, Bytes>,
+    sharings: HashMap<FileSharingId, FileSharing>,
+    distributions: HashMap<FileDistributionId, FileDistribution>,
 }
 
 impl MockAppBuilder {
@@ -102,6 +107,27 @@ impl MockAppBuilder {
         self
     }
 
+    pub fn sharings<I>(&mut self, sharings: I) -> &mut Self
+    where
+        I: IntoIterator<Item = FileSharing>,
+    {
+        self.sharings
+            .extend(sharings.into_iter().map(|sharing| (sharing.id(), sharing)));
+        self
+    }
+
+    pub fn distributions<I>(&mut self, distributions: I) -> &mut Self
+    where
+        I: IntoIterator<Item = FileDistribution>,
+    {
+        self.distributions.extend(
+            distributions
+                .into_iter()
+                .map(|distribution| (distribution.id, distribution)),
+        );
+        self
+    }
+
     pub fn build(&self) -> MockApp {
         let users = self
             .users
@@ -135,6 +161,8 @@ impl MockAppBuilder {
             answers: Arc::new(Mutex::new(answers)),
             files: Arc::new(Mutex::new(self.files.clone())),
             objects: Arc::new(Mutex::new(self.objects.clone())),
+            sharings: Arc::new(Mutex::new(self.sharings.clone())),
+            distributions: Arc::new(Mutex::new(self.distributions.clone())),
         }
     }
 }
@@ -147,6 +175,8 @@ pub struct MockApp {
     answers: Arc<Mutex<HashMap<FormAnswerId, FormAnswer>>>,
     files: Arc<Mutex<HashMap<FileId, File>>>,
     objects: Arc<Mutex<HashMap<ObjectId, Bytes>>>,
+    sharings: Arc<Mutex<HashMap<FileSharingId, FileSharing>>>,
+    distributions: Arc<Mutex<HashMap<FileDistributionId, FileDistribution>>>,
 }
 
 impl MockApp {
@@ -400,5 +430,75 @@ impl ObjectRepository for MockApp {
                 id,
                 data: ObjectData::from_stream(stream::once(async move { Ok(bytes) })),
             }))
+    }
+}
+
+#[async_trait::async_trait]
+impl FileSharingRepository for MockApp {
+    async fn store_file_sharing(&self, sharing: FileSharing) -> Result<()> {
+        self.sharings.lock().await.insert(sharing.id(), sharing);
+        Ok(())
+    }
+
+    async fn get_file_sharing(&self, id: FileSharingId) -> Result<Option<(FileSharing, File)>> {
+        if let Some(sharing) = self.sharings.lock().await.get(&id) {
+            let file = self.get_file(sharing.file_id()).await?.unwrap();
+            Ok(Some((sharing.clone(), file)))
+        } else {
+            Ok(None)
+        }
+    }
+
+    async fn list_file_sharings_by_user(
+        &self,
+        user_id: UserId,
+    ) -> Result<Vec<(FileSharing, File)>> {
+        let mut result = Vec::new();
+
+        for sharing in self.sharings.lock().await.values() {
+            let file = self.get_file(sharing.file_id()).await?.unwrap();
+            if file.author_id == user_id {
+                result.push((sharing.clone(), file));
+            }
+        }
+
+        Ok(result)
+    }
+}
+
+#[async_trait::async_trait]
+impl FileDistributionRepository for MockApp {
+    async fn store_file_distribution(&self, distribution: FileDistribution) -> Result<()> {
+        self.distributions
+            .lock()
+            .await
+            .insert(distribution.id, distribution);
+        Ok(())
+    }
+
+    async fn get_file_distribution(
+        &self,
+        id: FileDistributionId,
+    ) -> Result<Option<FileDistribution>> {
+        Ok(self.distributions.lock().await.get(&id).cloned())
+    }
+
+    async fn list_file_distributions(&self) -> Result<Vec<FileDistribution>> {
+        Ok(self.distributions.lock().await.values().cloned().collect())
+    }
+
+    async fn list_file_distributions_by_project(
+        &self,
+        project_id: ProjectId,
+    ) -> Result<Vec<FileDistribution>> {
+        let (project, _) = self.get_project(project_id).await?.unwrap();
+        Ok(self
+            .distributions
+            .lock()
+            .await
+            .values()
+            .filter(|distribution| distribution.is_targeted_to(&project))
+            .cloned()
+            .collect())
     }
 }

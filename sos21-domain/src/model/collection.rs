@@ -1,5 +1,5 @@
 use std::borrow::Borrow;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fmt::{self, Debug};
 use std::hash::Hash;
 use std::marker::PhantomData;
@@ -13,17 +13,17 @@ use thiserror::Error;
 use crate::model::bound::{Bound, Bounded};
 
 macro_rules! length_limited_collection {
-    ($name:ident, $t:ident) => {
+    ($name:ident, $t:ident < $( $param:ident ),* >) => {
         #[derive(Clone)]
-        pub struct $name<Lower, Upper, T> {
+        pub struct $name<Lower, Upper $(,$param)*> {
             _lower: PhantomData<Lower>,
             _upper: PhantomData<Upper>,
-            inner: $t<T>,
+            inner: $t<$($param),*>,
         }
 
         #[allow(dead_code)]
-        impl<Lower, Upper, T> $name<Lower, Upper, T> {
-            pub fn new(v: $t<T>) -> Result<Self, LengthError<Lower, Upper>>
+        impl<Lower, Upper $(,$param)*> $name<Lower, Upper $(,$param)*> {
+            pub fn new(v: $t<$($param),*>) -> Result<Self, LengthError<Lower, Upper>>
             where
                 Lower: Bound<usize>,
                 Upper: Bound<usize>,
@@ -59,28 +59,24 @@ macro_rules! length_limited_collection {
                 self.inner.len()
             }
 
-            pub fn iter(&self) -> impl Iterator<Item = &T> {
-                self.inner.iter()
-            }
-
-            pub fn as_inner(&self) -> &$t<T> {
+            pub fn as_inner(&self) -> &$t<$($param),*> {
                 &self.inner
             }
 
-            pub fn into_inner(self) -> $t<T> {
+            pub fn into_inner(self) -> $t<$($param),*> {
                 self.inner
             }
         }
 
-        impl<Lower, Upper, T: Debug> Debug for $name<Lower, Upper, T> {
+        impl<Lower, Upper $(, $param: Debug)*> Debug for $name<Lower, Upper $(, $param)*> {
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-                <$t<T> as Debug>::fmt(&self.inner, f)
+                <$t<$($param),*> as Debug>::fmt(&self.inner, f)
             }
         }
 
-        impl<Lower, Upper, T> Serialize for $name<Lower, Upper, T>
+        impl<Lower, Upper $(, $param)*> Serialize for $name<Lower, Upper $(, $param)*>
         where
-            $t<T>: Serialize,
+            $t<$($param),*>: Serialize,
         {
             fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
             where
@@ -90,17 +86,17 @@ macro_rules! length_limited_collection {
             }
         }
 
-        impl<'de, Lower, Upper, T> Deserialize<'de> for $name<Lower, Upper, T>
+        impl<'de, Lower, Upper $(, $param)*> Deserialize<'de> for $name<Lower, Upper $(, $param)*>
         where
             Lower: Bound<usize>,
             Upper: Bound<usize>,
-            $t<T>: Deserialize<'de>,
+            $t<$($param),*>: Deserialize<'de>,
         {
             fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
             where
                 D: Deserializer<'de>,
             {
-                $name::new($t::<T>::deserialize(deserializer)?).map_err(de::Error::custom)
+                $name::new($t::<$($param),*>::deserialize(deserializer)?).map_err(de::Error::custom)
             }
         }
     };
@@ -136,8 +132,15 @@ impl<Lower, Upper> LengthError<Lower, Upper> {
     }
 }
 
-length_limited_collection! { LengthLimitedVec, Vec }
-length_limited_collection! { LengthLimitedSet, HashSet }
+length_limited_collection! { LengthLimitedVec, Vec<T> }
+length_limited_collection! { LengthLimitedSet, HashSet<T> }
+length_limited_collection! { LengthLimitedMap, HashMap<K, V> }
+
+impl<Lower, Upper, T> LengthLimitedVec<Lower, Upper, T> {
+    pub fn iter(&self) -> impl Iterator<Item = &'_ T> {
+        self.inner.iter()
+    }
+}
 
 impl<Lower, Upper, T: PartialEq> PartialEq for LengthLimitedVec<Lower, Upper, T> {
     fn eq(&self, other: &Self) -> bool {
@@ -154,6 +157,12 @@ impl<Lower, Upper, T: Eq + Hash> PartialEq for LengthLimitedSet<Lower, Upper, T>
 }
 
 impl<Lower, Upper, T: Eq + Hash> Eq for LengthLimitedSet<Lower, Upper, T> {}
+
+impl<Lower, Upper, T> LengthLimitedSet<Lower, Upper, T> {
+    pub fn iter(&self) -> impl Iterator<Item = &'_ T> {
+        self.inner.iter()
+    }
+}
 
 impl<Lower, Upper, T> LengthLimitedSet<Lower, Upper, T>
 where
@@ -190,8 +199,36 @@ where
     }
 }
 
+impl<Lower, Upper, K, V> LengthBoundedMap<Lower, Upper, K, V> {
+    pub fn iter(&self) -> impl Iterator<Item = (&'_ K, &'_ V)> {
+        self.inner.iter()
+    }
+}
+
+impl<Lower, Upper, K, V> LengthBoundedMap<Lower, Upper, K, V>
+where
+    K: Eq + Hash,
+{
+    pub fn contains_key<Q: ?Sized>(&self, key: &Q) -> bool
+    where
+        Q: Hash + Eq,
+        K: Borrow<Q>,
+    {
+        self.inner.contains_key(key)
+    }
+
+    pub fn get<Q: ?Sized>(&self, key: &Q) -> Option<&V>
+    where
+        Q: Hash + Eq,
+        K: Borrow<Q>,
+    {
+        self.inner.get(key)
+    }
+}
+
 pub type LengthBoundedVec<Min, Max, T> = LengthLimitedVec<Bounded<Min>, Bounded<Max>, T>;
-// pub type LengthBoundedSet<Min, Max, T> = LengthLimitedSet<Bounded<Min>, Bounded<Max>, T>;
+pub type LengthBoundedSet<Min, Max, T> = LengthLimitedSet<Bounded<Min>, Bounded<Max>, T>;
+pub type LengthBoundedMap<Min, Max, K, V> = LengthLimitedMap<Bounded<Min>, Bounded<Max>, K, V>;
 
 #[cfg(test)]
 mod tests {

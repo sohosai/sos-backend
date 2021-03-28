@@ -447,6 +447,35 @@ paths:
       operationId: me/file/check-usage
       description: ログインしているユーザーのファイルの利用状況を返します。
     parameters: []
+  /me/file-sharing/list:
+    get:
+      summary: me/file-sharing/list
+      tags:
+        - me
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sharings:
+                    type: array
+                    items:
+                      $ref: ./model/file_sharing/FileSharing.yml
+                required:
+                  - sharings
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me/file-sharing/list
+      parameters: []
+      description: ログインしているユーザーのファイル共有の一覧を返します。
   /project/create:
     post:
       summary: project/create
@@ -1278,7 +1307,112 @@ paths:
                 items:
                   type: array
                   items:
-                    $ref: ./model/form_answer/FormAnswerItem.yml
+                    allOf:
+                      - type: object
+                        properties:
+                          item_id:
+                            $ref: ./model/form/item/FormItemId.yml
+                        required:
+                          - item_id
+                      - nullable: true
+                        oneOf:
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - text
+                              answer:
+                                type: string
+                                nullable: true
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - integer
+                              answer:
+                                type: integer
+                                nullable: true
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - checkbox
+                              answer:
+                                type: array
+                                items:
+                                  $ref: ./model/form/item/CheckboxId.yml
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - radio
+                              answer:
+                                oneOf:
+                                  - $ref: ./model/Null.yml
+                                  - $ref: ./model/form/item/RadioId.yml
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - grid_radio
+                              answer:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    row_id:
+                                      $ref: ./model/form/item/GridRadioRowId.yml
+                                    value:
+                                      oneOf:
+                                        - $ref: ./model/Null.yml
+                                        - $ref: ./model/form/item/GridRadioColumnId.yml
+                                  required:
+                                    - row_id
+                                    - value
+                            required:
+                              - type
+                              - answer
+                          - type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - file
+                              answer:
+                                type: array
+                                items:
+                                  type: object
+                                  oneOf:
+                                    - properties:
+                                        file_id:
+                                          $ref: ./model/file/FileId.yml
+                                      required:
+                                        - file_id
+                                    - properties:
+                                        sharing_id:
+                                          $ref: ./model/file_sharing/FileSharingId.yml
+                                      required:
+                                        - sharing_id
+                            required:
+                              - type
+                              - answer
               required:
                 - project_id
                 - form_id
@@ -1372,6 +1506,303 @@ paths:
           in: query
           name: form_id
           required: true
+  /project/form/answer/file-sharing/get-file:
+    get:
+      summary: project/form/answer/file-sharing/get-file
+      tags:
+        - project
+        - form
+        - form_answer
+        - file
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing, Project, Form or Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - FORM_NOT_FOUND
+                                  - FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/form/answer/file-sharing/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: form_id
+          required: true
+      description: 指定されたファイル共有で申請の回答に対して共有されているファイルを返します。
+  /project/form/answer/file-sharing/get-file-info:
+    get:
+      summary: project/form/answer/file-sharing/get-file-info
+      tags:
+        - project
+        - form
+        - form_answer
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing, Project, Form or Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - FORM_NOT_FOUND
+                                  - FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/form/answer/file-sharing/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: form_id
+          required: true
+      description: 指定されたファイル共有で申請の回答に対して共有されているファイルの情報を返します。
+  /project/file-distribution/get:
+    get:
+      summary: project/file-distribution/get
+      tags:
+        - project
+        - file_distribution
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distributed_file:
+                    $ref: ./model/DistributedFile.yml
+                required:
+                  - distributed_file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: File Distribution or Project Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - FILE_DISTRIBUTION_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_DISTRIBUTION_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/file-distribution/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: distribution_id
+          required: true
+      description: 企画の指定された配布ファイルの情報を返します。
+  /project/file-distribution/list:
+    get:
+      summary: project/file-distribution/list
+      tags:
+        - project
+        - file_distribution
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distributed_files:
+                    type: array
+                    items:
+                      $ref: ./model/DistributedFile.yml
+                required:
+                  - distributed_files
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/file-distribution/list
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+      description: 指定された企画宛の配布ファイルの一覧を返します。
   /form/get:
     get:
       summary: form/get
@@ -1646,6 +2077,14 @@ paths:
           name: checkbox_unchecked
           required: true
           description: チェックボックスにチェックがついていない状態をどう表示するか指定します。
+        - schema:
+            type: string
+          in: query
+          name: file_answer_template
+          required: true
+          description: |
+            ファイル回答の表示先 URL の形式を [RFC6570](https://tools.ietf.org/html/rfc6570) の Level 4 template で指定します。
+            `answer_id` 変数を回答の ID で、 `sharing_ids` 変数を回答されたファイル共有の ID のリストで展開して CSV に出力します。
   /form-answer/get:
     get:
       summary: form-answer/get
@@ -1869,6 +2308,921 @@ paths:
           name: file_id
           required: true
       description: 指定されたファイルを返します。
+  /file/share:
+    post:
+      summary: file/share
+      tags:
+        - file
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sharing:
+                    $ref: ./model/file_sharing/FileSharing.yml
+                required:
+                  - sharing
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_FILE_EXPIRATION_DATE
+                            required:
+                              - type
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file/share
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file_id:
+                  $ref: ./model/file/FileId.yml
+                expires_at:
+                  oneOf:
+                    - $ref: ./model/DateTime.yml
+                    - $ref: ./model/Null.yml
+                scope:
+                  type: string
+                  enum:
+                    - committee
+                    - committee_operator
+                    - public
+              required:
+                - file_id
+                - expires_at
+                - scope
+      description: 指定されたファイルを共有します。
+  /file-sharing/revoke:
+    post:
+      summary: file-sharing/revoke
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sharing:
+                    $ref: ./model/file_sharing/FileSharing.yml
+                required:
+                  - sharing
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - ALREADY_REVOKED_FILE_SHARING
+                                  - EXPIRED_FILE_SHARING
+                            required:
+                              - type
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/revoke
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sharing_id:
+                  $ref: ./model/file_sharing/FileSharingId.yml
+              required:
+                - sharing_id
+      description: 指定されたファイル共有を無効化します。
+  /file-sharing/get:
+    get:
+      summary: file-sharing/get
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sharing:
+                    $ref: ./model/file_sharing/FileSharing.yml
+                required:
+                  - sharing
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有の情報を返します。
+  /file-sharing/get-file:
+    get:
+      summary: file-sharing/get-file
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有で共有されているファイルを返します。
+  /file-sharing/get-file-info:
+    get:
+      summary: file-sharing/get-file-info
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有で共有されているファイルの情報を返します。
+  /file-sharing/public/get-file:
+    get:
+      summary: file-sharing/public/get-file
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 403
+                      error:
+                        oneOf:
+                          - properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REQUEST
+                              id:
+                                type: string
+                                enum:
+                                  - CORS_FORBIDDEN
+                            required:
+                              - type
+                              - id
+                          - properties:
+                              type:
+                                type: string
+                                enum:
+                                  - API
+                              info:
+                                type: object
+                                required:
+                                  - type
+                                properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FILE_SHARING
+                            required:
+                              - type
+                              - info
+                        type: object
+                    required:
+                      - status
+                      - error
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/public/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有で共有されているファイルを認証無しで返します。
+      security: []
+  /file-sharing/public/get-file-info:
+    get:
+      summary: file-sharing/public/get-file-info
+      tags:
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 403
+                      error:
+                        oneOf:
+                          - properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REQUEST
+                              id:
+                                type: string
+                                enum:
+                                  - CORS_FORBIDDEN
+                            required:
+                              - type
+                              - id
+                          - properties:
+                              type:
+                                type: string
+                                enum:
+                                  - API
+                              info:
+                                type: object
+                                required:
+                                  - type
+                                properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FILE_SHARING
+                            required:
+                              - type
+                              - info
+                        type: object
+                    required:
+                      - status
+                      - error
+        "404":
+          $ref: "#/components/responses/FileSharingNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/public/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+      description: 指定されたファイル共有で共有されているファイルの情報を認証無しで返します。
+      security: []
+  /file-sharing/project/get-file:
+    get:
+      summary: file-sharing/project/get-file
+      tags:
+        - file
+        - project
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing or Project Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/project/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+      description: 指定されたファイル共有で企画に対して共有されているファイルを返します。
+  /file-sharing/project/get-file-info:
+    get:
+      summary: file-sharing/project/get-file-info
+      tags:
+        - file
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing or Project Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/project/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+      description: 指定されたファイル共有で企画に対して共有されているファイルの情報を返します。
+  /file-sharing/form-answer/get-file:
+    get:
+      summary: file-sharing/form-answer/get-file
+      tags:
+        - file
+        - form_answer
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing or Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/form-answer/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: answer_id
+          required: true
+      description: 指定されたファイル共有で申請の回答に対して共有されているファイルを返します。
+  /file-sharing/form-answer/get-file-info:
+    get:
+      summary: file-sharing/form-answer/get-file-info
+      tags:
+        - file
+        - form_answer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing or Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-sharing/form-answer/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: answer_id
+          required: true
+      description: 指定されたファイル共有で申請の回答に対して共有されているファイルの情報を返します。
+  /file-distribution/create:
+    post:
+      summary: file-distribution/create
+      tags:
+        - file_distribution
+        - committee
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distribution:
+                    $ref: ./model/file_distribution/FileDistribution.yml
+                required:
+                  - distribution
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_FIELD
+                              field:
+                                type: string
+                            required:
+                              - type
+                              - field
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing, File, or Project Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - FILE_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-distribution/create
+      description: ファイルを企画に配布します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                files:
+                  type: array
+                  items:
+                    type: object
+                    oneOf:
+                      - properties:
+                          project_id:
+                            $ref: ./model/project/ProjectId.yml
+                          sharing_id:
+                            $ref: ./model/file_sharing/FileSharingId.yml
+                        required:
+                          - project_id
+                          - sharing_id
+                      - properties:
+                          project_id:
+                            $ref: ./model/project/ProjectId.yml
+                          file_id:
+                            $ref: ./model/file/FileId.yml
+                        required:
+                          - project_id
+                          - file_id
+              required:
+                - name
+                - description
+                - files
+  /file-distribution/get:
+    get:
+      summary: file-distribution/get
+      tags:
+        - file_distribution
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distribution:
+                    $ref: ./model/file_distribution/FileDistribution.yml
+                required:
+                  - distribution
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FileDistributionNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-distribution/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: distribution_id
+          required: true
+      description: 指定されたファイル配布の情報を返します。
+  /file-distribution/list:
+    get:
+      summary: file-distribution/list
+      tags:
+        - file_distribution
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distributions:
+                    type: array
+                    items:
+                      $ref: ./model/file_distribution/FileDistribution.yml
+                required:
+                  - distributions
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: file-distribution/list
+      parameters: []
+      description: ファイル配布の一覧を返します。
   /meta/health/check:
     get:
       summary: meta/health/check
@@ -2190,6 +3544,92 @@ components:
                   type: API
                   info:
                     type: FILE_NOT_FOUND
+    FileSharingNotFound:
+      description: File Sharing Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - FILE_SHARING_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: FILE_SHARING_NOT_FOUND
+    FileDistributionNotFound:
+      description: File Distribution Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - FILE_DISTRIBUTION_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: FILE_DISTRIBUTION_NOT_FOUND
     InternalServerError:
       description: Internal Server Error
       content:
@@ -2314,6 +3754,9 @@ components:
                                 type: string
                                 enum:
                                   - INSUFFICIENT_PERMISSIONS
+                                  - NON_SHARABLE_FILE
+                                  - OUT_OF_SCOPE_FILE_SHARING
+                                  - INVALID_FILE_SHARING
                         required:
                           - type
                           - info
@@ -2380,5 +3823,6 @@ tags:
   - name: committee
   - name: admin
   - name: meta
+  - name: file_distribution
 security:
   - token: []

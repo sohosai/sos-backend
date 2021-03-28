@@ -89,6 +89,27 @@ macro_rules! raw_response_handler {
               crate::handler::handle_raw_handler_result
         }
     };
+    ($vis:vis async fn $name:ident (
+        $ctx:ident: Context
+        $(, $param:ident : $ty:ty)* $(,)?
+    ) -> HandlerResult<impl warp::Reply, $err:ty> $body:block) => {
+        $vis async fn $name(
+            app: crate::app::App
+            $(, $param: $ty)*
+        ) -> Result<impl ::warp::reply::Reply, ::warp::reject::Rejection> {
+            async fn run(
+                app: crate::app::App
+                $(, $param: $ty)*
+            ) -> HandlerResult<impl warp::Reply, $err> {
+                let $ctx: Context = app.start_context().await?;
+                let result: HandlerResult<_, $err> = $body;
+                $ctx.commit_changes().await?;
+                result
+            }
+
+            crate::handler::handle_raw_handler_result(run(app $(, $param)*).await)
+        }
+    };
 }
 
 macro_rules! handler {
@@ -108,6 +129,27 @@ macro_rules! handler {
         handler! {
                 @impl_login $vis $name($ctx, $($param: $ty),*) -> $resp, $err, $body;
               crate::handler::handle_handler_result
+        }
+    };
+    ($vis:vis async fn $name:ident (
+        $ctx:ident: Context
+        $(, $param:ident : $ty:ty)* $(,)?
+    ) -> HandlerResult<$resp:ty, $err:ty> $body:block) => {
+        $vis async fn $name(
+            app: crate::app::App
+            $(, $param: $ty)*
+        ) -> Result<impl ::warp::reply::Reply, ::warp::reject::Rejection> {
+            async fn run(
+                app: crate::app::App
+                $(, $param: $ty)*
+            ) -> HandlerResult<$resp, $err> {
+                let $ctx: Context = app.start_context().await?;
+                let result: HandlerResult<_, $err> = $body;
+                $ctx.commit_changes().await?;
+                result
+            }
+
+            crate::handler::handle_handler_result(run(app $(, $param)*).await)
         }
     };
     ($vis:vis async fn $name:ident (
@@ -202,6 +244,8 @@ pub mod project;
 pub mod signup;
 pub mod user;
 pub use signup::handler as signup;
+pub mod file_distribution;
+pub mod file_sharing;
 pub mod me;
 pub mod meta;
 

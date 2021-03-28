@@ -1,0 +1,35 @@
+title: FileSharing
+type: object
+description: ""
+properties:
+  id:
+    $ref: ./FileSharingId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  is_revoked:
+    type: boolean
+  expires_at:
+    oneOf:
+      - $ref: ../DateTime.yml
+      - $ref: ../Null.yml
+  scope:
+    $ref: ./FileSharingScope.yml
+  file_id:
+    $ref: ../file/FileId.yml
+  file_name:
+    type: string
+    nullable: true
+  file_type:
+    $ref: ../Mime.yml
+  file_size:
+    type: integer
+required:
+  - id
+  - created_at
+  - is_revoked
+  - expires_at
+  - scope
+  - file_id
+  - file_name
+  - file_type
+  - file_size

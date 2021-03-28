@@ -25,14 +25,16 @@ impl UserRole {
                 UserRole::Committee.permissions()
                     | Permissions::READ_ALL_USERS
                     | Permissions::CREATE_FORMS
+                    | Permissions::DISTRIBUTE_FILES
             }
             UserRole::Committee => {
                 UserRole::General.permissions()
                     | Permissions::READ_ALL_PROJECTS
                     | Permissions::READ_ALL_FORMS
                     | Permissions::READ_ALL_FORM_ANSWERS
+                    | Permissions::READ_ALL_FILE_DISTRIBUTIONS
             }
-            UserRole::General => Permissions::CREATE_FILES,
+            UserRole::General => Permissions::CREATE_FILES | Permissions::SHARE_FILES,
         }
     }
 
@@ -57,5 +59,13 @@ impl UserRole {
             }
             UserRole::Administrator => UserFileUsageQuota::unlimited(),
         }
+    }
+
+    pub fn is_committee(&self) -> bool {
+        matches!(self, UserRole::CommitteeOperator | UserRole::Committee)
+    }
+
+    pub fn is_committee_operator(&self) -> bool {
+        matches!(self, UserRole::CommitteeOperator)
     }
 }

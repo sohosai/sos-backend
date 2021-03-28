@@ -134,3 +134,15 @@ sos21_domain::delegate_object_repository! {
         self { &self.s3 }
     }
 }
+
+sos21_domain::delegate_file_sharing_repository! {
+    impl FileSharingRepository for Context {
+        self { &self.database }
+    }
+}
+
+sos21_domain::delegate_file_distribution_repository! {
+    impl FileDistributionRepository for Context {
+        self { &self.database }
+    }
+}

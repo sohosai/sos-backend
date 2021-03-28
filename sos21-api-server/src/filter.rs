@@ -90,7 +90,8 @@ pub fn endpoints(
             / "file" {
                 / "list" => GET (handler::me::file::list),
                 / "check-usage" => GET (handler::me::file::check_usage),
-            }
+            },
+            / "file-sharing" / "list" => GET (handler::me::file_sharing::list),
         },
         / "project" {
             / "get" => GET (handler::project::get),
@@ -104,7 +105,15 @@ pub fn endpoints(
                 / "answer" {
                     / => POST (handler::project::form::answer),
                     / "get" => GET (handler::project::form::answer::get),
+                    / "file-sharing" {
+                        / "get-file" => GET (handler::project::form::answer::file_sharing::get_file),
+                        / "get-file-info" => GET (handler::project::form::answer::file_sharing::get_file_info),
+                    }
                 }
+            },
+            / "file-distribution" {
+                / "list" => GET (handler::project::file_distribution::list),
+                / "get" => GET (handler::project::file_distribution::get),
             }
         },
         / "form" {
@@ -129,6 +138,30 @@ pub fn endpoints(
             / "create" => POST_STREAM (handler::file::create),
             / "get" => GET (handler::file::get),
             / "get-info" => GET (handler::file::get_info),
+            / "share" => POST (handler::file::share),
+        },
+        / "file-sharing" {
+            / "get" => GET (handler::file_sharing::get),
+            / "revoke" => POST (handler::file_sharing::revoke),
+            / "get-file" => GET (handler::file_sharing::get_file),
+            / "get-file-info" => GET (handler::file_sharing::get_file_info),
+            / "public" {
+                / "get-file" => {noauth} GET (handler::file_sharing::public::get_file),
+                / "get-file-info" => {noauth} GET (handler::file_sharing::public::get_file_info),
+            },
+            / "project" {
+                / "get-file" => GET (handler::file_sharing::project::get_file),
+                / "get-file-info" => GET (handler::file_sharing::project::get_file_info),
+            },
+            / "form-answer" {
+                / "get-file" => GET (handler::file_sharing::form_answer::get_file),
+                / "get-file-info" => GET (handler::file_sharing::form_answer::get_file_info),
+            }
+        },
+        / "file-distribution" {
+            / "create" => POST (handler::file_distribution::create),
+            / "list" => GET (handler::file_distribution::list),
+            / "get" => GET (handler::file_distribution::get),
         }
     };
 

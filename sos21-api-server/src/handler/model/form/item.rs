@@ -1,3 +1,4 @@
+use mime::Mime;
 use serde::{Deserialize, Serialize};
 use sos21_use_case::model::form::item as use_case;
 use uuid::Uuid;
@@ -58,6 +59,15 @@ pub enum FormItemBody {
         columns: Vec<GridRadioColumn>,
         exclusive_column: bool,
         required: GridRadioRequired,
+    },
+    File {
+        #[serde(
+            with = "crate::handler::model::serde::mime_vec_option",
+            rename = "accepted_types"
+        )]
+        types: Option<Vec<Mime>>,
+        accept_multiple_files: bool,
+        is_required: bool,
     },
 }
 
@@ -120,6 +130,15 @@ impl FormItemBody {
                 exclusive_column,
                 required: GridRadioRequired::from_use_case(required),
             },
+            use_case::FormItemBody::File {
+                types,
+                accept_multiple_files,
+                is_required,
+            } => FormItemBody::File {
+                types,
+                accept_multiple_files,
+                is_required,
+            },
         }
     }
 
@@ -180,6 +199,15 @@ impl FormItemBody {
                     .collect(),
                 exclusive_column,
                 required: required.into_use_case(),
+            },
+            FormItemBody::File {
+                types,
+                accept_multiple_files,
+                is_required,
+            } => use_case::FormItemBody::File {
+                types,
+                accept_multiple_files,
+                is_required,
             },
         }
     }

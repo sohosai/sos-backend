@@ -13,6 +13,7 @@ use uuid::Uuid;
 pub mod checkbox;
 pub mod condition;
 pub mod description;
+pub mod file;
 pub mod grid_radio;
 pub mod integer;
 pub mod name;
@@ -21,6 +22,7 @@ pub mod text;
 pub use checkbox::CheckboxFormItem;
 pub use condition::{FormItemCondition, FormItemConditions};
 pub use description::FormItemDescription;
+pub use file::FileFormItem;
 pub use grid_radio::GridRadioFormItem;
 pub use integer::IntegerFormItem;
 pub use name::FormItemName;
@@ -190,6 +192,9 @@ pub enum CheckAnswerItemErrorKind {
     TooSmallInteger,
     TooManyChecks,
     TooFewChecks,
+    NotAnsweredFile,
+    NotAllowedMultipleFiles,
+    NotAllowedFileType,
     UnknownCheckboxId {
         id: checkbox::CheckboxId,
     },
@@ -293,6 +298,20 @@ impl CheckAnswerItemError {
 
         CheckAnswerItemError { kind }
     }
+
+    pub fn from_file_item_error(err: file::CheckAnswerError) -> Self {
+        let kind = match err.kind() {
+            file::CheckAnswerErrorKind::NotAnswered => CheckAnswerItemErrorKind::NotAnsweredFile,
+            file::CheckAnswerErrorKind::NotAllowedMultipleFiles => {
+                CheckAnswerItemErrorKind::NotAllowedMultipleFiles
+            }
+            file::CheckAnswerErrorKind::NotAllowedFileType => {
+                CheckAnswerItemErrorKind::NotAllowedFileType
+            }
+        };
+
+        CheckAnswerItemError { kind }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -361,6 +380,7 @@ pub enum FormItemBody {
     Checkbox(CheckboxFormItem),
     Radio(RadioFormItem),
     GridRadio(GridRadioFormItem),
+    File(FileFormItem),
 }
 
 impl FormItemBody {
@@ -381,6 +401,9 @@ impl FormItemBody {
             (FormItemBody::GridRadio(item), FormAnswerItemBody::GridRadio(answer)) => item
                 .check_answer(answer)
                 .map_err(CheckAnswerItemError::from_grid_radio_item_error),
+            (FormItemBody::File(item), FormAnswerItemBody::File(answer)) => item
+                .check_answer(answer)
+                .map_err(CheckAnswerItemError::from_file_item_error),
             (_, _) => Err(CheckAnswerItemError {
                 kind: CheckAnswerItemErrorKind::MismatchedItemType,
             }),

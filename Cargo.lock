@@ -1961,6 +1961,7 @@ dependencies = [
  "tracing",
  "tracing-futures",
  "tracing-subscriber",
+ "uritemplate-next",
  "url",
  "uuid",
  "vergen",
@@ -2014,6 +2015,7 @@ dependencies = [
  "sos21-database",
  "sos21-domain",
  "sqlx",
+ "uuid",
 ]
 
 [[package]]
@@ -2650,6 +2652,15 @@ name = "untrusted"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a"
+
+[[package]]
+name = "uritemplate-next"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bcde98d1fc3f528255b1ecb22fb688ee0d23deb672a8c57127df10b98b4bd18c"
+dependencies = [
+ "regex",
+]
 
 [[package]]
 name = "url"

@@ -1,3 +1,4 @@
+use mime::Mime;
 use sos21_domain::model::form::item as entity;
 use uuid::Uuid;
 
@@ -55,6 +56,11 @@ pub enum FormItemBody {
         columns: Vec<GridRadioColumn>,
         exclusive_column: bool,
         required: GridRadioRequired,
+    },
+    File {
+        types: Option<Vec<Mime>>,
+        accept_multiple_files: bool,
+        is_required: bool,
     },
 }
 
@@ -120,6 +126,13 @@ impl FormItemBody {
                     exclusive_column: item.exclusive_column,
                 }
             }
+            entity::FormItemBody::File(item) => FormItemBody::File {
+                types: item
+                    .types
+                    .map(|types| types.into_types().map(|type_| type_.into_mime()).collect()),
+                accept_multiple_files: item.accept_multiple_files,
+                is_required: item.is_required,
+            },
         }
     }
 }

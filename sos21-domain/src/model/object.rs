@@ -1,4 +1,5 @@
 use crate::model::file::File;
+use crate::model::file_sharing::FileSharingWitness;
 use crate::model::user::User;
 
 use uuid::Uuid;
@@ -36,5 +37,9 @@ impl Object {
         }
 
         self.id == file.object_id && file.is_visible_to(user)
+    }
+
+    pub fn is_visible_to_with_sharing(&self, file: &File, witness: &FileSharingWitness) -> bool {
+        self.id == file.object_id && file.is_visible_to_with_sharing(witness)
     }
 }

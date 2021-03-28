@@ -9,6 +9,9 @@ with the HTTP API interface being the "public API".
 ## [Unreleased]
 
 ### Added
+
+- File sharings ([#42](https://github.com/sohosai/sos21-backend/pull/42))
+
 ### Changed
 ### Deprecated
 ### Removed

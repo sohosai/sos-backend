@@ -1,3 +1,5 @@
+use std::fmt::{self, Debug};
+
 use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::form::FormId;
 
@@ -12,10 +14,26 @@ pub enum Error {
 }
 
 #[derive(Debug, Clone)]
-pub struct Input {
+pub struct RenderFileAnswerInput {
+    pub answer_id: String,
+    pub sharing_ids: Vec<String>,
+}
+
+pub struct Input<F> {
     pub form_id: FormId,
     pub field_names: InputFieldNames,
     pub checkbox_names: InputCheckboxNames,
+    pub render_file_answer: F,
+}
+
+impl<F> Debug for Input<F> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("Input")
+            .field("form_id", &self.form_id)
+            .field("field_names", &self.field_names)
+            .field("checkbox_names", &self.checkbox_names)
+            .finish()
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -33,9 +51,10 @@ pub struct InputCheckboxNames {
 }
 
 #[tracing::instrument(skip(ctx))]
-pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<Vec<u8>, Error>
+pub async fn run<C, F>(ctx: &Login<C>, input: Input<F>) -> UseCaseResult<Vec<u8>, Error>
 where
     C: FormRepository + FormAnswerRepository + Send + Sync,
+    F: Fn(RenderFileAnswerInput) -> anyhow::Result<String> + Send + Sync,
 {
     let login_user = ctx.login_user();
 
@@ -138,14 +157,15 @@ where
     Ok(())
 }
 
-fn write_record<W>(
+fn write_record<W, F>(
     writer: &mut csv::Writer<W>,
-    input: &Input,
+    input: &Input<F>,
     form: &form::Form,
     answer: form_answer::FormAnswer,
 ) -> anyhow::Result<()>
 where
     W: std::io::Write,
+    F: Fn(RenderFileAnswerInput) -> anyhow::Result<String>,
 {
     let InputFieldNames {
         id,
@@ -171,8 +191,15 @@ where
         writer.write_field(answer.author_id.0)?;
     }
 
+    let answer_id = answer.id.to_uuid().to_hyphenated().to_string();
+    let render = |sharing_ids| {
+        (input.render_file_answer)(RenderFileAnswerInput {
+            answer_id: answer_id.clone(),
+            sharing_ids,
+        })
+    };
     for (item, answer_item) in form.items.items().zip(answer.items.into_items()) {
-        write_item_fields(writer, &input.checkbox_names, item, answer_item)?;
+        write_item_fields(writer, &input.checkbox_names, render, item, answer_item)?;
     }
 
     // this terminates the record (see docs on `csv::Writer::write_record`)
@@ -181,14 +208,16 @@ where
     Ok(())
 }
 
-fn write_item_fields<W>(
+fn write_item_fields<W, F>(
     writer: &mut csv::Writer<W>,
     checkbox_names: &InputCheckboxNames,
+    render_file_answer: F,
     item: &form::item::FormItem,
     answer_item: form_answer::item::FormAnswerItem,
 ) -> anyhow::Result<()>
 where
     W: std::io::Write,
+    F: FnOnce(Vec<String>) -> anyhow::Result<String>,
 {
     let body = match answer_item.body {
         Some(body) => body,
@@ -256,6 +285,14 @@ where
                 writer.write_field(column.label.as_str())?;
             }
         }
+        FormAnswerItemBody::File(sharings) => {
+            let sharings = sharings
+                .sharing_answers()
+                .map(|answer| answer.sharing_id.to_uuid().to_hyphenated().to_string())
+                .collect();
+            let field = (render_file_answer)(sharings).context("Failed to render file answer")?;
+            writer.write_field(field)?;
+        }
     }
 
     Ok(())
@@ -295,7 +332,11 @@ mod tests {
         (app, form1_id)
     }
 
-    fn mock_input(form_id: FormId) -> export_form_answers::Input {
+    fn mock_input(
+        form_id: FormId,
+    ) -> export_form_answers::Input<
+        impl Fn(export_form_answers::RenderFileAnswerInput) -> anyhow::Result<String>,
+    > {
         let field_names = export_form_answers::InputFieldNames {
             id: None,
             created_at: Some("作成日時".to_string()),
@@ -306,10 +347,18 @@ mod tests {
             checked: "1".to_string(),
             unchecked: "0".to_string(),
         };
+        let render_file_answer = |input: export_form_answers::RenderFileAnswerInput| {
+            Ok(format!(
+                "{},{}",
+                input.answer_id,
+                input.sharing_ids.join(",")
+            ))
+        };
         export_form_answers::Input {
             form_id,
             field_names,
             checkbox_names,
+            render_file_answer,
         }
     }
 
