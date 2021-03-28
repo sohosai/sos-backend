@@ -88,6 +88,10 @@
 <span id="85">85</span>
 <span id="86">86</span>
 <span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">form</span>::<span class="ident">FormId</span>;
@@ -96,6 +100,7 @@
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::<span class="ident">Login</span>;
 <span class="kw">use</span> <span class="ident">sos21_use_case</span>::<span class="ident">export_form_answers</span>;
+<span class="kw">use</span> <span class="ident">uritemplate</span>::<span class="ident">UriTemplate</span>;
 <span class="kw">use</span> <span class="ident">warp</span>::<span class="ident">http</span>::<span class="ident">StatusCode</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Deserialize</span>)]</span>
@@ -109,8 +114,7 @@
     <span class="kw">pub</span> <span class="ident">field_project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">field_author_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">checkbox_checked</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">checkbox_unchecked</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">file_answer_template</span>: <span class="ident">String</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>)]</span>
@@ -150,23 +154,27 @@
             <span class="ident">field_created_at</span>,
             <span class="ident">field_project_id</span>,
             <span class="ident">field_author_id</span>,
-            <span class="ident">checkbox_checked</span>,
-            <span class="ident">checkbox_unchecked</span>,
+            <span class="ident">file_answer_template</span>,
         } <span class="op">=</span> <span class="ident">request</span>;
+
+        <span class="kw">let</span> <span class="ident">render_file_answer</span> <span class="op">=</span> <span class="kw">move</span> <span class="op">|</span><span class="ident">input</span>: <span class="ident">export_form_answers</span>::<span class="ident">RenderFileAnswerInput</span><span class="op">|</span> {
+            <span class="comment">// TODO: Prepare outside the closure to prevent duplication of work</span>
+            <span class="prelude-val">Ok</span>(<span class="ident">UriTemplate</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">file_answer_template</span>)
+                .<span class="ident">set</span>(<span class="string">&quot;answer_id&quot;</span>, <span class="ident">input</span>.<span class="ident">answer_id</span>)
+                .<span class="ident">set</span>(<span class="string">&quot;sharing_ids&quot;</span>, <span class="ident">input</span>.<span class="ident">sharing_ids</span>)
+                .<span class="ident">build</span>())
+        };
+
         <span class="kw">let</span> <span class="ident">field_names</span> <span class="op">=</span> <span class="ident">export_form_answers</span>::<span class="ident">InputFieldNames</span> {
             <span class="ident">id</span>: <span class="ident">field_id</span>,
             <span class="ident">created_at</span>: <span class="ident">field_created_at</span>,
             <span class="ident">project_id</span>: <span class="ident">field_project_id</span>,
             <span class="ident">author_id</span>: <span class="ident">field_author_id</span>,
         };
-        <span class="kw">let</span> <span class="ident">checkbox_names</span> <span class="op">=</span> <span class="ident">export_form_answers</span>::<span class="ident">InputCheckboxNames</span> {
-            <span class="ident">checked</span>: <span class="ident">checkbox_checked</span>,
-            <span class="ident">unchecked</span>: <span class="ident">checkbox_unchecked</span>,
-        };
         <span class="ident">export_form_answers</span>::<span class="ident">Input</span> {
             <span class="ident">form_id</span>: <span class="ident">form_id</span>.<span class="ident">into_use_case</span>(),
             <span class="ident">field_names</span>,
-            <span class="ident">checkbox_names</span>,
+            <span class="ident">render_file_answer</span>,
         }
     };
 
@@ -177,4 +185,5 @@
     ))
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../../../";window.currentCrate = "sos21_api_server";</script><script src="../../../../../main.js"></script><script src="../../../../../source-script.js"></script><script src="../../../../../source-files.js"></script><script defer src="../../../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../../" data-current-crate="sos21_api_server"></div>
+    <script src="../../../../../main.js"></script><script src="../../../../../source-script.js"></script><script src="../../../../../source-files.js"></script><script defer src="../../../../../search-index.js"></script></body></html>

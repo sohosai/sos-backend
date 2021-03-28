@@ -70,7 +70,17 @@
 <span id="67">67</span>
 <span id="68">68</span>
 <span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file_sharing</span>::<span class="ident">FileSharingId</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::<span class="ident">item</span>::{
     <span class="ident">CheckboxId</span>, <span class="ident">FormItemId</span>, <span class="ident">GridRadioColumnId</span>, <span class="ident">GridRadioRowId</span>, <span class="ident">RadioId</span>,
 };
@@ -99,6 +109,7 @@
     <span class="ident">Checkbox</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">CheckboxId</span><span class="op">&gt;</span>),
     <span class="ident">Radio</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RadioId</span><span class="op">&gt;</span>),
     <span class="ident">GridRadio</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">GridRadioRowAnswer</span><span class="op">&gt;</span>),
+    <span class="ident">File</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FileSharingId</span><span class="op">&gt;</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">FormAnswerItemBody</span> {
@@ -122,6 +133,13 @@
                     .<span class="ident">collect</span>();
                 <span class="ident">FormAnswerItemBody</span>::<span class="ident">GridRadio</span>(<span class="ident">answers</span>)
             }
+            <span class="ident">entity</span>::<span class="ident">FormAnswerItemBody</span>::<span class="ident">File</span>(<span class="ident">answer</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">answer</span>
+                    .<span class="ident">into_sharing_answers</span>()
+                    .<span class="ident">map</span>(<span class="op">|</span><span class="ident">answer</span><span class="op">|</span> <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">sharing_id</span>))
+                    .<span class="ident">collect</span>();
+                <span class="ident">FormAnswerItemBody</span>::<span class="ident">File</span>(<span class="ident">answer</span>)
+            }
         }
     }
 }
@@ -141,4 +159,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../../";window.currentCrate = "sos21_use_case";</script><script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="sos21_use_case"></div>
+    <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>

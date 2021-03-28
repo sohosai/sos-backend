@@ -35,9 +35,21 @@
 <span id="32">32</span>
 <span id="33">33</span>
 <span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">mod</span> <span class="ident">count_projects</span>;
 <span class="kw">mod</span> <span class="ident">find_file</span>;
+<span class="kw">mod</span> <span class="ident">find_file_distribution</span>;
+<span class="kw">mod</span> <span class="ident">find_file_sharing</span>;
 <span class="kw">mod</span> <span class="ident">find_form</span>;
 <span class="kw">mod</span> <span class="ident">find_form_answer</span>;
 <span class="kw">mod</span> <span class="ident">find_form_answer_by_form_and_project</span>;
@@ -45,6 +57,9 @@
 <span class="kw">mod</span> <span class="ident">find_project_by_index</span>;
 <span class="kw">mod</span> <span class="ident">find_user</span>;
 <span class="kw">mod</span> <span class="ident">is_healthy</span>;
+<span class="kw">mod</span> <span class="ident">list_file_distributions</span>;
+<span class="kw">mod</span> <span class="ident">list_file_distributions_by_project</span>;
+<span class="kw">mod</span> <span class="ident">list_file_sharings_by_user</span>;
 <span class="kw">mod</span> <span class="ident">list_files_by_user</span>;
 <span class="kw">mod</span> <span class="ident">list_form_answers_by_form</span>;
 <span class="kw">mod</span> <span class="ident">list_forms</span>;
@@ -55,6 +70,8 @@
 <span class="kw">mod</span> <span class="ident">sum_file_size_by_user</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">count_projects</span>::<span class="ident">count_projects</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">find_file</span>::<span class="ident">find_file</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">find_file_distribution</span>::<span class="ident">find_file_distribution</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">find_file_sharing</span>::<span class="ident">find_file_sharing</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">find_form</span>::<span class="ident">find_form</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">find_form_answer</span>::<span class="ident">find_form_answer</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">find_form_answer_by_form_and_project</span>::<span class="ident">find_form_answer_by_form_and_project</span>;
@@ -62,6 +79,9 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">find_project_by_index</span>::<span class="ident">find_project_by_index</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">find_user</span>::<span class="ident">find_user</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">is_healthy</span>::<span class="ident">is_healthy</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">list_file_distributions</span>::<span class="ident">list_file_distributions</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">list_file_distributions_by_project</span>::<span class="ident">list_file_distributions_by_project</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">list_file_sharings_by_user</span>::<span class="ident">list_file_sharings_by_user</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">list_files_by_user</span>::<span class="ident">list_files_by_user</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">list_form_answers_by_form</span>::<span class="ident">list_form_answers_by_form</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">list_forms</span>::<span class="ident">list_forms</span>;
@@ -71,4 +91,5 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">list_users</span>::<span class="ident">list_users</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sum_file_size_by_user</span>::<span class="ident">sum_file_size_by_user</span>;
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "sos21_database";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="sos21_database"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

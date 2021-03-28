@@ -46,6 +46,25 @@
 <span id="43">43</span>
 <span id="44">44</span>
 <span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">use_case_ensure</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">cond</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
@@ -63,27 +82,46 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create_form</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create_form_answer</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create_project</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">distribute_files</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">export_form_answers</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">export_projects</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">export_users</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_distributed_file</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_file</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_file_distribution</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_file_object</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_file_sharing</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_form</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_form_answer</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_form_answer_shared_file</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_form_answer_shared_file_object</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_login_user</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project_by_code</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project_form</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project_form_answer</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project_form_answer_shared_file</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project_form_answer_shared_file_object</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project_shared_file</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project_shared_file_object</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_publicly_shared_file</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_publicly_shared_file_object</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_shared_file</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_shared_file_object</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_user</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_user_file_usage</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_all_file_distributions</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_all_forms</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_all_projects</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_distributed_files</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_form_answers</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_project_forms</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_user_file_sharings</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_user_files</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_user_projects</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_users</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">revoke_file_sharing</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">share_file</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">signup</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_user</span>;
@@ -93,4 +131,5 @@
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">model</span>;
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "sos21_use_case";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="sos21_use_case"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

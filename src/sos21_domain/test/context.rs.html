@@ -405,17 +405,120 @@
 <span id="402">402</span>
 <span id="403">403</span>
 <span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{
-    <span class="ident">Authentication</span>, <span class="ident">FileRepository</span>, <span class="ident">FormAnswerRepository</span>, <span class="ident">FormRepository</span>, <span class="ident">Login</span>, <span class="ident">ObjectRepository</span>,
-    <span class="ident">ProjectRepository</span>, <span class="ident">UserRepository</span>,
+    <span class="ident">Authentication</span>, <span class="ident">FileDistributionRepository</span>, <span class="ident">FileRepository</span>, <span class="ident">FileSharingRepository</span>,
+    <span class="ident">FormAnswerRepository</span>, <span class="ident">FormRepository</span>, <span class="ident">Login</span>, <span class="ident">ObjectRepository</span>, <span class="ident">ProjectRepository</span>,
+    <span class="ident">UserRepository</span>,
 };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">file</span>::{<span class="ident">File</span>, <span class="ident">FileId</span>},
+    <span class="ident">file_distribution</span>::{<span class="ident">FileDistribution</span>, <span class="ident">FileDistributionId</span>},
+    <span class="ident">file_sharing</span>::{<span class="ident">FileSharing</span>, <span class="ident">FileSharingId</span>},
     <span class="ident">form</span>::{<span class="ident">Form</span>, <span class="ident">FormId</span>},
     <span class="ident">form_answer</span>::{<span class="ident">FormAnswer</span>, <span class="ident">FormAnswerId</span>},
     <span class="ident">object</span>::{<span class="ident">Object</span>, <span class="ident">ObjectData</span>, <span class="ident">ObjectId</span>},
@@ -440,6 +543,8 @@
     <span class="ident">answers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FormAnswer</span><span class="op">&gt;</span>,
     <span class="ident">files</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">FileId</span>, <span class="ident">File</span><span class="op">&gt;</span>,
     <span class="ident">objects</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">ObjectId</span>, <span class="ident">Bytes</span><span class="op">&gt;</span>,
+    <span class="ident">sharings</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">FileSharingId</span>, <span class="ident">FileSharing</span><span class="op">&gt;</span>,
+    <span class="ident">distributions</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">FileDistributionId</span>, <span class="ident">FileDistribution</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">MockAppBuilder</span> {
@@ -510,6 +615,27 @@
         <span class="self">self</span>
     }
 
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sharings</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">sharings</span>: <span class="ident">I</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    <span class="kw">where</span>
+        <span class="ident">I</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">FileSharing</span><span class="op">&gt;</span>,
+    {
+        <span class="self">self</span>.<span class="ident">sharings</span>
+            .<span class="ident">extend</span>(<span class="ident">sharings</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">sharing</span><span class="op">|</span> (<span class="ident">sharing</span>.<span class="ident">id</span>(), <span class="ident">sharing</span>)));
+        <span class="self">self</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">distributions</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">distributions</span>: <span class="ident">I</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    <span class="kw">where</span>
+        <span class="ident">I</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">FileDistribution</span><span class="op">&gt;</span>,
+    {
+        <span class="self">self</span>.<span class="ident">distributions</span>.<span class="ident">extend</span>(
+            <span class="ident">distributions</span>
+                .<span class="ident">into_iter</span>()
+                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">distribution</span><span class="op">|</span> (<span class="ident">distribution</span>.<span class="ident">id</span>, <span class="ident">distribution</span>)),
+        );
+        <span class="self">self</span>
+    }
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MockApp</span> {
         <span class="kw">let</span> <span class="ident">users</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">users</span>
@@ -543,6 +669,8 @@
             <span class="ident">answers</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">answers</span>)),
             <span class="ident">files</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">files</span>.<span class="ident">clone</span>())),
             <span class="ident">objects</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">objects</span>.<span class="ident">clone</span>())),
+            <span class="ident">sharings</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">sharings</span>.<span class="ident">clone</span>())),
+            <span class="ident">distributions</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">distributions</span>.<span class="ident">clone</span>())),
         }
     }
 }
@@ -555,6 +683,8 @@
     <span class="ident">answers</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">FormAnswerId</span>, <span class="ident">FormAnswer</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">files</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">FileId</span>, <span class="ident">File</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">objects</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">ObjectId</span>, <span class="ident">Bytes</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">sharings</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">FileSharingId</span>, <span class="ident">FileSharing</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">distributions</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">FileDistributionId</span>, <span class="ident">FileDistribution</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">MockApp</span> {
@@ -810,5 +940,76 @@
             }))
     }
 }
+
+<span class="attribute">#[<span class="ident">async_trait</span>::<span class="ident">async_trait</span>]</span>
+<span class="kw">impl</span> <span class="ident">FileSharingRepository</span> <span class="kw">for</span> <span class="ident">MockApp</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">store_file_sharing</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">sharing</span>: <span class="ident">FileSharing</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">sharings</span>.<span class="ident">lock</span>().<span class="kw">await</span>.<span class="ident">insert</span>(<span class="ident">sharing</span>.<span class="ident">id</span>(), <span class="ident">sharing</span>);
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_file_sharing</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">FileSharingId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">FileSharing</span>, <span class="ident">File</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">sharing</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">sharings</span>.<span class="ident">lock</span>().<span class="kw">await</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">id</span>) {
+            <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_file</span>(<span class="ident">sharing</span>.<span class="ident">file_id</span>()).<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">unwrap</span>();
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((<span class="ident">sharing</span>.<span class="ident">clone</span>(), <span class="ident">file</span>)))
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
+        }
+    }
+
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_file_sharings_by_user</span>(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="ident">user_id</span>: <span class="ident">UserId</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">FileSharing</span>, <span class="ident">File</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+
+        <span class="kw">for</span> <span class="ident">sharing</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">sharings</span>.<span class="ident">lock</span>().<span class="kw">await</span>.<span class="ident">values</span>() {
+            <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_file</span>(<span class="ident">sharing</span>.<span class="ident">file_id</span>()).<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">unwrap</span>();
+            <span class="kw">if</span> <span class="ident">file</span>.<span class="ident">author_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">user_id</span> {
+                <span class="ident">result</span>.<span class="ident">push</span>((<span class="ident">sharing</span>.<span class="ident">clone</span>(), <span class="ident">file</span>));
+            }
+        }
+
+        <span class="prelude-val">Ok</span>(<span class="ident">result</span>)
+    }
+}
+
+<span class="attribute">#[<span class="ident">async_trait</span>::<span class="ident">async_trait</span>]</span>
+<span class="kw">impl</span> <span class="ident">FileDistributionRepository</span> <span class="kw">for</span> <span class="ident">MockApp</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">store_file_distribution</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">distribution</span>: <span class="ident">FileDistribution</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">distributions</span>
+            .<span class="ident">lock</span>()
+            .<span class="kw">await</span>
+            .<span class="ident">insert</span>(<span class="ident">distribution</span>.<span class="ident">id</span>, <span class="ident">distribution</span>);
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_file_distribution</span>(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="ident">id</span>: <span class="ident">FileDistributionId</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">FileDistribution</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">distributions</span>.<span class="ident">lock</span>().<span class="kw">await</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">id</span>).<span class="ident">cloned</span>())
+    }
+
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_file_distributions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FileDistribution</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">distributions</span>.<span class="ident">lock</span>().<span class="kw">await</span>.<span class="ident">values</span>().<span class="ident">cloned</span>().<span class="ident">collect</span>())
+    }
+
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_file_distributions_by_project</span>(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="ident">project_id</span>: <span class="ident">ProjectId</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FileDistribution</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> (<span class="ident">project</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_project</span>(<span class="ident">project_id</span>).<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">unwrap</span>();
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>
+            .<span class="ident">distributions</span>
+            .<span class="ident">lock</span>()
+            .<span class="kw">await</span>
+            .<span class="ident">values</span>()
+            .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">distribution</span><span class="op">|</span> <span class="ident">distribution</span>.<span class="ident">is_targeted_to</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>))
+            .<span class="ident">cloned</span>()
+            .<span class="ident">collect</span>())
+    }
+}
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "sos21_domain";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="sos21_domain"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

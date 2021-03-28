@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["create",""],["get",""],["get_info",""]]});
+initSidebarItems({"mod":[["create",""],["get",""],["get_info",""],["share",""]]});

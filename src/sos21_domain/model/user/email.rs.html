@@ -86,6 +86,8 @@
 <span id="83">83</span>
 <span id="84">84</span>
 <span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">email</span>::{<span class="self">self</span>, <span class="ident">EmailAddress</span>};
 
@@ -139,7 +141,7 @@
         <span class="kw">let</span> <span class="ident">email</span> <span class="op">=</span> <span class="ident">EmailAddress</span>::<span class="ident">from_string</span>(<span class="ident">s</span>.<span class="ident">into</span>()).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="ident">EmailAddressError</span> {
             <span class="ident">inner</span>: <span class="ident">EmailAddressErrorInner</span>::<span class="ident">InvalidEmailAddress</span>(<span class="ident">err</span>),
         })<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">email</span>.<span class="ident">ends_with</span>(<span class="string">&quot;@s.tsukuba.ac.jp&quot;</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">email</span>.<span class="ident">ends_with</span>(<span class="string">&quot;@u.tsukuba.ac.jp&quot;</span>) {
+        <span class="kw">if</span> <span class="ident">email</span>.<span class="ident">ends_with</span>(<span class="string">&quot;tsukuba.ac.jp&quot;</span>) {
             <span class="prelude-val">Ok</span>(<span class="ident">UserEmailAddress</span>(<span class="ident">email</span>))
         } <span class="kw">else</span> {
             <span class="prelude-val">Err</span>(<span class="ident">EmailAddressError</span> {
@@ -162,7 +164,7 @@
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;a@b.c&quot;</span>).<span class="ident">is_err</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;a.b.c@de.fg&quot;</span>).<span class="ident">is_err</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;ab.c@d-e.fg&quot;</span>).<span class="ident">is_err</span>());
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;ab.c@coins.tsukuba.ac.jp&quot;</span>).<span class="ident">is_err</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;a@s.tsukuba.ac.jp.com&quot;</span>).<span class="ident">is_err</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -170,7 +172,10 @@
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;a@s.tsukuba.ac.jp&quot;</span>).<span class="ident">is_ok</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;a.b.c@u.tsukuba.ac.jp&quot;</span>).<span class="ident">is_ok</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;a-c@s.tsukuba.ac.jp&quot;</span>).<span class="ident">is_ok</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;abcde@su.tsukuba.ac.jp&quot;</span>).<span class="ident">is_ok</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;ab.c@coins.tsukuba.ac.jp&quot;</span>).<span class="ident">is_ok</span>());
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../../";window.currentCrate = "sos21_domain";</script><script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="sos21_domain"></div>
+    <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>
