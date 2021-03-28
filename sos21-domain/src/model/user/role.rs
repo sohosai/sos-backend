@@ -32,6 +32,7 @@ impl UserRole {
                     | Permissions::READ_ALL_PROJECTS
                     | Permissions::READ_ALL_FORMS
                     | Permissions::READ_ALL_FORM_ANSWERS
+                    | Permissions::READ_ALL_FILE_DISTRIBUTIONS
             }
             UserRole::General => Permissions::CREATE_FILES | Permissions::SHARE_FILES,
         }

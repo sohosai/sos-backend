@@ -11,5 +11,6 @@ bitflags::bitflags! {
         const CREATE_FILES                = 0b0000000010000000;
         const SHARE_FILES                 = 0b0000000100000000;
         const DISTRIBUTE_FILES            = 0b0000001000000000;
+        const READ_ALL_FILE_DISTRIBUTIONS = 0b0000010000000000;
     }
 }
