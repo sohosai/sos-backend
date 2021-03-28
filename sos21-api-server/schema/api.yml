@@ -2068,18 +2068,6 @@ paths:
         - schema:
             type: string
           in: query
-          name: checkbox_checked
-          required: true
-          description: チェックボックスにチェックがついている状態をどう表示するか指定します。
-        - schema:
-            type: string
-          in: query
-          name: checkbox_unchecked
-          required: true
-          description: チェックボックスにチェックがついていない状態をどう表示するか指定します。
-        - schema:
-            type: string
-          in: query
           name: file_answer_template
           required: true
           description: |

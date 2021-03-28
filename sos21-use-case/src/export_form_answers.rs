@@ -22,7 +22,6 @@ pub struct RenderFileAnswerInput {
 pub struct Input<F> {
     pub form_id: FormId,
     pub field_names: InputFieldNames,
-    pub checkbox_names: InputCheckboxNames,
     pub render_file_answer: F,
 }
 
@@ -31,7 +30,6 @@ impl<F> Debug for Input<F> {
         f.debug_struct("Input")
             .field("form_id", &self.form_id)
             .field("field_names", &self.field_names)
-            .field("checkbox_names", &self.checkbox_names)
             .finish()
     }
 }
@@ -42,12 +40,6 @@ pub struct InputFieldNames {
     pub created_at: Option<String>,
     pub project_id: Option<String>,
     pub author_id: Option<String>,
-}
-
-#[derive(Debug, Clone)]
-pub struct InputCheckboxNames {
-    pub checked: String,
-    pub unchecked: String,
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -199,7 +191,7 @@ where
         })
     };
     for (item, answer_item) in form.items.items().zip(answer.items.into_items()) {
-        write_item_fields(writer, &input.checkbox_names, render, item, answer_item)?;
+        write_item_fields(writer, render, item, answer_item)?;
     }
 
     // this terminates the record (see docs on `csv::Writer::write_record`)
@@ -210,7 +202,6 @@ where
 
 fn write_item_fields<W, F>(
     writer: &mut csv::Writer<W>,
-    checkbox_names: &InputCheckboxNames,
     render_file_answer: F,
     item: &form::item::FormItem,
     answer_item: form_answer::item::FormAnswerItem,
@@ -242,9 +233,9 @@ where
 
             for checkbox in item.boxes() {
                 if checks.is_checked(checkbox.id) {
-                    writer.write_field(&checkbox_names.checked)?;
+                    writer.write_field(b"TRUE")?;
                 } else {
-                    writer.write_field(&checkbox_names.unchecked)?;
+                    writer.write_field(b"FALSE")?;
                 }
             }
         }
@@ -343,10 +334,6 @@ mod tests {
             project_id: Some("企画番号".to_string()),
             author_id: Some("回答者".to_string()),
         };
-        let checkbox_names = export_form_answers::InputCheckboxNames {
-            checked: "1".to_string(),
-            unchecked: "0".to_string(),
-        };
         let render_file_answer = |input: export_form_answers::RenderFileAnswerInput| {
             Ok(format!(
                 "{},{}",
@@ -357,7 +344,6 @@ mod tests {
         export_form_answers::Input {
             form_id,
             field_names,
-            checkbox_names,
             render_file_answer,
         }
     }
