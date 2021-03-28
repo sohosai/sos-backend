@@ -3,6 +3,7 @@ pub mod login;
 pub use authentication::Authentication;
 pub use login::Login;
 
+mod file_distribution_repository;
 mod file_repository;
 mod file_sharing_repository;
 mod form_answer_repository;
@@ -10,6 +11,7 @@ mod form_repository;
 mod object_repository;
 mod project_repository;
 mod user_repository;
+pub use file_distribution_repository::FileDistributionRepository;
 pub use file_repository::FileRepository;
 pub use file_sharing_repository::FileSharingRepository;
 pub use form_answer_repository::FormAnswerRepository;

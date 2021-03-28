@@ -3,11 +3,13 @@ use std::convert::TryInto;
 use std::sync::Arc;
 
 use crate::context::{
-    Authentication, FileRepository, FileSharingRepository, FormAnswerRepository, FormRepository,
-    Login, ObjectRepository, ProjectRepository, UserRepository,
+    Authentication, FileDistributionRepository, FileRepository, FileSharingRepository,
+    FormAnswerRepository, FormRepository, Login, ObjectRepository, ProjectRepository,
+    UserRepository,
 };
 use crate::model::{
     file::{File, FileId},
+    file_distribution::{FileDistribution, FileDistributionId},
     file_sharing::{FileSharing, FileSharingId},
     form::{Form, FormId},
     form_answer::{FormAnswer, FormAnswerId},
@@ -34,6 +36,7 @@ pub struct MockAppBuilder {
     files: HashMap<FileId, File>,
     objects: HashMap<ObjectId, Bytes>,
     sharings: HashMap<FileSharingId, FileSharing>,
+    distributions: HashMap<FileDistributionId, FileDistribution>,
 }
 
 impl MockAppBuilder {
@@ -113,6 +116,18 @@ impl MockAppBuilder {
         self
     }
 
+    pub fn distributions<I>(&mut self, distributions: I) -> &mut Self
+    where
+        I: IntoIterator<Item = FileDistribution>,
+    {
+        self.distributions.extend(
+            distributions
+                .into_iter()
+                .map(|distribution| (distribution.id, distribution)),
+        );
+        self
+    }
+
     pub fn build(&self) -> MockApp {
         let users = self
             .users
@@ -147,6 +162,7 @@ impl MockAppBuilder {
             files: Arc::new(Mutex::new(self.files.clone())),
             objects: Arc::new(Mutex::new(self.objects.clone())),
             sharings: Arc::new(Mutex::new(self.sharings.clone())),
+            distributions: Arc::new(Mutex::new(self.distributions.clone())),
         }
     }
 }
@@ -160,6 +176,7 @@ pub struct MockApp {
     files: Arc<Mutex<HashMap<FileId, File>>>,
     objects: Arc<Mutex<HashMap<ObjectId, Bytes>>>,
     sharings: Arc<Mutex<HashMap<FileSharingId, FileSharing>>>,
+    distributions: Arc<Mutex<HashMap<FileDistributionId, FileDistribution>>>,
 }
 
 impl MockApp {
@@ -446,5 +463,42 @@ impl FileSharingRepository for MockApp {
         }
 
         Ok(result)
+    }
+}
+
+#[async_trait::async_trait]
+impl FileDistributionRepository for MockApp {
+    async fn store_file_distribution(&self, distribution: FileDistribution) -> Result<()> {
+        self.distributions
+            .lock()
+            .await
+            .insert(distribution.id, distribution);
+        Ok(())
+    }
+
+    async fn get_file_distribution(
+        &self,
+        id: FileDistributionId,
+    ) -> Result<Option<FileDistribution>> {
+        Ok(self.distributions.lock().await.get(&id).cloned())
+    }
+
+    async fn list_file_distributions(&self) -> Result<Vec<FileDistribution>> {
+        Ok(self.distributions.lock().await.values().cloned().collect())
+    }
+
+    async fn list_file_distributions_by_project(
+        &self,
+        project_id: ProjectId,
+    ) -> Result<Vec<FileDistribution>> {
+        let (project, _) = self.get_project(project_id).await?.unwrap();
+        Ok(self
+            .distributions
+            .lock()
+            .await
+            .values()
+            .filter(|distribution| distribution.is_targeted_to(&project))
+            .cloned()
+            .collect())
     }
 }
