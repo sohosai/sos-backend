@@ -14,8 +14,8 @@ mod error;
 
 use authentication::authenticate;
 pub use authentication::{AuthenticationInfo, KeyStore};
-use error::handle_rejection;
 pub use error::model;
+use error::{handle_cors_rejection, handle_rejection};
 
 macro_rules! route {
     (@way GET) => { warp::get().and(warp::query()) };
@@ -174,7 +174,8 @@ pub fn endpoints(
         .max_age(std::time::Duration::from_secs(30 * 60));
 
     routes
-        .with(cors)
         .recover(handle_rejection)
+        .with(cors)
+        .recover(handle_cors_rejection)
         .with(warp::trace::request())
 }

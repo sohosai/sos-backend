@@ -85,13 +85,6 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
                 status: StatusCode::FORBIDDEN,
             },
         }
-    } else if err.find::<warp::filters::cors::CorsForbidden>().is_some() {
-        Error {
-            error: ErrorBody::Request {
-                id: RequestErrorId::CorsForbidden,
-            },
-            status: StatusCode::FORBIDDEN,
-        }
     } else if err.find::<warp::reject::UnsupportedMediaType>().is_some() {
         Error {
             error: ErrorBody::Request {
@@ -135,14 +128,36 @@ pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> 
             status: StatusCode::BAD_REQUEST,
         }
     } else {
-        event!(Level::ERROR, rejection = ?err, "Unhandled rejection");
-        Error {
-            error: ErrorBody::Internal,
-            status: StatusCode::INTERNAL_SERVER_ERROR,
-        }
+        unhandled_rejection(err)
     };
     Ok(warp::reply::with_status(
         warp::reply::json(&error),
         error.status,
     ))
+}
+
+pub async fn handle_cors_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
+    let error = if err.find::<warp::filters::cors::CorsForbidden>().is_some() {
+        Error {
+            error: ErrorBody::Request {
+                id: RequestErrorId::CorsForbidden,
+            },
+            status: StatusCode::FORBIDDEN,
+        }
+    } else {
+        unhandled_rejection(err)
+    };
+
+    Ok(warp::reply::with_status(
+        warp::reply::json(&error),
+        error.status,
+    ))
+}
+
+fn unhandled_rejection(err: Rejection) -> Error {
+    event!(Level::ERROR, rejection = ?err, "Unhandled rejection");
+    Error {
+        error: ErrorBody::Internal,
+        status: StatusCode::INTERNAL_SERVER_ERROR,
+    }
 }
