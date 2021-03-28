@@ -1,14 +1,11 @@
 use crate::app::Context;
+use crate::handler::model::file::FileObject;
 use crate::handler::model::file_sharing::FileSharingId;
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_use_case::get_publicly_shared_file_object;
-use warp::{
-    http::{self, header, StatusCode},
-    hyper::Body,
-    reply,
-};
+use warp::{http::StatusCode, reply};
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {
@@ -42,20 +39,10 @@ impl From<get_publicly_shared_file_object::Error> for Error {
 
 #[apply_macro::apply(raw_response_handler)]
 pub async fn handler(ctx: Context, request: Request) -> HandlerResult<impl warp::Reply, Error> {
-    let file_object =
-        get_publicly_shared_file_object::run(&ctx, request.sharing_id.into_use_case()).await?;
-
-    let reply = http::Response::new(Body::wrap_stream(file_object.object_data));
-    let reply = reply::with_header(
-        reply,
-        header::CONTENT_TYPE,
-        file_object.file.type_.to_string(),
-    );
-    let reply = reply::with_header(
-        reply,
-        header::CONTENT_LENGTH,
-        file_object.file.size.to_string(),
-    );
+    let sharing_id = request.sharing_id.into_use_case();
+    let file_object = get_publicly_shared_file_object::run(&ctx, sharing_id).await?;
+    let file_object = FileObject::from_use_case(file_object);
+    let reply = file_object.into_reply();
     let reply = reply::with_status(reply, StatusCode::OK);
     Ok(reply)
 }
