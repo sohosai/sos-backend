@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 ### Removed
 ### Fixed
+
+- Include CORS headers on errors as well ([#44](https://github.com/sohosai/sos21-backend/pull/44))
+
 ### Security
 
 ## [0.2.1] - 2021-03-21

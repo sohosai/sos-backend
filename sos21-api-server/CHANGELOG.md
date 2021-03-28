@@ -16,6 +16,9 @@ with the HTTP API interface being the "public API".
 ### Deprecated
 ### Removed
 ### Fixed
+
+- Include CORS headers on errors as well ([#44](https://github.com/sohosai/sos21-backend/pull/44))
+
 ### Security
 
 ## [0.2.1] - 2021-03-21
