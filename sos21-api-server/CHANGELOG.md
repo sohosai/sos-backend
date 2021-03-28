@@ -15,6 +15,9 @@ with the HTTP API interface being the "public API".
 ### Changed
 ### Deprecated
 ### Removed
+
+- Options to specify how the checkbox answers are displayed when exporting form answers ([#48](https://github.com/sohosai/sos21-backend/pull/48))
+
 ### Fixed
 
 - Include CORS headers on errors as well ([#44](https://github.com/sohosai/sos21-backend/pull/44))
