@@ -20,8 +20,6 @@ pub struct Request {
     #[serde(default)]
     pub field_author_id: Option<String>,
     pub file_answer_template: String,
-    pub checkbox_checked: String,
-    pub checkbox_unchecked: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -62,8 +60,6 @@ pub async fn handler(
             field_project_id,
             field_author_id,
             file_answer_template,
-            checkbox_checked,
-            checkbox_unchecked,
         } = request;
 
         let render_file_answer = move |input: export_form_answers::RenderFileAnswerInput| {
@@ -80,15 +76,10 @@ pub async fn handler(
             project_id: field_project_id,
             author_id: field_author_id,
         };
-        let checkbox_names = export_form_answers::InputCheckboxNames {
-            checked: checkbox_checked,
-            unchecked: checkbox_unchecked,
-        };
         export_form_answers::Input {
             form_id: form_id.into_use_case(),
             field_names,
             render_file_answer,
-            checkbox_names,
         }
     };
 
