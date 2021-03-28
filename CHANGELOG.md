@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - Include CORS headers on errors as well ([#44](https://github.com/sohosai/sos21-backend/pull/44))
+- Preserve filenames in the file download ([#46](https://github.com/sohosai/sos21-backend/pull/46))
 
 ### Security
 

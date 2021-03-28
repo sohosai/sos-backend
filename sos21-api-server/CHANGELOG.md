@@ -18,6 +18,7 @@ with the HTTP API interface being the "public API".
 ### Fixed
 
 - Include CORS headers on errors as well ([#44](https://github.com/sohosai/sos21-backend/pull/44))
+- Preserve filenames in the file download ([#46](https://github.com/sohosai/sos21-backend/pull/46))
 
 ### Security
 
