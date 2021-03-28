@@ -181,6 +181,7 @@
 <span id="178">178</span>
 <span id="179">179</span>
 <span id="180">180</span>
+<span id="181">181</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -198,8 +199,8 @@
 
 <span class="kw">use</span> <span class="ident">authentication</span>::<span class="ident">authenticate</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">authentication</span>::{<span class="ident">AuthenticationInfo</span>, <span class="ident">KeyStore</span>};
-<span class="kw">use</span> <span class="ident">error</span>::<span class="ident">handle_rejection</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">error</span>::<span class="ident">model</span>;
+<span class="kw">use</span> <span class="ident">error</span>::{<span class="ident">handle_cors_rejection</span>, <span class="ident">handle_rejection</span>};
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">route</span> {
     (@<span class="ident">way</span> <span class="ident">GET</span>) <span class="op">=</span><span class="op">&gt;</span> { <span class="ident">warp</span>::<span class="ident">get</span>().<span class="ident">and</span>(<span class="ident">warp</span>::<span class="ident">query</span>()) };
@@ -358,8 +359,9 @@
         .<span class="ident">max_age</span>(<span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">30</span> <span class="op">*</span> <span class="number">60</span>));
 
     <span class="ident">routes</span>
-        .<span class="ident">with</span>(<span class="ident">cors</span>)
         .<span class="ident">recover</span>(<span class="ident">handle_rejection</span>)
+        .<span class="ident">with</span>(<span class="ident">cors</span>)
+        .<span class="ident">recover</span>(<span class="ident">handle_cors_rejection</span>)
         .<span class="ident">with</span>(<span class="ident">warp</span>::<span class="ident">trace</span>::<span class="ident">request</span>())
 }
 </pre></div>
