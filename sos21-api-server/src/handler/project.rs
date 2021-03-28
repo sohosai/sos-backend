@@ -9,4 +9,5 @@ pub use list::handler as list;
 pub mod export;
 pub use export::handler as export;
 
+pub mod file_distribution;
 pub mod form;

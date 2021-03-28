@@ -110,6 +110,10 @@ pub fn endpoints(
                         / "get-file-info" => GET (handler::project::form::answer::file_sharing::get_file_info),
                     }
                 }
+            },
+            / "file-distribution" {
+                / "list" => GET (handler::project::file_distribution::list),
+                / "get" => GET (handler::project::file_distribution::get),
             }
         },
         / "form" {

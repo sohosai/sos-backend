@@ -1683,6 +1683,126 @@ paths:
           name: form_id
           required: true
       description: 指定されたファイル共有で申請の回答に対して共有されているファイルの情報を返します。
+  /project/file-distribution/get:
+    get:
+      summary: project/file-distribution/get
+      tags:
+        - project
+        - file_distribution
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distributed_file:
+                    $ref: ./model/DistributedFile.yml
+                required:
+                  - distributed_file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: File Distribution or Project Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - FILE_DISTRIBUTION_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_DISTRIBUTION_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/file-distribution/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: distribution_id
+          required: true
+      description: 企画の指定された配布ファイルの情報を返します。
+  /project/file-distribution/list:
+    get:
+      summary: project/file-distribution/list
+      tags:
+        - project
+        - file_distribution
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  distributed_files:
+                    type: array
+                    items:
+                      $ref: ./model/DistributedFile.yml
+                required:
+                  - distributed_files
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/file-distribution/list
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+      description: 指定された企画宛の配布ファイルの一覧を返します。
   /form/get:
     get:
       summary: form/get

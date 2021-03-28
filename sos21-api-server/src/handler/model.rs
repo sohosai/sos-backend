@@ -9,6 +9,7 @@
 mod serde;
 
 pub mod date_time;
+pub mod distributed_file;
 pub mod file;
 pub mod file_distribution;
 pub mod file_sharing;
