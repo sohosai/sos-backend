@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["File",""],["FileId",""]]});
+initSidebarItems({"struct":[["File",""],["FileId",""],["FileObject",""]]});
