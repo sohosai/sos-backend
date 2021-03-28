@@ -14,6 +14,7 @@ pub mod create_file;
 pub mod create_form;
 pub mod create_form_answer;
 pub mod create_project;
+pub mod distribute_files;
 pub mod export_form_answers;
 pub mod export_projects;
 pub mod export_users;

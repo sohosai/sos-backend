@@ -25,6 +25,7 @@ impl UserRole {
                 UserRole::Committee.permissions()
                     | Permissions::READ_ALL_USERS
                     | Permissions::CREATE_FORMS
+                    | Permissions::DISTRIBUTE_FILES
             }
             UserRole::Committee => {
                 UserRole::General.permissions()
