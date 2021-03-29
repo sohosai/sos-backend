@@ -1,6 +1,8 @@
 { pkgs ? import ./nix/pkgs.nix }:
-
-pkgs.rustPlatform.buildRustPackage {
+let
+  rustPlatform = pkgs.callPackage ./nix/rustPlatform.nix { };
+in
+rustPlatform.buildRustPackage {
   pname = "sos21-backend";
   version = "0.3.0";
   src = ./.;
