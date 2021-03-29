@@ -1,13 +1,10 @@
 { pkgs ? import ./nix/pkgs.nix }:
 let
+  sos21-backend = import ./. { inherit pkgs; };
   sqlx-cli = pkgs.callPackage ./nix/sqlx-cli.nix { };
-  rustPlatform = pkgs.callPackage ./nix/rustPlatform.nix { };
 in
-pkgs.mkShell {
-  nativeBuildInputs = [
-    rustPlatform.rust.rustc
-    rustPlatform.rust.cargo
+sos21-backend.overrideAttrs (oldAttrs: {
+  nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [
     sqlx-cli
-    pkgs.zlib
   ];
-}
+})

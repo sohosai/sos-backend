@@ -24,7 +24,7 @@ jobs:
         with:
           name: sos21-backend
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - run: nix-build shell.nix -A nativeBuildInputs
+      - run: nix-shell --pure --run true
   fmt:
     name: Rustfmt
     runs-on: ubuntu-18.04
