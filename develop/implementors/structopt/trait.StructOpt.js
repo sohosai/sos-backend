@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["sos21_run_migrations"] = [{"text":"impl StructOpt for <a class=\"struct\" href=\"sos21_run_migrations/struct.Opt.html\" title=\"struct sos21_run_migrations::Opt\">Opt</a>","synthetic":false,"types":["sos21_run_migrations::Opt"]}];
+implementors["sos21_run_migrations"] = [{"text":"impl StructOpt for Opt","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

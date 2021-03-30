@@ -1,4 +1,4 @@
 (function() {var implementors = {};
-implementors["sos21_domain"] = [{"text":"impl Stream for <a class=\"struct\" href=\"sos21_domain/model/object/data/struct.ObjectDataStream.html\" title=\"struct sos21_domain::model::object::data::ObjectDataStream\">ObjectDataStream</a>","synthetic":false,"types":["sos21_domain::model::object::data::ObjectDataStream"]}];
-implementors["sos21_use_case"] = [{"text":"impl Stream for <a class=\"struct\" href=\"sos21_use_case/model/stream/struct.ByteStream.html\" title=\"struct sos21_use_case::model::stream::ByteStream\">ByteStream</a>","synthetic":false,"types":["sos21_use_case::model::stream::ByteStream"]}];
+implementors["sos21_domain"] = [{"text":"impl Stream for ObjectDataStream","synthetic":false,"types":[]}];
+implementors["sos21_use_case"] = [{"text":"impl Stream for ByteStream","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

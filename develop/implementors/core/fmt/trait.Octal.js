@@ -1,4 +1,4 @@
 (function() {var implementors = {};
-implementors["sos21_database"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/fmt/trait.Octal.html\" title=\"trait core::fmt::Octal\">Octal</a> for <a class=\"struct\" href=\"sos21_database/model/project/struct.ProjectAttributes.html\" title=\"struct sos21_database::model::project::ProjectAttributes\">ProjectAttributes</a>","synthetic":false,"types":["sos21_database::model::project::ProjectAttributes"]}];
-implementors["sos21_domain"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/fmt/trait.Octal.html\" title=\"trait core::fmt::Octal\">Octal</a> for <a class=\"struct\" href=\"sos21_domain/model/permissions/struct.Permissions.html\" title=\"struct sos21_domain::model::permissions::Permissions\">Permissions</a>","synthetic":false,"types":["sos21_domain::model::permissions::Permissions"]}];
+implementors["sos21_database"] = [{"text":"impl Octal for ProjectAttributes","synthetic":false,"types":[]}];
+implementors["sos21_domain"] = [{"text":"impl Octal for Permissions","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
