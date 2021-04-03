@@ -4,8 +4,8 @@ use std::sync::Arc;
 
 use crate::context::{
     Authentication, FileDistributionRepository, FileRepository, FileSharingRepository,
-    FormAnswerRepository, FormRepository, Login, ObjectRepository, ProjectRepository,
-    UserRepository,
+    FormAnswerRepository, FormRepository, Login, ObjectRepository, PendingProjectRepository,
+    ProjectRepository, UserRepository,
 };
 use crate::model::{
     file::{File, FileId},
@@ -14,6 +14,7 @@ use crate::model::{
     form::{Form, FormId},
     form_answer::{FormAnswer, FormAnswerId},
     object::{Object, ObjectData, ObjectId},
+    pending_project::{PendingProject, PendingProjectId},
     project::{Project, ProjectId, ProjectIndex},
     user::{User, UserFileUsage, UserId},
 };
@@ -37,6 +38,7 @@ pub struct MockAppBuilder {
     objects: HashMap<ObjectId, Bytes>,
     sharings: HashMap<FileSharingId, FileSharing>,
     distributions: HashMap<FileDistributionId, FileDistribution>,
+    pending_projects: HashMap<PendingProjectId, PendingProject>,
 }
 
 impl MockAppBuilder {
@@ -128,6 +130,18 @@ impl MockAppBuilder {
         self
     }
 
+    pub fn pending_projects<I>(&mut self, pending_projects: I) -> &mut Self
+    where
+        I: IntoIterator<Item = PendingProject>,
+    {
+        self.pending_projects.extend(
+            pending_projects
+                .into_iter()
+                .map(|pending_project| (pending_project.id, pending_project)),
+        );
+        self
+    }
+
     pub fn build(&self) -> MockApp {
         let users = self
             .users
@@ -163,6 +177,7 @@ impl MockAppBuilder {
             objects: Arc::new(Mutex::new(self.objects.clone())),
             sharings: Arc::new(Mutex::new(self.sharings.clone())),
             distributions: Arc::new(Mutex::new(self.distributions.clone())),
+            pending_projects: Arc::new(Mutex::new(self.pending_projects.clone())),
         }
     }
 }
@@ -177,6 +192,7 @@ pub struct MockApp {
     objects: Arc<Mutex<HashMap<ObjectId, Bytes>>>,
     sharings: Arc<Mutex<HashMap<FileSharingId, FileSharing>>>,
     distributions: Arc<Mutex<HashMap<FileDistributionId, FileDistribution>>>,
+    pending_projects: Arc<Mutex<HashMap<PendingProjectId, PendingProject>>>,
 }
 
 impl MockApp {
@@ -498,6 +514,32 @@ impl FileDistributionRepository for MockApp {
             .await
             .values()
             .filter(|distribution| distribution.is_targeted_to(&project))
+            .cloned()
+            .collect())
+    }
+}
+
+#[async_trait::async_trait]
+impl PendingProjectRepository for MockApp {
+    async fn store_pending_project(&self, pending_project: PendingProject) -> Result<()> {
+        self.pending_projects
+            .lock()
+            .await
+            .insert(pending_project.id, pending_project);
+        Ok(())
+    }
+
+    async fn get_pending_project(&self, id: PendingProjectId) -> Result<Option<PendingProject>> {
+        Ok(self.pending_projects.lock().await.get(&id).cloned())
+    }
+
+    async fn list_pending_projects_by_user(&self, user_id: UserId) -> Result<Vec<PendingProject>> {
+        Ok(self
+            .pending_projects
+            .lock()
+            .await
+            .values()
+            .filter(|pending_project| pending_project.author_id == user_id)
             .cloned()
             .collect())
     }
