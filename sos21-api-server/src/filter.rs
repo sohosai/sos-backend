@@ -94,6 +94,7 @@ pub fn endpoints(
             / "file-sharing" / "list" => GET (handler::me::file_sharing::list),
         },
         / "project" {
+            / "prepare" => POST (handler::project::prepare),
             / "get" => GET (handler::project::get),
             / "create" => POST (handler::project::create),
             / "update" => POST (handler::project::update),
