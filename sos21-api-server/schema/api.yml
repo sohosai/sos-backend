@@ -387,6 +387,35 @@ paths:
       operationId: me/project/list
       description: ログインしているユーザーの企画一覧を返します。
     parameters: []
+  /me/pending-project/list:
+    get:
+      summary: me/pending-project/list
+      tags:
+        - me
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pending_projects:
+                    type: array
+                    items:
+                      $ref: ./model/pending_project/PendingProject.yml
+                required:
+                  - pending_projects
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me/pending-project/list
+      description: ログインしているユーザーの承認待ち企画一覧を返します。
+    parameters: []
   /me/file/list:
     get:
       summary: me/file/list
@@ -714,6 +743,40 @@ paths:
                 - attributes
       tags:
         - project
+    parameters: []
+  /pending-project/get:
+    get:
+      summary: pending-project/get
+      tags:
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pending_project:
+                    $ref: ./model/pending_project/PendingProject.yml
+                required:
+                  - pending_project
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/PendingProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: pending-project/get
+      description: 指定された承認待ち企画の情報を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: pending_project_id
     parameters: []
   /project/get:
     get:
@@ -3720,6 +3783,49 @@ components:
                   type: API
                   info:
                     type: FILE_DISTRIBUTION_NOT_FOUND
+    PendingProjectNotFound:
+      description: Pending Project Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - PENDING_PROJECT_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: PENDING_PROJECT_NOT_FOUND
     InternalServerError:
       description: Internal Server Error
       content:
