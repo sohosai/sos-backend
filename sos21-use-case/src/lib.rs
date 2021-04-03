@@ -52,6 +52,7 @@ pub mod list_user_file_sharings;
 pub mod list_user_files;
 pub mod list_user_projects;
 pub mod list_users;
+pub mod prepare_project;
 pub mod revoke_file_sharing;
 pub mod share_file;
 pub mod signup;

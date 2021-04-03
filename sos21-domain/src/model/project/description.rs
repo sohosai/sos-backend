@@ -8,14 +8,14 @@ pub struct ProjectDescription(LengthBoundedString<typenum::U1, typenum::U1024, S
 
 #[derive(Debug, Error, Clone)]
 #[error("invalid project description")]
-pub struct InvalidProjectDescription {
+pub struct DescriptionError {
     _priv: (),
 }
 
 impl ProjectDescription {
-    pub fn from_string(description: impl Into<String>) -> Result<Self, InvalidProjectDescription> {
+    pub fn from_string(description: impl Into<String>) -> Result<Self, DescriptionError> {
         let inner = LengthBoundedString::new(description.into())
-            .map_err(|_| InvalidProjectDescription { _priv: () })?;
+            .map_err(|_| DescriptionError { _priv: () })?;
         Ok(ProjectDescription(inner))
     }
 
