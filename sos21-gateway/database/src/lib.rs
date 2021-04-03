@@ -4,6 +4,8 @@ use sqlx::{Postgres, Transaction};
 
 mod project_repository;
 use project_repository::ProjectDatabase;
+mod pending_project_repository;
+use pending_project_repository::PendingProjectDatabase;
 mod form_repository;
 use form_repository::FormDatabase;
 mod file_repository;
@@ -73,5 +75,11 @@ sos21_domain::delegate_file_sharing_repository! {
 sos21_domain::delegate_file_distribution_repository! {
     impl FileDistributionRepository for Database {
         self { FileDistributionDatabase::ref_cast(&self.connection) }
+    }
+}
+
+sos21_domain::delegate_pending_project_repository! {
+    impl PendingProjectRepository for Database {
+        self { PendingProjectDatabase::ref_cast(&self.connection) }
     }
 }
