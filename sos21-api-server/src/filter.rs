@@ -97,7 +97,6 @@ pub fn endpoints(
         / "project" {
             / "prepare" => POST (handler::project::prepare),
             / "get" => GET (handler::project::get),
-            / "create" => POST (handler::project::create),
             / "update" => POST (handler::project::update),
             / "list" => GET (handler::project::list),
             / "export" => GET (handler::project::export),
