@@ -303,26 +303,24 @@ impl ProjectRepository for MockApp {
             .await
     }
 
-    async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<ProjectWithOwners>> {
-        futures::stream::iter(
-            self.projects
-                .lock()
-                .await
-                .values()
-                .filter(|project| project.owner_id == id)
-                .cloned(),
-        )
-        .then(|project| async move {
+    async fn list_projects_by_user(&self, id: UserId) -> Result<Vec<ProjectWithOwners>> {
+        let mut projects = Vec::new();
+
+        for project in self.projects.lock().await.values() {
+            if project.owner_id != id && project.subowner_id != id {
+                continue;
+            }
+
             let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
             let subowner = self.get_user(project.subowner_id.clone()).await?.unwrap();
-            Ok(ProjectWithOwners {
-                project,
+            projects.push(ProjectWithOwners {
+                project: project.clone(),
                 owner,
                 subowner,
-            })
-        })
-        .try_collect()
-        .await
+            });
+        }
+
+        Ok(projects)
     }
 }
 

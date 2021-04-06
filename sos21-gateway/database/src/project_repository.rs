@@ -77,9 +77,9 @@ impl ProjectRepository for ProjectDatabase {
             .await
     }
 
-    async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<ProjectWithOwners>> {
+    async fn list_projects_by_user(&self, user_id: UserId) -> Result<Vec<ProjectWithOwners>> {
         let mut lock = self.0.lock().await;
-        query::list_projects_by_owner(&mut *lock, id.0)
+        query::list_projects_by_user(&mut *lock, user_id.0)
             .and_then(|result| future::ready(to_project_with_owner(result)))
             .try_collect()
             .await

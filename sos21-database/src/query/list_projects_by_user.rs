@@ -6,9 +6,9 @@ use crate::model::{
 use anyhow::{Context, Result};
 use futures::stream::{BoxStream, StreamExt};
 
-pub fn list_projects_by_owner<'a, E>(
+pub fn list_projects_by_user<'a, E>(
     conn: E,
-    owner_id: String,
+    user_id: String,
 ) -> BoxStream<'a, Result<ProjectWithOwners>>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres> + 'a,
@@ -50,9 +50,9 @@ SELECT
 FROM projects
 INNER JOIN users AS owners ON (projects.owner_id = owners.id)
 INNER JOIN users AS subowners ON (projects.subowner_id = subowners.id)
-WHERE owner_id = $1
+WHERE owner_id = $1 OR subowner_id = $1
 "#,
-        owner_id
+        user_id
     )
     .fetch(conn)
     .map(|row| {
