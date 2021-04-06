@@ -25,7 +25,7 @@
 ## Run
 
 次のコマンドでローカルに API サーバーを起動します。
-これはリリースごとに push される `docker.pkg.github.com/sohosai/sos21-backend/sos21-api-server` イメージを用いています。
+これはリリースごとに push される `ghcr.io/sohosai/sos21-backend` イメージを用いています。
 
 ```shell
 $ export SOS21_FIREBASE_PROJECT_ID=<project ID>
