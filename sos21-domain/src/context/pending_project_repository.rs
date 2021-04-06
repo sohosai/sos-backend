@@ -1,14 +1,24 @@
 use crate::model::{
     pending_project::{PendingProject, PendingProjectId},
-    user::UserId,
+    user::{User, UserId},
 };
 
 use anyhow::Result;
 
+#[derive(Debug, Clone)]
+pub struct PendingProjectWithAuthor {
+    pub pending_project: PendingProject,
+    pub author: User,
+}
+
 #[async_trait::async_trait]
 pub trait PendingProjectRepository {
     async fn store_pending_project(&self, pending_project: PendingProject) -> Result<()>;
-    async fn get_pending_project(&self, id: PendingProjectId) -> Result<Option<PendingProject>>;
+    async fn delete_pending_project(&self, id: PendingProjectId) -> Result<()>;
+    async fn get_pending_project(
+        &self,
+        id: PendingProjectId,
+    ) -> Result<Option<PendingProjectWithAuthor>>;
     async fn list_pending_projects_by_user(&self, user_id: UserId) -> Result<Vec<PendingProject>>;
 }
 
@@ -25,13 +35,17 @@ macro_rules! delegate_pending_project_repository {
             ) -> ::anyhow::Result<()> {
                 $target.store_pending_project(pending_project).await
             }
+            async fn delete_pending_project(
+                &$sel,
+                id: $crate::model::pending_project::PendingProjectId,
+            ) -> ::anyhow::Result<()> {
+                $target.delete_pending_project(id).await
+            }
             async fn get_pending_project(
                 &$sel,
                 id: $crate::model::pending_project::PendingProjectId,
             ) -> ::anyhow::Result<
-                Option<
-                    $crate::model::pending_project::PendingProject,
-                >,
+                Option<$crate::context::pending_project_repository::PendingProjectWithAuthor>,
             > {
                 $target.get_pending_project(id).await
             }
@@ -55,7 +69,14 @@ impl<C: PendingProjectRepository + Sync> PendingProjectRepository for &C {
         <C as PendingProjectRepository>::store_pending_project(self, pending_project).await
     }
 
-    async fn get_pending_project(&self, id: PendingProjectId) -> Result<Option<PendingProject>> {
+    async fn delete_pending_project(&self, id: PendingProjectId) -> Result<()> {
+        <C as PendingProjectRepository>::delete_pending_project(self, id).await
+    }
+
+    async fn get_pending_project(
+        &self,
+        id: PendingProjectId,
+    ) -> Result<Option<PendingProjectWithAuthor>> {
         <C as PendingProjectRepository>::get_pending_project(self, id).await
     }
 

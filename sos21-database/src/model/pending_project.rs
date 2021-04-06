@@ -1,4 +1,5 @@
 use crate::model::project::{ProjectAttributes, ProjectCategory};
+use crate::model::user::User;
 
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
@@ -15,4 +16,10 @@ pub struct PendingProject {
     pub description: String,
     pub category: ProjectCategory,
     pub attributes: ProjectAttributes,
+}
+
+#[derive(Debug, Clone)]
+pub struct PendingProjectWithAuthor {
+    pub pending_project: PendingProject,
+    pub author: User,
 }

@@ -1,12 +1,15 @@
 use crate::project_repository::{
     from_project_attributes, from_project_category, to_project_attributes, to_project_category,
 };
+use crate::user_repository::to_user;
 
 use anyhow::Result;
 use futures::{future, lock::Mutex, stream::TryStreamExt};
 use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
-use sos21_domain::context::PendingProjectRepository;
+use sos21_domain::context::pending_project_repository::{
+    PendingProjectRepository, PendingProjectWithAuthor,
+};
 use sos21_domain::model::{
     date_time::DateTime,
     pending_project::{PendingProject, PendingProjectId},
@@ -49,17 +52,25 @@ impl PendingProjectRepository for PendingProjectDatabase {
         }
     }
 
-    async fn get_pending_project(&self, id: PendingProjectId) -> Result<Option<PendingProject>> {
+    async fn delete_pending_project(&self, id: PendingProjectId) -> Result<()> {
+        let mut lock = self.0.lock().await;
+        command::delete_pending_project(&mut *lock, id.to_uuid()).await
+    }
+
+    async fn get_pending_project(
+        &self,
+        id: PendingProjectId,
+    ) -> Result<Option<PendingProjectWithAuthor>> {
         let mut lock = self.0.lock().await;
         query::find_pending_project(&mut *lock, id.to_uuid())
             .await
-            .and_then(|opt| opt.map(to_pending_project).transpose())
+            .and_then(|opt| opt.map(to_pending_project_with_author).transpose())
     }
 
     async fn list_pending_projects_by_user(&self, user_id: UserId) -> Result<Vec<PendingProject>> {
         let mut lock = self.0.lock().await;
         query::list_pending_projects_by_user(&mut *lock, user_id.0)
-            .and_then(|file| future::ready(to_pending_project(file)))
+            .and_then(|pending_project| future::ready(to_pending_project(pending_project)))
             .try_collect()
             .await
     }
@@ -91,6 +102,20 @@ fn from_pending_project(pending_project: PendingProject) -> data::pending_projec
         category: from_project_category(category),
         attributes: from_project_attributes(&attributes),
     }
+}
+
+fn to_pending_project_with_author(
+    pending_project_with_author: data::pending_project::PendingProjectWithAuthor,
+) -> Result<PendingProjectWithAuthor> {
+    let data::pending_project::PendingProjectWithAuthor {
+        pending_project,
+        author,
+    } = pending_project_with_author;
+
+    Ok(PendingProjectWithAuthor {
+        pending_project: to_pending_project(pending_project)?,
+        author: to_user(author)?,
+    })
 }
 
 fn to_pending_project(

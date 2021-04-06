@@ -24,7 +24,7 @@ where
         .await
         .context("Failed to get a pending project")?;
     let pending_project = match result {
-        Some(pending_project) if pending_project.is_visible_to(login_user) => pending_project,
+        Some(result) if result.pending_project.is_visible_to(login_user) => result.pending_project,
         _ => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
 

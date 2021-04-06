@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::convert::TryInto;
 use std::sync::Arc;
 
+use crate::context::pending_project_repository::PendingProjectWithAuthor;
 use crate::context::project_repository::ProjectWithOwners;
 use crate::context::{
     Authentication, FileDistributionRepository, FileRepository, FileSharingRepository,
@@ -562,8 +563,29 @@ impl PendingProjectRepository for MockApp {
         Ok(())
     }
 
-    async fn get_pending_project(&self, id: PendingProjectId) -> Result<Option<PendingProject>> {
-        Ok(self.pending_projects.lock().await.get(&id).cloned())
+    async fn delete_pending_project(&self, id: PendingProjectId) -> Result<()> {
+        self.pending_projects.lock().await.remove(&id);
+        Ok(())
+    }
+
+    async fn get_pending_project(
+        &self,
+        id: PendingProjectId,
+    ) -> Result<Option<PendingProjectWithAuthor>> {
+        let result = self.pending_projects.lock().await.get(&id).cloned();
+        match result {
+            Some(pending_project) => {
+                let author = self
+                    .get_user(pending_project.author_id.clone())
+                    .await?
+                    .unwrap();
+                Ok(Some(PendingProjectWithAuthor {
+                    pending_project,
+                    author,
+                }))
+            }
+            None => Ok(None),
+        }
     }
 
     async fn list_pending_projects_by_user(&self, user_id: UserId) -> Result<Vec<PendingProject>> {
