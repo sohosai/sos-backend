@@ -1,8 +1,11 @@
 use crate::error::{UseCaseError, UseCaseResult};
-use crate::model::project::{Project, ProjectAttribute, ProjectCategory, ProjectId};
+use crate::model::project::{
+    Project, ProjectAttribute, ProjectCategory, ProjectFromEntityInput, ProjectId,
+};
 
 use anyhow::Context;
-use sos21_domain::context::{Login, ProjectRepository};
+use sos21_domain::context::project_repository::{self, ProjectRepository};
+use sos21_domain::context::Login;
 use sos21_domain::model::{permissions::Permissions, project};
 
 #[derive(Debug, Clone)]
@@ -47,10 +50,16 @@ where
         .get_project(input.id.into_entity())
         .await
         .context("Failed to get a project")?;
-    let (mut project, owner) = match result {
-        Some(x) => x,
-        None => return Err(UseCaseError::UseCase(Error::NotFound)),
+    let result = match result {
+        Some(result) if result.project.is_visible_to(login_user) => result,
+        _ => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
+
+    let project_repository::ProjectWithOwners {
+        mut project,
+        owner,
+        subowner,
+    } = result;
 
     if let Some(name) = input.name {
         let name = project::ProjectName::from_string(name)
@@ -100,12 +109,16 @@ where
         project.is_visible_to(login_user)
             && owner.name.is_visible_to(login_user)
             && owner.kana_name.is_visible_to(login_user)
+            && subowner.name.is_visible_to(login_user)
+            && subowner.kana_name.is_visible_to(login_user)
     );
-    Ok(Project::from_entity(
+    Ok(Project::from_entity(ProjectFromEntityInput {
         project,
-        owner.name.clone(),
-        owner.kana_name.clone(),
-    ))
+        owner_name: owner.name,
+        owner_kana_name: owner.kana_name,
+        subowner_name: subowner.name,
+        subowner_kana_name: subowner.kana_name,
+    }))
 }
 
 #[cfg(test)]

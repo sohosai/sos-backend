@@ -15,6 +15,12 @@ properties:
     $ref: ../user/UserName.yml
   owner_kana_name:
     $ref: ../user/UserKanaName.yml
+  subowner_id:
+    $ref: ../user/UserId.yml
+  subowner_name:
+    $ref: ../user/UserName.yml
+  subowner_kana_name:
+    $ref: ../user/UserKanaName.yml
   name:
     type: string
   kana_name:
@@ -38,6 +44,9 @@ required:
   - owner_id
   - owner_name
   - owner_kana_name
+  - subowner_id
+  - subowner_name
+  - subowner_kana_name
   - name
   - kana_name
   - group_name

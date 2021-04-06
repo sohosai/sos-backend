@@ -28,14 +28,10 @@ where
         .get_project(project_id.into_entity())
         .await
         .context("Failed to get a project")?;
-    let (project, _) = match result {
-        Some(x) => x,
-        None => return Err(UseCaseError::UseCase(Error::ProjectNotFound)),
+    let project = match result {
+        Some(result) if result.project.is_visible_to(login_user) => result.project,
+        _ => return Err(UseCaseError::UseCase(Error::ProjectNotFound)),
     };
-
-    if !project.is_visible_to(login_user) {
-        return Err(UseCaseError::UseCase(Error::ProjectNotFound));
-    }
 
     let result = ctx
         .get_form(form_id.into_entity())
@@ -98,6 +94,31 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
+            .projects(vec![project.clone()])
+            .forms(vec![form.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let form_id = FormId::from_entity(form.id);
+        assert!(matches!(
+            get_project_form::run(&app, ProjectId::from_entity(project.id), form_id).await,
+            Ok(got)
+            if got.id == form_id && got.name == form.name.into_string()
+        ));
+    }
+
+    // Checks that the normal user can read the form via owning project.
+    #[tokio::test]
+    async fn test_general_subowner() {
+        let owner = test::model::new_general_user();
+        let user = test::model::new_general_user();
+        let project =
+            test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
+        let form = test::model::new_form(user.id.clone());
+
+        let app = test::build_mock_app()
+            .users(vec![owner.clone(), user.clone()])
             .projects(vec![project.clone()])
             .forms(vec![form.clone()])
             .build()

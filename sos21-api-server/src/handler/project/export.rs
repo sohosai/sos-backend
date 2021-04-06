@@ -29,6 +29,20 @@ pub struct Request {
     #[serde(default)]
     pub field_owner_kana_full_name: Option<String>,
     #[serde(default)]
+    pub field_subowner_id: Option<String>,
+    #[serde(default)]
+    pub field_subowner_first_name: Option<String>,
+    #[serde(default)]
+    pub field_subowner_last_name: Option<String>,
+    #[serde(default)]
+    pub field_subowner_full_name: Option<String>,
+    #[serde(default)]
+    pub field_subowner_kana_first_name: Option<String>,
+    #[serde(default)]
+    pub field_subowner_kana_last_name: Option<String>,
+    #[serde(default)]
+    pub field_subowner_kana_full_name: Option<String>,
+    #[serde(default)]
     pub field_name: Option<String>,
     #[serde(default)]
     pub field_kana_name: Option<String>,
@@ -93,6 +107,13 @@ pub async fn handler(
             field_owner_kana_first_name,
             field_owner_kana_last_name,
             field_owner_kana_full_name,
+            field_subowner_id,
+            field_subowner_first_name,
+            field_subowner_last_name,
+            field_subowner_full_name,
+            field_subowner_kana_first_name,
+            field_subowner_kana_last_name,
+            field_subowner_kana_full_name,
             field_name,
             field_kana_name,
             field_group_name,
@@ -119,6 +140,13 @@ pub async fn handler(
             owner_kana_first_name: field_owner_kana_first_name,
             owner_kana_last_name: field_owner_kana_last_name,
             owner_kana_full_name: field_owner_kana_full_name,
+            subowner_id: field_subowner_id,
+            subowner_first_name: field_subowner_first_name,
+            subowner_last_name: field_subowner_last_name,
+            subowner_full_name: field_subowner_full_name,
+            subowner_kana_first_name: field_subowner_kana_first_name,
+            subowner_kana_last_name: field_subowner_kana_last_name,
+            subowner_kana_full_name: field_subowner_kana_full_name,
             name: field_name,
             kana_name: field_kana_name,
             group_name: field_group_name,

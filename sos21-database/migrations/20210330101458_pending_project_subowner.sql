@@ -26,3 +26,5 @@ SELECT
 FROM projects;
 
 DELETE FROM projects;
+
+ALTER TABLE projects ADD COLUMN subowner_id varchar(64) NOT NULL REFERENCES users ON DELETE RESTRICT;

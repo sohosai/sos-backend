@@ -38,6 +38,7 @@ pub struct Project {
     pub index: ProjectIndex,
     pub created_at: DateTime,
     pub owner_id: UserId,
+    pub subowner_id: UserId,
     pub name: ProjectName,
     pub kana_name: ProjectKanaName,
     pub group_name: ProjectGroupName,
@@ -49,7 +50,7 @@ pub struct Project {
 
 impl Project {
     pub fn is_visible_to(&self, user: &User) -> bool {
-        if self.owner_id == user.id {
+        if self.owner_id == user.id || self.subowner_id == user.id {
             return true;
         }
 
@@ -107,6 +108,16 @@ mod tests {
     fn test_visibility_general_owner() {
         let user = test_model::new_general_user();
         let project = test_model::new_general_project(user.id.clone());
+        assert!(project.is_visible_to(&user));
+    }
+
+    #[test]
+    fn test_visibility_general_subowner() {
+        let user = test_model::new_general_user();
+        let project = test_model::new_general_project_with_subowner(
+            test_model::new_user_id(),
+            user.id.clone(),
+        );
         assert!(project.is_visible_to(&user));
     }
 

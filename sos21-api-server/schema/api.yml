@@ -828,6 +828,48 @@ paths:
           description: 与えられた場合、その名前の列で企画責任者のフルネームのよみがなを出力します。
         - schema:
             type: string
+            example: 企画副責任者 内部ID
+          in: query
+          name: field_subowner_id
+          description: 与えられた場合、その名前の列で企画副責任者の ID を出力します。
+        - schema:
+            type: string
+            example: 企画副責任者 名
+          in: query
+          name: field_subowner_first_name
+          description: 与えられた場合、その名前の列で企画副責任者の下の名前を出力します。
+        - schema:
+            type: string
+            example: 企画副責任者 姓
+          in: query
+          name: field_subowner_last_name
+          description: 与えられた場合、その名前の列で企画副責任者の上の名前を出力します。
+        - schema:
+            type: string
+            example: 企画副責任者
+          in: query
+          name: field_subowner_full_name
+          description: 与えられた場合、その名前の列で企画副責任者のフルネームを出力します。
+        - schema:
+            type: string
+            example: 企画副責任者 名（よみがな）
+          in: query
+          name: field_subowner_kana_first_name
+          description: 与えられた場合、その名前の列で企画副責任者の下の名前のよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画副責任者 姓（よみがな）
+          in: query
+          name: field_subowner_kana_last_name
+          description: 与えられた場合、その名前の列で企画副責任者の上の名前のよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画副責任者（よみがな）
+          in: query
+          name: field_subowner_kana_full_name
+          description: 与えられた場合、その名前の列で企画副責任者のフルネームのよみがなを出力します。
+        - schema:
+            type: string
             example: 企画名
           in: query
           name: field_name

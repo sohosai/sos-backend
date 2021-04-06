@@ -1,6 +1,8 @@
 use std::convert::TryInto;
 use std::fmt::{self, Display};
 
+use crate::model::user::User;
+
 use chrono::{DateTime, Utc};
 use sqlx::postgres::{PgArgumentBuffer, PgTypeInfo, PgValueRef};
 use uuid::Uuid;
@@ -61,6 +63,7 @@ pub struct Project {
     pub index: i16,
     pub created_at: DateTime<Utc>,
     pub owner_id: String,
+    pub subowner_id: String,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -68,4 +71,11 @@ pub struct Project {
     pub description: String,
     pub category: ProjectCategory,
     pub attributes: ProjectAttributes,
+}
+
+#[derive(Debug, Clone)]
+pub struct ProjectWithOwners {
+    pub project: Project,
+    pub owner: User,
+    pub subowner: User,
 }

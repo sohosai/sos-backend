@@ -65,6 +65,7 @@ mod tests {
             ))
         ));
     }
+
     // Checks that the (unprivileged) committee user can read the others' form.
     #[tokio::test]
     async fn test_committee_other() {

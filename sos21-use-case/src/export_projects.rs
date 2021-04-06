@@ -27,6 +27,13 @@ pub struct InputFieldNames {
     pub owner_kana_first_name: Option<String>,
     pub owner_kana_last_name: Option<String>,
     pub owner_kana_full_name: Option<String>,
+    pub subowner_id: Option<String>,
+    pub subowner_first_name: Option<String>,
+    pub subowner_last_name: Option<String>,
+    pub subowner_full_name: Option<String>,
+    pub subowner_kana_first_name: Option<String>,
+    pub subowner_kana_last_name: Option<String>,
+    pub subowner_kana_full_name: Option<String>,
     pub name: Option<String>,
     pub kana_name: Option<String>,
     pub group_name: Option<String>,
@@ -46,9 +53,6 @@ pub struct InputCategoryNames {
     pub cooking: String,
     pub food: String,
 }
-
-#[derive(Debug, Clone)]
-pub struct InputAttributeNames {}
 
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<Vec<u8>, Error>
@@ -70,9 +74,11 @@ where
         .context("Failed to list projects")?;
     use_case_ensure!(projects
         .iter()
-        .all(|(project, owner)| project.is_visible_to(login_user)
-            && owner.name.is_visible_to(login_user)
-            && owner.kana_name.is_visible_to(login_user)));
+        .all(|result| result.project.is_visible_to(login_user)
+            && result.owner.name.is_visible_to(login_user)
+            && result.owner.kana_name.is_visible_to(login_user)
+            && result.subowner.name.is_visible_to(login_user)
+            && result.subowner.kana_name.is_visible_to(login_user)));
 
     // TODO: Tune buffer size and initial vector capacity
     let mut writer = csv::WriterBuilder::new()
@@ -81,8 +87,18 @@ where
 
     write_header(&mut writer, &input)?;
 
-    for (project, owner) in projects {
-        write_record(&mut writer, &input, project, owner.name, owner.kana_name)?;
+    for project_with_owners in projects {
+        write_record(
+            &mut writer,
+            &input,
+            WriteRecordInput {
+                project: project_with_owners.project,
+                owner_name: project_with_owners.owner.name,
+                owner_kana_name: project_with_owners.owner.kana_name,
+                subowner_name: project_with_owners.subowner.name,
+                subowner_kana_name: project_with_owners.subowner.kana_name,
+            },
+        )?;
     }
 
     let csv = writer.into_inner().context("Failed to write CSV data")?;
@@ -105,6 +121,13 @@ where
         owner_kana_first_name,
         owner_kana_last_name,
         owner_kana_full_name,
+        subowner_id,
+        subowner_first_name,
+        subowner_last_name,
+        subowner_full_name,
+        subowner_kana_first_name,
+        subowner_kana_last_name,
+        subowner_kana_full_name,
         name,
         kana_name,
         group_name,
@@ -135,6 +158,13 @@ where
     write_field!(writer, owner_kana_first_name);
     write_field!(writer, owner_kana_last_name);
     write_field!(writer, owner_kana_full_name);
+    write_field!(writer, subowner_id);
+    write_field!(writer, subowner_first_name);
+    write_field!(writer, subowner_last_name);
+    write_field!(writer, subowner_full_name);
+    write_field!(writer, subowner_kana_first_name);
+    write_field!(writer, subowner_kana_last_name);
+    write_field!(writer, subowner_kana_full_name);
     write_field!(writer, name);
     write_field!(writer, kana_name);
     write_field!(writer, group_name);
@@ -152,12 +182,18 @@ where
     Ok(())
 }
 
-fn write_record<W>(
-    writer: &mut csv::Writer<W>,
-    input: &Input,
+struct WriteRecordInput {
     project: project::Project,
     owner_name: user::UserName,
     owner_kana_name: user::UserKanaName,
+    subowner_name: user::UserName,
+    subowner_kana_name: user::UserKanaName,
+}
+
+fn write_record<W>(
+    writer: &mut csv::Writer<W>,
+    input: &Input,
+    data: WriteRecordInput,
 ) -> anyhow::Result<()>
 where
     W: std::io::Write,
@@ -173,6 +209,13 @@ where
         owner_kana_first_name,
         owner_kana_last_name,
         owner_kana_full_name,
+        subowner_id,
+        subowner_first_name,
+        subowner_last_name,
+        subowner_full_name,
+        subowner_kana_first_name,
+        subowner_kana_last_name,
+        subowner_kana_full_name,
         name,
         kana_name,
         group_name,
@@ -186,80 +229,76 @@ where
     } = &input.field_names;
 
     if id.is_some() {
-        writer.write_field(project.id.to_uuid().to_hyphenated().to_string())?;
+        writer.write_field(data.project.id.to_uuid().to_hyphenated().to_string())?;
     }
 
     if code.is_some() {
-        writer.write_field(project.code().to_string())?;
+        writer.write_field(data.project.code().to_string())?;
     }
 
     if created_at.is_some() {
-        let created_at = project.created_at.jst().format("%F %T").to_string();
+        let created_at = data.project.created_at.jst().format("%F %T").to_string();
         writer.write_field(created_at)?;
     }
 
     if owner_id.is_some() {
-        writer.write_field(project.owner_id.0)?;
+        writer.write_field(data.project.owner_id.0)?;
     }
 
-    if owner_first_name.is_some() {
-        writer.write_field(owner_name.first())?;
+    write_user_name_fields(
+        writer,
+        WriteUserNameFieldsInput {
+            first_name: owner_first_name.as_ref(),
+            last_name: owner_last_name.as_ref(),
+            full_name: owner_full_name.as_ref(),
+            kana_first_name: owner_kana_first_name.as_ref(),
+            kana_last_name: owner_kana_last_name.as_ref(),
+            kana_full_name: owner_kana_full_name.as_ref(),
+        },
+        data.owner_name,
+        data.owner_kana_name,
+    )?;
+
+    if subowner_id.is_some() {
+        writer.write_field(data.project.subowner_id.0)?;
     }
 
-    if owner_last_name.is_some() {
-        writer.write_field(owner_name.last())?;
-    }
-
-    if owner_full_name.is_some() {
-        let first = owner_name.first().as_bytes();
-        let last = owner_name.last().as_bytes();
-        let mut full = Vec::with_capacity(first.len() + last.len() + 1);
-        full.extend(last);
-        full.push(b' ');
-        full.extend(first);
-        writer.write_field(full)?;
-    }
-
-    if owner_kana_first_name.is_some() {
-        writer.write_field(owner_kana_name.first())?;
-    }
-
-    if owner_kana_last_name.is_some() {
-        writer.write_field(owner_kana_name.last())?;
-    }
-
-    if owner_kana_full_name.is_some() {
-        let first = owner_kana_name.first().as_bytes();
-        let last = owner_kana_name.last().as_bytes();
-        let mut full = Vec::with_capacity(first.len() + last.len() + 1);
-        full.extend(last);
-        full.push(b' ');
-        full.extend(first);
-        writer.write_field(full)?;
-    }
+    write_user_name_fields(
+        writer,
+        WriteUserNameFieldsInput {
+            first_name: subowner_first_name.as_ref(),
+            last_name: subowner_last_name.as_ref(),
+            full_name: subowner_full_name.as_ref(),
+            kana_first_name: subowner_kana_first_name.as_ref(),
+            kana_last_name: subowner_kana_last_name.as_ref(),
+            kana_full_name: subowner_kana_full_name.as_ref(),
+        },
+        data.subowner_name,
+        data.subowner_kana_name,
+    )?;
 
     if name.is_some() {
-        writer.write_field(project.name.into_string())?;
+        writer.write_field(data.project.name.into_string())?;
     }
 
     if kana_name.is_some() {
-        writer.write_field(project.kana_name.into_string())?;
+        writer.write_field(data.project.kana_name.into_string())?;
     }
 
     if group_name.is_some() {
-        writer.write_field(project.group_name.into_string())?;
+        writer.write_field(data.project.group_name.into_string())?;
     }
 
     if kana_group_name.is_some() {
-        writer.write_field(project.kana_group_name.into_string())?;
+        writer.write_field(data.project.kana_group_name.into_string())?;
     }
 
     if description.is_some() {
-        writer.write_field(project.description.into_string())?;
+        writer.write_field(data.project.description.into_string())?;
     }
 
     if category.is_some() {
-        let category_name = match project.category {
+        let category_name = match data.project.category {
             project::ProjectCategory::General => &input.category_names.general,
             project::ProjectCategory::Stage => &input.category_names.stage,
             project::ProjectCategory::Cooking => &input.category_names.cooking,
@@ -269,7 +308,8 @@ where
     }
 
     if attribute_academic.is_some() {
-        if project
+        if data
+            .project
             .attributes
             .contains(project::ProjectAttribute::Academic)
         {
@@ -280,7 +320,8 @@ where
     }
 
     if attribute_artistic.is_some() {
-        if project
+        if data
+            .project
             .attributes
             .contains(project::ProjectAttribute::Artistic)
         {
@@ -291,7 +332,8 @@ where
     }
 
     if attribute_committee.is_some() {
-        if project
+        if data
+            .project
             .attributes
             .contains(project::ProjectAttribute::Committee)
         {
@@ -302,7 +344,8 @@ where
     }
 
     if attribute_outdoor.is_some() {
-        if project
+        if data
+            .project
             .attributes
             .contains(project::ProjectAttribute::Outdoor)
         {
@@ -314,6 +357,63 @@ where
 
     // this terminates the record (see docs on `csv::Writer::write_record`)
     writer.write_record(std::iter::empty::<&[u8]>())?;
+
+    Ok(())
+}
+
+struct WriteUserNameFieldsInput<'a> {
+    first_name: Option<&'a String>,
+    last_name: Option<&'a String>,
+    full_name: Option<&'a String>,
+    kana_first_name: Option<&'a String>,
+    kana_last_name: Option<&'a String>,
+    kana_full_name: Option<&'a String>,
+}
+
+fn write_user_name_fields<W>(
+    writer: &mut csv::Writer<W>,
+    input: WriteUserNameFieldsInput<'_>,
+    name: user::UserName,
+    kana_name: user::UserKanaName,
+) -> anyhow::Result<()>
+where
+    W: std::io::Write,
+{
+    if input.first_name.is_some() {
+        writer.write_field(name.first())?;
+    }
+
+    if input.last_name.is_some() {
+        writer.write_field(name.last())?;
+    }
+
+    if input.full_name.is_some() {
+        let first = name.first().as_bytes();
+        let last = name.last().as_bytes();
+        let mut full = Vec::with_capacity(first.len() + last.len() + 1);
+        full.extend(last);
+        full.push(b' ');
+        full.extend(first);
+        writer.write_field(full)?;
+    }
+
+    if input.kana_first_name.is_some() {
+        writer.write_field(kana_name.first())?;
+    }
+
+    if input.kana_last_name.is_some() {
+        writer.write_field(kana_name.last())?;
+    }
+
+    if input.kana_full_name.is_some() {
+        let first = kana_name.first().as_bytes();
+        let last = kana_name.last().as_bytes();
+        let mut full = Vec::with_capacity(first.len() + last.len() + 1);
+        full.extend(last);
+        full.push(b' ');
+        full.extend(first);
+        writer.write_field(full)?;
+    }
 
     Ok(())
 }
@@ -351,6 +451,13 @@ mod tests {
             owner_kana_first_name: None,
             owner_kana_last_name: None,
             owner_kana_full_name: Some("責任者名（よみがな）".to_string()),
+            subowner_id: Some("副責任者".to_string()),
+            subowner_first_name: None,
+            subowner_last_name: None,
+            subowner_full_name: Some("副責任者名".to_string()),
+            subowner_kana_first_name: None,
+            subowner_kana_last_name: None,
+            subowner_kana_full_name: Some("副責任者名（よみがな）".to_string()),
             name: Some("企画名".to_string()),
             kana_name: Some("企画名（よみがな）".to_string()),
             group_name: Some("団体名".to_string()),

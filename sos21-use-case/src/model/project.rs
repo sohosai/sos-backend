@@ -81,6 +81,9 @@ pub struct Project {
     pub owner_id: UserId,
     pub owner_name: UserName,
     pub owner_kana_name: UserKanaName,
+    pub subowner_id: UserId,
+    pub subowner_name: UserName,
+    pub subowner_kana_name: UserKanaName,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -90,12 +93,25 @@ pub struct Project {
     pub attributes: Vec<ProjectAttribute>,
 }
 
+#[derive(Debug, Clone)]
+pub struct ProjectFromEntityInput {
+    pub project: entity::Project,
+    pub owner_name: sos21_domain::model::user::UserName,
+    pub owner_kana_name: sos21_domain::model::user::UserKanaName,
+    pub subowner_name: sos21_domain::model::user::UserName,
+    pub subowner_kana_name: sos21_domain::model::user::UserKanaName,
+}
+
 impl Project {
-    pub fn from_entity(
-        project: entity::Project,
-        owner_name: sos21_domain::model::user::UserName,
-        owner_kana_name: sos21_domain::model::user::UserKanaName,
-    ) -> Project {
+    pub fn from_entity(input: ProjectFromEntityInput) -> Self {
+        let ProjectFromEntityInput {
+            project,
+            owner_name,
+            owner_kana_name,
+            subowner_name,
+            subowner_kana_name,
+        } = input;
+
         Project {
             id: ProjectId::from_entity(project.id),
             code: project.code().to_string(),
@@ -103,6 +119,9 @@ impl Project {
             owner_id: UserId::from_entity(project.owner_id),
             owner_name: UserName::from_entity(owner_name),
             owner_kana_name: UserKanaName::from_entity(owner_kana_name),
+            subowner_id: UserId::from_entity(project.subowner_id),
+            subowner_name: UserName::from_entity(subowner_name),
+            subowner_kana_name: UserKanaName::from_entity(subowner_kana_name),
             name: project.name.into_string(),
             kana_name: project.kana_name.into_string(),
             group_name: project.group_name.into_string(),

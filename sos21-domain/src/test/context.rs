@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::convert::TryInto;
 use std::sync::Arc;
 
+use crate::context::project_repository::ProjectWithOwners;
 use crate::context::{
     Authentication, FileDistributionRepository, FileRepository, FileSharingRepository,
     FormAnswerRepository, FormRepository, Login, ObjectRepository, PendingProjectRepository,
@@ -16,14 +17,15 @@ use crate::model::{
     object::{Object, ObjectData, ObjectId},
     pending_project::{PendingProject, PendingProjectId},
     project::{Project, ProjectId, ProjectIndex},
-    user::{User, UserFileUsage, UserId},
+    user::{User, UserFileUsage, UserId, UserRole},
 };
+use crate::test::model as test_model;
 
 use anyhow::Result;
 use bytes::{BufMut, Bytes, BytesMut};
 use futures::lock::Mutex;
 use futures::{
-    future::{self, TryFutureExt},
+    future,
     stream::{self, StreamExt, TryStreamExt},
 };
 use thiserror::Error;
@@ -223,6 +225,13 @@ impl UserRepository for MockApp {
     }
 
     async fn get_user(&self, id: UserId) -> Result<Option<User>> {
+        if id == *test_model::KNOWN_MOCK_GENERAL_USER_ID {
+            return Ok(Some(test_model::mock_user(
+                test_model::KNOWN_MOCK_GENERAL_USER_ID.clone(),
+                UserRole::General,
+            )));
+        }
+
         Ok(self.users.lock().await.get(&id).cloned())
     }
 
@@ -238,17 +247,22 @@ impl ProjectRepository for MockApp {
         Ok(())
     }
 
-    async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {
+    async fn get_project(&self, id: ProjectId) -> Result<Option<ProjectWithOwners>> {
         let project = self.projects.lock().await.get(&id).cloned();
         if let Some(project) = project {
             let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
-            Ok(Some((project, owner)))
+            let subowner = self.get_user(project.subowner_id.clone()).await?.unwrap();
+            Ok(Some(ProjectWithOwners {
+                project,
+                owner,
+                subowner,
+            }))
         } else {
             Ok(None)
         }
     }
 
-    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<(Project, User)>> {
+    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<ProjectWithOwners>> {
         let project = self
             .projects
             .lock()
@@ -258,7 +272,12 @@ impl ProjectRepository for MockApp {
             .cloned();
         if let Some(project) = project {
             let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
-            Ok(Some((project, owner)))
+            let subowner = self.get_user(project.subowner_id.clone()).await?.unwrap();
+            Ok(Some(ProjectWithOwners {
+                project,
+                owner,
+                subowner,
+            }))
         } else {
             Ok(None)
         }
@@ -269,25 +288,41 @@ impl ProjectRepository for MockApp {
         Ok(len)
     }
 
-    async fn list_projects(&self) -> Result<Vec<(Project, User)>> {
+    async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>> {
         futures::stream::iter(self.projects.lock().await.values().cloned())
-            .then(|project| {
-                self.get_user(project.owner_id.clone())
-                    .map_ok(|owner| (project, owner.unwrap()))
+            .then(|project| async move {
+                let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
+                let subowner = self.get_user(project.subowner_id.clone()).await?.unwrap();
+                Ok(ProjectWithOwners {
+                    project,
+                    owner,
+                    subowner,
+                })
             })
             .try_collect()
             .await
     }
 
-    async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<Project>> {
-        Ok(self
-            .projects
-            .lock()
-            .await
-            .values()
-            .filter(|project| project.owner_id == id)
-            .cloned()
-            .collect())
+    async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<ProjectWithOwners>> {
+        futures::stream::iter(
+            self.projects
+                .lock()
+                .await
+                .values()
+                .filter(|project| project.owner_id == id)
+                .cloned(),
+        )
+        .then(|project| async move {
+            let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
+            let subowner = self.get_user(project.subowner_id.clone()).await?.unwrap();
+            Ok(ProjectWithOwners {
+                project,
+                owner,
+                subowner,
+            })
+        })
+        .try_collect()
+        .await
     }
 }
 
@@ -307,7 +342,7 @@ impl FormRepository for MockApp {
     }
 
     async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<Form>> {
-        let (project, _) = self.get_project(id).await?.unwrap();
+        let project = self.get_project(id).await?.unwrap().project;
         Ok(self
             .forms
             .lock()
@@ -507,7 +542,7 @@ impl FileDistributionRepository for MockApp {
         &self,
         project_id: ProjectId,
     ) -> Result<Vec<FileDistribution>> {
-        let (project, _) = self.get_project(project_id).await?.unwrap();
+        let project = self.get_project(project_id).await?.unwrap().project;
         Ok(self
             .distributions
             .lock()

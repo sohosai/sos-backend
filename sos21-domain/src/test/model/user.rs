@@ -3,6 +3,8 @@ use crate::model::{
     phone_number::PhoneNumber,
     user::{User, UserAffiliation, UserEmailAddress, UserId, UserKanaName, UserName, UserRole},
 };
+
+use once_cell::sync::Lazy;
 use uuid::Uuid;
 
 pub fn new_user_id() -> UserId {
@@ -29,9 +31,9 @@ pub fn mock_user_affiliation() -> UserAffiliation {
     UserAffiliation::from_string("情報学群情報科学類").unwrap()
 }
 
-pub fn new_user(role: UserRole) -> User {
+pub fn mock_user(id: UserId, role: UserRole) -> User {
     User {
-        id: new_user_id(),
+        id,
         created_at: DateTime::now(),
         name: mock_user_name(),
         kana_name: mock_user_kana_name(),
@@ -40,6 +42,17 @@ pub fn new_user(role: UserRole) -> User {
         affiliation: mock_user_affiliation(),
         role,
     }
+}
+
+/// `UserId` that is known to be exist globally in the testing context.
+///
+/// We can use this ID to implicitly refer (uninterested) test user in mocking.
+/// Implementors of the testing context must make sure that this ID is known without persistence.
+pub static KNOWN_MOCK_GENERAL_USER_ID: Lazy<UserId> =
+    Lazy::new(|| UserId("MOCK_USER_ID".to_string()));
+
+pub fn new_user(role: UserRole) -> User {
+    mock_user(new_user_id(), role)
 }
 
 pub fn new_general_user() -> User {

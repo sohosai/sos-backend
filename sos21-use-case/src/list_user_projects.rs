@@ -1,10 +1,11 @@
 use std::convert::Infallible;
 
 use crate::error::UseCaseResult;
-use crate::model::project::Project;
+use crate::model::project::{Project, ProjectFromEntityInput};
 
 use anyhow::Context;
-use sos21_domain::context::{Login, ProjectRepository};
+use sos21_domain::context::project_repository::{self, ProjectRepository};
+use sos21_domain::context::Login;
 
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Login<C>) -> UseCaseResult<Vec<Project>, Infallible>
@@ -17,21 +18,34 @@ where
         .await
         .context("Failed to list projects")?;
 
-    use_case_ensure!(projects
-        .iter()
-        .all(|project| project.is_visible_to(login_user)));
+    let mut result = Vec::new();
 
-    let projects = projects
-        .into_iter()
-        .map(|project| {
-            Project::from_entity(
-                project,
-                login_user.name.clone(),
-                login_user.kana_name.clone(),
-            )
-        })
-        .collect();
-    Ok(projects)
+    for project_with_owner in projects {
+        let project_repository::ProjectWithOwners {
+            project,
+            owner,
+            subowner,
+        } = project_with_owner;
+
+        use_case_ensure!(owner.id == login_user.id);
+        use_case_ensure!(
+            project.is_visible_to(login_user)
+                && owner.name.is_visible_to(login_user)
+                && owner.kana_name.is_visible_to(login_user)
+                && subowner.name.is_visible_to(login_user)
+                && subowner.kana_name.is_visible_to(login_user)
+        );
+
+        result.push(Project::from_entity(ProjectFromEntityInput {
+            project,
+            owner_name: owner.name,
+            owner_kana_name: owner.kana_name,
+            subowner_name: subowner.name,
+            subowner_kana_name: subowner.kana_name,
+        }));
+    }
+
+    Ok(result)
 }
 
 #[cfg(test)]

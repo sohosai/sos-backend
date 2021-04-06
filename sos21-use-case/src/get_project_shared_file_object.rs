@@ -42,7 +42,7 @@ where
         .await
         .context("Failed to get a project")?;
     let project = match result {
-        Some((project, _)) if project.is_visible_to(login_user) => project,
+        Some(result) if result.project.is_visible_to(login_user) => result.project,
         _ => return Err(UseCaseError::UseCase(Error::ProjectNotFound)),
     };
 
@@ -132,6 +132,43 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
+            .projects(vec![project.clone()])
+            .files(vec![other_file.clone()])
+            .objects(vec![other_object])
+            .await
+            .sharings(vec![sharing.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let input = get_project_shared_file_object::Input {
+            project_id: ProjectId::from_entity(project.id),
+            sharing_id: FileSharingId::from_entity(sharing.id()),
+        };
+        assert!(matches!(
+            get_project_shared_file_object::run(&app, input).await,
+            Ok(object)
+            if object.file.id == FileId::from_entity(other_file.id)
+        ));
+    }
+
+    // Checks that the normal user can read others' file which is shared to owning project.
+    #[tokio::test]
+    async fn test_general_subowner_project() {
+        let owner = test::model::new_general_user();
+        let user = test::model::new_general_user();
+        let project =
+            test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
+        let other = test::model::new_general_user();
+        let (other_file, other_object) = test::model::new_file(other.id.clone());
+
+        let sharing = file_sharing::FileSharing::new(
+            other_file.id,
+            file_sharing::FileSharingScope::Project(project.id),
+        );
+
+        let app = test::build_mock_app()
+            .users(vec![owner.clone(), user.clone(), other.clone()])
             .projects(vec![project.clone()])
             .files(vec![other_file.clone()])
             .objects(vec![other_object])

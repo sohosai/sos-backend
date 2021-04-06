@@ -25,7 +25,7 @@ where
         .await
         .context("Failed to get project")?;
     let project = match result {
-        Some((project, _)) if project.is_visible_to(login_user) => project,
+        Some(result) if result.project.is_visible_to(login_user) => result.project,
         _ => return Err(UseCaseError::UseCase(Error::ProjectNotFound)),
     };
 
