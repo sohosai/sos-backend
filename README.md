@@ -25,7 +25,7 @@
 ## Run
 
 次のコマンドでローカルに API サーバーを起動します。
-これはリリースごとに push される `ghcr.io/sohosai/sos21-backend` イメージを用いています。
+これはリリースごとに push される [`ghcr.io/sohosai/sos21-backend`](https://github.com/orgs/sohosai/packages/container/package/sos21-backend) イメージを用いています。
 
 ```shell
 $ export SOS21_FIREBASE_PROJECT_ID=<project ID>
