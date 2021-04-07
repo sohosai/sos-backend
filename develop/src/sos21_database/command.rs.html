@@ -45,18 +45,11 @@
 <span id="42">42</span>
 <span id="43">43</span>
 <span id="44">44</span>
-<span id="45">45</span>
-<span id="46">46</span>
-<span id="47">47</span>
-<span id="48">48</span>
-<span id="49">49</span>
-<span id="50">50</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_file_distribution_files</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_form_condition_excludes</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_form_condition_includes</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_form_project_query_conjunctions</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_pending_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_file</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_file_distribution</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_file_distribution_files</span>;
@@ -66,7 +59,6 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_form_condition_excludes</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_form_condition_includes</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_form_project_query_conjunctions</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_pending_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_user</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_file</span>;
@@ -74,14 +66,12 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_file_sharing</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_form</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_form_answer</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_pending_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_user</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_file_distribution_files</span>::<span class="ident">delete_file_distribution_files</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_form_condition_excludes</span>::<span class="ident">delete_form_condition_excludes</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_form_condition_includes</span>::<span class="ident">delete_form_condition_includes</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_form_project_query_conjunctions</span>::<span class="ident">delete_form_project_query_conjunctions</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_pending_project</span>::<span class="ident">delete_pending_project</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_file</span>::<span class="ident">insert_file</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_file_distribution</span>::<span class="ident">insert_file_distribution</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_file_distribution_files</span>::<span class="ident">insert_file_distribution_files</span>;
@@ -91,7 +81,6 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_form_condition_excludes</span>::<span class="ident">insert_form_condition_excludes</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_form_condition_includes</span>::<span class="ident">insert_form_condition_includes</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_form_project_query_conjunctions</span>::<span class="ident">insert_form_project_query_conjunctions</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_pending_project</span>::<span class="ident">insert_pending_project</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_project</span>::<span class="ident">insert_project</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_user</span>::<span class="ident">insert_user</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_file</span>::<span class="ident">update_file</span>;
@@ -99,7 +88,6 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_file_sharing</span>::<span class="ident">update_file_sharing</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_form</span>::<span class="ident">update_form</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_form_answer</span>::<span class="ident">update_form_answer</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_pending_project</span>::<span class="ident">update_pending_project</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_project</span>::<span class="ident">update_project</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_user</span>::<span class="ident">update_user</span>;
 </pre></div>

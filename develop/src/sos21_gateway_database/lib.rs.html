@@ -78,14 +78,6 @@
 <span id="75">75</span>
 <span id="76">76</span>
 <span id="77">77</span>
-<span id="78">78</span>
-<span id="79">79</span>
-<span id="80">80</span>
-<span id="81">81</span>
-<span id="82">82</span>
-<span id="83">83</span>
-<span id="84">84</span>
-<span id="85">85</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">lock</span>::<span class="ident">Mutex</span>;
 <span class="kw">use</span> <span class="ident">ref_cast</span>::<span class="ident">RefCast</span>;
@@ -93,8 +85,6 @@
 
 <span class="kw">mod</span> <span class="ident">project_repository</span>;
 <span class="kw">use</span> <span class="ident">project_repository</span>::<span class="ident">ProjectDatabase</span>;
-<span class="kw">mod</span> <span class="ident">pending_project_repository</span>;
-<span class="kw">use</span> <span class="ident">pending_project_repository</span>::<span class="ident">PendingProjectDatabase</span>;
 <span class="kw">mod</span> <span class="ident">form_repository</span>;
 <span class="kw">use</span> <span class="ident">form_repository</span>::<span class="ident">FormDatabase</span>;
 <span class="kw">mod</span> <span class="ident">file_repository</span>;
@@ -164,12 +154,6 @@
 <span class="ident">sos21_domain</span>::<span class="macro">delegate_file_distribution_repository</span><span class="macro">!</span> {
     <span class="kw">impl</span> <span class="ident">FileDistributionRepository</span> <span class="kw">for</span> <span class="ident">Database</span> {
         <span class="self">self</span> { <span class="ident">FileDistributionDatabase</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection</span>) }
-    }
-}
-
-<span class="ident">sos21_domain</span>::<span class="macro">delegate_pending_project_repository</span><span class="macro">!</span> {
-    <span class="kw">impl</span> <span class="ident">PendingProjectRepository</span> <span class="kw">for</span> <span class="ident">Database</span> {
-        <span class="self">self</span> { <span class="ident">PendingProjectDatabase</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection</span>) }
     }
 }
 </pre></div>

@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["find_project",""]]});
+initSidebarItems({"fn":[["find_project",""]],"struct":[["ProjectWithOwner",""]]});

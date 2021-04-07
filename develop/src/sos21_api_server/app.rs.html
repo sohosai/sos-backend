@@ -149,12 +149,6 @@
 <span id="146">146</span>
 <span id="147">147</span>
 <span id="148">148</span>
-<span id="149">149</span>
-<span id="150">150</span>
-<span id="151">151</span>
-<span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>};
 
@@ -301,12 +295,6 @@
 
 <span class="ident">sos21_domain</span>::<span class="macro">delegate_file_distribution_repository</span><span class="macro">!</span> {
     <span class="kw">impl</span> <span class="ident">FileDistributionRepository</span> <span class="kw">for</span> <span class="ident">Context</span> {
-        <span class="self">self</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">database</span> }
-    }
-}
-
-<span class="ident">sos21_domain</span>::<span class="macro">delegate_pending_project_repository</span><span class="macro">!</span> {
-    <span class="kw">impl</span> <span class="ident">PendingProjectRepository</span> <span class="kw">for</span> <span class="ident">Context</span> {
         <span class="self">self</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">database</span> }
     }
 }

@@ -65,9 +65,6 @@
 <span id="62">62</span>
 <span id="63">63</span>
 <span id="64">64</span>
-<span id="65">65</span>
-<span id="66">66</span>
-<span id="67">67</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">use_case_ensure</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">cond</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
@@ -81,10 +78,10 @@
     };
 }
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">accept_project_subowner</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create_file</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create_form</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create_form_answer</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">create_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">distribute_files</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">export_form_answers</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">export_projects</span>;
@@ -99,7 +96,6 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_form_answer_shared_file</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_form_answer_shared_file_object</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_login_user</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_pending_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project_by_code</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">get_project_form</span>;
@@ -122,10 +118,8 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_project_forms</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_user_file_sharings</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_user_files</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_user_pending_projects</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_user_projects</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">list_users</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">prepare_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">revoke_file_sharing</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">share_file</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">signup</span>;

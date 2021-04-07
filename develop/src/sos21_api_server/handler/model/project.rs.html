@@ -120,12 +120,6 @@
 <span id="117">117</span>
 <span id="118">118</span>
 <span id="119">119</span>
-<span id="120">120</span>
-<span id="121">121</span>
-<span id="122">122</span>
-<span id="123">123</span>
-<span id="124">124</span>
-<span id="125">125</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">UserId</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>};
@@ -214,9 +208,6 @@
     <span class="kw">pub</span> <span class="ident">owner_id</span>: <span class="ident">UserId</span>,
     <span class="kw">pub</span> <span class="ident">owner_name</span>: <span class="ident">UserName</span>,
     <span class="kw">pub</span> <span class="ident">owner_kana_name</span>: <span class="ident">UserKanaName</span>,
-    <span class="kw">pub</span> <span class="ident">subowner_id</span>: <span class="ident">UserId</span>,
-    <span class="kw">pub</span> <span class="ident">subowner_name</span>: <span class="ident">UserName</span>,
-    <span class="kw">pub</span> <span class="ident">subowner_kana_name</span>: <span class="ident">UserKanaName</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">group_name</span>: <span class="ident">String</span>,
@@ -235,9 +226,6 @@
             <span class="ident">owner_id</span>: <span class="ident">UserId</span>::<span class="ident">from_use_case</span>(<span class="ident">project</span>.<span class="ident">owner_id</span>),
             <span class="ident">owner_name</span>: <span class="ident">UserName</span>::<span class="ident">from_use_case</span>(<span class="ident">project</span>.<span class="ident">owner_name</span>),
             <span class="ident">owner_kana_name</span>: <span class="ident">UserKanaName</span>::<span class="ident">from_use_case</span>(<span class="ident">project</span>.<span class="ident">owner_kana_name</span>),
-            <span class="ident">subowner_id</span>: <span class="ident">UserId</span>::<span class="ident">from_use_case</span>(<span class="ident">project</span>.<span class="ident">subowner_id</span>),
-            <span class="ident">subowner_name</span>: <span class="ident">UserName</span>::<span class="ident">from_use_case</span>(<span class="ident">project</span>.<span class="ident">subowner_name</span>),
-            <span class="ident">subowner_kana_name</span>: <span class="ident">UserKanaName</span>::<span class="ident">from_use_case</span>(<span class="ident">project</span>.<span class="ident">subowner_kana_name</span>),
             <span class="ident">name</span>: <span class="ident">project</span>.<span class="ident">name</span>,
             <span class="ident">kana_name</span>: <span class="ident">project</span>.<span class="ident">kana_name</span>,
             <span class="ident">group_name</span>: <span class="ident">project</span>.<span class="ident">group_name</span>,

@@ -714,66 +714,6 @@
 <span id="711">711</span>
 <span id="712">712</span>
 <span id="713">713</span>
-<span id="714">714</span>
-<span id="715">715</span>
-<span id="716">716</span>
-<span id="717">717</span>
-<span id="718">718</span>
-<span id="719">719</span>
-<span id="720">720</span>
-<span id="721">721</span>
-<span id="722">722</span>
-<span id="723">723</span>
-<span id="724">724</span>
-<span id="725">725</span>
-<span id="726">726</span>
-<span id="727">727</span>
-<span id="728">728</span>
-<span id="729">729</span>
-<span id="730">730</span>
-<span id="731">731</span>
-<span id="732">732</span>
-<span id="733">733</span>
-<span id="734">734</span>
-<span id="735">735</span>
-<span id="736">736</span>
-<span id="737">737</span>
-<span id="738">738</span>
-<span id="739">739</span>
-<span id="740">740</span>
-<span id="741">741</span>
-<span id="742">742</span>
-<span id="743">743</span>
-<span id="744">744</span>
-<span id="745">745</span>
-<span id="746">746</span>
-<span id="747">747</span>
-<span id="748">748</span>
-<span id="749">749</span>
-<span id="750">750</span>
-<span id="751">751</span>
-<span id="752">752</span>
-<span id="753">753</span>
-<span id="754">754</span>
-<span id="755">755</span>
-<span id="756">756</span>
-<span id="757">757</span>
-<span id="758">758</span>
-<span id="759">759</span>
-<span id="760">760</span>
-<span id="761">761</span>
-<span id="762">762</span>
-<span id="763">763</span>
-<span id="764">764</span>
-<span id="765">765</span>
-<span id="766">766</span>
-<span id="767">767</span>
-<span id="768">768</span>
-<span id="769">769</span>
-<span id="770">770</span>
-<span id="771">771</span>
-<span id="772">772</span>
-<span id="773">773</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file</span>::<span class="ident">FileId</span>;
@@ -1051,10 +991,14 @@
         .<span class="ident">get_project</span>(<span class="ident">input</span>.<span class="ident">project_id</span>.<span class="ident">into_entity</span>())
         .<span class="kw">await</span>
         .<span class="ident">context</span>(<span class="string">&quot;Failed to get a project&quot;</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">result</span> {
-        <span class="prelude-val">Some</span>(<span class="ident">result</span>) <span class="kw">if</span> <span class="ident">result</span>.<span class="ident">project</span>.<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">project</span>,
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">ProjectNotFound</span>)),
+    <span class="kw">let</span> (<span class="ident">project</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">result</span> {
+        <span class="prelude-val">Some</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>,
+        <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">ProjectNotFound</span>)),
     };
+
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">project</span>.<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>) {
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">ProjectNotFound</span>));
+    }
 
     <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">ctx</span>
         .<span class="ident">get_form</span>(<span class="ident">input</span>.<span class="ident">form_id</span>.<span class="ident">into_entity</span>())
@@ -1349,45 +1293,9 @@
     }
 
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_create_subowner</span>() {
-        <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span>
-            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project_with_subowner</span>(<span class="ident">owner</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
-
-        <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
-            .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">owner</span>.<span class="ident">clone</span>(), <span class="ident">user</span>.<span class="ident">clone</span>(), <span class="ident">other</span>.<span class="ident">clone</span>()])
-            .<span class="ident">projects</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">project</span>.<span class="ident">clone</span>()])
-            .<span class="ident">forms</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">form</span>.<span class="ident">clone</span>()])
-            .<span class="ident">build</span>()
-            .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
-            .<span class="kw">await</span>;
-
-        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">project_id</span> <span class="op">=</span> <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">create_form_answer</span>::<span class="ident">Input</span> {
-            <span class="ident">form_id</span>,
-            <span class="ident">project_id</span>,
-            <span class="ident">items</span>: <span class="ident">mock_input_form_answer_items</span>(<span class="kw-2">&amp;</span><span class="ident">form</span>.<span class="ident">items</span>),
-        };
-
-        <span class="kw">let</span> <span class="ident">got</span> <span class="op">=</span> <span class="ident">create_form_answer</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>.<span class="ident">unwrap</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">got</span>.<span class="ident">form_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">form_id</span>);
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">got</span>.<span class="ident">project_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">project_id</span>);
-
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
-            <span class="ident">get_project_form_answer</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">project_id</span>, <span class="ident">form_id</span>).<span class="kw">await</span>,
-            <span class="prelude-val">Ok</span>(<span class="ident">answer</span>)
-            <span class="kw">if</span> <span class="ident">answer</span>.<span class="ident">id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">got</span>.<span class="ident">id</span>
-        ));
-    }
-
-    <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_create_owner</span>() {
-        <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_create</span>() {
+        <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_committee_user</span>();
+        <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
 
@@ -1407,7 +1315,10 @@
             <span class="ident">items</span>: <span class="ident">mock_input_form_answer_items</span>(<span class="kw-2">&amp;</span><span class="ident">form</span>.<span class="ident">items</span>),
         };
 
-        <span class="kw">let</span> <span class="ident">got</span> <span class="op">=</span> <span class="ident">create_form_answer</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>.<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">create_form_answer</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>;
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">result</span>.<span class="ident">is_ok</span>());
+
+        <span class="kw">let</span> <span class="ident">got</span> <span class="op">=</span> <span class="ident">result</span>.<span class="ident">unwrap</span>();
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">got</span>.<span class="ident">form_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">form_id</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">got</span>.<span class="ident">project_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">project_id</span>);
 
@@ -1419,40 +1330,9 @@
     }
 
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_create_other</span>() {
-        <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
-
-        <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
-            .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>(), <span class="ident">other</span>.<span class="ident">clone</span>()])
-            .<span class="ident">projects</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">project</span>.<span class="ident">clone</span>()])
-            .<span class="ident">forms</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">form</span>.<span class="ident">clone</span>()])
-            .<span class="ident">build</span>()
-            .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
-            .<span class="kw">await</span>;
-
-        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">project_id</span> <span class="op">=</span> <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">create_form_answer</span>::<span class="ident">Input</span> {
-            <span class="ident">form_id</span>,
-            <span class="ident">project_id</span>,
-            <span class="ident">items</span>: <span class="ident">mock_input_form_answer_items</span>(<span class="kw-2">&amp;</span><span class="ident">form</span>.<span class="ident">items</span>),
-        };
-
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
-            <span class="ident">create_form_answer</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>,
-            <span class="prelude-val">Err</span>(<span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(
-                <span class="ident">create_form_answer</span>::<span class="ident">Error</span>::<span class="ident">ProjectNotFound</span>
-            ))
-        ));
-    }
-
-    <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_invalid</span>() {
-        <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
+        <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_committee_user</span>();
+        <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
 
@@ -1481,8 +1361,8 @@
 
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_file_share</span>() {
-        <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
+        <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_committee_user</span>();
+        <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
 
         <span class="kw">let</span> (<span class="ident">form</span>, <span class="ident">item_id</span>) <span class="op">=</span> {
