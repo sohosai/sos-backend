@@ -1,4 +1,4 @@
 (function() {var implementors = {};
-implementors["sos21_database"] = [{"text":"impl Binary for ProjectAttributes","synthetic":false,"types":[]}];
-implementors["sos21_domain"] = [{"text":"impl Binary for Permissions","synthetic":false,"types":[]}];
+implementors["sos21_database"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/fmt/trait.Binary.html\" title=\"trait core::fmt::Binary\">Binary</a> for <a class=\"struct\" href=\"sos21_database/model/project/struct.ProjectAttributes.html\" title=\"struct sos21_database::model::project::ProjectAttributes\">ProjectAttributes</a>","synthetic":false,"types":["sos21_database::model::project::ProjectAttributes"]}];
+implementors["sos21_domain"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/fmt/trait.Binary.html\" title=\"trait core::fmt::Binary\">Binary</a> for <a class=\"struct\" href=\"sos21_domain/model/permissions/struct.Permissions.html\" title=\"struct sos21_domain::model::permissions::Permissions\">Permissions</a>","synthetic":false,"types":["sos21_domain::model::permissions::Permissions"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
