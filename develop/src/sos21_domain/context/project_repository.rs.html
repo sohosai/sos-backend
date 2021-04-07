@@ -102,8 +102,6 @@
 <span id="99"> 99</span>
 <span id="100">100</span>
 <span id="101">101</span>
-<span id="102">102</span>
-<span id="103">103</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">project</span>::{<span class="ident">Project</span>, <span class="ident">ProjectId</span>, <span class="ident">ProjectIndex</span>},
@@ -112,14 +110,21 @@
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span>;
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectWithOwners</span> {
+    <span class="kw">pub</span> <span class="ident">project</span>: <span class="ident">Project</span>,
+    <span class="kw">pub</span> <span class="ident">owner</span>: <span class="ident">User</span>,
+    <span class="kw">pub</span> <span class="ident">subowner</span>: <span class="ident">User</span>,
+}
+
 <span class="attribute">#[<span class="ident">async_trait</span>::<span class="ident">async_trait</span>]</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ProjectRepository</span> {
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">store_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">project</span>: <span class="ident">Project</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ProjectId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span>;
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project_by_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">ProjectIndex</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span>;
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ProjectId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project_by_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">ProjectIndex</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span>;
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">count_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>;
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span>;
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects_by_owner</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Project</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects_by_user</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">user_id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 }
 
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
@@ -139,10 +144,7 @@
                 <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">sel</span>,
                 <span class="ident">id</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">project</span>::<span class="ident">ProjectId</span>,
             ) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>
-                <span class="prelude-ty">Option</span><span class="op">&lt;</span>(
-                    <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">project</span>::<span class="ident">Project</span>,
-                    <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">user</span>::<span class="ident">User</span>,
-                )<span class="op">&gt;</span>,
+                <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">context</span>::<span class="ident">project_repository</span>::<span class="ident">ProjectWithOwners</span><span class="op">&gt;</span>,
             <span class="op">&gt;</span> {
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">get_project</span>(<span class="ident">id</span>).<span class="kw">await</span>
             }
@@ -150,10 +152,7 @@
                 <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">sel</span>,
                 <span class="ident">index</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">project</span>::<span class="ident">ProjectIndex</span>,
             ) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>
-                <span class="prelude-ty">Option</span><span class="op">&lt;</span>(
-                    <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">project</span>::<span class="ident">Project</span>,
-                    <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">user</span>::<span class="ident">User</span>,
-                )<span class="op">&gt;</span>,
+                <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">context</span>::<span class="ident">project_repository</span>::<span class="ident">ProjectWithOwners</span><span class="op">&gt;</span>,
             <span class="op">&gt;</span> {
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">get_project_by_index</span>(<span class="ident">index</span>).<span class="kw">await</span>
             }
@@ -165,18 +164,15 @@
             <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects</span>(
                 <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">sel</span>,
             ) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>
-                <span class="ident">Vec</span><span class="op">&lt;</span>(
-                    <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">project</span>::<span class="ident">Project</span>,
-                    <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">user</span>::<span class="ident">User</span>,
-                )<span class="op">&gt;</span>,
+                <span class="ident">Vec</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">context</span>::<span class="ident">project_repository</span>::<span class="ident">ProjectWithOwners</span><span class="op">&gt;</span>,
             <span class="op">&gt;</span> {
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">list_projects</span>().<span class="kw">await</span>
             }
-            <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects_by_owner</span>(
+            <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects_by_user</span>(
                 <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">sel</span>,
-                <span class="ident">id</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">user</span>::<span class="ident">UserId</span>,
-            ) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">project</span>::<span class="ident">Project</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">list_projects_by_owner</span>(<span class="ident">id</span>).<span class="kw">await</span>
+                <span class="ident">user_id</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">user</span>::<span class="ident">UserId</span>,
+            ) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">context</span>::<span class="ident">project_repository</span>::<span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">list_projects_by_user</span>(<span class="ident">user_id</span>).<span class="kw">await</span>
             }
         }
     };
@@ -188,11 +184,11 @@
         <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ProjectRepository</span><span class="op">&gt;</span>::<span class="ident">store_project</span>(<span class="self">self</span>, <span class="ident">project</span>).<span class="kw">await</span>
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ProjectId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ProjectId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ProjectRepository</span><span class="op">&gt;</span>::<span class="ident">get_project</span>(<span class="self">self</span>, <span class="ident">id</span>).<span class="kw">await</span>
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project_by_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">ProjectIndex</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project_by_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">ProjectIndex</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ProjectRepository</span><span class="op">&gt;</span>::<span class="ident">get_project_by_index</span>(<span class="self">self</span>, <span class="ident">index</span>).<span class="kw">await</span>
     }
 
@@ -200,12 +196,12 @@
         <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ProjectRepository</span><span class="op">&gt;</span>::<span class="ident">count_projects</span>(<span class="self">self</span>).<span class="kw">await</span>
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ProjectRepository</span><span class="op">&gt;</span>::<span class="ident">list_projects</span>(<span class="self">self</span>).<span class="kw">await</span>
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects_by_owner</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Project</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ProjectRepository</span><span class="op">&gt;</span>::<span class="ident">list_projects_by_owner</span>(<span class="self">self</span>, <span class="ident">id</span>).<span class="kw">await</span>
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects_by_user</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">user_id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ProjectRepository</span><span class="op">&gt;</span>::<span class="ident">list_projects_by_user</span>(<span class="self">self</span>, <span class="ident">user_id</span>).<span class="kw">await</span>
     }
 }
 </pre></div>

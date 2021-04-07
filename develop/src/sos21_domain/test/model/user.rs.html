@@ -60,12 +60,27 @@
 <span id="57">57</span>
 <span id="58">58</span>
 <span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
     <span class="ident">phone_number</span>::<span class="ident">PhoneNumber</span>,
     <span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserAffiliation</span>, <span class="ident">UserEmailAddress</span>, <span class="ident">UserId</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>, <span class="ident">UserRole</span>},
 };
+
+<span class="kw">use</span> <span class="ident">once_cell</span>::<span class="ident">sync</span>::<span class="ident">Lazy</span>;
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_user_id</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UserId</span> {
@@ -92,9 +107,9 @@
     <span class="ident">UserAffiliation</span>::<span class="ident">from_string</span>(<span class="string">&quot;情報学群情報科学類&quot;</span>).<span class="ident">unwrap</span>()
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_user</span>(<span class="ident">role</span>: <span class="ident">UserRole</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">User</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mock_user</span>(<span class="ident">id</span>: <span class="ident">UserId</span>, <span class="ident">role</span>: <span class="ident">UserRole</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">User</span> {
     <span class="ident">User</span> {
-        <span class="ident">id</span>: <span class="ident">new_user_id</span>(),
+        <span class="ident">id</span>,
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">now</span>(),
         <span class="ident">name</span>: <span class="ident">mock_user_name</span>(),
         <span class="ident">kana_name</span>: <span class="ident">mock_user_kana_name</span>(),
@@ -103,6 +118,17 @@
         <span class="ident">affiliation</span>: <span class="ident">mock_user_affiliation</span>(),
         <span class="ident">role</span>,
     }
+}
+
+<span class="doccomment">/// `UserId` that is known to be exist globally in the testing context.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// We can use this ID to implicitly refer (uninterested) test user in mocking.</span>
+<span class="doccomment">/// Implementors of the testing context must make sure that this ID is known without persistence.</span>
+<span class="kw">pub</span> <span class="kw">static</span> <span class="ident">KNOWN_MOCK_GENERAL_USER_ID</span>: <span class="ident">Lazy</span><span class="op">&lt;</span><span class="ident">UserId</span><span class="op">&gt;</span> <span class="op">=</span>
+    <span class="ident">Lazy</span>::<span class="ident">new</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">UserId</span>(<span class="string">&quot;MOCK_USER_ID&quot;</span>.<span class="ident">to_string</span>()));
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_user</span>(<span class="ident">role</span>: <span class="ident">UserRole</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">User</span> {
+    <span class="ident">mock_user</span>(<span class="ident">new_user_id</span>(), <span class="ident">role</span>)
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_general_user</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">User</span> {

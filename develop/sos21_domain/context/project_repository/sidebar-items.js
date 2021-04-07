@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["ProjectRepository",""]]});
+initSidebarItems({"struct":[["ProjectWithOwners",""]],"trait":[["ProjectRepository",""]]});
