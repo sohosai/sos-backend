@@ -19,12 +19,12 @@ jobs:
         run: docker load < $(nix-build nix/image.nix --argstr tag latest --argstr name sos21-backend)
       - name: Tag the image
         run: |
-          docker tag sos21-backend:latest "docker.pkg.github.com/sohosai/sos21-backend/sos21-backend:latest"
-          docker tag sos21-backend:latest "docker.pkg.github.com/sohosai/sos21-backend/sos21-backend:${GITHUB_REF#refs/tags/}"
+          docker tag sos21-backend:latest "ghcr.io/sohosai/sos21-backend:latest"
+          docker tag sos21-backend:latest "ghcr.io/sohosai/sos21-backend:${GITHUB_REF#refs/tags/}"
       - name: Login to the registry
-        run: echo '${{ secrets.GITHUB_TOKEN }}' | docker login docker.pkg.github.com -u '${{ github.actor }}' --password-stdin
+        run: echo '${{ secrets.GITHUB_TOKEN }}' | docker login ghcr.io -u '${{ github.actor }}' --password-stdin
       - name: Push the image
-        run: docker push --all-tags "docker.pkg.github.com/sohosai/sos21-backend/sos21-backend"
+        run: docker push --all-tags "ghcr.io/sohosai/sos21-backend"
   generate-api-server-document:
     name: Generate documentation from OpenAPI schema
     runs-on: ubuntu-18.04
