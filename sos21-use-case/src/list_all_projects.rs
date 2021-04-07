@@ -1,8 +1,9 @@
 use crate::error::{UseCaseError, UseCaseResult};
-use crate::model::project::Project;
+use crate::model::project::{Project, ProjectFromEntityInput};
 
 use anyhow::Context;
-use sos21_domain::context::{Login, ProjectRepository};
+use sos21_domain::context::project_repository::{self, ProjectRepository};
+use sos21_domain::context::Login;
 use sos21_domain::model::permissions::Permissions;
 
 #[derive(Debug, Clone)]
@@ -28,17 +29,34 @@ where
         .list_projects()
         .await
         .context("Failed to list projects")?;
-    use_case_ensure!(projects
-        .iter()
-        .all(|(project, owner)| project.is_visible_to(login_user)
-            && owner.name.is_visible_to(login_user)
-            && owner.kana_name.is_visible_to(login_user)));
 
-    let projects = projects
-        .into_iter()
-        .map(|(project, owner)| Project::from_entity(project, owner.name, owner.kana_name))
-        .collect();
-    Ok(projects)
+    let mut result = Vec::new();
+
+    for project_with_owner in projects {
+        let project_repository::ProjectWithOwners {
+            project,
+            owner,
+            subowner,
+        } = project_with_owner;
+
+        use_case_ensure!(
+            project.is_visible_to(login_user)
+                && owner.name.is_visible_to(login_user)
+                && owner.kana_name.is_visible_to(login_user)
+                && subowner.name.is_visible_to(login_user)
+                && subowner.kana_name.is_visible_to(login_user)
+        );
+
+        result.push(Project::from_entity(ProjectFromEntityInput {
+            project,
+            owner_name: owner.name,
+            owner_kana_name: owner.kana_name,
+            subowner_name: subowner.name,
+            subowner_kana_name: subowner.kana_name,
+        }));
+    }
+
+    Ok(result)
 }
 
 #[cfg(test)]

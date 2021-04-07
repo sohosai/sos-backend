@@ -1,0 +1,36 @@
+title: PendingProject
+type: object
+properties:
+  id:
+    $ref: ./PendingProjectId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  author_id:
+    $ref: ../user/UserId.yml
+  name:
+    type: string
+  kana_name:
+    type: string
+  group_name:
+    type: string
+  kana_group_name:
+    type: string
+  description:
+    type: string
+  category:
+    $ref: ../project/ProjectCategory.yml
+  attributes:
+    type: array
+    items:
+      $ref: ../project/ProjectAttribute.yml
+required:
+  - id
+  - created_at
+  - author_id
+  - name
+  - kana_name
+  - group_name
+  - kana_group_name
+  - description
+  - category
+  - attributes

@@ -8,7 +8,7 @@ use futures::lock::Mutex;
 use futures::{future, stream::TryStreamExt};
 use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
-use sos21_domain::context::ProjectRepository;
+use sos21_domain::context::project_repository::{ProjectRepository, ProjectWithOwners};
 use sos21_domain::model::{
     date_time::DateTime,
     project::{
@@ -16,7 +16,7 @@ use sos21_domain::model::{
         ProjectGroupName, ProjectId, ProjectIndex, ProjectKanaGroupName, ProjectKanaName,
         ProjectName,
     },
-    user::{User, UserId},
+    user::UserId,
 };
 use sqlx::{Postgres, Transaction};
 
@@ -48,24 +48,20 @@ impl ProjectRepository for ProjectDatabase {
         }
     }
 
-    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<(Project, User)>> {
+    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<ProjectWithOwners>> {
         let mut lock = self.0.lock().await;
-
-        let opt = query::find_project_by_index(&mut *lock, index.to_i16()).await?;
-        let result = match opt {
-            Some(x) => x,
-            None => return Ok(None),
-        };
-        to_project_with_owner(result.project, result.owner).map(Some)
+        query::find_project_by_index(&mut *lock, index.to_i16())
+            .await?
+            .map(to_project_with_owner)
+            .transpose()
     }
 
-    async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {
+    async fn get_project(&self, id: ProjectId) -> Result<Option<ProjectWithOwners>> {
         let mut lock = self.0.lock().await;
-        let result = match query::find_project(&mut *lock, id.to_uuid()).await? {
-            Some(x) => x,
-            None => return Ok(None),
-        };
-        to_project_with_owner(result.project, result.owner).map(Some)
+        query::find_project(&mut *lock, id.to_uuid())
+            .await?
+            .map(to_project_with_owner)
+            .transpose()
     }
 
     async fn count_projects(&self) -> Result<u64> {
@@ -73,30 +69,37 @@ impl ProjectRepository for ProjectDatabase {
         query::count_projects(&mut *lock).await
     }
 
-    async fn list_projects(&self) -> Result<Vec<(Project, User)>> {
+    async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>> {
         let mut lock = self.0.lock().await;
         query::list_projects(&mut *lock)
-            .and_then(|result| future::ready(to_project_with_owner(result.project, result.owner)))
+            .and_then(|result| future::ready(to_project_with_owner(result)))
             .try_collect()
             .await
     }
 
-    async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<Project>> {
+    async fn list_projects_by_user(&self, user_id: UserId) -> Result<Vec<ProjectWithOwners>> {
         let mut lock = self.0.lock().await;
-        query::list_projects_by_owner(&mut *lock, id.0)
-            .and_then(|project| future::ready(to_project(project)))
+        query::list_projects_by_user(&mut *lock, user_id.0)
+            .and_then(|result| future::ready(to_project_with_owner(result)))
             .try_collect()
             .await
     }
 }
 
 fn to_project_with_owner(
-    project: data::project::Project,
-    owner: data::user::User,
-) -> Result<(Project, User)> {
-    let project = to_project(project)?;
-    let owner = to_user(owner)?;
-    Ok((project, owner))
+    project_with_owners: data::project::ProjectWithOwners,
+) -> Result<ProjectWithOwners> {
+    let data::project::ProjectWithOwners {
+        project,
+        owner,
+        subowner,
+    } = project_with_owners;
+
+    Ok(ProjectWithOwners {
+        project: to_project(project)?,
+        owner: to_user(owner)?,
+        subowner: to_user(subowner)?,
+    })
 }
 
 fn from_project(project: Project) -> data::project::Project {
@@ -105,6 +108,7 @@ fn from_project(project: Project) -> data::project::Project {
         index,
         created_at,
         owner_id,
+        subowner_id,
         name,
         kana_name,
         group_name,
@@ -118,6 +122,7 @@ fn from_project(project: Project) -> data::project::Project {
         index: index.to_i16(),
         created_at: created_at.utc(),
         owner_id: owner_id.0,
+        subowner_id: subowner_id.0,
         name: name.into_string(),
         kana_name: kana_name.into_string(),
         group_name: group_name.into_string(),
@@ -155,6 +160,7 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         index,
         created_at,
         owner_id,
+        subowner_id,
         name,
         kana_name,
         group_name,
@@ -169,6 +175,7 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         index: ProjectIndex::from_u16(index.try_into()?)?,
         created_at: DateTime::from_utc(created_at),
         owner_id: UserId(owner_id),
+        subowner_id: UserId(subowner_id),
         name: ProjectName::from_string(name)?,
         kana_name: ProjectKanaName::from_string(kana_name)?,
         group_name: ProjectGroupName::from_string(group_name)?,

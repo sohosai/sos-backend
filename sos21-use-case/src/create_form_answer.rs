@@ -274,14 +274,10 @@ where
         .get_project(input.project_id.into_entity())
         .await
         .context("Failed to get a project")?;
-    let (project, _) = match result {
-        Some(x) => x,
-        None => return Err(UseCaseError::UseCase(Error::ProjectNotFound)),
+    let project = match result {
+        Some(result) if result.project.is_visible_to(login_user) => result.project,
+        _ => return Err(UseCaseError::UseCase(Error::ProjectNotFound)),
     };
-
-    if !project.is_visible_to(login_user) {
-        return Err(UseCaseError::UseCase(Error::ProjectNotFound));
-    }
 
     let result = ctx
         .get_form(input.form_id.into_entity())
@@ -576,9 +572,45 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_create() {
-        let user = test::model::new_committee_user();
-        let other = test::model::new_general_user();
+    async fn test_create_subowner() {
+        let owner = test::model::new_general_user();
+        let user = test::model::new_general_user();
+        let other = test::model::new_operator_user();
+        let project =
+            test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
+        let form = test::model::new_form(other.id.clone());
+
+        let app = test::build_mock_app()
+            .users(vec![owner.clone(), user.clone(), other.clone()])
+            .projects(vec![project.clone()])
+            .forms(vec![form.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let form_id = FormId::from_entity(form.id);
+        let project_id = ProjectId::from_entity(project.id);
+        let input = create_form_answer::Input {
+            form_id,
+            project_id,
+            items: mock_input_form_answer_items(&form.items),
+        };
+
+        let got = create_form_answer::run(&app, input).await.unwrap();
+        assert!(got.form_id == form_id);
+        assert!(got.project_id == project_id);
+
+        assert!(matches!(
+            get_project_form_answer::run(&app, project_id, form_id).await,
+            Ok(answer)
+            if answer.id == got.id
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_create_owner() {
+        let user = test::model::new_general_user();
+        let other = test::model::new_operator_user();
         let project = test::model::new_general_project(user.id.clone());
         let form = test::model::new_form(other.id.clone());
 
@@ -598,10 +630,7 @@ mod tests {
             items: mock_input_form_answer_items(&form.items),
         };
 
-        let result = create_form_answer::run(&app, input).await;
-        assert!(result.is_ok());
-
-        let got = result.unwrap();
+        let got = create_form_answer::run(&app, input).await.unwrap();
         assert!(got.form_id == form_id);
         assert!(got.project_id == project_id);
 
@@ -613,9 +642,40 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_create_other() {
+        let user = test::model::new_general_user();
+        let other = test::model::new_operator_user();
+        let project = test::model::new_general_project(other.id.clone());
+        let form = test::model::new_form(other.id.clone());
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone(), other.clone()])
+            .projects(vec![project.clone()])
+            .forms(vec![form.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let form_id = FormId::from_entity(form.id);
+        let project_id = ProjectId::from_entity(project.id);
+        let input = create_form_answer::Input {
+            form_id,
+            project_id,
+            items: mock_input_form_answer_items(&form.items),
+        };
+
+        assert!(matches!(
+            create_form_answer::run(&app, input).await,
+            Err(UseCaseError::UseCase(
+                create_form_answer::Error::ProjectNotFound
+            ))
+        ));
+    }
+
+    #[tokio::test]
     async fn test_invalid() {
-        let user = test::model::new_committee_user();
-        let other = test::model::new_general_user();
+        let user = test::model::new_general_user();
+        let other = test::model::new_operator_user();
         let project = test::model::new_general_project(user.id.clone());
         let form = test::model::new_form(other.id.clone());
 
@@ -644,8 +704,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_file_share() {
-        let user = test::model::new_committee_user();
-        let other = test::model::new_general_user();
+        let user = test::model::new_general_user();
+        let other = test::model::new_operator_user();
         let project = test::model::new_general_project(user.id.clone());
 
         let (form, item_id) = {

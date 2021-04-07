@@ -1,10 +1,11 @@
 use crate::app::Context;
-use crate::handler::model::project::{Project, ProjectAttribute, ProjectCategory};
+use crate::handler::model::pending_project::PendingProject;
+use crate::handler::model::project::{ProjectAttribute, ProjectCategory};
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::create_project;
+use sos21_use_case::prepare_project;
 use warp::http::StatusCode;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -20,7 +21,7 @@ pub struct Request {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Response {
-    pub project: Project,
+    pub pending_project: PendingProject,
 }
 
 impl HandlerResponse for Response {
@@ -34,7 +35,6 @@ impl HandlerResponse for Response {
 pub enum Error {
     InvalidField { field: &'static str },
     DuplicatedProjectAttributes,
-    TooManyProjects,
 }
 
 impl HandlerResponse for Error {
@@ -42,34 +42,32 @@ impl HandlerResponse for Error {
         match self {
             Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
             Error::DuplicatedProjectAttributes => StatusCode::BAD_REQUEST,
-            Error::TooManyProjects => StatusCode::CONFLICT,
         }
     }
 }
 
-impl From<create_project::Error> for Error {
-    fn from(err: create_project::Error) -> Error {
+impl From<prepare_project::Error> for Error {
+    fn from(err: prepare_project::Error) -> Error {
         match err {
-            create_project::Error::InvalidName => Error::InvalidField { field: "name" },
-            create_project::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
-            create_project::Error::InvalidGroupName => Error::InvalidField {
+            prepare_project::Error::InvalidName => Error::InvalidField { field: "name" },
+            prepare_project::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
+            prepare_project::Error::InvalidGroupName => Error::InvalidField {
                 field: "group_name",
             },
-            create_project::Error::InvalidKanaGroupName => Error::InvalidField {
+            prepare_project::Error::InvalidKanaGroupName => Error::InvalidField {
                 field: "kana_group_name",
             },
-            create_project::Error::InvalidDescription => Error::InvalidField {
+            prepare_project::Error::InvalidDescription => Error::InvalidField {
                 field: "description",
             },
-            create_project::Error::DuplicatedAttributes => Error::DuplicatedProjectAttributes,
-            create_project::Error::TooManyProjects => Error::TooManyProjects,
+            prepare_project::Error::DuplicatedAttributes => Error::DuplicatedProjectAttributes,
         }
     }
 }
 
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
-    let input = create_project::Input {
+    let input = prepare_project::Input {
         name: request.name,
         kana_name: request.kana_name,
         group_name: request.group_name,
@@ -82,7 +80,7 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
             .map(ProjectAttribute::into_use_case)
             .collect(),
     };
-    let project = create_project::run(&ctx, input).await?;
-    let project = Project::from_use_case(project);
-    Ok(Response { project })
+    let pending_project = prepare_project::run(&ctx, input).await?;
+    let pending_project = PendingProject::from_use_case(pending_project);
+    Ok(Response { pending_project })
 }

@@ -146,3 +146,9 @@ sos21_domain::delegate_file_distribution_repository! {
         self { &self.database }
     }
 }
+
+sos21_domain::delegate_pending_project_repository! {
+    impl PendingProjectRepository for Context {
+        self { &self.database }
+    }
+}

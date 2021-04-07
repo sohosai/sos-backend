@@ -87,6 +87,7 @@ pub fn endpoints(
         / "me" {
             / "get" => GET (handler::me::get),
             / "project" / "list" => GET (handler::me::project::list),
+            / "pending-project" / "list" => GET (handler::me::pending_project::list),
             / "file" {
                 / "list" => GET (handler::me::file::list),
                 / "check-usage" => GET (handler::me::file::check_usage),
@@ -94,8 +95,8 @@ pub fn endpoints(
             / "file-sharing" / "list" => GET (handler::me::file_sharing::list),
         },
         / "project" {
+            / "prepare" => POST (handler::project::prepare),
             / "get" => GET (handler::project::get),
-            / "create" => POST (handler::project::create),
             / "update" => POST (handler::project::update),
             / "list" => GET (handler::project::list),
             / "export" => GET (handler::project::export),
@@ -115,6 +116,10 @@ pub fn endpoints(
                 / "list" => GET (handler::project::file_distribution::list),
                 / "get" => GET (handler::project::file_distribution::get),
             }
+        },
+        / "pending-project" {
+            / "get" => GET (handler::pending_project::get),
+            / "accept-subowner" => POST (handler::pending_project::accept_subowner),
         },
         / "form" {
             / "get" => GET (handler::form::get),

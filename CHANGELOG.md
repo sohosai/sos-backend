@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
+- Subowner ([#54](https://github.com/sohosai/sos21-backend/pull/54))
+
 ### Changed
 
 - Use GitHub Container Registry instead of GitHub Packages Docker registry to store container images ([#55](https://github.com/sohosai/sos21-backend/pull/55))

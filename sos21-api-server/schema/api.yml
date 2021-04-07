@@ -387,6 +387,35 @@ paths:
       operationId: me/project/list
       description: ログインしているユーザーの企画一覧を返します。
     parameters: []
+  /me/pending-project/list:
+    get:
+      summary: me/pending-project/list
+      tags:
+        - me
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pending_projects:
+                    type: array
+                    items:
+                      $ref: ./model/pending_project/PendingProject.yml
+                required:
+                  - pending_projects
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: me/pending-project/list
+      description: ログインしているユーザーの承認待ち企画一覧を返します。
+    parameters: []
   /me/file/list:
     get:
       summary: me/file/list
@@ -476,10 +505,10 @@ paths:
       operationId: me/file-sharing/list
       parameters: []
       description: ログインしているユーザーのファイル共有の一覧を返します。
-  /project/create:
+  /project/prepare:
     post:
-      summary: project/create
-      operationId: project/create
+      summary: project/prepare
+      operationId: project/prepare
       responses:
         "201":
           description: Created
@@ -488,10 +517,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  project:
-                    $ref: ./model/project/Project.yml
+                  pending_project:
+                    $ref: ./model/pending_project/PendingProject.yml
                 required:
-                  - project
+                  - pending_project
         "400":
           description: Bad Request
           content:
@@ -542,44 +571,9 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
-        "409":
-          description: Conflict
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: ./model/error/Error.yml
-                  - type: object
-                    properties:
-                      status:
-                        type: integer
-                        enum:
-                          - 409
-                      error:
-                        type: object
-                        required:
-                          - type
-                          - info
-                        properties:
-                          type:
-                            type: string
-                            enum:
-                              - API
-                          info:
-                            type: object
-                            properties:
-                              type:
-                                type: string
-                                enum:
-                                  - TOO_MANY_PROJECTS
-                            required:
-                              - type
-                    required:
-                      - status
-                      - error
         "500":
           $ref: "#/components/responses/InternalServerError"
-      description: 企画を作成します。
+      description: 承認待ち企画を作成します。
       requestBody:
         content:
           application/json:
@@ -612,6 +606,113 @@ paths:
                 - attributes
       tags:
         - project
+    parameters: []
+  /pending-project/get:
+    get:
+      summary: pending-project/get
+      tags:
+        - project
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pending_project:
+                    $ref: ./model/pending_project/PendingProject.yml
+                required:
+                  - pending_project
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/PendingProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: pending-project/get
+      description: 指定された承認待ち企画の情報を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: pending_project_id
+    parameters: []
+  /pending-project/accept-subowner:
+    post:
+      summary: pending-project/accept-subowner
+      operationId: pending-project/accept-subowner
+      tags:
+        - project
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: ./model/project/Project.yml
+                required:
+                  - project
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/PendingProjectNotFound"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        required:
+                          - type
+                          - info
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - TOO_MANY_PROJECTS
+                    required:
+                      - status
+                      - error
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 指定された承認待ち企画の副責任者になることを承認し、企画を作成します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pending_project_id:
+                  $ref: ./model/pending_project/PendingProjectId.yml
+              required:
+                - pending_project_id
     parameters: []
   /project/get:
     get:
@@ -798,6 +899,48 @@ paths:
           in: query
           name: field_owner_kana_full_name
           description: 与えられた場合、その名前の列で企画責任者のフルネームのよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画副責任者 内部ID
+          in: query
+          name: field_subowner_id
+          description: 与えられた場合、その名前の列で企画副責任者の ID を出力します。
+        - schema:
+            type: string
+            example: 企画副責任者 名
+          in: query
+          name: field_subowner_first_name
+          description: 与えられた場合、その名前の列で企画副責任者の下の名前を出力します。
+        - schema:
+            type: string
+            example: 企画副責任者 姓
+          in: query
+          name: field_subowner_last_name
+          description: 与えられた場合、その名前の列で企画副責任者の上の名前を出力します。
+        - schema:
+            type: string
+            example: 企画副責任者
+          in: query
+          name: field_subowner_full_name
+          description: 与えられた場合、その名前の列で企画副責任者のフルネームを出力します。
+        - schema:
+            type: string
+            example: 企画副責任者 名（よみがな）
+          in: query
+          name: field_subowner_kana_first_name
+          description: 与えられた場合、その名前の列で企画副責任者の下の名前のよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画副責任者 姓（よみがな）
+          in: query
+          name: field_subowner_kana_last_name
+          description: 与えられた場合、その名前の列で企画副責任者の上の名前のよみがなを出力します。
+        - schema:
+            type: string
+            example: 企画副責任者（よみがな）
+          in: query
+          name: field_subowner_kana_full_name
+          description: 与えられた場合、その名前の列で企画副責任者のフルネームのよみがなを出力します。
         - schema:
             type: string
             example: 企画名
@@ -3618,6 +3761,49 @@ components:
                   type: API
                   info:
                     type: FILE_DISTRIBUTION_NOT_FOUND
+    PendingProjectNotFound:
+      description: Pending Project Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - PENDING_PROJECT_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: PENDING_PROJECT_NOT_FOUND
     InternalServerError:
       description: Internal Server Error
       content:

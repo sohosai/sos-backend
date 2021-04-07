@@ -240,6 +240,7 @@ macro_rules! handler {
 pub mod file;
 pub mod form;
 pub mod form_answer;
+pub mod pending_project;
 pub mod project;
 pub mod signup;
 pub mod user;

@@ -5,14 +5,21 @@ use crate::model::{
 
 use anyhow::Result;
 
+#[derive(Debug, Clone)]
+pub struct ProjectWithOwners {
+    pub project: Project,
+    pub owner: User,
+    pub subowner: User,
+}
+
 #[async_trait::async_trait]
 pub trait ProjectRepository {
     async fn store_project(&self, project: Project) -> Result<()>;
-    async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>>;
-    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<(Project, User)>>;
+    async fn get_project(&self, id: ProjectId) -> Result<Option<ProjectWithOwners>>;
+    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<ProjectWithOwners>>;
     async fn count_projects(&self) -> Result<u64>;
-    async fn list_projects(&self) -> Result<Vec<(Project, User)>>;
-    async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<Project>>;
+    async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>>;
+    async fn list_projects_by_user(&self, user_id: UserId) -> Result<Vec<ProjectWithOwners>>;
 }
 
 #[macro_export]
@@ -32,10 +39,7 @@ macro_rules! delegate_project_repository {
                 &$sel,
                 id: $crate::model::project::ProjectId,
             ) -> ::anyhow::Result<
-                Option<(
-                    $crate::model::project::Project,
-                    $crate::model::user::User,
-                )>,
+                Option<$crate::context::project_repository::ProjectWithOwners>,
             > {
                 $target.get_project(id).await
             }
@@ -43,10 +47,7 @@ macro_rules! delegate_project_repository {
                 &$sel,
                 index: $crate::model::project::ProjectIndex,
             ) -> ::anyhow::Result<
-                Option<(
-                    $crate::model::project::Project,
-                    $crate::model::user::User,
-                )>,
+                Option<$crate::context::project_repository::ProjectWithOwners>,
             > {
                 $target.get_project_by_index(index).await
             }
@@ -58,18 +59,15 @@ macro_rules! delegate_project_repository {
             async fn list_projects(
                 &$sel,
             ) -> ::anyhow::Result<
-                Vec<(
-                    $crate::model::project::Project,
-                    $crate::model::user::User,
-                )>,
+                Vec<$crate::context::project_repository::ProjectWithOwners>,
             > {
                 $target.list_projects().await
             }
-            async fn list_projects_by_owner(
+            async fn list_projects_by_user(
                 &$sel,
-                id: $crate::model::user::UserId,
-            ) -> ::anyhow::Result<Vec<$crate::model::project::Project>> {
-                $target.list_projects_by_owner(id).await
+                user_id: $crate::model::user::UserId,
+            ) -> ::anyhow::Result<Vec<$crate::context::project_repository::ProjectWithOwners>> {
+                $target.list_projects_by_user(user_id).await
             }
         }
     };
@@ -81,11 +79,11 @@ impl<C: ProjectRepository + Sync> ProjectRepository for &C {
         <C as ProjectRepository>::store_project(self, project).await
     }
 
-    async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {
+    async fn get_project(&self, id: ProjectId) -> Result<Option<ProjectWithOwners>> {
         <C as ProjectRepository>::get_project(self, id).await
     }
 
-    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<(Project, User)>> {
+    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<ProjectWithOwners>> {
         <C as ProjectRepository>::get_project_by_index(self, index).await
     }
 
@@ -93,11 +91,11 @@ impl<C: ProjectRepository + Sync> ProjectRepository for &C {
         <C as ProjectRepository>::count_projects(self).await
     }
 
-    async fn list_projects(&self) -> Result<Vec<(Project, User)>> {
+    async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>> {
         <C as ProjectRepository>::list_projects(self).await
     }
 
-    async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<Project>> {
-        <C as ProjectRepository>::list_projects_by_owner(self, id).await
+    async fn list_projects_by_user(&self, user_id: UserId) -> Result<Vec<ProjectWithOwners>> {
+        <C as ProjectRepository>::list_projects_by_user(self, user_id).await
     }
 }

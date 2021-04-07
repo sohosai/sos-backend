@@ -39,7 +39,7 @@ where
         .await
         .context("Failed to get a project")?;
     let project = match result {
-        Some((project, _)) if project.is_visible_to(login_user) => project,
+        Some(result) if result.project.is_visible_to(login_user) => result.project,
         _ => return Err(UseCaseError::UseCase(Error::ProjectNotFound)),
     };
 
@@ -155,7 +155,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_get() {
+    async fn test_get_owner() {
         let operator = test::model::new_operator_user();
         let (file, object) = test::model::new_file(operator.id.clone());
 
@@ -170,6 +170,45 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
+            .projects(vec![project.clone()])
+            .files(vec![file.clone()])
+            .objects(vec![object])
+            .await
+            .sharings(vec![sharing.clone()])
+            .distributions(vec![distribution.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let input = get_distributed_file::Input {
+            project_id: ProjectId::from_entity(project.id),
+            distribution_id: FileDistributionId::from_entity(distribution.id),
+        };
+        assert!(matches!(
+            get_distributed_file::run(&app, input).await,
+            Ok(got)
+            if got.sharing_id == FileSharingId::from_entity(sharing.id())
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_get_subowner() {
+        let operator = test::model::new_operator_user();
+        let (file, object) = test::model::new_file(operator.id.clone());
+
+        let owner = test::model::new_general_user();
+        let user = test::model::new_general_user();
+        let project =
+            test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
+
+        let scope = file_sharing::FileSharingScope::Project(project.id);
+        let sharing = file_sharing::FileSharing::new(file.id, scope);
+        let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
+        let distribution =
+            test::model::new_file_distribution_with_files(operator.id.clone(), files);
+
+        let app = test::build_mock_app()
+            .users(vec![owner.clone(), user.clone(), operator.clone()])
             .projects(vec![project.clone()])
             .files(vec![file.clone()])
             .objects(vec![object])

@@ -2,10 +2,12 @@ use std::collections::HashMap;
 use std::convert::TryInto;
 use std::sync::Arc;
 
+use crate::context::pending_project_repository::PendingProjectWithAuthor;
+use crate::context::project_repository::ProjectWithOwners;
 use crate::context::{
     Authentication, FileDistributionRepository, FileRepository, FileSharingRepository,
-    FormAnswerRepository, FormRepository, Login, ObjectRepository, ProjectRepository,
-    UserRepository,
+    FormAnswerRepository, FormRepository, Login, ObjectRepository, PendingProjectRepository,
+    ProjectRepository, UserRepository,
 };
 use crate::model::{
     file::{File, FileId},
@@ -14,15 +16,17 @@ use crate::model::{
     form::{Form, FormId},
     form_answer::{FormAnswer, FormAnswerId},
     object::{Object, ObjectData, ObjectId},
+    pending_project::{PendingProject, PendingProjectId},
     project::{Project, ProjectId, ProjectIndex},
-    user::{User, UserFileUsage, UserId},
+    user::{User, UserFileUsage, UserId, UserRole},
 };
+use crate::test::model as test_model;
 
 use anyhow::Result;
 use bytes::{BufMut, Bytes, BytesMut};
 use futures::lock::Mutex;
 use futures::{
-    future::{self, TryFutureExt},
+    future,
     stream::{self, StreamExt, TryStreamExt},
 };
 use thiserror::Error;
@@ -37,6 +41,7 @@ pub struct MockAppBuilder {
     objects: HashMap<ObjectId, Bytes>,
     sharings: HashMap<FileSharingId, FileSharing>,
     distributions: HashMap<FileDistributionId, FileDistribution>,
+    pending_projects: HashMap<PendingProjectId, PendingProject>,
 }
 
 impl MockAppBuilder {
@@ -128,6 +133,18 @@ impl MockAppBuilder {
         self
     }
 
+    pub fn pending_projects<I>(&mut self, pending_projects: I) -> &mut Self
+    where
+        I: IntoIterator<Item = PendingProject>,
+    {
+        self.pending_projects.extend(
+            pending_projects
+                .into_iter()
+                .map(|pending_project| (pending_project.id, pending_project)),
+        );
+        self
+    }
+
     pub fn build(&self) -> MockApp {
         let users = self
             .users
@@ -163,6 +180,7 @@ impl MockAppBuilder {
             objects: Arc::new(Mutex::new(self.objects.clone())),
             sharings: Arc::new(Mutex::new(self.sharings.clone())),
             distributions: Arc::new(Mutex::new(self.distributions.clone())),
+            pending_projects: Arc::new(Mutex::new(self.pending_projects.clone())),
         }
     }
 }
@@ -177,6 +195,7 @@ pub struct MockApp {
     objects: Arc<Mutex<HashMap<ObjectId, Bytes>>>,
     sharings: Arc<Mutex<HashMap<FileSharingId, FileSharing>>>,
     distributions: Arc<Mutex<HashMap<FileDistributionId, FileDistribution>>>,
+    pending_projects: Arc<Mutex<HashMap<PendingProjectId, PendingProject>>>,
 }
 
 impl MockApp {
@@ -207,6 +226,13 @@ impl UserRepository for MockApp {
     }
 
     async fn get_user(&self, id: UserId) -> Result<Option<User>> {
+        if id == *test_model::KNOWN_MOCK_GENERAL_USER_ID {
+            return Ok(Some(test_model::mock_user(
+                test_model::KNOWN_MOCK_GENERAL_USER_ID.clone(),
+                UserRole::General,
+            )));
+        }
+
         Ok(self.users.lock().await.get(&id).cloned())
     }
 
@@ -222,17 +248,22 @@ impl ProjectRepository for MockApp {
         Ok(())
     }
 
-    async fn get_project(&self, id: ProjectId) -> Result<Option<(Project, User)>> {
+    async fn get_project(&self, id: ProjectId) -> Result<Option<ProjectWithOwners>> {
         let project = self.projects.lock().await.get(&id).cloned();
         if let Some(project) = project {
             let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
-            Ok(Some((project, owner)))
+            let subowner = self.get_user(project.subowner_id.clone()).await?.unwrap();
+            Ok(Some(ProjectWithOwners {
+                project,
+                owner,
+                subowner,
+            }))
         } else {
             Ok(None)
         }
     }
 
-    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<(Project, User)>> {
+    async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<ProjectWithOwners>> {
         let project = self
             .projects
             .lock()
@@ -242,7 +273,12 @@ impl ProjectRepository for MockApp {
             .cloned();
         if let Some(project) = project {
             let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
-            Ok(Some((project, owner)))
+            let subowner = self.get_user(project.subowner_id.clone()).await?.unwrap();
+            Ok(Some(ProjectWithOwners {
+                project,
+                owner,
+                subowner,
+            }))
         } else {
             Ok(None)
         }
@@ -253,25 +289,39 @@ impl ProjectRepository for MockApp {
         Ok(len)
     }
 
-    async fn list_projects(&self) -> Result<Vec<(Project, User)>> {
+    async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>> {
         futures::stream::iter(self.projects.lock().await.values().cloned())
-            .then(|project| {
-                self.get_user(project.owner_id.clone())
-                    .map_ok(|owner| (project, owner.unwrap()))
+            .then(|project| async move {
+                let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
+                let subowner = self.get_user(project.subowner_id.clone()).await?.unwrap();
+                Ok(ProjectWithOwners {
+                    project,
+                    owner,
+                    subowner,
+                })
             })
             .try_collect()
             .await
     }
 
-    async fn list_projects_by_owner(&self, id: UserId) -> Result<Vec<Project>> {
-        Ok(self
-            .projects
-            .lock()
-            .await
-            .values()
-            .filter(|project| project.owner_id == id)
-            .cloned()
-            .collect())
+    async fn list_projects_by_user(&self, id: UserId) -> Result<Vec<ProjectWithOwners>> {
+        let mut projects = Vec::new();
+
+        for project in self.projects.lock().await.values() {
+            if project.owner_id != id && project.subowner_id != id {
+                continue;
+            }
+
+            let owner = self.get_user(project.owner_id.clone()).await?.unwrap();
+            let subowner = self.get_user(project.subowner_id.clone()).await?.unwrap();
+            projects.push(ProjectWithOwners {
+                project: project.clone(),
+                owner,
+                subowner,
+            });
+        }
+
+        Ok(projects)
     }
 }
 
@@ -291,7 +341,7 @@ impl FormRepository for MockApp {
     }
 
     async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<Form>> {
-        let (project, _) = self.get_project(id).await?.unwrap();
+        let project = self.get_project(id).await?.unwrap().project;
         Ok(self
             .forms
             .lock()
@@ -491,13 +541,60 @@ impl FileDistributionRepository for MockApp {
         &self,
         project_id: ProjectId,
     ) -> Result<Vec<FileDistribution>> {
-        let (project, _) = self.get_project(project_id).await?.unwrap();
+        let project = self.get_project(project_id).await?.unwrap().project;
         Ok(self
             .distributions
             .lock()
             .await
             .values()
             .filter(|distribution| distribution.is_targeted_to(&project))
+            .cloned()
+            .collect())
+    }
+}
+
+#[async_trait::async_trait]
+impl PendingProjectRepository for MockApp {
+    async fn store_pending_project(&self, pending_project: PendingProject) -> Result<()> {
+        self.pending_projects
+            .lock()
+            .await
+            .insert(pending_project.id, pending_project);
+        Ok(())
+    }
+
+    async fn delete_pending_project(&self, id: PendingProjectId) -> Result<()> {
+        self.pending_projects.lock().await.remove(&id);
+        Ok(())
+    }
+
+    async fn get_pending_project(
+        &self,
+        id: PendingProjectId,
+    ) -> Result<Option<PendingProjectWithAuthor>> {
+        let result = self.pending_projects.lock().await.get(&id).cloned();
+        match result {
+            Some(pending_project) => {
+                let author = self
+                    .get_user(pending_project.author_id.clone())
+                    .await?
+                    .unwrap();
+                Ok(Some(PendingProjectWithAuthor {
+                    pending_project,
+                    author,
+                }))
+            }
+            None => Ok(None),
+        }
+    }
+
+    async fn list_pending_projects_by_user(&self, user_id: UserId) -> Result<Vec<PendingProject>> {
+        Ok(self
+            .pending_projects
+            .lock()
+            .await
+            .values()
+            .filter(|pending_project| pending_project.author_id == user_id)
             .cloned()
             .collect())
     }

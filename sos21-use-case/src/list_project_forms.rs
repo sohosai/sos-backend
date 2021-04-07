@@ -20,14 +20,10 @@ where
         .get_project(project_id.into_entity())
         .await
         .context("Failed to get a project")?;
-    let (project, _) = match result {
-        Some(x) => x,
-        None => return Err(UseCaseError::UseCase(Error::NotFound)),
+    let project = match result {
+        Some(result) if result.project.is_visible_to(login_user) => result.project,
+        _ => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
-
-    if !project.is_visible_to(login_user) {
-        return Err(UseCaseError::UseCase(Error::NotFound));
-    }
 
     let forms = ctx
         .list_forms_by_project(project.id)

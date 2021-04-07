@@ -9,6 +9,7 @@ use crate::model::{
     },
     user::UserId,
 };
+use crate::test::model as test_model;
 
 use once_cell::sync::OnceCell;
 use uuid::Uuid;
@@ -58,6 +59,7 @@ pub fn new_project_with_attributes(
         index: new_project_index(),
         created_at: DateTime::now(),
         owner_id,
+        subowner_id: test_model::KNOWN_MOCK_GENERAL_USER_ID.clone(),
         name: mock_project_name(),
         kana_name: mock_project_kana_name(),
         group_name: mock_project_group_name(),
@@ -65,6 +67,27 @@ pub fn new_project_with_attributes(
         description: mock_project_description(),
         category,
         attributes: ProjectAttributes::from_attributes(attributes.iter().copied()).unwrap(),
+    }
+}
+
+pub fn new_project_with_subowner(
+    owner_id: UserId,
+    subowner_id: UserId,
+    category: ProjectCategory,
+) -> Project {
+    Project {
+        id: new_project_id(),
+        index: new_project_index(),
+        created_at: DateTime::now(),
+        owner_id,
+        subowner_id,
+        name: mock_project_name(),
+        kana_name: mock_project_kana_name(),
+        group_name: mock_project_group_name(),
+        kana_group_name: mock_project_kana_group_name(),
+        description: mock_project_description(),
+        category,
+        attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
     }
 }
 
@@ -78,4 +101,12 @@ pub fn new_general_project(owner_id: UserId) -> Project {
 
 pub fn new_stage_project(owner_id: UserId) -> Project {
     new_project(owner_id, ProjectCategory::Stage)
+}
+
+pub fn new_general_project_with_subowner(owner_id: UserId, subowner_id: UserId) -> Project {
+    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::General)
+}
+
+pub fn new_stage_project_with_subowner(owner_id: UserId, subowner_id: UserId) -> Project {
+    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::Stage)
 }
