@@ -1,5 +1,5 @@
 use crate::error::{UseCaseError, UseCaseResult};
-use crate::model::user::{User, UserId, UserKanaName, UserName, UserRole};
+use crate::model::user::{User, UserCategory, UserId, UserKanaName, UserName, UserRole};
 
 use anyhow::Context;
 use sos21_domain::context::{Login, UserRepository};
@@ -23,6 +23,7 @@ pub struct Input {
     pub phone_number: Option<String>,
     pub affiliation: Option<String>,
     pub role: Option<UserRole>,
+    pub category: Option<UserCategory>,
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -78,6 +79,10 @@ where
         user.set_role(role.into_entity());
     }
 
+    if let Some(category) = input.category {
+        user.set_category(category.into_entity());
+    }
+
     ctx.store_user(user.clone())
         .await
         .context("Failed to store a updated user")?;
@@ -109,6 +114,7 @@ mod tests {
             phone_number: None,
             affiliation: None,
             role: Some(UserRole::Administrator),
+            category: None,
         };
         assert!(matches!(
             update_user::run(&app, input).await,
@@ -136,6 +142,7 @@ mod tests {
             phone_number: None,
             affiliation: None,
             role: Some(UserRole::General),
+            category: None,
         };
         assert!(matches!(
             update_user::run(&app, input).await,
@@ -163,6 +170,7 @@ mod tests {
             phone_number: None,
             affiliation: None,
             role: Some(UserRole::Committee),
+            category: None,
         };
         assert!(matches!(
             update_user::run(&app, input).await,
@@ -190,6 +198,7 @@ mod tests {
             phone_number: None,
             affiliation: None,
             role: Some(UserRole::CommitteeOperator),
+            category: None,
         };
         assert!(matches!(
             update_user::run(&app, input).await,
