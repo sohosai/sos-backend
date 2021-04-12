@@ -12,6 +12,7 @@ pub enum Error {
     InvalidUserKanaName,
     InvalidPhoneNumber,
     InvalidUserAffiliation,
+    InvalidUserCategory,
 }
 
 #[derive(Debug, Clone)]
@@ -20,6 +21,7 @@ pub struct Input {
     pub kana_name: UserKanaName,
     pub phone_number: String,
     pub affiliation: String,
+    pub category: String,
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -45,6 +47,8 @@ where
         .map_err(|_| UseCaseError::UseCase(Error::InvalidPhoneNumber))?;
     let affiliation = user::UserAffiliation::from_string(input.affiliation)
         .map_err(|_| UseCaseError::UseCase(Error::InvalidUserAffiliation))?;
+    let category = user::UserCategory::from_string(input.category)
+        .map_err(|_| UseCaseError::UseCase(Error::InvalidUserCategory));
 
     let user = user::User {
         id,
@@ -55,6 +59,7 @@ where
         affiliation,
         created_at: DateTime::now(),
         role: user::UserRole::General,
+        category: user::UserCategory::UnderGraduate,
     };
     ctx.store_user(user.clone())
         .await

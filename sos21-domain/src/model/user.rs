@@ -107,6 +107,10 @@ impl User {
     pub fn set_role(&mut self, role: UserRole) {
         self.role = role;
     }
+
+    pub fn set_category(&mut self, category: UserCategory) {
+        self.category = category;
+    }
 }
 
 #[cfg(test)]

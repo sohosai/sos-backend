@@ -76,6 +76,31 @@ impl UserRole {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UserCategory {
+    Undergraduate,
+    GraduateStudent,
+    AcademicStaff,
+}
+
+impl UserCategory {
+    pub fn from_entity(category: entity::UserCategory) -> UserCategory {
+        match category {
+            entity::UserCategory::Undergraduate => UserCategory::Undergraduate,
+            entity::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
+            entity::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
+        }
+    }
+
+    pub fn into_entity(self) -> entity::UserCategory {
+        match self {
+            UserCategory::Undergraduate => entity::UserCategory::Undergraduate,
+            UserCategory::GraduateStudent => entity::UserCategory::GraduateStudent,
+            UserCategory::AcademicStaff => entity::UserCategory::AcademicStaff,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct User {
     pub id: UserId,
@@ -86,6 +111,7 @@ pub struct User {
     pub phone_number: String,
     pub affiliation: String,
     pub role: UserRole,
+    pub category: UserCategory,
 }
 
 impl User {
@@ -99,6 +125,7 @@ impl User {
             phone_number: user.phone_number.into_string(),
             affiliation: user.affiliation.into_string(),
             role: UserRole::from_entity(user.role),
+            category: UserCategory::from_entity(user.category),
         }
     }
 }
