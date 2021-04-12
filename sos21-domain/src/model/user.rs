@@ -4,7 +4,6 @@ use crate::model::permissions::Permissions;
 use crate::model::phone_number::PhoneNumber;
 
 use anyhow::Context;
-use category::UserCategory;
 use thiserror::Error;
 
 pub mod affiliation;
@@ -15,6 +14,7 @@ pub mod file_usage_quota;
 pub mod name;
 pub mod role;
 pub use affiliation::UserAffiliation;
+pub use category::UserCategory;
 pub use email::UserEmailAddress;
 pub use file_usage::UserFileUsage;
 pub use file_usage_quota::UserFileUsageQuota;
