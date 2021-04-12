@@ -4,9 +4,11 @@ use crate::model::permissions::Permissions;
 use crate::model::phone_number::PhoneNumber;
 
 use anyhow::Context;
+use category::UserCategory;
 use thiserror::Error;
 
 pub mod affiliation;
+pub mod category;
 pub mod email;
 pub mod file_usage;
 pub mod file_usage_quota;
@@ -32,6 +34,7 @@ pub struct User {
     pub affiliation: UserAffiliation,
     pub email: UserEmailAddress,
     pub role: UserRole,
+    pub category: UserCategory,
 }
 
 #[derive(Debug, Error, Clone)]
