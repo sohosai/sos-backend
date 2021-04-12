@@ -26,6 +26,16 @@
 <span id="23">23</span>
 <span id="24">24</span>
 <span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 
@@ -37,6 +47,15 @@
     <span class="ident">CommitteeOperator</span>,
     <span class="ident">Committee</span>,
     <span class="ident">General</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">sqlx</span>::<span class="ident">Type</span>)]</span>
+<span class="attribute">#[<span class="ident">sqlx</span>(<span class="ident">type_name</span> <span class="op">=</span> <span class="string">&quot;user_category&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">sqlx</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;snake_case&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">UserCategory</span> {
+    <span class="ident">UndergraduateStudent</span>,
+    <span class="ident">GraduateStudent</span>,
+    <span class="ident">AcademicStaff</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">sqlx</span>::<span class="ident">FromRow</span>)]</span>
@@ -51,6 +70,7 @@
     <span class="kw">pub</span> <span class="ident">affiliation</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">email</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">role</span>: <span class="ident">UserRole</span>,
+    <span class="kw">pub</span> <span class="ident">category</span>: <span class="ident">UserCategory</span>,
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="sos21_database"></div>

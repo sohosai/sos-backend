@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ProjectCategory",""]],"struct":[["FromBitsError",""],["Project",""],["ProjectAttributes",""]]});
+initSidebarItems({"enum":[["ProjectCategory",""]],"struct":[["FromBitsError",""],["Project",""],["ProjectAttributes",""],["ProjectWithOwners",""]]});

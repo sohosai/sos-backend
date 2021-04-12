@@ -48,8 +48,11 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">UserRole</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">UserCategory</span>, <span class="ident">UserRole</span>};
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
 
@@ -63,6 +66,7 @@
     <span class="kw">pub</span> <span class="ident">phone_number</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">affiliation</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">role</span>: <span class="ident">UserRole</span>,
+    <span class="kw">pub</span> <span class="ident">category</span>: <span class="ident">UserCategory</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">update_user</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">E</span><span class="op">&gt;</span>(<span class="ident">conn</span>: <span class="ident">E</span>, <span class="ident">input</span>: <span class="ident">Input</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
@@ -79,7 +83,8 @@ UPDATE users
     kana_last_name = $5,
     phone_number = $6,
     affiliation = $7,
-    role = $8
+    role = $8,
+    category = $9
   WHERE id = $1
 &quot;#</span>,
         <span class="ident">input</span>.<span class="ident">id</span>,
@@ -89,7 +94,8 @@ UPDATE users
         <span class="ident">input</span>.<span class="ident">kana_last_name</span>,
         <span class="ident">input</span>.<span class="ident">phone_number</span>,
         <span class="ident">input</span>.<span class="ident">affiliation</span>,
-        <span class="ident">input</span>.<span class="ident">role</span> <span class="kw">as</span> <span class="kw">_</span>
+        <span class="ident">input</span>.<span class="ident">role</span> <span class="kw">as</span> <span class="kw">_</span>,
+        <span class="ident">input</span>.<span class="ident">category</span> <span class="kw">as</span> <span class="kw">_</span>
     )
     .<span class="ident">execute</span>(<span class="ident">conn</span>)
     .<span class="kw">await</span>

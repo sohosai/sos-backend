@@ -108,10 +108,14 @@
 <span id="105">105</span>
 <span id="106">106</span>
 <span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">project</span>::{<span class="ident">Project</span>, <span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>, <span class="ident">ProjectWithOwners</span>},
-    <span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserRole</span>},
+    <span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserCategory</span>, <span class="ident">UserRole</span>},
 };
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
@@ -149,6 +153,7 @@ SELECT
         owners.affiliation AS &quot;owner_affiliation!&quot;,
         owners.email AS &quot;owner_email!&quot;,
         owners.role AS &quot;owner_role!: UserRole&quot;,
+        owners.category AS &quot;owner_category!: UserCategory&quot;,
         subowners.created_at AS &quot;subowner_created_at!&quot;,
         subowners.first_name AS &quot;subowner_first_name!&quot;,
         subowners.kana_first_name AS &quot;subowner_kana_first_name!&quot;,
@@ -157,7 +162,8 @@ SELECT
         subowners.phone_number AS &quot;subowner_phone_number!&quot;,
         subowners.affiliation AS &quot;subowner_affiliation!&quot;,
         subowners.email AS &quot;subowner_email!&quot;,
-        subowners.role AS &quot;subowner_role!: UserRole&quot;
+        subowners.role AS &quot;subowner_role!: UserRole&quot;,
+        subowners.category AS &quot;subowner_category!: UserCategory&quot;
 FROM projects
 INNER JOIN users AS owners ON (projects.owner_id = owners.id)
 INNER JOIN users AS subowners ON (projects.subowner_id = subowners.id)
@@ -194,6 +200,7 @@ WHERE owner_id = $1 OR subowner_id = $1
             <span class="ident">affiliation</span>: <span class="ident">row</span>.<span class="ident">owner_affiliation</span>,
             <span class="ident">email</span>: <span class="ident">row</span>.<span class="ident">owner_email</span>,
             <span class="ident">role</span>: <span class="ident">row</span>.<span class="ident">owner_role</span>,
+            <span class="ident">category</span>: <span class="ident">row</span>.<span class="ident">owner_category</span>,
         };
         <span class="kw">let</span> <span class="ident">subowner</span> <span class="op">=</span> <span class="ident">User</span> {
             <span class="ident">id</span>: <span class="ident">row</span>.<span class="ident">subowner_id</span>,
@@ -206,6 +213,7 @@ WHERE owner_id = $1 OR subowner_id = $1
             <span class="ident">affiliation</span>: <span class="ident">row</span>.<span class="ident">subowner_affiliation</span>,
             <span class="ident">email</span>: <span class="ident">row</span>.<span class="ident">subowner_email</span>,
             <span class="ident">role</span>: <span class="ident">row</span>.<span class="ident">subowner_role</span>,
+            <span class="ident">category</span>: <span class="ident">row</span>.<span class="ident">subowner_category</span>,
         };
 
         <span class="prelude-val">Ok</span>(<span class="ident">ProjectWithOwners</span> {

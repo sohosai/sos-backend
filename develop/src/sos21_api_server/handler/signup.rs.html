@@ -76,9 +76,11 @@
 <span id="73">73</span>
 <span id="74">74</span>
 <span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">Context</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserCategory</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::{<span class="ident">HandlerResponse</span>, <span class="ident">HandlerResult</span>};
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
@@ -92,6 +94,7 @@
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">UserKanaName</span>,
     <span class="kw">pub</span> <span class="ident">phone_number</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">affiliation</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">category</span>: <span class="ident">UserCategory</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>)]</span>
@@ -147,6 +150,7 @@
         <span class="ident">kana_name</span>: <span class="ident">request</span>.<span class="ident">kana_name</span>.<span class="ident">into_use_case</span>(),
         <span class="ident">phone_number</span>: <span class="ident">request</span>.<span class="ident">phone_number</span>,
         <span class="ident">affiliation</span>: <span class="ident">request</span>.<span class="ident">affiliation</span>,
+        <span class="ident">category</span>: <span class="ident">request</span>.<span class="ident">category</span>.<span class="ident">into_use_case</span>(),
     };
     <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">signup</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">ctx</span>, <span class="ident">input</span>).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">User</span>::<span class="ident">from_use_case</span>(<span class="ident">user</span>);

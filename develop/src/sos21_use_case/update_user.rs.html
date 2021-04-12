@@ -201,9 +201,18 @@
 <span id="198">198</span>
 <span id="199">199</span>
 <span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserId</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>, <span class="ident">UserRole</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserCategory</span>, <span class="ident">UserId</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>, <span class="ident">UserRole</span>};
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::{<span class="ident">Login</span>, <span class="ident">UserRepository</span>};
@@ -227,6 +236,7 @@
     <span class="kw">pub</span> <span class="ident">phone_number</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">affiliation</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">role</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">UserRole</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">category</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">UserCategory</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">tracing</span>::<span class="ident">instrument</span>(<span class="ident">skip</span>(<span class="ident">ctx</span>))]</span>
@@ -282,6 +292,10 @@
         <span class="ident">user</span>.<span class="ident">set_role</span>(<span class="ident">role</span>.<span class="ident">into_entity</span>());
     }
 
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">category</span>) <span class="op">=</span> <span class="ident">input</span>.<span class="ident">category</span> {
+        <span class="ident">user</span>.<span class="ident">set_category</span>(<span class="ident">category</span>.<span class="ident">into_entity</span>());
+    }
+
     <span class="ident">ctx</span>.<span class="ident">store_user</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
         .<span class="kw">await</span>
         .<span class="ident">context</span>(<span class="string">&quot;Failed to store a updated user&quot;</span>)<span class="question-mark">?</span>;
@@ -313,6 +327,7 @@
             <span class="ident">phone_number</span>: <span class="prelude-val">None</span>,
             <span class="ident">affiliation</span>: <span class="prelude-val">None</span>,
             <span class="ident">role</span>: <span class="prelude-val">Some</span>(<span class="ident">UserRole</span>::<span class="ident">Administrator</span>),
+            <span class="ident">category</span>: <span class="prelude-val">None</span>,
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
             <span class="ident">update_user</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>,
@@ -340,6 +355,7 @@
             <span class="ident">phone_number</span>: <span class="prelude-val">None</span>,
             <span class="ident">affiliation</span>: <span class="prelude-val">None</span>,
             <span class="ident">role</span>: <span class="prelude-val">Some</span>(<span class="ident">UserRole</span>::<span class="ident">General</span>),
+            <span class="ident">category</span>: <span class="prelude-val">None</span>,
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
             <span class="ident">update_user</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>,
@@ -367,6 +383,7 @@
             <span class="ident">phone_number</span>: <span class="prelude-val">None</span>,
             <span class="ident">affiliation</span>: <span class="prelude-val">None</span>,
             <span class="ident">role</span>: <span class="prelude-val">Some</span>(<span class="ident">UserRole</span>::<span class="ident">Committee</span>),
+            <span class="ident">category</span>: <span class="prelude-val">None</span>,
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
             <span class="ident">update_user</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>,
@@ -394,6 +411,7 @@
             <span class="ident">phone_number</span>: <span class="prelude-val">None</span>,
             <span class="ident">affiliation</span>: <span class="prelude-val">None</span>,
             <span class="ident">role</span>: <span class="prelude-val">Some</span>(<span class="ident">UserRole</span>::<span class="ident">CommitteeOperator</span>),
+            <span class="ident">category</span>: <span class="prelude-val">None</span>,
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
             <span class="ident">update_user</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>,

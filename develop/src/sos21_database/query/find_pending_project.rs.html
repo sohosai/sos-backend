@@ -81,10 +81,12 @@
 <span id="78">78</span>
 <span id="79">79</span>
 <span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">pending_project</span>::{<span class="ident">PendingProject</span>, <span class="ident">PendingProjectWithAuthor</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserRole</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserCategory</span>, <span class="ident">UserRole</span>};
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
@@ -117,7 +119,8 @@ SELECT
         authors.phone_number AS author_phone_number,
         authors.affiliation AS author_affiliation,
         authors.email AS author_email,
-        authors.role AS &quot;author_role: UserRole&quot;
+        authors.role AS &quot;author_role: UserRole&quot;,
+        authors.category AS &quot;author_category: UserCategory&quot;
 FROM pending_projects
 INNER JOIN users AS authors ON (pending_projects.author_id = authors.id)
 WHERE pending_projects.id = $1
@@ -155,6 +158,7 @@ WHERE pending_projects.id = $1
         <span class="ident">affiliation</span>: <span class="ident">row</span>.<span class="ident">author_affiliation</span>,
         <span class="ident">email</span>: <span class="ident">row</span>.<span class="ident">author_email</span>,
         <span class="ident">role</span>: <span class="ident">row</span>.<span class="ident">author_role</span>,
+        <span class="ident">category</span>: <span class="ident">row</span>.<span class="ident">author_category</span>,
     };
 
     <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">PendingProjectWithAuthor</span> {

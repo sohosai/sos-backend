@@ -217,6 +217,13 @@
 <span id="214">214</span>
 <span id="215">215</span>
 <span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
@@ -228,7 +235,7 @@
 <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">future</span>, <span class="ident">stream</span>::<span class="ident">TryStreamExt</span>};
 <span class="kw">use</span> <span class="ident">ref_cast</span>::<span class="ident">RefCast</span>;
 <span class="kw">use</span> <span class="ident">sos21_database</span>::{<span class="ident">command</span>, <span class="ident">model</span> <span class="kw">as</span> <span class="ident">data</span>, <span class="ident">query</span>};
-<span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::<span class="ident">ProjectRepository</span>;
+<span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::<span class="ident">project_repository</span>::{<span class="ident">ProjectRepository</span>, <span class="ident">ProjectWithOwners</span>};
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
     <span class="ident">project</span>::{
@@ -236,7 +243,7 @@
         <span class="ident">ProjectGroupName</span>, <span class="ident">ProjectId</span>, <span class="ident">ProjectIndex</span>, <span class="ident">ProjectKanaGroupName</span>, <span class="ident">ProjectKanaName</span>,
         <span class="ident">ProjectName</span>,
     },
-    <span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserId</span>},
+    <span class="ident">user</span>::<span class="ident">UserId</span>,
 };
 <span class="kw">use</span> <span class="ident">sqlx</span>::{<span class="ident">Postgres</span>, <span class="ident">Transaction</span>};
 
@@ -268,24 +275,20 @@
         }
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project_by_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">ProjectIndex</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project_by_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">ProjectIndex</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="kw">await</span>;
-
-        <span class="kw">let</span> <span class="ident">opt</span> <span class="op">=</span> <span class="ident">query</span>::<span class="ident">find_project_by_index</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">index</span>.<span class="ident">to_i16</span>()).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">opt</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>,
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
-        };
-        <span class="ident">to_project_with_owner</span>(<span class="ident">result</span>.<span class="ident">project</span>, <span class="ident">result</span>.<span class="ident">owner</span>).<span class="ident">map</span>(<span class="prelude-val">Some</span>)
+        <span class="ident">query</span>::<span class="ident">find_project_by_index</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">index</span>.<span class="ident">to_i16</span>())
+            .<span class="kw">await</span><span class="question-mark">?</span>
+            .<span class="ident">map</span>(<span class="ident">to_project_with_owner</span>)
+            .<span class="ident">transpose</span>()
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ProjectId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ProjectId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="kw">await</span>;
-        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">query</span>::<span class="ident">find_project</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">id</span>.<span class="ident">to_uuid</span>()).<span class="kw">await</span><span class="question-mark">?</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">x</span>,
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
-        };
-        <span class="ident">to_project_with_owner</span>(<span class="ident">result</span>.<span class="ident">project</span>, <span class="ident">result</span>.<span class="ident">owner</span>).<span class="ident">map</span>(<span class="prelude-val">Some</span>)
+        <span class="ident">query</span>::<span class="ident">find_project</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">id</span>.<span class="ident">to_uuid</span>())
+            .<span class="kw">await</span><span class="question-mark">?</span>
+            .<span class="ident">map</span>(<span class="ident">to_project_with_owner</span>)
+            .<span class="ident">transpose</span>()
     }
 
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">count_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
@@ -293,30 +296,37 @@
         <span class="ident">query</span>::<span class="ident">count_projects</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>).<span class="kw">await</span>
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="kw">await</span>;
         <span class="ident">query</span>::<span class="ident">list_projects</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>)
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">result</span><span class="op">|</span> <span class="ident">future</span>::<span class="ident">ready</span>(<span class="ident">to_project_with_owner</span>(<span class="ident">result</span>.<span class="ident">project</span>, <span class="ident">result</span>.<span class="ident">owner</span>)))
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">result</span><span class="op">|</span> <span class="ident">future</span>::<span class="ident">ready</span>(<span class="ident">to_project_with_owner</span>(<span class="ident">result</span>)))
             .<span class="ident">try_collect</span>()
             .<span class="kw">await</span>
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects_by_owner</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Project</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_projects_by_user</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">user_id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="kw">await</span>;
-        <span class="ident">query</span>::<span class="ident">list_projects_by_owner</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">id</span>.<span class="number">0</span>)
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">project</span><span class="op">|</span> <span class="ident">future</span>::<span class="ident">ready</span>(<span class="ident">to_project</span>(<span class="ident">project</span>)))
+        <span class="ident">query</span>::<span class="ident">list_projects_by_user</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">user_id</span>.<span class="number">0</span>)
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">result</span><span class="op">|</span> <span class="ident">future</span>::<span class="ident">ready</span>(<span class="ident">to_project_with_owner</span>(<span class="ident">result</span>)))
             .<span class="ident">try_collect</span>()
             .<span class="kw">await</span>
     }
 }
 
 <span class="kw">fn</span> <span class="ident">to_project_with_owner</span>(
-    <span class="ident">project</span>: <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">Project</span>,
-    <span class="ident">owner</span>: <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">User</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Project</span>, <span class="ident">User</span>)<span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">to_project</span>(<span class="ident">project</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">to_user</span>(<span class="ident">owner</span>)<span class="question-mark">?</span>;
-    <span class="prelude-val">Ok</span>((<span class="ident">project</span>, <span class="ident">owner</span>))
+    <span class="ident">project_with_owners</span>: <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectWithOwners</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ProjectWithOwners</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectWithOwners</span> {
+        <span class="ident">project</span>,
+        <span class="ident">owner</span>,
+        <span class="ident">subowner</span>,
+    } <span class="op">=</span> <span class="ident">project_with_owners</span>;
+
+    <span class="prelude-val">Ok</span>(<span class="ident">ProjectWithOwners</span> {
+        <span class="ident">project</span>: <span class="ident">to_project</span>(<span class="ident">project</span>)<span class="question-mark">?</span>,
+        <span class="ident">owner</span>: <span class="ident">to_user</span>(<span class="ident">owner</span>)<span class="question-mark">?</span>,
+        <span class="ident">subowner</span>: <span class="ident">to_user</span>(<span class="ident">subowner</span>)<span class="question-mark">?</span>,
+    })
 }
 
 <span class="kw">fn</span> <span class="ident">from_project</span>(<span class="ident">project</span>: <span class="ident">Project</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">Project</span> {
@@ -325,6 +335,7 @@
         <span class="ident">index</span>,
         <span class="ident">created_at</span>,
         <span class="ident">owner_id</span>,
+        <span class="ident">subowner_id</span>,
         <span class="ident">name</span>,
         <span class="ident">kana_name</span>,
         <span class="ident">group_name</span>,
@@ -338,6 +349,7 @@
         <span class="ident">index</span>: <span class="ident">index</span>.<span class="ident">to_i16</span>(),
         <span class="ident">created_at</span>: <span class="ident">created_at</span>.<span class="ident">utc</span>(),
         <span class="ident">owner_id</span>: <span class="ident">owner_id</span>.<span class="number">0</span>,
+        <span class="ident">subowner_id</span>: <span class="ident">subowner_id</span>.<span class="number">0</span>,
         <span class="ident">name</span>: <span class="ident">name</span>.<span class="ident">into_string</span>(),
         <span class="ident">kana_name</span>: <span class="ident">kana_name</span>.<span class="ident">into_string</span>(),
         <span class="ident">group_name</span>: <span class="ident">group_name</span>.<span class="ident">into_string</span>(),
@@ -375,6 +387,7 @@
         <span class="ident">index</span>,
         <span class="ident">created_at</span>,
         <span class="ident">owner_id</span>,
+        <span class="ident">subowner_id</span>,
         <span class="ident">name</span>,
         <span class="ident">kana_name</span>,
         <span class="ident">group_name</span>,
@@ -389,6 +402,7 @@
         <span class="ident">index</span>: <span class="ident">ProjectIndex</span>::<span class="ident">from_u16</span>(<span class="ident">index</span>.<span class="ident">try_into</span>()<span class="question-mark">?</span>)<span class="question-mark">?</span>,
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
         <span class="ident">owner_id</span>: <span class="ident">UserId</span>(<span class="ident">owner_id</span>),
+        <span class="ident">subowner_id</span>: <span class="ident">UserId</span>(<span class="ident">subowner_id</span>),
         <span class="ident">name</span>: <span class="ident">ProjectName</span>::<span class="ident">from_string</span>(<span class="ident">name</span>)<span class="question-mark">?</span>,
         <span class="ident">kana_name</span>: <span class="ident">ProjectKanaName</span>::<span class="ident">from_string</span>(<span class="ident">kana_name</span>)<span class="question-mark">?</span>,
         <span class="ident">group_name</span>: <span class="ident">ProjectGroupName</span>::<span class="ident">from_string</span>(<span class="ident">group_name</span>)<span class="question-mark">?</span>,
