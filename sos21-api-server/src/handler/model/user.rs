@@ -91,6 +91,32 @@ impl UserRole {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum UserCategory {
+    Undergraduate,
+    GraduateStudent,
+    AcademicStaff,
+}
+
+impl UserCategory {
+    pub fn from_use_case(category: use_case::UserCategory) -> UserCategory {
+        match category {
+            use_case::UserCategory::Undergraduate => UserCategory::Undergraduate,
+            use_case::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
+            use_case::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
+        }
+    }
+
+    pub fn into_use_case(self) -> use_case::UserCategory {
+        match self {
+            UserCategory::Undergraduate => use_case::UserCategory::Undergraduate,
+            UserCategory::GraduateStudent => use_case::UserCategory::GraduateStudent,
+            UserCategory::AcademicStaff => use_case::UserCategory::AcademicStaff,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct User {
     pub id: UserId,
     pub created_at: DateTime,
@@ -100,6 +126,7 @@ pub struct User {
     pub phone_number: String,
     pub affiliation: String,
     pub role: UserRole,
+    pub category: UserCategory,
 }
 
 impl User {
@@ -113,6 +140,7 @@ impl User {
             phone_number: user.phone_number,
             affiliation: user.affiliation,
             role: UserRole::from_use_case(user.role),
+            category: UserCategory::from_use_case(user.category),
         }
     }
 }
