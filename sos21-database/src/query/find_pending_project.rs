@@ -1,6 +1,6 @@
 use crate::model::pending_project::{PendingProject, PendingProjectWithAuthor};
 use crate::model::project::{ProjectAttributes, ProjectCategory};
-use crate::model::user::{User, UserRole};
+use crate::model::user::{User, UserCategory, UserRole};
 
 use anyhow::{Context, Result};
 use uuid::Uuid;
@@ -33,7 +33,8 @@ SELECT
         authors.phone_number AS author_phone_number,
         authors.affiliation AS author_affiliation,
         authors.email AS author_email,
-        authors.role AS "author_role: UserRole"
+        authors.role AS "author_role: UserRole",
+        authors.category AS "author_category: UserCategory"
 FROM pending_projects
 INNER JOIN users AS authors ON (pending_projects.author_id = authors.id)
 WHERE pending_projects.id = $1
@@ -71,6 +72,7 @@ WHERE pending_projects.id = $1
         affiliation: row.author_affiliation,
         email: row.author_email,
         role: row.author_role,
+        category: row.author_category,
     };
 
     Ok(Some(PendingProjectWithAuthor {

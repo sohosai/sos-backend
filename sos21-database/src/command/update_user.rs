@@ -1,4 +1,4 @@
-use crate::model::user::UserRole;
+use crate::model::user::{UserCategory, UserRole};
 
 use anyhow::{Context, Result};
 
@@ -12,6 +12,7 @@ pub struct Input {
     pub phone_number: String,
     pub affiliation: String,
     pub role: UserRole,
+    pub category: UserCategory,
 }
 
 pub async fn update_user<'a, E>(conn: E, input: Input) -> Result<()>
@@ -28,7 +29,8 @@ UPDATE users
     kana_last_name = $5,
     phone_number = $6,
     affiliation = $7,
-    role = $8
+    role = $8,
+    category = $9
   WHERE id = $1
 "#,
         input.id,
@@ -38,7 +40,8 @@ UPDATE users
         input.kana_last_name,
         input.phone_number,
         input.affiliation,
-        input.role as _
+        input.role as _,
+        input.category as _
     )
     .execute(conn)
     .await
