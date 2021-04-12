@@ -14,7 +14,7 @@ pub enum UserRole {
 #[sqlx(type_name = "user_category")]
 #[sqlx(rename_all = "snake_case")]
 pub enum UserCategory {
-    Undergraduate,
+    UndergraduateStudent,
     GraduateStudent,
     AcademicStaff,
 }

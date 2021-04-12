@@ -43,7 +43,7 @@ pub struct InputRoleNames {
 
 #[derive(Debug, Clone)]
 pub struct InputCategoryNames {
-    pub undergraduate: String,
+    pub undergraduate_student: String,
     pub graduate_student: String,
     pub academic_staff: String,
 }
@@ -234,7 +234,7 @@ where
 
     if category.is_some() {
         let category_name = match user.category {
-            user::UserCategory::Undergraduate => &input.category_names.undergraduate,
+            user::UserCategory::UndergraduateStudent => &input.category_names.undergraduate_student,
             user::UserCategory::GraduateStudent => &input.category_names.graduate_student,
             user::UserCategory::AcademicStaff => &input.category_names.academic_staff,
         };
@@ -275,7 +275,7 @@ mod tests {
             general: "一般".to_string(),
         };
         let category_names = export_users::InputCategoryNames {
-            undergraduate: "学部生".to_string(),
+            undergraduate_student: "学部生".to_string(),
             graduate_student: "院生".to_string(),
             academic_staff: "教職員".to_string(),
         };

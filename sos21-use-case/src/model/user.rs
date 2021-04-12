@@ -78,7 +78,7 @@ impl UserRole {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum UserCategory {
-    Undergraduate,
+    UndergraduateStudent,
     GraduateStudent,
     AcademicStaff,
 }
@@ -86,7 +86,7 @@ pub enum UserCategory {
 impl UserCategory {
     pub fn from_entity(category: entity::UserCategory) -> UserCategory {
         match category {
-            entity::UserCategory::Undergraduate => UserCategory::Undergraduate,
+            entity::UserCategory::UndergraduateStudent => UserCategory::UndergraduateStudent,
             entity::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
             entity::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
         }
@@ -94,7 +94,7 @@ impl UserCategory {
 
     pub fn into_entity(self) -> entity::UserCategory {
         match self {
-            UserCategory::Undergraduate => entity::UserCategory::Undergraduate,
+            UserCategory::UndergraduateStudent => entity::UserCategory::UndergraduateStudent,
             UserCategory::GraduateStudent => entity::UserCategory::GraduateStudent,
             UserCategory::AcademicStaff => entity::UserCategory::AcademicStaff,
         }

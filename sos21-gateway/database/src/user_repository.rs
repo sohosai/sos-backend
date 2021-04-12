@@ -92,7 +92,7 @@ fn from_user(user: User) -> data::user::User {
             UserRole::General => data::user::UserRole::General,
         },
         category: match category {
-            UserCategory::Undergraduate => data::user::UserCategory::Undergraduate,
+            UserCategory::UndergraduateStudent => data::user::UserCategory::UndergraduateStudent,
             UserCategory::GraduateStudent => data::user::UserCategory::GraduateStudent,
             UserCategory::AcademicStaff => data::user::UserCategory::AcademicStaff,
         },
@@ -128,7 +128,7 @@ pub fn to_user(user: data::user::User) -> Result<User> {
             data::user::UserRole::General => UserRole::General,
         },
         category: match category {
-            data::user::UserCategory::Undergraduate => UserCategory::Undergraduate,
+            data::user::UserCategory::UndergraduateStudent => UserCategory::UndergraduateStudent,
             data::user::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
             data::user::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
         },

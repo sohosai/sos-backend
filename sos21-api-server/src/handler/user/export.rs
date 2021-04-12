@@ -38,7 +38,7 @@ pub struct Request {
     pub role_committee_operator: String,
     pub role_committee: String,
     pub role_general: String,
-    pub category_undergarduate: String,
+    pub category_undergraduate_student: String,
     pub category_garduate_student: String,
     pub category_academic_staff: String,
 }
@@ -89,7 +89,7 @@ pub async fn handler(
             role_committee_operator,
             role_committee,
             role_general,
-            category_undergarduate,
+            category_undergraduate_student,
             category_garduate_student,
             category_academic_staff,
         } = request;
@@ -115,7 +115,7 @@ pub async fn handler(
             general: role_general,
         };
         let category_names = export_users::InputCategoryNames {
-            undergraduate: category_undergarduate,
+            undergraduate_student: category_undergraduate_student,
             graduate_student: category_garduate_student,
             academic_staff: category_academic_staff,
         };

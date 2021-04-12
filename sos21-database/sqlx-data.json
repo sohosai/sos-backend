@@ -254,7 +254,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -357,7 +357,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -629,7 +629,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -702,7 +702,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -1003,7 +1003,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -1076,7 +1076,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -1254,7 +1254,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -1538,7 +1538,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -1950,7 +1950,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -2129,7 +2129,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -2202,7 +2202,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -2741,7 +2741,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
@@ -2814,7 +2814,7 @@
               "name": "user_category",
               "kind": {
                 "Enum": [
-                  "undergraduate",
+                  "undergraduate_student",
                   "graduate_student",
                   "academic_staff"
                 ]
