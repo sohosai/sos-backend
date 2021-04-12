@@ -17,6 +17,7 @@ where
         phone_number,
         affiliation,
         role,
+        category,
     } = user;
 
     sqlx::query!(
@@ -31,8 +32,9 @@ INSERT INTO users (
     email,
     phone_number,
     affiliation,
-    role
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )
+    role,
+    category
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )
 "#,
         id,
         created_at,
@@ -43,7 +45,8 @@ INSERT INTO users (
         email,
         phone_number,
         affiliation,
-        role as _
+        role as _,
+        category as _
     )
     .execute(conn)
     .await

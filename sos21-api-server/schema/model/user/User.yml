@@ -21,6 +21,8 @@ properties:
     type: string
   role:
     $ref: ./UserRole.yml
+  category:
+    $ref: ./UserCategory.yml
 required:
   - id
   - created_at
@@ -30,3 +32,4 @@ required:
   - phone_number
   - affiliation
   - role
+  - category

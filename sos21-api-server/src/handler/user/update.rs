@@ -1,5 +1,5 @@
 use crate::app::Context;
-use crate::handler::model::user::{User, UserId, UserKanaName, UserName, UserRole};
+use crate::handler::model::user::{User, UserCategory, UserId, UserKanaName, UserName, UserRole};
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
@@ -20,6 +20,8 @@ pub struct Request {
     pub affiliation: Option<String>,
     #[serde(default)]
     pub role: Option<UserRole>,
+    #[serde(default)]
+    pub category: Option<UserCategory>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -77,6 +79,7 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
         phone_number: request.phone_number,
         affiliation: request.affiliation,
         role: request.role.map(UserRole::into_use_case),
+        category: request.category.map(UserCategory::into_use_case),
     };
     let user = update_user::run(&ctx, input).await?;
     let user = User::from_use_case(user);

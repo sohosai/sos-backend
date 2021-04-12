@@ -1,7 +1,10 @@
 use crate::model::{
     date_time::DateTime,
     phone_number::PhoneNumber,
-    user::{User, UserAffiliation, UserEmailAddress, UserId, UserKanaName, UserName, UserRole},
+    user::{
+        User, UserAffiliation, UserCategory, UserEmailAddress, UserId, UserKanaName, UserName,
+        UserRole,
+    },
 };
 
 use once_cell::sync::Lazy;
@@ -31,6 +34,10 @@ pub fn mock_user_affiliation() -> UserAffiliation {
     UserAffiliation::from_string("情報学群情報科学類").unwrap()
 }
 
+pub fn mock_user_category() -> UserCategory {
+    UserCategory::UndergraduateStudent
+}
+
 pub fn mock_user(id: UserId, role: UserRole) -> User {
     User {
         id,
@@ -41,6 +48,7 @@ pub fn mock_user(id: UserId, role: UserRole) -> User {
         phone_number: mock_phone_number(),
         affiliation: mock_user_affiliation(),
         role,
+        category: mock_user_category(),
     }
 }
 

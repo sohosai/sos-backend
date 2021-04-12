@@ -10,6 +10,15 @@ pub enum UserRole {
     General,
 }
 
+#[derive(Debug, Clone, sqlx::Type)]
+#[sqlx(type_name = "user_category")]
+#[sqlx(rename_all = "snake_case")]
+pub enum UserCategory {
+    UndergraduateStudent,
+    GraduateStudent,
+    AcademicStaff,
+}
+
 #[derive(Debug, Clone, sqlx::FromRow)]
 pub struct User {
     pub id: String,
@@ -22,4 +31,5 @@ pub struct User {
     pub affiliation: String,
     pub email: String,
     pub role: UserRole,
+    pub category: UserCategory,
 }

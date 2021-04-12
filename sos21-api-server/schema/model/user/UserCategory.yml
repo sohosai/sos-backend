@@ -1,0 +1,10 @@
+type: string
+title: UserCategory
+enum:
+  - undergraduate_student
+  - graduate_student
+  - academic_staff
+description: ""
+x-tags:
+  - user
+example: undergraduate_student

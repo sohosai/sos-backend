@@ -7,12 +7,14 @@ use anyhow::Context;
 use thiserror::Error;
 
 pub mod affiliation;
+pub mod category;
 pub mod email;
 pub mod file_usage;
 pub mod file_usage_quota;
 pub mod name;
 pub mod role;
 pub use affiliation::UserAffiliation;
+pub use category::UserCategory;
 pub use email::UserEmailAddress;
 pub use file_usage::UserFileUsage;
 pub use file_usage_quota::UserFileUsageQuota;
@@ -32,6 +34,7 @@ pub struct User {
     pub affiliation: UserAffiliation,
     pub email: UserEmailAddress,
     pub role: UserRole,
+    pub category: UserCategory,
 }
 
 #[derive(Debug, Error, Clone)]
@@ -103,6 +106,10 @@ impl User {
 
     pub fn set_role(&mut self, role: UserRole) {
         self.role = role;
+    }
+
+    pub fn set_category(&mut self, category: UserCategory) {
+        self.category = category;
     }
 }
 

@@ -7,7 +7,10 @@ use sos21_domain::context::UserRepository;
 use sos21_domain::model::{
     date_time::DateTime,
     phone_number::PhoneNumber,
-    user::{User, UserAffiliation, UserEmailAddress, UserId, UserKanaName, UserName, UserRole},
+    user::{
+        User, UserAffiliation, UserCategory, UserEmailAddress, UserId, UserKanaName, UserName,
+        UserRole,
+    },
 };
 use sqlx::{Postgres, Transaction};
 
@@ -34,6 +37,7 @@ impl UserRepository for UserDatabase {
                 phone_number: user.phone_number,
                 affiliation: user.affiliation,
                 role: user.role,
+                category: user.category,
             };
             command::update_user(&mut *lock, input).await
         } else {
@@ -67,6 +71,7 @@ fn from_user(user: User) -> data::user::User {
         phone_number,
         affiliation,
         role,
+        category,
     } = user;
     let (first_name, last_name) = name.into_string();
     let (kana_first_name, kana_last_name) = kana_name.into_string();
@@ -86,6 +91,11 @@ fn from_user(user: User) -> data::user::User {
             UserRole::Committee => data::user::UserRole::Committee,
             UserRole::General => data::user::UserRole::General,
         },
+        category: match category {
+            UserCategory::UndergraduateStudent => data::user::UserCategory::UndergraduateStudent,
+            UserCategory::GraduateStudent => data::user::UserCategory::GraduateStudent,
+            UserCategory::AcademicStaff => data::user::UserCategory::AcademicStaff,
+        },
     }
 }
 
@@ -101,6 +111,7 @@ pub fn to_user(user: data::user::User) -> Result<User> {
         phone_number,
         affiliation,
         role,
+        category,
     } = user;
     Ok(User {
         id: UserId(id),
@@ -115,6 +126,11 @@ pub fn to_user(user: data::user::User) -> Result<User> {
             data::user::UserRole::CommitteeOperator => UserRole::CommitteeOperator,
             data::user::UserRole::Committee => UserRole::Committee,
             data::user::UserRole::General => UserRole::General,
+        },
+        category: match category {
+            data::user::UserCategory::UndergraduateStudent => UserCategory::UndergraduateStudent,
+            data::user::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
+            data::user::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
         },
     })
 }

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Subowner ([#54](https://github.com/sohosai/sos21-backend/pull/54))
+- Users' category ([#57](https://github.com/sohosai/sos21-backend/pull/57))
 
 ### Changed
 

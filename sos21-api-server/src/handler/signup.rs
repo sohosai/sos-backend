@@ -1,5 +1,5 @@
 use crate::app::Context;
-use crate::handler::model::user::{User, UserKanaName, UserName};
+use crate::handler::model::user::{User, UserCategory, UserKanaName, UserName};
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
@@ -13,6 +13,7 @@ pub struct Request {
     pub kana_name: UserKanaName,
     pub phone_number: String,
     pub affiliation: String,
+    pub category: UserCategory,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -68,6 +69,7 @@ pub async fn handler(
         kana_name: request.kana_name.into_use_case(),
         phone_number: request.phone_number,
         affiliation: request.affiliation,
+        category: request.category.into_use_case(),
     };
     let user = signup::run(&ctx, input).await?;
     let user = User::from_use_case(user);

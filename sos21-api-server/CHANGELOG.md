@@ -11,6 +11,7 @@ with the HTTP API interface being the "public API".
 ### Added
 
 - Subowner ([#54](https://github.com/sohosai/sos21-backend/pull/54))
+- Users' category ([#57](https://github.com/sohosai/sos21-backend/pull/57))
 
 ### Changed
 ### Deprecated

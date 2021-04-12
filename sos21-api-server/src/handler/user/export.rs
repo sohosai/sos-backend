@@ -32,10 +32,15 @@ pub struct Request {
     pub field_affiliation: Option<String>,
     #[serde(default)]
     pub field_role: Option<String>,
+    #[serde(default)]
+    pub field_category: Option<String>,
     pub role_administrator: String,
     pub role_committee_operator: String,
     pub role_committee: String,
     pub role_general: String,
+    pub category_undergraduate_student: String,
+    pub category_graduate_student: String,
+    pub category_academic_staff: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -79,10 +84,14 @@ pub async fn handler(
             field_phone_number,
             field_affiliation,
             field_role,
+            field_category,
             role_administrator,
             role_committee_operator,
             role_committee,
             role_general,
+            category_undergraduate_student,
+            category_graduate_student,
+            category_academic_staff,
         } = request;
         let field_names = export_users::InputFieldNames {
             id: field_id,
@@ -97,6 +106,7 @@ pub async fn handler(
             phone_number: field_phone_number,
             affiliation: field_affiliation,
             role: field_role,
+            category: field_category,
         };
         let role_names = export_users::InputRoleNames {
             administrator: role_administrator,
@@ -104,9 +114,15 @@ pub async fn handler(
             committee: role_committee,
             general: role_general,
         };
+        let category_names = export_users::InputCategoryNames {
+            undergraduate_student: category_undergraduate_student,
+            graduate_student: category_graduate_student,
+            academic_staff: category_academic_staff,
+        };
         export_users::Input {
             field_names,
             role_names,
+            category_names,
         }
     };
 

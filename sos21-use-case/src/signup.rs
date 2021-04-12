@@ -1,5 +1,5 @@
 use crate::error::{UseCaseError, UseCaseResult};
-use crate::model::user::{User, UserKanaName, UserName};
+use crate::model::user::{User, UserCategory, UserKanaName, UserName};
 
 use anyhow::Context;
 use sos21_domain::context::{Authentication, UserRepository};
@@ -20,6 +20,7 @@ pub struct Input {
     pub kana_name: UserKanaName,
     pub phone_number: String,
     pub affiliation: String,
+    pub category: UserCategory,
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -45,6 +46,7 @@ where
         .map_err(|_| UseCaseError::UseCase(Error::InvalidPhoneNumber))?;
     let affiliation = user::UserAffiliation::from_string(input.affiliation)
         .map_err(|_| UseCaseError::UseCase(Error::InvalidUserAffiliation))?;
+    let category = input.category.into_entity();
 
     let user = user::User {
         id,
@@ -55,6 +57,7 @@ where
         affiliation,
         created_at: DateTime::now(),
         role: user::UserRole::General,
+        category,
     };
     ctx.store_user(user.clone())
         .await
@@ -64,7 +67,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::model::user::{UserId, UserKanaName, UserName};
+    use crate::model::user::{UserCategory, UserId, UserKanaName, UserName};
     use crate::{signup, UseCaseError};
     use sos21_domain::test;
 
@@ -73,11 +76,13 @@ mod tests {
         let kana_name = UserKanaName::from_entity(test::model::mock_user_kana_name());
         let phone_number = test::model::mock_phone_number().into_string();
         let affiliation = test::model::mock_user_affiliation().into_string();
+        let category = UserCategory::from_entity(test::model::mock_user_category());
         signup::Input {
             name,
             kana_name,
             phone_number,
             affiliation,
+            category,
         }
     }
 
