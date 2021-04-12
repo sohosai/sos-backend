@@ -13,6 +13,7 @@ pub enum Error {
 pub struct Input {
     pub field_names: InputFieldNames,
     pub role_names: InputRoleNames,
+    pub category_names: InputCategoryNames,
 }
 
 #[derive(Debug, Clone)]
@@ -29,6 +30,7 @@ pub struct InputFieldNames {
     pub phone_number: Option<String>,
     pub affiliation: Option<String>,
     pub role: Option<String>,
+    pub category: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -37,6 +39,13 @@ pub struct InputRoleNames {
     pub committee_operator: String,
     pub committee: String,
     pub general: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct InputCategoryNames {
+    pub undergraduate: String,
+    pub graduate_student: String,
+    pub academic_staff: String,
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -89,6 +98,7 @@ where
         phone_number,
         affiliation,
         role,
+        category,
     } = &input.field_names;
 
     macro_rules! write_field {
@@ -111,6 +121,7 @@ where
     write_field!(writer, phone_number);
     write_field!(writer, affiliation);
     write_field!(writer, role);
+    write_field!(writer, category);
 
     // this terminates the record (see docs on `csv::Writer::write_record`)
     writer.write_record(std::iter::empty::<&[u8]>())?;
@@ -139,6 +150,7 @@ where
         phone_number,
         affiliation,
         role,
+        category,
     } = &input.field_names;
 
     if id.is_some() {
@@ -220,6 +232,15 @@ where
         writer.write_field(role_name)?;
     }
 
+    if category.is_some() {
+        let category_name = match user.category {
+            user::UserCategory::Undergraduate => &input.category_names.undergraduate,
+            user::UserCategory::GraduateStudent => &input.category_names.graduate_student,
+            user::UserCategory::AcademicStaff => &input.category_names.academic_staff,
+        };
+        writer.write_field(category_name)?;
+    }
+
     // this terminates the record (see docs on `csv::Writer::write_record`)
     writer.write_record(std::iter::empty::<&[u8]>())?;
 
@@ -245,6 +266,7 @@ mod tests {
             phone_number: Some("電話番号".to_string()),
             affiliation: None,
             role: Some("権限".to_string()),
+            category: Some("分類".to_string()),
         };
         let role_names = export_users::InputRoleNames {
             administrator: "管理者".to_string(),
@@ -252,9 +274,15 @@ mod tests {
             committee: "実委人".to_string(),
             general: "一般".to_string(),
         };
+        let category_names = export_users::InputCategoryNames {
+            undergraduate: "学部生".to_string(),
+            graduate_student: "院生".to_string(),
+            academic_staff: "教職員".to_string(),
+        };
         export_users::Input {
             field_names,
             role_names,
+            category_names,
         }
     }
 
