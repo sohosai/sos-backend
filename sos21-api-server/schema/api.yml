@@ -335,7 +335,7 @@ paths:
           in: query
           name: category_undergraduate_student
           required: true
-          description: "`udergraduate_student` ユーザー区分をどう表示するか指定します。"
+          description: "`undergraduate_student` ユーザー区分をどう表示するか指定します。"
         - schema:
             type: string
             example: 院生

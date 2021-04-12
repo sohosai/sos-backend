@@ -39,7 +39,7 @@ pub struct Request {
     pub role_committee: String,
     pub role_general: String,
     pub category_undergraduate_student: String,
-    pub category_garduate_student: String,
+    pub category_graduate_student: String,
     pub category_academic_staff: String,
 }
 
@@ -90,7 +90,7 @@ pub async fn handler(
             role_committee,
             role_general,
             category_undergraduate_student,
-            category_garduate_student,
+            category_graduate_student,
             category_academic_staff,
         } = request;
         let field_names = export_users::InputFieldNames {
@@ -116,7 +116,7 @@ pub async fn handler(
         };
         let category_names = export_users::InputCategoryNames {
             undergraduate_student: category_undergraduate_student,
-            graduate_student: category_garduate_student,
+            graduate_student: category_graduate_student,
             academic_staff: category_academic_staff,
         };
         export_users::Input {
