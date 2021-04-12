@@ -12,7 +12,6 @@ pub enum Error {
     InvalidUserKanaName,
     InvalidPhoneNumber,
     InvalidUserAffiliation,
-    InvalidUserCategory,
 }
 
 #[derive(Debug, Clone)]
@@ -58,7 +57,7 @@ where
         affiliation,
         created_at: DateTime::now(),
         role: user::UserRole::General,
-        category: category,
+        category,
     };
     ctx.store_user(user.clone())
         .await
