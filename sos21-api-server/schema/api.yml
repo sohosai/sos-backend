@@ -163,11 +163,14 @@ paths:
                   type: string
                 affiliation:
                   type: string
+                category:
+                  $ref: ./model/user/UserCategory.yml
               required:
                 - name
                 - kana_name
                 - phone_number
                 - affiliation
+                - category
       description: ユーザー情報を登録します。
   /user/list:
     get:
@@ -294,6 +297,12 @@ paths:
           description: 与えられた場合、その名前の列でユーザーのロールを出力します。
         - schema:
             type: string
+            example: 区分
+          in: query
+          name: field_category
+          description: 与えられた場合、その名前の列でユーザーの区分を出力します。
+        - schema:
+            type: string
             example: 管理者
           in: query
           name: role_administrator
@@ -320,6 +329,27 @@ paths:
           name: role_general
           required: true
           description: "`general` ロールをどう表示するか指定します。"
+        - schema:
+            type: string
+            example: 学部生
+          in: query
+          name: category_undergraduate_student
+          required: true
+          description: "`udergraduate_student` ユーザー区分をどう表示するか指定します。"
+        - schema:
+            type: string
+            example: 院生
+          in: query
+          name: category_graduate_student
+          required: true
+          description: "`graduate_student` ユーザー区分をどう表示するか指定します。"
+        - schema:
+            type: string
+            example: 学部生
+          in: query
+          name: category_academic_staff
+          required: true
+          description: "`academic_staff` ユーザー区分をどう表示するか指定します。"
       description: ユーザ一覧を CSV で出力します。
     parameters: []
   /user/get:
@@ -1076,6 +1106,8 @@ paths:
                   type: string
                 role:
                   $ref: ./model/user/UserRole.yml
+                category:
+                  $ref: ./model/user/UserCategory.yml
               required:
                 - id
       description: 指定されたユーザーの情報を更新します。
