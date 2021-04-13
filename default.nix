@@ -1,21 +1,35 @@
-{ pkgs ? import ./nix/pkgs.nix }:
+{ pkgs ? import ./nix/pkgs.nix
+, runTests ? true
+}:
 let
-  rustPlatform = pkgs.callPackage ./nix/rustPlatform.nix { };
-  gitignore = import ./nix/gitignore.nix { inherit (pkgs) lib; };
-  gitignoreFilter = gitignore.gitignoreFilter ./.;
-in
-rustPlatform.buildRustPackage {
-  pname = "sos21-backend";
-  version = "0.3.0";
-
-  src = pkgs.lib.cleanSourceWith {
-    filter = path: type: builtins.baseNameOf path == ".git" || gitignoreFilter path type;
-    src = ./.;
+  # sos21-database (that uses sqlx) needs cargo during compilation
+  cargoMetadataNoDeps = pkgs.writeShellScript "cargo-wrapped" ''
+    [ "$1" != "metadata" ] && exit 1
+    shift
+    ${pkgs.cargo}/bin/cargo metadata "$@" --no-deps
+  '';
+  cargoNix = pkgs.callPackage ./Cargo.nix {
+    defaultCrateOverrides = pkgs.defaultCrateOverrides // {
+      sos21-database = oldAttrs: {
+        CARGO = "${cargoMetadataNoDeps}";
+      };
+      sos21-api-server = oldAttrs: {
+        src = pkgs.symlinkJoin {
+          name = "${oldAttrs.crateName}-src";
+          paths = [ oldAttrs.src ];
+          postBuild = ''
+            cp -r ${builtins.path {
+              name = "git";
+              path = ./.git;
+            }} $out/.git
+          '';
+        };
+      };
+    };
   };
-
-  cargoSha256 = "1nq8pyl3xsri74q4ify74cwg2v11f2ifpsdsx29bldz3v1nm73kb";
-
-  nativeBuildInputs = with pkgs; [
-    zlib
-  ];
-}
+in
+pkgs.lib.mapAttrs
+  (_: crate: crate.build.override {
+    inherit runTests;
+  })
+  cargoNix.workspaceMembers
