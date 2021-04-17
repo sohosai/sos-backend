@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - Use GitHub Container Registry instead of GitHub Packages Docker registry to store container images ([#55](https://github.com/sohosai/sos21-backend/pull/55))
+- Use crate2nix for building ([#59](https://github.com/sohosai/sos21-backend/pull/59))
 
 ### Deprecated
 ### Removed
