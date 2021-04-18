@@ -22,6 +22,8 @@ SELECT
             form_project_query_conjunctions.category,
             form_project_query_conjunctions.attributes
         ))
+        /* works because attributes column in form_project_query_conjunctions table is NOT NULL */
+        FILTER (WHERE form_project_query_conjunctions.attributes IS NOT NULL)
         AS "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>"
 FROM forms
 LEFT OUTER JOIN form_condition_includes

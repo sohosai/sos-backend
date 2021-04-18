@@ -17,6 +17,9 @@ with the HTTP API interface being the "public API".
 ### Deprecated
 ### Removed
 ### Fixed
+
+- 500 when an empty query is used in the form condition ([#63](https://github.com/sohosai/sos21-backend/pull/63))
+
 ### Security
 
 ## [0.3.0] - 2021-03-29

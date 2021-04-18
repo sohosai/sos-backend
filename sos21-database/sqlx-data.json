@@ -784,84 +784,6 @@
       "nullable": []
     }
   },
-  "3711b1e67808ed304eb8431a42c28d478f503afce5f9453e9f8fb96d4d09819d": {
-    "query": "\nSELECT\n    forms.*,\n    array_agg(DISTINCT form_condition_includes.project_id)\n        FILTER (WHERE form_condition_includes.project_id IS NOT NULL)\n        AS include_ids,\n    array_agg(DISTINCT form_condition_excludes.project_id)\n        FILTER (WHERE form_condition_excludes.project_id IS NOT NULL)\n        AS exclude_ids,\n    array_agg(DISTINCT (\n            form_project_query_conjunctions.category,\n            form_project_query_conjunctions.attributes\n        ))\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM forms\nLEFT OUTER JOIN form_condition_includes\n    ON forms.id = form_condition_includes.form_id\nLEFT OUTER JOIN form_condition_excludes\n    ON forms.id = form_condition_excludes.form_id\nLEFT OUTER JOIN form_project_query_conjunctions\n    ON forms.id = form_project_query_conjunctions.form_id\nGROUP BY forms.id\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 2,
-          "name": "author_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 3,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 4,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "starts_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 6,
-          "name": "ends_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 7,
-          "name": "items",
-          "type_info": "Jsonb"
-        },
-        {
-          "ordinal": 8,
-          "name": "include_ids",
-          "type_info": "UuidArray"
-        },
-        {
-          "ordinal": 9,
-          "name": "exclude_ids",
-          "type_info": "UuidArray"
-        },
-        {
-          "ordinal": 10,
-          "name": "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
-          "type_info": "RecordArray"
-        }
-      ],
-      "parameters": {
-        "Left": []
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        null,
-        null,
-        null
-      ]
-    }
-  },
   "39997444e2c00a39d6537bdb162adf244e91f51905ba26e20c770e9ac3c7fac1": {
     "query": "\nSELECT\n        projects.id AS \"id!\",\n        projects.index AS \"index!\",\n        projects.created_at AS \"created_at!\",\n        projects.owner_id AS \"owner_id!\",\n        projects.subowner_id AS \"subowner_id!\",\n        projects.name AS \"name!\",\n        projects.kana_name AS \"kana_name!\",\n        projects.group_name AS \"group_name!\",\n        projects.kana_group_name AS \"kana_group_name!\",\n        projects.description AS \"description!\",\n        projects.category AS \"category!: ProjectCategory\",\n        projects.attributes AS \"attributes!: ProjectAttributes\",\n        owners.created_at AS \"owner_created_at!\",\n        owners.first_name AS \"owner_first_name!\",\n        owners.kana_first_name AS \"owner_kana_first_name!\",\n        owners.last_name AS \"owner_last_name!\",\n        owners.kana_last_name AS \"owner_kana_last_name!\",\n        owners.phone_number AS \"owner_phone_number!\",\n        owners.affiliation AS \"owner_affiliation!\",\n        owners.email AS \"owner_email!\",\n        owners.role AS \"owner_role!: UserRole\",\n        owners.category AS \"owner_category!: UserCategory\",\n        subowners.created_at AS \"subowner_created_at!\",\n        subowners.first_name AS \"subowner_first_name!\",\n        subowners.kana_first_name AS \"subowner_kana_first_name!\",\n        subowners.last_name AS \"subowner_last_name!\",\n        subowners.kana_last_name AS \"subowner_kana_last_name!\",\n        subowners.phone_number AS \"subowner_phone_number!\",\n        subowners.affiliation AS \"subowner_affiliation!\",\n        subowners.email AS \"subowner_email!\",\n        subowners.role AS \"subowner_role!: UserRole\",\n        subowners.category AS \"subowner_category!: UserCategory\"\nFROM projects\nINNER JOIN users AS owners ON (projects.owner_id = owners.id)\nINNER JOIN users AS subowners ON (projects.subowner_id = subowners.id)\n",
     "describe": {
@@ -1140,6 +1062,84 @@
         ]
       },
       "nullable": [
+        null
+      ]
+    }
+  },
+  "417fa6bfb6b53872ef20115ed31edb36e93c29689454f6a88998b799fec3d8bb": {
+    "query": "\nSELECT\n    forms.*,\n    array_agg(DISTINCT form_condition_includes.project_id)\n        FILTER (WHERE form_condition_includes.project_id IS NOT NULL)\n        AS include_ids,\n    array_agg(DISTINCT form_condition_excludes.project_id)\n        FILTER (WHERE form_condition_excludes.project_id IS NOT NULL)\n        AS exclude_ids,\n    array_agg(DISTINCT (\n            form_project_query_conjunctions.category,\n            form_project_query_conjunctions.attributes\n        ))\n        /* works because attributes column in form_project_query_conjunctions table is NOT NULL */\n        FILTER (WHERE form_project_query_conjunctions.attributes IS NOT NULL)\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM forms\nLEFT OUTER JOIN form_condition_includes\n    ON forms.id = form_condition_includes.form_id\nLEFT OUTER JOIN form_condition_excludes\n    ON forms.id = form_condition_excludes.form_id\nLEFT OUTER JOIN form_project_query_conjunctions\n    ON forms.id = form_project_query_conjunctions.form_id\nGROUP BY forms.id\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "starts_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 6,
+          "name": "ends_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 7,
+          "name": "items",
+          "type_info": "Jsonb"
+        },
+        {
+          "ordinal": 8,
+          "name": "include_ids",
+          "type_info": "UuidArray"
+        },
+        {
+          "ordinal": 9,
+          "name": "exclude_ids",
+          "type_info": "UuidArray"
+        },
+        {
+          "ordinal": 10,
+          "name": "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
+          "type_info": "RecordArray"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
         null
       ]
     }
