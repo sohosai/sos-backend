@@ -1,0 +1,4 @@
+Cargo.nix linguist-generated
+Cargo.lock linguist-generated
+sos21-database/sqlx-data.json linguist-generated
+sos21-api-server/schema/package-lock.json linguist-generated
