@@ -61,6 +61,7 @@ allOf:
             nullable: true
           placeholder:
             type: integer
+            nullable: true
           unit:
             type: string
             nullable: true

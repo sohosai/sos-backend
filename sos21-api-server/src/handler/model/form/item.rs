@@ -42,7 +42,7 @@ pub enum FormItemBody {
         is_required: bool,
         max: Option<u64>,
         min: Option<u64>,
-        placeholder: u64,
+        placeholder: Option<u64>,
         unit: Option<String>,
     },
     Checkbox {

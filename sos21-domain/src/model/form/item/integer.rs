@@ -15,7 +15,7 @@ pub struct IntegerFormItemContent {
     pub is_required: bool,
     pub max: Option<IntegerFormItemLimit>,
     pub min: Option<IntegerFormItemLimit>,
-    pub placeholder: u64,
+    pub placeholder: Option<u64>,
     pub unit: Option<IntegerFormItemUnit>,
 }
 
@@ -72,19 +72,21 @@ impl IntegerFormItem {
             _ => {}
         }
 
-        if let Some(min) = content.min {
-            if min.to_u64() > content.placeholder {
-                return Err(FromContentError {
-                    kind: FromContentErrorKind::TooSmallPlaceholder,
-                });
+        if let Some(placeholder) = content.placeholder {
+            if let Some(min) = content.min {
+                if min.to_u64() > placeholder {
+                    return Err(FromContentError {
+                        kind: FromContentErrorKind::TooSmallPlaceholder,
+                    });
+                }
             }
-        }
 
-        if let Some(max) = content.max {
-            if max.to_u64() < content.placeholder {
-                return Err(FromContentError {
-                    kind: FromContentErrorKind::TooBigPlaceholder,
-                });
+            if let Some(max) = content.max {
+                if max.to_u64() < placeholder {
+                    return Err(FromContentError {
+                        kind: FromContentErrorKind::TooBigPlaceholder,
+                    });
+                }
             }
         }
 
@@ -157,7 +159,7 @@ mod tests {
             is_required: true,
             max: None,
             min: None,
-            placeholder: 0,
+            placeholder: None,
             unit: None,
         })
         .unwrap();
@@ -166,7 +168,7 @@ mod tests {
             is_required: true,
             max: Some(IntegerFormItemLimit::from_u64(3).unwrap()),
             min: Some(IntegerFormItemLimit::from_u64(1).unwrap()),
-            placeholder: 1,
+            placeholder: Some(1),
             unit: None,
         })
         .unwrap();
@@ -175,7 +177,7 @@ mod tests {
             is_required: true,
             max: Some(IntegerFormItemLimit::from_u64(3).unwrap()),
             min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-            placeholder: 3,
+            placeholder: Some(3),
             unit: None,
         })
         .unwrap();
@@ -184,7 +186,7 @@ mod tests {
             is_required: true,
             max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
             min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-            placeholder: 3,
+            placeholder: Some(3),
             unit: None,
         })
         .unwrap();
@@ -197,7 +199,7 @@ mod tests {
                 is_required: true,
                 max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
                 min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-                placeholder: 1,
+                placeholder: Some(1),
                 unit: None,
             })
             .unwrap_err()
@@ -210,7 +212,7 @@ mod tests {
                 is_required: true,
                 max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
                 min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-                placeholder: 5,
+                placeholder: Some(5),
                 unit: None,
             })
             .unwrap_err()
@@ -226,7 +228,7 @@ mod tests {
                 is_required: true,
                 max: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
                 min: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
-                placeholder: 3,
+                placeholder: Some(3),
                 unit: None,
             })
             .unwrap_err()
@@ -241,7 +243,7 @@ mod tests {
             is_required: true,
             max: None,
             min: None,
-            placeholder: 0,
+            placeholder: Some(0),
             unit: None,
         })
         .unwrap()
@@ -252,7 +254,7 @@ mod tests {
             is_required: false,
             max: None,
             min: None,
-            placeholder: 0,
+            placeholder: None,
             unit: None,
         })
         .unwrap()
@@ -263,7 +265,7 @@ mod tests {
             is_required: false,
             max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
             min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-            placeholder: 3,
+            placeholder: Some(3),
             unit: None,
         })
         .unwrap()
@@ -278,7 +280,7 @@ mod tests {
                 is_required: true,
                 max: None,
                 min: None,
-                placeholder: 0,
+                placeholder: Some(0),
                 unit: None,
             })
             .unwrap()
@@ -296,7 +298,7 @@ mod tests {
                 is_required: true,
                 max: None,
                 min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-                placeholder: 2,
+                placeholder: Some(2),
                 unit: None,
             })
             .unwrap()
@@ -311,7 +313,7 @@ mod tests {
                 is_required: true,
                 max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
                 min: None,
-                placeholder: 0,
+                placeholder: None,
                 unit: None,
             })
             .unwrap()
