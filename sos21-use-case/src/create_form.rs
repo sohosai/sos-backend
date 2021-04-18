@@ -38,7 +38,6 @@ pub enum ItemError {
     InvalidTextMaxLength,
     InvalidTextMinLength,
     InvalidTextPlaceholder,
-    OutOfLimitsTextPlaceholderLength,
     InconsistentTextLengthLimits,
     InvalidIntegerMaxLimit,
     InvalidIntegerMinLimit,
@@ -78,12 +77,6 @@ pub enum ItemError {
 impl ItemError {
     fn from_text_content_error(err: item::text::FromContentError) -> Self {
         match err.kind() {
-            item::text::FromContentErrorKind::TooLongPlaceholder => {
-                ItemError::OutOfLimitsTextPlaceholderLength
-            }
-            item::text::FromContentErrorKind::TooShortPlaceholder => {
-                ItemError::OutOfLimitsTextPlaceholderLength
-            }
             item::text::FromContentErrorKind::InconsistentLengthLimits => {
                 ItemError::InconsistentTextLengthLimits
             }
