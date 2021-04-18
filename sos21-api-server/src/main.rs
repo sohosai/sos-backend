@@ -47,6 +47,7 @@ fn main() {
 
     if let Err(error) = run(opt) {
         event!(Level::ERROR, ?error);
+        std::process::exit(1);
     }
 }
 
