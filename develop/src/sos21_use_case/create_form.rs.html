@@ -681,13 +681,6 @@
 <span id="678">678</span>
 <span id="679">679</span>
 <span id="680">680</span>
-<span id="681">681</span>
-<span id="682">682</span>
-<span id="683">683</span>
-<span id="684">684</span>
-<span id="685">685</span>
-<span id="686">686</span>
-<span id="687">687</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::{
@@ -729,7 +722,6 @@
     <span class="ident">InvalidTextMaxLength</span>,
     <span class="ident">InvalidTextMinLength</span>,
     <span class="ident">InvalidTextPlaceholder</span>,
-    <span class="ident">OutOfLimitsTextPlaceholderLength</span>,
     <span class="ident">InconsistentTextLengthLimits</span>,
     <span class="ident">InvalidIntegerMaxLimit</span>,
     <span class="ident">InvalidIntegerMinLimit</span>,
@@ -769,12 +761,6 @@
 <span class="kw">impl</span> <span class="ident">ItemError</span> {
     <span class="kw">fn</span> <span class="ident">from_text_content_error</span>(<span class="ident">err</span>: <span class="ident">item</span>::<span class="ident">text</span>::<span class="ident">FromContentError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">match</span> <span class="ident">err</span>.<span class="ident">kind</span>() {
-            <span class="ident">item</span>::<span class="ident">text</span>::<span class="ident">FromContentErrorKind</span>::<span class="ident">TooLongPlaceholder</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">ItemError</span>::<span class="ident">OutOfLimitsTextPlaceholderLength</span>
-            }
-            <span class="ident">item</span>::<span class="ident">text</span>::<span class="ident">FromContentErrorKind</span>::<span class="ident">TooShortPlaceholder</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">ItemError</span>::<span class="ident">OutOfLimitsTextPlaceholderLength</span>
-            }
             <span class="ident">item</span>::<span class="ident">text</span>::<span class="ident">FromContentErrorKind</span>::<span class="ident">InconsistentLengthLimits</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">ItemError</span>::<span class="ident">InconsistentTextLengthLimits</span>
             }

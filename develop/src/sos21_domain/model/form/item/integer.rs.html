@@ -325,6 +325,8 @@
 <span id="322">322</span>
 <span id="323">323</span>
 <span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">serde</span>::{
     <span class="ident">de</span>::{<span class="self">self</span>, <span class="ident">Deserializer</span>},
@@ -343,7 +345,7 @@
     <span class="kw">pub</span> <span class="ident">is_required</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">max</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">IntegerFormItemLimit</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">min</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">IntegerFormItemLimit</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">placeholder</span>: <span class="ident">u64</span>,
+    <span class="kw">pub</span> <span class="ident">placeholder</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">unit</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">IntegerFormItemUnit</span><span class="op">&gt;</span>,
 }
 
@@ -400,19 +402,21 @@
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {}
         }
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">min</span>) <span class="op">=</span> <span class="ident">content</span>.<span class="ident">min</span> {
-            <span class="kw">if</span> <span class="ident">min</span>.<span class="ident">to_u64</span>() <span class="op">&gt;</span> <span class="ident">content</span>.<span class="ident">placeholder</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FromContentError</span> {
-                    <span class="ident">kind</span>: <span class="ident">FromContentErrorKind</span>::<span class="ident">TooSmallPlaceholder</span>,
-                });
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">placeholder</span>) <span class="op">=</span> <span class="ident">content</span>.<span class="ident">placeholder</span> {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">min</span>) <span class="op">=</span> <span class="ident">content</span>.<span class="ident">min</span> {
+                <span class="kw">if</span> <span class="ident">min</span>.<span class="ident">to_u64</span>() <span class="op">&gt;</span> <span class="ident">placeholder</span> {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FromContentError</span> {
+                        <span class="ident">kind</span>: <span class="ident">FromContentErrorKind</span>::<span class="ident">TooSmallPlaceholder</span>,
+                    });
+                }
             }
-        }
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">max</span>) <span class="op">=</span> <span class="ident">content</span>.<span class="ident">max</span> {
-            <span class="kw">if</span> <span class="ident">max</span>.<span class="ident">to_u64</span>() <span class="op">&lt;</span> <span class="ident">content</span>.<span class="ident">placeholder</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FromContentError</span> {
-                    <span class="ident">kind</span>: <span class="ident">FromContentErrorKind</span>::<span class="ident">TooBigPlaceholder</span>,
-                });
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">max</span>) <span class="op">=</span> <span class="ident">content</span>.<span class="ident">max</span> {
+                <span class="kw">if</span> <span class="ident">max</span>.<span class="ident">to_u64</span>() <span class="op">&lt;</span> <span class="ident">placeholder</span> {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FromContentError</span> {
+                        <span class="ident">kind</span>: <span class="ident">FromContentErrorKind</span>::<span class="ident">TooBigPlaceholder</span>,
+                    });
+                }
             }
         }
 
@@ -485,7 +489,7 @@
             <span class="ident">is_required</span>: <span class="bool-val">true</span>,
             <span class="ident">max</span>: <span class="prelude-val">None</span>,
             <span class="ident">min</span>: <span class="prelude-val">None</span>,
-            <span class="ident">placeholder</span>: <span class="number">0</span>,
+            <span class="ident">placeholder</span>: <span class="prelude-val">None</span>,
             <span class="ident">unit</span>: <span class="prelude-val">None</span>,
         })
         .<span class="ident">unwrap</span>();
@@ -494,7 +498,7 @@
             <span class="ident">is_required</span>: <span class="bool-val">true</span>,
             <span class="ident">max</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">3</span>).<span class="ident">unwrap</span>()),
             <span class="ident">min</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">1</span>).<span class="ident">unwrap</span>()),
-            <span class="ident">placeholder</span>: <span class="number">1</span>,
+            <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">1</span>),
             <span class="ident">unit</span>: <span class="prelude-val">None</span>,
         })
         .<span class="ident">unwrap</span>();
@@ -503,7 +507,7 @@
             <span class="ident">is_required</span>: <span class="bool-val">true</span>,
             <span class="ident">max</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">3</span>).<span class="ident">unwrap</span>()),
             <span class="ident">min</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">2</span>).<span class="ident">unwrap</span>()),
-            <span class="ident">placeholder</span>: <span class="number">3</span>,
+            <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">3</span>),
             <span class="ident">unit</span>: <span class="prelude-val">None</span>,
         })
         .<span class="ident">unwrap</span>();
@@ -512,7 +516,7 @@
             <span class="ident">is_required</span>: <span class="bool-val">true</span>,
             <span class="ident">max</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">4</span>).<span class="ident">unwrap</span>()),
             <span class="ident">min</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">2</span>).<span class="ident">unwrap</span>()),
-            <span class="ident">placeholder</span>: <span class="number">3</span>,
+            <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">3</span>),
             <span class="ident">unit</span>: <span class="prelude-val">None</span>,
         })
         .<span class="ident">unwrap</span>();
@@ -525,7 +529,7 @@
                 <span class="ident">is_required</span>: <span class="bool-val">true</span>,
                 <span class="ident">max</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">4</span>).<span class="ident">unwrap</span>()),
                 <span class="ident">min</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">2</span>).<span class="ident">unwrap</span>()),
-                <span class="ident">placeholder</span>: <span class="number">1</span>,
+                <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">1</span>),
                 <span class="ident">unit</span>: <span class="prelude-val">None</span>,
             })
             .<span class="ident">unwrap_err</span>()
@@ -538,7 +542,7 @@
                 <span class="ident">is_required</span>: <span class="bool-val">true</span>,
                 <span class="ident">max</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">4</span>).<span class="ident">unwrap</span>()),
                 <span class="ident">min</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">2</span>).<span class="ident">unwrap</span>()),
-                <span class="ident">placeholder</span>: <span class="number">5</span>,
+                <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">5</span>),
                 <span class="ident">unit</span>: <span class="prelude-val">None</span>,
             })
             .<span class="ident">unwrap_err</span>()
@@ -554,7 +558,7 @@
                 <span class="ident">is_required</span>: <span class="bool-val">true</span>,
                 <span class="ident">max</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">2</span>).<span class="ident">unwrap</span>()),
                 <span class="ident">min</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">4</span>).<span class="ident">unwrap</span>()),
-                <span class="ident">placeholder</span>: <span class="number">3</span>,
+                <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">3</span>),
                 <span class="ident">unit</span>: <span class="prelude-val">None</span>,
             })
             .<span class="ident">unwrap_err</span>()
@@ -569,7 +573,7 @@
             <span class="ident">is_required</span>: <span class="bool-val">true</span>,
             <span class="ident">max</span>: <span class="prelude-val">None</span>,
             <span class="ident">min</span>: <span class="prelude-val">None</span>,
-            <span class="ident">placeholder</span>: <span class="number">0</span>,
+            <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">0</span>),
             <span class="ident">unit</span>: <span class="prelude-val">None</span>,
         })
         .<span class="ident">unwrap</span>()
@@ -580,7 +584,7 @@
             <span class="ident">is_required</span>: <span class="bool-val">false</span>,
             <span class="ident">max</span>: <span class="prelude-val">None</span>,
             <span class="ident">min</span>: <span class="prelude-val">None</span>,
-            <span class="ident">placeholder</span>: <span class="number">0</span>,
+            <span class="ident">placeholder</span>: <span class="prelude-val">None</span>,
             <span class="ident">unit</span>: <span class="prelude-val">None</span>,
         })
         .<span class="ident">unwrap</span>()
@@ -591,7 +595,7 @@
             <span class="ident">is_required</span>: <span class="bool-val">false</span>,
             <span class="ident">max</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">4</span>).<span class="ident">unwrap</span>()),
             <span class="ident">min</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">2</span>).<span class="ident">unwrap</span>()),
-            <span class="ident">placeholder</span>: <span class="number">3</span>,
+            <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">3</span>),
             <span class="ident">unit</span>: <span class="prelude-val">None</span>,
         })
         .<span class="ident">unwrap</span>()
@@ -606,7 +610,7 @@
                 <span class="ident">is_required</span>: <span class="bool-val">true</span>,
                 <span class="ident">max</span>: <span class="prelude-val">None</span>,
                 <span class="ident">min</span>: <span class="prelude-val">None</span>,
-                <span class="ident">placeholder</span>: <span class="number">0</span>,
+                <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">0</span>),
                 <span class="ident">unit</span>: <span class="prelude-val">None</span>,
             })
             .<span class="ident">unwrap</span>()
@@ -624,7 +628,7 @@
                 <span class="ident">is_required</span>: <span class="bool-val">true</span>,
                 <span class="ident">max</span>: <span class="prelude-val">None</span>,
                 <span class="ident">min</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">2</span>).<span class="ident">unwrap</span>()),
-                <span class="ident">placeholder</span>: <span class="number">2</span>,
+                <span class="ident">placeholder</span>: <span class="prelude-val">Some</span>(<span class="number">2</span>),
                 <span class="ident">unit</span>: <span class="prelude-val">None</span>,
             })
             .<span class="ident">unwrap</span>()
@@ -639,7 +643,7 @@
                 <span class="ident">is_required</span>: <span class="bool-val">true</span>,
                 <span class="ident">max</span>: <span class="prelude-val">Some</span>(<span class="ident">IntegerFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">4</span>).<span class="ident">unwrap</span>()),
                 <span class="ident">min</span>: <span class="prelude-val">None</span>,
-                <span class="ident">placeholder</span>: <span class="number">0</span>,
+                <span class="ident">placeholder</span>: <span class="prelude-val">None</span>,
                 <span class="ident">unit</span>: <span class="prelude-val">None</span>,
             })
             .<span class="ident">unwrap</span>()
