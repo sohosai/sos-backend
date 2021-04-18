@@ -71,6 +71,8 @@
 <span id="68">68</span>
 <span id="69">69</span>
 <span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::{<span class="ident">Form</span>, <span class="ident">FormData</span>, <span class="ident">FormProjectQueryConjunction</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
@@ -96,6 +98,8 @@ SELECT
             form_project_query_conjunctions.category,
             form_project_query_conjunctions.attributes
         ))
+        /* works because attributes column in form_project_query_conjunctions table is NOT NULL */
+        FILTER (WHERE form_project_query_conjunctions.attributes IS NOT NULL)
         AS &quot;query: Vec&lt;(Option&lt;ProjectCategory&gt;, ProjectAttributes)&gt;&quot;
 FROM forms
 LEFT OUTER JOIN form_condition_includes
