@@ -27,8 +27,6 @@ pub struct TextFormItem(TextFormItemContent);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FromContentErrorKind {
-    TooLongPlaceholder,
-    TooShortPlaceholder,
     InconsistentLengthLimits,
 }
 
@@ -73,22 +71,6 @@ impl TextFormItem {
                 });
             }
             _ => {}
-        }
-
-        if let Some(min_length) = &content.min_length {
-            if min_length.to_u64() > content.placeholder.len() as u64 {
-                return Err(FromContentError {
-                    kind: FromContentErrorKind::TooShortPlaceholder,
-                });
-            }
-        }
-
-        if let Some(max_length) = &content.max_length {
-            if max_length.to_u64() < content.placeholder.len() as u64 {
-                return Err(FromContentError {
-                    kind: FromContentErrorKind::TooLongPlaceholder,
-                });
-            }
         }
 
         Ok(TextFormItem(content))
@@ -200,35 +182,6 @@ mod tests {
             placeholder: TextFormItemPlaceholder::from_string("あああああ").unwrap(),
         })
         .unwrap();
-    }
-
-    #[test]
-    fn test_placeholder() {
-        assert_eq!(
-            TextFormItem::from_content(TextFormItemContent {
-                accept_multiple_lines: true,
-                is_required: true,
-                max_length: Some(TextFormItemLength::from_u64(2).unwrap()),
-                min_length: Some(TextFormItemLength::from_u64(1).unwrap()),
-                placeholder: TextFormItemPlaceholder::from_string("あああ").unwrap(),
-            })
-            .unwrap_err()
-            .kind(),
-            FromContentErrorKind::TooLongPlaceholder,
-        );
-
-        assert_eq!(
-            TextFormItem::from_content(TextFormItemContent {
-                accept_multiple_lines: true,
-                is_required: true,
-                max_length: Some(TextFormItemLength::from_u64(2).unwrap()),
-                min_length: Some(TextFormItemLength::from_u64(1).unwrap()),
-                placeholder: TextFormItemPlaceholder::from_string("").unwrap(),
-            })
-            .unwrap_err()
-            .kind(),
-            FromContentErrorKind::TooShortPlaceholder,
-        );
     }
 
     #[test]
