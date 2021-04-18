@@ -19,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 ### Removed
 ### Fixed
+
+- Exit with non-zero exit code for errors ([#62](https://github.com/sohosai/sos21-backend/pull/62))
+
 ### Security
 
 ## [0.3.0] - 2021-03-29
