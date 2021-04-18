@@ -11,5 +11,6 @@ in
 import nixpkgs {
   overlays = [
     (import moz_overlay)
+    (import ./overlay.nix)
   ];
 }
