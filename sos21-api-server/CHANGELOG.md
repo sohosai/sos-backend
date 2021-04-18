@@ -14,6 +14,9 @@ with the HTTP API interface being the "public API".
 - Users' category ([#57](https://github.com/sohosai/sos21-backend/pull/57))
 
 ### Changed
+
+- Change the specification around text and integer placeholders ([#65](https://github.com/sohosai/sos21-backend/pull/65))
+
 ### Deprecated
 ### Removed
 ### Fixed
