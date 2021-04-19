@@ -1,0 +1,67 @@
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+name: Nightly
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-18.04
+    outputs:
+      deployed: "${{ steps.check-changes.outputs.changed == 'true' && job.status == 'success' }}"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: sos21-backend
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Check changes
+        id: check-changes
+        run: |
+          last_nightly=$(git tag --list --sort=taggerdate 'nightly-*' | tail -n 1)
+          if [ -z "$last_nightly" ]; then
+            echo "::set-output name=changed::true"
+            exit
+          fi
+          git diff --exit-code "$last_nightly" \
+            && echo "::set-output name=changed::false" \
+            || echo "::set-output name=changed::true"
+      - name: Create ssh private key file
+        if: ${{ steps.check-changes.outputs.changed == 'true' }}
+        env:
+          SSH_PRIVATE_KEY: "${{ secrets.SSH_PRIVATE_KEY }}"
+        run: |
+          touch ./ssh_private_key
+          chmod 600 ./ssh_private_key
+          echo "$SSH_PRIVATE_KEY" > ./ssh_private_key
+      - name: Deploy
+        if: ${{ steps.check-changes.outputs.changed == 'true' }}
+        uses: sohosai/sos21-backend-infrastructure/actions/deploy-staging@main
+        with:
+          target: direct.online-api-nightly.sohosai.com
+          ssh_private_key: ./ssh_private_key
+          configurations: ./nix/deployment/nightly.nix
+      - name: Delete ssh private key file
+        if: always()
+        run: rm -f ./ssh_private_key
+  tag:
+    name: Tag
+    runs-on: ubuntu-18.04
+    needs: deploy
+    if: needs.deploy.outputs.deployed == 'true'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # GITHUB_TOKEN user cannot trigger another workflow
+          token: "${{ secrets.TAGGER_PAT }}"
+      - name: git tag
+        run: |
+          tag_name=$(date +'nightly-%Y-%m-%d')
+          git tag "$tag_name"
+          git push --tags
