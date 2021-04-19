@@ -14,6 +14,11 @@ where
         "form_condition_excludes",
         "form_project_query_conjunctions",
         "form_answers",
+        "file_sharings",
+        "files",
+        "file_distributions",
+        "file_distribution_files",
+        "pending_projects",
     ]
     .as_ref();
 

@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Exit with non-zero exit code for errors ([#62](https://github.com/sohosai/sos21-backend/pull/62))
 - 500 when an empty query is used in the form condition ([#63](https://github.com/sohosai/sos21-backend/pull/63))
+- Fix is_health query to check some missing tables ([#66](https://github.com/sohosai/sos21-backend/pull/66))
 
 ### Security
 
