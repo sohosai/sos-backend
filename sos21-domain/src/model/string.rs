@@ -342,6 +342,30 @@ impl FromStr for StrippedString<String> {
     }
 }
 
+impl<S> Serialize for StrippedString<S>
+where
+    S: Serialize,
+{
+    fn serialize<Ser>(&self, serializer: Ser) -> Result<Ser::Ok, Ser::Error>
+    where
+        Ser: Serializer,
+    {
+        self.0.serialize(serializer)
+    }
+}
+
+impl<'de, S> Deserialize<'de> for StrippedString<S>
+where
+    S: Deserialize<'de> + AsRef<str>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        StrippedString::new(S::deserialize(deserializer)?).map_err(de::Error::custom)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{KanaString, LengthLimitedString, StrippedString};
