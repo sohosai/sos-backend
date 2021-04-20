@@ -1,0 +1,62 @@
+on:
+  push:
+    branches:
+      - 'v*'
+
+name: Beta
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: sos21-backend
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Create ssh private key file
+        env:
+          SSH_PRIVATE_KEY: "${{ secrets.SSH_PRIVATE_KEY }}"
+        run: |
+          touch ./ssh_private_key
+          chmod 600 ./ssh_private_key
+          echo "$SSH_PRIVATE_KEY" > ./ssh_private_key
+      - name: Deploy
+        uses: sohosai/sos21-backend-infrastructure/actions/deploy-staging@main
+        with:
+          target: direct.online-api-beta.sohosai.com
+          ssh_private_key: ./ssh_private_key
+          configurations: ./nix/deployment/beta.nix
+      - name: Delete ssh private key file
+        if: always()
+        run: rm -f ./ssh_private_key
+  tag:
+    name: Tag
+    runs-on: ubuntu-18.04
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # GITHUB_TOKEN user cannot trigger another workflow
+          token: "${{ secrets.TAGGER_PAT }}"
+      - name: Calculate next beta number
+        run: |
+          version=$(git branch --show-current)
+          last_beta=$(git tag --list --sort=taggerdate "$version"'-beta*' | tail -n 1)
+          if [ -z "$last_beta" ]; then
+            echo "::set-output name=number::0"
+            exit
+          fi
+          beta_number=${last_beta#v*-beta}
+          beta_number=$(( beta_number + 1 ))
+          echo "::set-output name=number::$beta_number"
+      - name: git tag
+        env:
+          BETA_NUMBER: "${{ steps.calculate-beta-number.outputs.number }}"
+        run: |
+          version=$(git branch --show-current)
+          tag_name=${version}-beta${BETA_NUMBER}
+          git tag "$tag_name"
+          git push --tags

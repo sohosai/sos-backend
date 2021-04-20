@@ -13,6 +13,10 @@ servers:
     description: Local server
   - url: "http://localhost:4010"
     description: Local server (with validation proxy)
+  - url: "https://online-api-nightly.sohosai.com"
+    description: Nightly depolyment
+  - url: "https://online-api-beta.sohosai.com"
+    description: Beta depolyment
 paths:
   /me/get:
     get:
