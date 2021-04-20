@@ -64,3 +64,14 @@ jobs:
       - run: nix-env -f ./nix/pkgs.nix -iA nodejs
       - run: cd sos21-api-server/schema; npm install
       - run: cd sos21-api-server/schema; npm run lint
+  nixpkgs-fmt:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: sos21-backend
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - run: nix-env -f ./nix/pkgs.nix -iA nixpkgs-fmt
+      - run: nixpkgs-fmt --check $(find . -name '*.nix' ! -name 'Cargo.nix')
