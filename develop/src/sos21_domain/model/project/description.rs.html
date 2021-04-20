@@ -31,9 +31,9 @@
 
 <span class="kw">use</span> <span class="ident">thiserror</span>::<span class="ident">Error</span>;
 
-<span class="doccomment">/// A description text of projects, whose length is 1 ..= 1024 chars.</span>
+<span class="doccomment">/// A description text of projects, whose length is 1 ..= 50 chars.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectDescription</span>(<span class="ident">LengthBoundedString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U1024</span>, <span class="ident">String</span><span class="op">&gt;</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectDescription</span>(<span class="ident">LengthBoundedString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U50</span>, <span class="ident">String</span><span class="op">&gt;</span>);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid project description&quot;</span>)]</span>
