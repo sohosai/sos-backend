@@ -3155,7 +3155,7 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "user" ];
       };
-      "num-bigint" = rec {
+      "num-bigint 0.2.6" = rec {
         crateName = "num-bigint";
         version = "0.2.6";
         edition = "2015";
@@ -3188,6 +3188,40 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
+      "num-bigint 0.4.0" = rec {
+        crateName = "num-bigint";
+        version = "0.4.0";
+        edition = "2018";
+        sha256 = "04k5xh7d0nxay4yfb02rj841y9g5jh45d320avi53ak221y083af";
+        authors = [
+          "The Rust Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "num-integer";
+            packageId = "num-integer";
+            usesDefaultFeatures = false;
+            features = [ "i128" ];
+          }
+          {
+            name = "num-traits";
+            packageId = "num-traits";
+            usesDefaultFeatures = false;
+            features = [ "i128" ];
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg";
+          }
+        ];
+        features = {
+          "default" = [ "std" ];
+          "std" = [ "num-integer/std" "num-traits/std" ];
+        };
+        resolvedDefaultFeatures = [ "std" ];
+      };
       "num-integer" = rec {
         crateName = "num-integer";
         version = "0.1.44";
@@ -3214,7 +3248,48 @@ rec {
           "i128" = [ "num-traits/i128" ];
           "std" = [ "num-traits/std" ];
         };
-        resolvedDefaultFeatures = [ "std" ];
+        resolvedDefaultFeatures = [ "i128" "std" ];
+      };
+      "num-rational" = rec {
+        crateName = "num-rational";
+        version = "0.4.0";
+        edition = "2018";
+        sha256 = "0ska19zb05f84b1cki7vyzy5wjqs26y82hiq1d9gabbw2syh45yl";
+        authors = [
+          "The Rust Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "num-bigint";
+            packageId = "num-bigint 0.4.0";
+            optional = true;
+            usesDefaultFeatures = false;
+          }
+          {
+            name = "num-integer";
+            packageId = "num-integer";
+            usesDefaultFeatures = false;
+            features = [ "i128" ];
+          }
+          {
+            name = "num-traits";
+            packageId = "num-traits";
+            usesDefaultFeatures = false;
+            features = [ "i128" ];
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg";
+          }
+        ];
+        features = {
+          "default" = [ "num-bigint-std" "std" ];
+          "num-bigint-std" = [ "num-bigint/std" ];
+          "std" = [ "num-integer/std" "num-traits/std" ];
+        };
+        resolvedDefaultFeatures = [ "default" "num-bigint" "num-bigint-std" "std" ];
       };
       "num-traits" = rec {
         crateName = "num-traits";
@@ -3233,7 +3308,7 @@ rec {
         features = {
           "default" = [ "std" ];
         };
-        resolvedDefaultFeatures = [ "default" "std" ];
+        resolvedDefaultFeatures = [ "default" "i128" "std" ];
       };
       "num_cpus" = rec {
         crateName = "num_cpus";
@@ -5292,7 +5367,7 @@ rec {
           }
           {
             name = "num-bigint";
-            packageId = "num-bigint";
+            packageId = "num-bigint 0.2.6";
           }
           {
             name = "num-traits";
@@ -5632,6 +5707,10 @@ rec {
             packageId = "mime";
           }
           {
+            name = "num-rational";
+            packageId = "num-rational";
+          }
+          {
             name = "once_cell";
             packageId = "once_cell";
             optional = true;
@@ -5659,6 +5738,10 @@ rec {
           {
             name = "typenum";
             packageId = "typenum";
+          }
+          {
+            name = "unicode-segmentation";
+            packageId = "unicode-segmentation";
           }
           {
             name = "uuid";
