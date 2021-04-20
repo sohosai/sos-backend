@@ -5,6 +5,23 @@ let
   cfg = config.services.sos21-api-server;
   sos21-backend = import ../../. { };
   inherit (sos21-backend) sos21-api-server sos21-run-migrations;
+
+  makeKeyLoadScript = { name, keys, envFile, user, group }:
+    let
+      exports = concatStringsSep "\n" (mapAttrsToList
+        (keyName: keyPath: ''
+          export ${keyName}=$(cat '${toString keyPath}')
+        '')
+        keys);
+    in
+    pkgs.writeShellScript name ''
+      touch '${envFile}'
+      chmod 600 '${envFile}'
+      cat << EOS > '${envFile}'
+      ${exports}
+      EOS
+      chown '${user}:${group}' '${envFile}'
+    '';
 in
 {
 
@@ -68,70 +85,137 @@ in
 
   config = mkIf cfg.enable {
 
-    systemd.services.sos21-run-migrations = {
-      after = [ "postgresql.service" ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        Type = "oneshot";
-      };
-      script = ''
-        DB_USERNAME=$(cat ${toString cfg.databaseUsernameFile})
-        DB_PASSWORD=$(cat ${toString cfg.databasePasswordFile})
-        export SOS21_RUN_MIGRATIONS_POSTGRES_URI="postgres://$DB_USERNAME:$DB_PASSWORD@${cfg.databaseHost}:${toString cfg.databasePort}/${cfg.databaseName}"
-        export PGPASSWORD=$DB_PASSWORD
-
-        HAS_DB=$(
-          ${pkgs.postgresql_13}/bin/psql postgres -h '${cfg.databaseHost}' -U "$DB_USERNAME" \
-            -tA -c "SELECT true FROM pg_database WHERE datname = '${cfg.databaseName}'"
-        )
-        if [ "$HAS_DB" != "t" ]; then
-           ${pkgs.postgresql_13}/bin/createdb -h '${cfg.databaseHost}' -U "$DB_USERNAME" '${cfg.databaseName}'
-        fi
-
-        ${sos21-run-migrations}/bin/sos21-run-migrations
-      '';
+    users.users.sos21 = {
+      name = "sos21";
+      group = "sos21";
+    };
+    users.groups.sos21 = {
+      name = "sos21";
     };
 
-    systemd.services.sos21-create-bucket = {
-      after = [ "minio.service" ];
-      wantedBy = [ "multi-user.target" ];
-      path = [ pkgs.getent ];  # needed by mc
-      serviceConfig = {
-        Type = "oneshot";
-      };
-      script = ''
-        ACCESS_KEY=$(cat ${toString cfg.s3AccessKeyFile})
-        ACCESS_SECRET=$(cat ${toString cfg.s3AccessSecretFile})
-        ${pkgs.minio-client}/bin/mc alias set minio '${cfg.s3Endpoint}' $ACCESS_KEY $ACCESS_SECRET
-        ${pkgs.minio-client}/bin/mc mb -p 'minio/${cfg.s3ObjectBucket}'
-      '';
-    };
+    systemd.services.sos21-run-migrations =
+      let
+        envFile = "/var/tmp/sos21-run-migrations-keys";
+        preStart = makeKeyLoadScript {
+          name = "sos21-run-migrations-pre-start";
+          user = config.users.users.sos21.name;
+          group = config.users.users.sos21.group;
+          inherit envFile;
+          keys = {
+            DB_USERNAME = cfg.databaseUsernameFile;
+            DB_PASSWORD = cfg.databasePasswordFile;
+          };
+        };
+      in
+      {
+        after = [ "postgresql.service" ];
+        wantedBy = [ "multi-user.target" ];
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStartPre = "+${preStart}";
+          User = config.users.users.sos21.name;
+          Group = config.users.users.sos21.group;
+        };
+        postStart = "rm -f '${envFile}'";
+        script = ''
+          source '${envFile}'
+          export SOS21_RUN_MIGRATIONS_POSTGRES_URI="postgres://$DB_USERNAME:$DB_PASSWORD@${cfg.databaseHost}:${toString cfg.databasePort}/${cfg.databaseName}"
+          export PGPASSWORD=$DB_PASSWORD
 
-    systemd.services.sos21-api-server = {
-      wantedBy = [ "multi-user.target" ];
-      after = [
-        "sos21-run-migrations.service"
-        "sos21-create-bucket.service"
-        "network-online.target"
-      ];
-      environment = {
-        SOS21_API_SERVER_JWT_AUDIENCE = cfg.firebaseProjectId;
-        SOS21_API_SERVER_JWT_ISSUER = "https://securetoken.google.com/${cfg.firebaseProjectId}";
-        SOS21_API_SERVER_JWT_KEYS_URL = "https://www.googleapis.com/robot/v1/metadata/jwk/securetoken@system.gserviceaccount.com";
-        SOS21_API_SERVER_S3_REGION = cfg.s3Region;
-        SOS21_API_SERVER_S3_ENDPOINT = cfg.s3Endpoint;
-        SOS21_API_SERVER_S3_OBJECT_BUCKET = cfg.s3ObjectBucket;
-        SOS21_API_SERVER_BIND = "0.0.0.0:${toString cfg.port}";
+          HAS_DB=$(
+            ${pkgs.postgresql_13}/bin/psql postgres -h '${cfg.databaseHost}' -U "$DB_USERNAME" \
+              -tA -c "SELECT true FROM pg_database WHERE datname = '${cfg.databaseName}'"
+          )
+          if [ "$HAS_DB" != "t" ]; then
+             ${pkgs.postgresql_13}/bin/createdb -h '${cfg.databaseHost}' -U "$DB_USERNAME" '${cfg.databaseName}'
+          fi
+
+          ${sos21-run-migrations}/bin/sos21-run-migrations --wait
+        '';
       };
-      script = ''
-        DB_USERNAME=$(cat ${toString cfg.databaseUsernameFile})
-        DB_PASSWORD=$(cat ${toString cfg.databasePasswordFile})
-        export SOS21_API_SERVER_POSTGRES_URI="postgres://$DB_USERNAME:$DB_PASSWORD@${cfg.databaseHost}:${toString cfg.databasePort}/${cfg.databaseName}"
-        export SOS21_API_SERVER_S3_ACCESS_KEY=$(cat ${toString cfg.s3AccessKeyFile})
-        export SOS21_API_SERVER_S3_ACCESS_SECRET=$(cat ${toString cfg.s3AccessSecretFile})
-        ${sos21-api-server}/bin/sos21-api-server
-      '';
-    };
+
+    systemd.services.sos21-create-bucket =
+      let
+        envFile = "/var/tmp/sos21-create-bucket-keys";
+        preStart = makeKeyLoadScript {
+          name = "sos21-create-bucket-pre-start";
+          user = config.users.users.sos21.name;
+          group = config.users.users.sos21.group;
+          inherit envFile;
+          keys = {
+            ACCESS_KEY = cfg.s3AccessKeyFile;
+            ACCESS_SECRET = cfg.s3AccessSecretFile;
+          };
+        };
+      in
+      {
+        after = [ "minio.service" ];
+        wantedBy = [ "multi-user.target" ];
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStartPre = "+${preStart}";
+          User = config.users.users.sos21.name;
+          Group = config.users.users.sos21.group;
+        };
+        postStart = "rm -f '${envFile}'";
+        script = ''
+          source '${envFile}'
+          endpoint=${cfg.s3Endpoint}
+          scheme=''${endpoint%://*}
+          endpoint=''${endpoint#*://}
+          export MC_HOST_minio=$scheme://$ACCESS_KEY:$ACCESS_SECRET@$endpoint
+          # TODO: run without config dir
+          mkdir -p /var/tmp/.mc
+          ${pkgs.minio-client}/bin/mc -C /var/tmp/.mc mb -p 'minio/${cfg.s3ObjectBucket}'
+        '';
+      };
+
+    systemd.services.sos21-api-server =
+      let
+        envFile = "/var/tmp/sos21-api-server-keys";
+        preStart = makeKeyLoadScript {
+          name = "sos21-api-server-pre-start";
+          user = config.users.users.sos21.name;
+          group = config.users.users.sos21.group;
+          inherit envFile;
+          keys = {
+            DB_USERNAME = cfg.databaseUsernameFile;
+            DB_PASSWORD = cfg.databasePasswordFile;
+            SOS21_API_SERVER_S3_ACCESS_KEY = cfg.s3AccessKeyFile;
+            SOS21_API_SERVER_S3_ACCESS_SECRET = cfg.s3AccessSecretFile;
+          };
+        };
+      in
+      {
+        wantedBy = [ "multi-user.target" ];
+        after = [
+          "sos21-run-migrations.service"
+          "sos21-create-bucket.service"
+          "network-online.target"
+        ];
+        serviceConfig = {
+          ExecStartPre = "+${preStart}";
+          User = config.users.users.sos21.name;
+          Group = config.users.users.sos21.group;
+          AmbientCapabilities = "CAP_NET_BIND_SERVICE";
+        };
+        postStop = "rm -f '${envFile}'";
+        environment = {
+          SOS21_API_SERVER_JWT_AUDIENCE = cfg.firebaseProjectId;
+          SOS21_API_SERVER_JWT_ISSUER = "https://securetoken.google.com/${cfg.firebaseProjectId}";
+          SOS21_API_SERVER_JWT_KEYS_URL = "https://www.googleapis.com/robot/v1/metadata/jwk/securetoken@system.gserviceaccount.com";
+          SOS21_API_SERVER_S3_REGION = cfg.s3Region;
+          SOS21_API_SERVER_S3_ENDPOINT = cfg.s3Endpoint;
+          SOS21_API_SERVER_S3_OBJECT_BUCKET = cfg.s3ObjectBucket;
+          SOS21_API_SERVER_BIND = "0.0.0.0:${toString cfg.port}";
+        };
+        script = ''
+          source '${envFile}'
+          rm -f '${envFile}'
+          export SOS21_API_SERVER_POSTGRES_URI="postgres://$DB_USERNAME:$DB_PASSWORD@${cfg.databaseHost}:${toString cfg.databasePort}/${cfg.databaseName}"
+          ${sos21-api-server}/bin/sos21-api-server
+        '';
+      };
 
   };
 
