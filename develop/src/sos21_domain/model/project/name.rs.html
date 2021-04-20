@@ -312,11 +312,48 @@
 <span id="309">309</span>
 <span id="310">310</span>
 <span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">string</span>::{<span class="self">self</span>, <span class="ident">KanaString</span>, <span class="ident">LengthBoundedString</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">string</span>::{<span class="self">self</span>, <span class="ident">KanaString</span>, <span class="ident">LengthBoundedString</span>, <span class="ident">StrippedString</span>};
 
 <span class="kw">use</span> <span class="ident">num_rational</span>::<span class="ident">Ratio</span>;
 <span class="kw">use</span> <span class="ident">thiserror</span>::<span class="ident">Error</span>;
@@ -344,6 +381,12 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Max</span><span class="op">&gt;</span> <span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">ProjectNameString</span><span class="op">&lt;</span><span class="ident">Max</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="op">&lt;</span><span class="ident">String</span> <span class="kw">as</span> <span class="ident">Debug</span><span class="op">&gt;</span>::<span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>, <span class="ident">f</span>)
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Max</span><span class="op">&gt;</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ProjectNameString</span><span class="op">&lt;</span><span class="ident">Max</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">as_ref</span>()
     }
 }
 
@@ -394,7 +437,7 @@
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectName</span>(<span class="ident">ProjectNameString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U22</span><span class="op">&gt;</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectName</span>(<span class="ident">StrippedString</span><span class="op">&lt;</span><span class="ident">ProjectNameString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U22</span><span class="op">&gt;</span><span class="op">&gt;</span>);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid project name&quot;</span>)]</span>
@@ -406,22 +449,29 @@
     <span class="kw">fn</span> <span class="ident">from_length_error</span>(<span class="ident">_err</span>: <span class="ident">NameLengthError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">NameError</span> { <span class="ident">_priv</span>: () }
     }
+
+    <span class="kw">fn</span> <span class="ident">from_not_stripped_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">NotStrippedError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">NameError</span> { <span class="ident">_priv</span>: () }
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">ProjectName</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_string</span>(<span class="ident">name</span>: <span class="kw">impl</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">NameError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span>
             <span class="ident">ProjectNameString</span>::<span class="ident">from_string</span>(<span class="ident">name</span>.<span class="ident">into</span>()).<span class="ident">map_err</span>(<span class="ident">NameError</span>::<span class="ident">from_length_error</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">StrippedString</span>::<span class="ident">new</span>(<span class="ident">inner</span>).<span class="ident">map_err</span>(<span class="ident">NameError</span>::<span class="ident">from_not_stripped_error</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">ProjectName</span>(<span class="ident">inner</span>))
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_string</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_string</span>()
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>().<span class="ident">into_string</span>()
     }
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectKanaName</span>(<span class="ident">KanaString</span><span class="op">&lt;</span><span class="ident">LengthBoundedString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U128</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectKanaName</span>(
+    <span class="ident">StrippedString</span><span class="op">&lt;</span><span class="ident">KanaString</span><span class="op">&lt;</span><span class="ident">LengthBoundedString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U128</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid project kana name&quot;</span>)]</span>
@@ -437,6 +487,10 @@
     <span class="kw">fn</span> <span class="ident">from_not_kana_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">NotKanaError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">KanaNameError</span> { <span class="ident">_priv</span>: () }
     }
+
+    <span class="kw">fn</span> <span class="ident">from_not_stripped_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">NotStrippedError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">KanaNameError</span> { <span class="ident">_priv</span>: () }
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">ProjectKanaName</span> {
@@ -444,16 +498,17 @@
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span>
             <span class="ident">LengthBoundedString</span>::<span class="ident">new</span>(<span class="ident">kana_name</span>.<span class="ident">into</span>()).<span class="ident">map_err</span>(<span class="ident">KanaNameError</span>::<span class="ident">from_length_error</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">KanaString</span>::<span class="ident">new</span>(<span class="ident">inner</span>).<span class="ident">map_err</span>(<span class="ident">KanaNameError</span>::<span class="ident">from_not_kana_error</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">StrippedString</span>::<span class="ident">new</span>(<span class="ident">inner</span>).<span class="ident">map_err</span>(<span class="ident">KanaNameError</span>::<span class="ident">from_not_stripped_error</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">ProjectKanaName</span>(<span class="ident">inner</span>))
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_string</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>().<span class="ident">into_inner</span>()
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>().<span class="ident">into_inner</span>().<span class="ident">into_inner</span>()
     }
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectGroupName</span>(<span class="ident">ProjectNameString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U25</span><span class="op">&gt;</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectGroupName</span>(<span class="ident">StrippedString</span><span class="op">&lt;</span><span class="ident">ProjectNameString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U25</span><span class="op">&gt;</span><span class="op">&gt;</span>);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid project group name&quot;</span>)]</span>
@@ -465,17 +520,22 @@
     <span class="kw">fn</span> <span class="ident">from_length_error</span>(<span class="ident">_err</span>: <span class="ident">NameLengthError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">GroupNameError</span> { <span class="ident">_priv</span>: () }
     }
+
+    <span class="kw">fn</span> <span class="ident">from_not_stripped_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">NotStrippedError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">GroupNameError</span> { <span class="ident">_priv</span>: () }
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">ProjectGroupName</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_string</span>(<span class="ident">kana_name</span>: <span class="kw">impl</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">GroupNameError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">ProjectNameString</span>::<span class="ident">from_string</span>(<span class="ident">kana_name</span>.<span class="ident">into</span>())
             .<span class="ident">map_err</span>(<span class="ident">GroupNameError</span>::<span class="ident">from_length_error</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">StrippedString</span>::<span class="ident">new</span>(<span class="ident">inner</span>).<span class="ident">map_err</span>(<span class="ident">GroupNameError</span>::<span class="ident">from_not_stripped_error</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">ProjectGroupName</span>(<span class="ident">inner</span>))
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_string</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_string</span>()
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>().<span class="ident">into_string</span>()
     }
 }
 
@@ -493,11 +553,15 @@
     <span class="kw">fn</span> <span class="ident">from_not_kana_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">NotKanaError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">KanaGroupNameError</span> { <span class="ident">_priv</span>: () }
     }
+
+    <span class="kw">fn</span> <span class="ident">from_not_stripped_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">NotStrippedError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">KanaGroupNameError</span> { <span class="ident">_priv</span>: () }
+    }
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectKanaGroupName</span>(
-    <span class="ident">KanaString</span><span class="op">&lt;</span><span class="ident">LengthBoundedString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U128</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">StrippedString</span><span class="op">&lt;</span><span class="ident">KanaString</span><span class="op">&lt;</span><span class="ident">LengthBoundedString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U128</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 );
 
 <span class="kw">impl</span> <span class="ident">ProjectKanaGroupName</span> {
@@ -505,11 +569,13 @@
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">LengthBoundedString</span>::<span class="ident">new</span>(<span class="ident">kana_name</span>.<span class="ident">into</span>())
             .<span class="ident">map_err</span>(<span class="ident">KanaGroupNameError</span>::<span class="ident">from_length_error</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">KanaString</span>::<span class="ident">new</span>(<span class="ident">inner</span>).<span class="ident">map_err</span>(<span class="ident">KanaGroupNameError</span>::<span class="ident">from_not_kana_error</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span>
+            <span class="ident">StrippedString</span>::<span class="ident">new</span>(<span class="ident">inner</span>).<span class="ident">map_err</span>(<span class="ident">KanaGroupNameError</span>::<span class="ident">from_not_stripped_error</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">ProjectKanaGroupName</span>(<span class="ident">inner</span>))
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_string</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>().<span class="ident">into_inner</span>()
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>().<span class="ident">into_inner</span>().<span class="ident">into_inner</span>()
     }
 }
 
@@ -521,6 +587,10 @@
     <span class="kw">fn</span> <span class="ident">test_name_empty</span>() {
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
             <span class="ident">ProjectName</span>::<span class="ident">from_string</span>(<span class="string">&quot;&quot;</span>),
+            <span class="prelude-val">Err</span>(<span class="ident">NameError</span> { .. })
+        ));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
+            <span class="ident">ProjectName</span>::<span class="ident">from_string</span>(<span class="string">&quot;   &quot;</span>),
             <span class="prelude-val">Err</span>(<span class="ident">NameError</span> { .. })
         ));
     }
@@ -569,6 +639,10 @@
     <span class="kw">fn</span> <span class="ident">test_group_name_empty</span>() {
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
             <span class="ident">ProjectGroupName</span>::<span class="ident">from_string</span>(<span class="string">&quot;&quot;</span>),
+            <span class="prelude-val">Err</span>(<span class="ident">GroupNameError</span> { .. })
+        ));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
+            <span class="ident">ProjectGroupName</span>::<span class="ident">from_string</span>(<span class="string">&quot;   &quot;</span>),
             <span class="prelude-val">Err</span>(<span class="ident">GroupNameError</span> { .. })
         ));
     }

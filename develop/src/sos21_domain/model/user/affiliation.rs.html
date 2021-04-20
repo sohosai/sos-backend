@@ -26,14 +26,26 @@
 <span id="23">23</span>
 <span id="24">24</span>
 <span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">string</span>::<span class="ident">LengthBoundedString</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">string</span>::{<span class="self">self</span>, <span class="ident">LengthBoundedString</span>, <span class="ident">StrippedString</span>};
 
 <span class="kw">use</span> <span class="ident">thiserror</span>::<span class="ident">Error</span>;
 
 <span class="doccomment">/// A text of users&#39; affiliation, whose length is 1 ..= 128 chars.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UserAffiliation</span>(<span class="ident">LengthBoundedString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U128</span>, <span class="ident">String</span><span class="op">&gt;</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UserAffiliation</span>(<span class="ident">StrippedString</span><span class="op">&lt;</span><span class="ident">LengthBoundedString</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U128</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid user affiliation&quot;</span>)]</span>
@@ -41,15 +53,27 @@
     <span class="ident">_priv</span>: (),
 }
 
+<span class="kw">impl</span> <span class="ident">AffiliationError</span> {
+    <span class="kw">fn</span> <span class="ident">from_length_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">BoundedLengthError</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U128</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">AffiliationError</span> { <span class="ident">_priv</span>: () }
+    }
+
+    <span class="kw">fn</span> <span class="ident">from_not_stripped_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">NotStrippedError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">AffiliationError</span> { <span class="ident">_priv</span>: () }
+    }
+}
+
 <span class="kw">impl</span> <span class="ident">UserAffiliation</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_string</span>(<span class="ident">affiliation</span>: <span class="kw">impl</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">AffiliationError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">LengthBoundedString</span>::<span class="ident">new</span>(<span class="ident">affiliation</span>.<span class="ident">into</span>())
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">AffiliationError</span> { <span class="ident">_priv</span>: () })<span class="question-mark">?</span>;
+            .<span class="ident">map_err</span>(<span class="ident">AffiliationError</span>::<span class="ident">from_length_error</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span>
+            <span class="ident">StrippedString</span>::<span class="ident">new</span>(<span class="ident">inner</span>).<span class="ident">map_err</span>(<span class="ident">AffiliationError</span>::<span class="ident">from_not_stripped_error</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">UserAffiliation</span>(<span class="ident">inner</span>))
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_string</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>()
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>().<span class="ident">into_inner</span>()
     }
 }
 </pre></div>

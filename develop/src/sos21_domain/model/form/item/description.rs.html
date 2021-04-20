@@ -28,16 +28,32 @@
 <span id="25">25</span>
 <span id="26">26</span>
 <span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">bound</span>::{<span class="ident">Bounded</span>, <span class="ident">Unbounded</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">string</span>::<span class="ident">LengthLimitedString</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">string</span>::{<span class="self">self</span>, <span class="ident">LengthLimitedString</span>, <span class="ident">StrippedString</span>};
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">thiserror</span>::<span class="ident">Error</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Deserialize</span>, <span class="ident">Serialize</span>)]</span>
 <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FormItemDescription</span>(<span class="ident">LengthLimitedString</span><span class="op">&lt;</span><span class="ident">Unbounded</span>, <span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1024</span><span class="op">&gt;</span>, <span class="ident">String</span><span class="op">&gt;</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FormItemDescription</span>(
+    <span class="ident">StrippedString</span><span class="op">&lt;</span><span class="ident">LengthLimitedString</span><span class="op">&lt;</span><span class="ident">Unbounded</span>, <span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1024</span><span class="op">&gt;</span>, <span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid form item description&quot;</span>)]</span>
@@ -45,15 +61,27 @@
     <span class="ident">_priv</span>: (),
 }
 
+<span class="kw">impl</span> <span class="ident">ItemDescriptionError</span> {
+    <span class="kw">fn</span> <span class="ident">from_length_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">LengthError</span><span class="op">&lt;</span><span class="ident">Unbounded</span>, <span class="ident">Bounded</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1024</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">ItemDescriptionError</span> { <span class="ident">_priv</span>: () }
+    }
+
+    <span class="kw">fn</span> <span class="ident">from_not_stripped_error</span>(<span class="ident">_err</span>: <span class="ident">string</span>::<span class="ident">NotStrippedError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="ident">ItemDescriptionError</span> { <span class="ident">_priv</span>: () }
+    }
+}
+
 <span class="kw">impl</span> <span class="ident">FormItemDescription</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_string</span>(<span class="ident">name</span>: <span class="kw">impl</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">ItemDescriptionError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">LengthLimitedString</span>::<span class="ident">new</span>(<span class="ident">name</span>.<span class="ident">into</span>())
-            .<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">ItemDescriptionError</span> { <span class="ident">_priv</span>: () })<span class="question-mark">?</span>;
+            .<span class="ident">map_err</span>(<span class="ident">ItemDescriptionError</span>::<span class="ident">from_length_error</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span>
+            <span class="ident">StrippedString</span>::<span class="ident">new</span>(<span class="ident">inner</span>).<span class="ident">map_err</span>(<span class="ident">ItemDescriptionError</span>::<span class="ident">from_not_stripped_error</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">FormItemDescription</span>(<span class="ident">inner</span>))
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_string</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>()
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">into_inner</span>().<span class="ident">into_inner</span>()
     }
 }
 </pre></div>
