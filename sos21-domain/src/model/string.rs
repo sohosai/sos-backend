@@ -262,9 +262,89 @@ impl FromStr for KanaString<String> {
     }
 }
 
+/// A stripped string that does not have whitespace on both ends.
+///
+/// This provides a wrapper to validate that the string is stripped for all `AsRef<str>` types.
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct StrippedString<S>(S);
+
+impl<S> StrippedString<S>
+where
+    S: AsRef<str>,
+{
+    pub fn new(s: S) -> Result<Self, NotStrippedError> {
+        if is_stripped_string(s.as_ref()) {
+            Ok(StrippedString(s))
+        } else {
+            Err(NotStrippedError { _priv: () })
+        }
+    }
+
+    pub fn as_str(&self) -> &str {
+        self.0.as_ref()
+    }
+}
+
+impl<S> StrippedString<S> {
+    pub fn into_inner(self) -> S {
+        self.0
+    }
+}
+
+fn is_stripped_string(s: &str) -> bool {
+    !s.starts_with(char::is_whitespace) && !s.ends_with(char::is_whitespace)
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("not stripped string")]
+pub struct NotStrippedError {
+    _priv: (),
+}
+
+// This cannot be generic because of the blanket impl `TryFrom<T> for U where U: Into<T>`
+impl TryFrom<String> for StrippedString<String> {
+    type Error = NotStrippedError;
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        StrippedString::new(s)
+    }
+}
+
+// This cannot be generic because of the orphan rule
+impl From<StrippedString<String>> for String {
+    fn from(s: StrippedString<String>) -> String {
+        s.into_inner()
+    }
+}
+
+impl<S: AsRef<str>> AsRef<str> for StrippedString<S> {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl<S: Display> Display for StrippedString<S> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        <S as Display>::fmt(&self.0, f)
+    }
+}
+
+impl<S: Debug> Debug for StrippedString<S> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        <S as Debug>::fmt(&self.0, f)
+    }
+}
+
+impl FromStr for StrippedString<String> {
+    type Err = NotStrippedError;
+    fn from_str(s: &str) -> Result<StrippedString<String>, Self::Err> {
+        let s = s.to_owned();
+        StrippedString::new(s)
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{KanaString, LengthLimitedString};
+    use super::{KanaString, LengthLimitedString, StrippedString};
     use crate::model::bound::{Bounded, Unbounded};
     use std::str::FromStr;
 
@@ -326,5 +406,24 @@ mod tests {
             )
             .is_err()
         );
+    }
+
+    #[test]
+    fn test_stripped() {
+        assert!(StrippedString::from_str("").is_ok());
+        assert!(StrippedString::from_str("abc").is_ok());
+        assert!(StrippedString::from_str("a b c").is_ok());
+        assert!(StrippedString::from_str("雙峰祭 オンラインシステム").is_ok());
+    }
+
+    #[test]
+    fn test_not_stripped() {
+        assert!(StrippedString::from_str(" ").is_err());
+        assert!(StrippedString::from_str("　").is_err());
+        assert!(StrippedString::from_str(" abc").is_err());
+        assert!(StrippedString::from_str("abc　").is_err());
+        assert!(StrippedString::from_str("a b c ").is_err());
+        assert!(StrippedString::from_str("　雙峰祭 オンラインシステム").is_err());
+        assert!(StrippedString::from_str("　雙峰祭 ").is_err());
     }
 }
