@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Use crate2nix for building ([#59](https://github.com/sohosai/sos21-backend/pull/59))
 - Change the specification around text and integer placeholders ([#65](https://github.com/sohosai/sos21-backend/pull/65))
 - Change the specification around the project name and description length ([#69](https://github.com/sohosai/sos21-backend/pull/69))
+- Require stripped texts ([#70](https://github.com/sohosai/sos21-backend/pull/70))
 
 ### Deprecated
 ### Removed
