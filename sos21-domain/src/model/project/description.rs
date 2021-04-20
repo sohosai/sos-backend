@@ -2,9 +2,9 @@ use crate::model::string::LengthBoundedString;
 
 use thiserror::Error;
 
-/// A description text of projects, whose length is 1 ..= 1024 chars.
+/// A description text of projects, whose length is 1 ..= 50 chars.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ProjectDescription(LengthBoundedString<typenum::U1, typenum::U1024, String>);
+pub struct ProjectDescription(LengthBoundedString<typenum::U1, typenum::U50, String>);
 
 #[derive(Debug, Error, Clone)]
 #[error("invalid project description")]
