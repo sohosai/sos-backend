@@ -1,7 +1,7 @@
 use std::fmt::{self, Debug};
 use std::marker::PhantomData;
 
-use crate::model::string::{self, KanaString, LengthBoundedString};
+use crate::model::string::{self, KanaString, LengthBoundedString, StrippedString};
 
 use num_rational::Ratio;
 use thiserror::Error;
@@ -29,6 +29,12 @@ struct ProjectNameString<Max> {
 impl<Max> Debug for ProjectNameString<Max> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         <String as Debug>::fmt(&self.inner, f)
+    }
+}
+
+impl<Max> AsRef<str> for ProjectNameString<Max> {
+    fn as_ref(&self) -> &str {
+        self.inner.as_ref()
     }
 }
 
@@ -79,7 +85,7 @@ impl<Max> ProjectNameString<Max> {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ProjectName(ProjectNameString<typenum::U22>);
+pub struct ProjectName(StrippedString<ProjectNameString<typenum::U22>>);
 
 #[derive(Debug, Error, Clone)]
 #[error("invalid project name")]
@@ -91,22 +97,29 @@ impl NameError {
     fn from_length_error(_err: NameLengthError) -> Self {
         NameError { _priv: () }
     }
+
+    fn from_not_stripped_error(_err: string::NotStrippedError) -> Self {
+        NameError { _priv: () }
+    }
 }
 
 impl ProjectName {
     pub fn from_string(name: impl Into<String>) -> Result<Self, NameError> {
         let inner =
             ProjectNameString::from_string(name.into()).map_err(NameError::from_length_error)?;
+        let inner = StrippedString::new(inner).map_err(NameError::from_not_stripped_error)?;
         Ok(ProjectName(inner))
     }
 
     pub fn into_string(self) -> String {
-        self.0.into_string()
+        self.0.into_inner().into_string()
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ProjectKanaName(KanaString<LengthBoundedString<typenum::U1, typenum::U128, String>>);
+pub struct ProjectKanaName(
+    StrippedString<KanaString<LengthBoundedString<typenum::U1, typenum::U128, String>>>,
+);
 
 #[derive(Debug, Error, Clone)]
 #[error("invalid project kana name")]
@@ -122,6 +135,10 @@ impl KanaNameError {
     fn from_not_kana_error(_err: string::NotKanaError) -> Self {
         KanaNameError { _priv: () }
     }
+
+    fn from_not_stripped_error(_err: string::NotStrippedError) -> Self {
+        KanaNameError { _priv: () }
+    }
 }
 
 impl ProjectKanaName {
@@ -129,16 +146,17 @@ impl ProjectKanaName {
         let inner =
             LengthBoundedString::new(kana_name.into()).map_err(KanaNameError::from_length_error)?;
         let inner = KanaString::new(inner).map_err(KanaNameError::from_not_kana_error)?;
+        let inner = StrippedString::new(inner).map_err(KanaNameError::from_not_stripped_error)?;
         Ok(ProjectKanaName(inner))
     }
 
     pub fn into_string(self) -> String {
-        self.0.into_inner().into_inner()
+        self.0.into_inner().into_inner().into_inner()
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ProjectGroupName(ProjectNameString<typenum::U25>);
+pub struct ProjectGroupName(StrippedString<ProjectNameString<typenum::U25>>);
 
 #[derive(Debug, Error, Clone)]
 #[error("invalid project group name")]
@@ -150,17 +168,22 @@ impl GroupNameError {
     fn from_length_error(_err: NameLengthError) -> Self {
         GroupNameError { _priv: () }
     }
+
+    fn from_not_stripped_error(_err: string::NotStrippedError) -> Self {
+        GroupNameError { _priv: () }
+    }
 }
 
 impl ProjectGroupName {
     pub fn from_string(kana_name: impl Into<String>) -> Result<Self, GroupNameError> {
         let inner = ProjectNameString::from_string(kana_name.into())
             .map_err(GroupNameError::from_length_error)?;
+        let inner = StrippedString::new(inner).map_err(GroupNameError::from_not_stripped_error)?;
         Ok(ProjectGroupName(inner))
     }
 
     pub fn into_string(self) -> String {
-        self.0.into_string()
+        self.0.into_inner().into_string()
     }
 }
 
@@ -178,11 +201,15 @@ impl KanaGroupNameError {
     fn from_not_kana_error(_err: string::NotKanaError) -> Self {
         KanaGroupNameError { _priv: () }
     }
+
+    fn from_not_stripped_error(_err: string::NotStrippedError) -> Self {
+        KanaGroupNameError { _priv: () }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProjectKanaGroupName(
-    KanaString<LengthBoundedString<typenum::U1, typenum::U128, String>>,
+    StrippedString<KanaString<LengthBoundedString<typenum::U1, typenum::U128, String>>>,
 );
 
 impl ProjectKanaGroupName {
@@ -190,11 +217,13 @@ impl ProjectKanaGroupName {
         let inner = LengthBoundedString::new(kana_name.into())
             .map_err(KanaGroupNameError::from_length_error)?;
         let inner = KanaString::new(inner).map_err(KanaGroupNameError::from_not_kana_error)?;
+        let inner =
+            StrippedString::new(inner).map_err(KanaGroupNameError::from_not_stripped_error)?;
         Ok(ProjectKanaGroupName(inner))
     }
 
     pub fn into_string(self) -> String {
-        self.0.into_inner().into_inner()
+        self.0.into_inner().into_inner().into_inner()
     }
 }
 
@@ -206,6 +235,10 @@ mod tests {
     fn test_name_empty() {
         assert!(matches!(
             ProjectName::from_string(""),
+            Err(NameError { .. })
+        ));
+        assert!(matches!(
+            ProjectName::from_string("   "),
             Err(NameError { .. })
         ));
     }
@@ -254,6 +287,10 @@ mod tests {
     fn test_group_name_empty() {
         assert!(matches!(
             ProjectGroupName::from_string(""),
+            Err(GroupNameError { .. })
+        ));
+        assert!(matches!(
+            ProjectGroupName::from_string("   "),
             Err(GroupNameError { .. })
         ));
     }
