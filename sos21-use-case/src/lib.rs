@@ -64,4 +64,5 @@ pub mod update_user;
 mod error;
 pub use error::{UseCaseError, UseCaseResult};
 
+pub mod interface;
 pub mod model;
