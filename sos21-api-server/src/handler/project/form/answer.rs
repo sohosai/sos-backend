@@ -13,7 +13,7 @@ use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::create_form_answer;
+use sos21_use_case::{create_form_answer, interface};
 use warp::http::StatusCode;
 
 pub mod file_sharing;
@@ -110,22 +110,34 @@ impl From<create_form_answer::Error> for Error {
             create_form_answer::Error::ProjectNotFound => Error::ProjectNotFound,
             create_form_answer::Error::OutOfAnswerPeriod => Error::OutOfAnswerPeriod,
             create_form_answer::Error::AlreadyAnswered => Error::AlreadyAnsweredForm,
-            create_form_answer::Error::NoItems => Error::NoFormItems,
-            create_form_answer::Error::TooManyItems => Error::TooManyFormItems,
-            // TODO: break down invalid item errors
-            create_form_answer::Error::InvalidItem(id, _) => Error::InvalidFormItem {
-                id: FormItemId::from_use_case(id),
-            },
-            create_form_answer::Error::MismatchedItemsLength => Error::MismatchedFormItemsLength,
-            create_form_answer::Error::MismatchedItemId { expected, got } => {
-                Error::MismatchedFormItemId {
-                    expected: FormItemId::from_use_case(expected),
-                    got: FormItemId::from_use_case(got),
+            create_form_answer::Error::InvalidItems(err) => match err {
+                interface::form_answer::FormAnswerItemsError::NoItems => Error::NoFormItems,
+                interface::form_answer::FormAnswerItemsError::TooManyItems => {
+                    Error::TooManyFormItems
                 }
-            }
-            // TODO: break down invalid answer errors
-            create_form_answer::Error::InvalidAnswer(id, _) => Error::InvalidFormAnswer {
-                id: FormItemId::from_use_case(id),
+                // TODO: break down invalid item errors
+                interface::form_answer::FormAnswerItemsError::InvalidItem(id, _) => {
+                    Error::InvalidFormItem {
+                        id: FormItemId::from_use_case(id),
+                    }
+                }
+            },
+            create_form_answer::Error::InvalidAnswer(err) => match err {
+                interface::form::CheckAnswerError::MismatchedItemsLength => {
+                    Error::MismatchedFormItemsLength
+                }
+                interface::form::CheckAnswerError::MismatchedItemId { expected, got } => {
+                    Error::MismatchedFormItemId {
+                        expected: FormItemId::from_use_case(expected),
+                        got: FormItemId::from_use_case(got),
+                    }
+                }
+                // TODO: break down invalid answer errors
+                interface::form::CheckAnswerError::InvalidAnswerItem { item_id, .. } => {
+                    Error::InvalidFormAnswer {
+                        id: FormItemId::from_use_case(item_id),
+                    }
+                }
             },
         }
     }
@@ -149,8 +161,8 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
 
 fn to_input_form_answer_item(
     item: RequestFormAnswerItem,
-) -> create_form_answer::InputFormAnswerItem {
-    create_form_answer::InputFormAnswerItem {
+) -> interface::form_answer::InputFormAnswerItem {
+    interface::form_answer::InputFormAnswerItem {
         item_id: item.item_id.into_use_case(),
         body: item.body.map(to_input_form_answer_item_body),
     }
@@ -158,24 +170,26 @@ fn to_input_form_answer_item(
 
 fn to_input_form_answer_item_body(
     body: RequestFormAnswerItemBody,
-) -> create_form_answer::InputFormAnswerItemBody {
+) -> interface::form_answer::InputFormAnswerItemBody {
     match body {
         RequestFormAnswerItemBody::Text(answer) => {
-            create_form_answer::InputFormAnswerItemBody::Text(answer)
+            interface::form_answer::InputFormAnswerItemBody::Text(answer)
         }
         RequestFormAnswerItemBody::Integer(answer) => {
-            create_form_answer::InputFormAnswerItemBody::Integer(answer)
+            interface::form_answer::InputFormAnswerItemBody::Integer(answer)
         }
         RequestFormAnswerItemBody::Checkbox(answer) => {
-            create_form_answer::InputFormAnswerItemBody::Checkbox(
+            interface::form_answer::InputFormAnswerItemBody::Checkbox(
                 answer.into_iter().map(CheckboxId::into_use_case).collect(),
             )
         }
         RequestFormAnswerItemBody::Radio(answer) => {
-            create_form_answer::InputFormAnswerItemBody::Radio(answer.map(RadioId::into_use_case))
+            interface::form_answer::InputFormAnswerItemBody::Radio(
+                answer.map(RadioId::into_use_case),
+            )
         }
         RequestFormAnswerItemBody::GridRadio(answer) => {
-            create_form_answer::InputFormAnswerItemBody::GridRadio(
+            interface::form_answer::InputFormAnswerItemBody::GridRadio(
                 answer
                     .into_iter()
                     .map(GridRadioRowAnswer::into_use_case)
@@ -183,7 +197,7 @@ fn to_input_form_answer_item_body(
             )
         }
         RequestFormAnswerItemBody::File(answer) => {
-            create_form_answer::InputFormAnswerItemBody::File(
+            interface::form_answer::InputFormAnswerItemBody::File(
                 answer
                     .into_iter()
                     .map(to_input_form_answer_item_file)
@@ -195,13 +209,13 @@ fn to_input_form_answer_item_body(
 
 fn to_input_form_answer_item_file(
     file: RequestFormAnswerItemFile,
-) -> create_form_answer::InputFormAnswerItemFile {
+) -> interface::form_answer::InputFormAnswerItemFile {
     match file {
         RequestFormAnswerItemFile::FileId(file_id) => {
-            create_form_answer::InputFormAnswerItemFile::File(file_id.into_use_case())
+            interface::form_answer::InputFormAnswerItemFile::File(file_id.into_use_case())
         }
         RequestFormAnswerItemFile::SharingId(sharing_id) => {
-            create_form_answer::InputFormAnswerItemFile::Sharing(sharing_id.into_use_case())
+            interface::form_answer::InputFormAnswerItemFile::Sharing(sharing_id.into_use_case())
         }
     }
 }

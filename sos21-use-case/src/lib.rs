@@ -66,3 +66,6 @@ pub use error::{UseCaseError, UseCaseResult};
 
 pub mod interface;
 pub mod model;
+
+#[cfg(test)]
+pub mod test;
