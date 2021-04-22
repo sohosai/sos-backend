@@ -37,7 +37,11 @@ impl UserRole {
                     | Permissions::READ_ALL_REGISTRATION_FORMS
                     | Permissions::READ_ALL_REGISTRATION_FORM_ANSWERS
             }
-            UserRole::General => Permissions::CREATE_FILES | Permissions::SHARE_FILES,
+            UserRole::General => {
+                Permissions::CREATE_FILES
+                    | Permissions::SHARE_FILES
+                    | Permissions::ANSWER_REGISTRATION_FORMS
+            }
         }
     }
 

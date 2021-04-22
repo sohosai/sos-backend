@@ -11,7 +11,7 @@ use sos21_domain::context::{FileRepository, FileSharingRepository, Login};
 use sos21_domain::model::{
     file, file_sharing, form,
     form_answer::{self, item},
-    project,
+    pending_project, project, registration_form, registration_form_answer,
 };
 
 #[derive(Debug, Clone)]
@@ -126,10 +126,90 @@ where
     C: FileRepository + FileSharingRepository + Send + Sync,
     I: IntoIterator<Item = InputFormAnswerItem>,
 {
+    to_form_answer_items_with_target(ctx, ShareTarget::FormAnswer { project, form }, items).await
+}
+
+pub async fn to_registration_form_answer_items<C, I>(
+    ctx: &Login<C>,
+    pending_project: &pending_project::PendingProject,
+    registration_form: &registration_form::RegistrationForm,
+    items: I,
+) -> UseCaseResult<form_answer::FormAnswerItems, FormAnswerItemsError>
+where
+    C: FileRepository + FileSharingRepository + Send + Sync,
+    I: IntoIterator<Item = InputFormAnswerItem>,
+{
+    to_form_answer_items_with_target(
+        ctx,
+        ShareTarget::RegistrationFormAnswer {
+            pending_project,
+            registration_form,
+        },
+        items,
+    )
+    .await
+}
+
+/// Internal data type that carries sharing target to each functions
+#[derive(Debug, Clone)]
+enum ShareTarget<'a> {
+    FormAnswer {
+        project: &'a project::Project,
+        form: &'a form::Form,
+    },
+    RegistrationFormAnswer {
+        pending_project: &'a pending_project::PendingProject,
+        registration_form: &'a registration_form::RegistrationForm,
+    },
+}
+
+impl<'a> ShareTarget<'a> {
+    fn to_scope(&self) -> file_sharing::FileSharingScope {
+        match self {
+            ShareTarget::FormAnswer { project, form } => {
+                file_sharing::FileSharingScope::FormAnswer(project.id, form.id)
+            }
+            ShareTarget::RegistrationFormAnswer {
+                pending_project,
+                registration_form,
+            } => file_sharing::FileSharingScope::RegistrationFormAnswer(
+                registration_form_answer::RegistrationFormAnswerRespondent::PendingProject(
+                    pending_project.id,
+                ),
+                registration_form.id,
+            ),
+        }
+    }
+
+    fn is_contained_by(&self, scope: file_sharing::FileSharingScope) -> bool {
+        match self {
+            ShareTarget::FormAnswer { project, form } => {
+                scope.contains_project_form_answer(project, form)
+            }
+            ShareTarget::RegistrationFormAnswer {
+                pending_project,
+                registration_form,
+            } => scope.contains_pending_project_registration_form_answer(
+                pending_project,
+                registration_form,
+            ),
+        }
+    }
+}
+
+async fn to_form_answer_items_with_target<C, I>(
+    ctx: &Login<C>,
+    target: ShareTarget<'_>,
+    items: I,
+) -> UseCaseResult<form_answer::FormAnswerItems, FormAnswerItemsError>
+where
+    C: FileRepository + FileSharingRepository + Send + Sync,
+    I: IntoIterator<Item = InputFormAnswerItem>,
+{
     let mut result = Vec::new();
     for item in items {
         let item_id = item.item_id;
-        let item = to_form_answer_item(ctx, &project, &form, item)
+        let item = to_form_answer_item(ctx, target.clone(), item)
             .await
             .map_err(|err| {
                 err.map_use_case(|err| FormAnswerItemsError::InvalidItem(item_id, err))
@@ -141,10 +221,9 @@ where
         .map_err(|err| UseCaseError::UseCase(FormAnswerItemsError::from_items_error(err)))
 }
 
-pub async fn to_form_answer_item<C>(
+async fn to_form_answer_item<C>(
     ctx: &Login<C>,
-    project: &project::Project,
-    form: &form::Form,
+    target: ShareTarget<'_>,
     item: InputFormAnswerItem,
 ) -> UseCaseResult<form_answer::FormAnswerItem, FormAnswerItemError>
 where
@@ -193,7 +272,7 @@ where
         InputFormAnswerItemBody::File(files) => {
             let mut sharings = Vec::new();
             for file in files {
-                let sharing = to_file_sharing_answer(ctx, project, form, file).await?;
+                let sharing = to_file_sharing_answer(ctx, target.clone(), file).await?;
                 sharings.push(sharing);
             }
             let sharings = item::FormAnswerItemFileSharings::from_sharing_answers(sharings)
@@ -212,8 +291,7 @@ where
 
 async fn to_file_sharing_answer<C>(
     ctx: &Login<C>,
-    project: &project::Project,
-    form: &form::Form,
+    target: ShareTarget<'_>,
     file: InputFormAnswerItemFile,
 ) -> UseCaseResult<item::FileSharingAnswer, FormAnswerItemError>
 where
@@ -232,8 +310,7 @@ where
                 _ => return Err(UseCaseError::UseCase(FormAnswerItemError::FileNotFound)),
             };
 
-            let scope = file_sharing::FileSharingScope::FormAnswer(project.id, form.id);
-            let sharing = match file.share_by(login_user, scope) {
+            let sharing = match file.share_by(login_user, target.to_scope()) {
                 Ok(sharing) => sharing,
                 Err(err) => {
                     return Err(UseCaseError::UseCase(
@@ -246,7 +323,7 @@ where
                 .await
                 .context("Failed to store a file sharing")?;
 
-            use_case_ensure!(sharing.scope().contains_project_form_answer(project, form));
+            use_case_ensure!(target.is_contained_by(sharing.scope()));
             Ok(item::FileSharingAnswer {
                 sharing_id: sharing.id(),
                 type_: file.type_,
@@ -268,7 +345,7 @@ where
                 }
             };
 
-            if !sharing.scope().contains_project_form_answer(project, form) {
+            if !target.is_contained_by(sharing.scope()) {
                 return Err(UseCaseError::UseCase(
                     FormAnswerItemError::OutOfScopeFileSharing,
                 ));
