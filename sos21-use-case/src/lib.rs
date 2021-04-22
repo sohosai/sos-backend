@@ -45,6 +45,8 @@ pub mod get_publicly_shared_file;
 pub mod get_publicly_shared_file_object;
 pub mod get_registration_form;
 pub mod get_registration_form_answer;
+pub mod get_registration_form_answer_shared_file;
+pub mod get_registration_form_answer_shared_file_object;
 pub mod get_shared_file;
 pub mod get_shared_file_object;
 pub mod get_user;
