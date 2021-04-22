@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error",""]],"fn":[["run",""],["write_header",""],["write_record",""],["write_user_name_fields",""]],"struct":[["Input",""],["InputCategoryNames",""],["InputFieldNames",""],["WriteRecordInput",""],["WriteUserNameFieldsInput",""]]});
