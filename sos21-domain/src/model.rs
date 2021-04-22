@@ -16,4 +16,6 @@ pub mod permissions;
 pub mod phone_number;
 pub mod project;
 pub mod project_query;
+pub mod registration_form;
+pub mod registration_form_answer;
 pub mod user;

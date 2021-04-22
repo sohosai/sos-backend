@@ -108,7 +108,7 @@ mod tests {
         let subowner = test::model::new_general_user();
 
         let app = test::build_mock_app().build();
-        let pending_project = test::model::new_pending_project(owner.id.clone());
+        let pending_project = test::model::new_general_pending_project(owner.id.clone());
         let project = pending_project
             .accept_subowner(&app, &subowner)
             .await

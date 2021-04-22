@@ -7,7 +7,8 @@ use crate::context::project_repository::ProjectWithOwners;
 use crate::context::{
     Authentication, FileDistributionRepository, FileRepository, FileSharingRepository,
     FormAnswerRepository, FormRepository, Login, ObjectRepository, PendingProjectRepository,
-    ProjectRepository, UserRepository,
+    ProjectRepository, RegistrationFormAnswerRepository, RegistrationFormRepository,
+    UserRepository,
 };
 use crate::model::{
     file::{File, FileId},
@@ -18,6 +19,8 @@ use crate::model::{
     object::{Object, ObjectData, ObjectId},
     pending_project::{PendingProject, PendingProjectId},
     project::{Project, ProjectId, ProjectIndex},
+    registration_form::{RegistrationForm, RegistrationFormId},
+    registration_form_answer::{RegistrationFormAnswer, RegistrationFormAnswerId},
     user::{User, UserFileUsage, UserId, UserRole},
 };
 use crate::test::model as test_model;
@@ -42,6 +45,8 @@ pub struct MockAppBuilder {
     sharings: HashMap<FileSharingId, FileSharing>,
     distributions: HashMap<FileDistributionId, FileDistribution>,
     pending_projects: HashMap<PendingProjectId, PendingProject>,
+    registration_forms: HashMap<RegistrationFormId, RegistrationForm>,
+    registration_form_answers: HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>,
 }
 
 impl MockAppBuilder {
@@ -145,6 +150,33 @@ impl MockAppBuilder {
         self
     }
 
+    pub fn registration_forms<I>(&mut self, registration_forms: I) -> &mut Self
+    where
+        I: IntoIterator<Item = RegistrationForm>,
+    {
+        self.registration_forms.extend(
+            registration_forms
+                .into_iter()
+                .map(|registration_form| (registration_form.id, registration_form)),
+        );
+        self
+    }
+
+    pub fn registration_form_answers<I>(&mut self, registration_form_answers: I) -> &mut Self
+    where
+        I: IntoIterator<Item = RegistrationFormAnswer>,
+    {
+        self.registration_form_answers
+            .extend(
+                registration_form_answers
+                    .into_iter()
+                    .map(|registration_form_answer| {
+                        (registration_form_answer.id, registration_form_answer)
+                    }),
+            );
+        self
+    }
+
     pub fn build(&self) -> MockApp {
         let users = self
             .users
@@ -181,6 +213,8 @@ impl MockAppBuilder {
             sharings: Arc::new(Mutex::new(self.sharings.clone())),
             distributions: Arc::new(Mutex::new(self.distributions.clone())),
             pending_projects: Arc::new(Mutex::new(self.pending_projects.clone())),
+            registration_forms: Arc::new(Mutex::new(self.registration_forms.clone())),
+            registration_form_answers: Arc::new(Mutex::new(self.registration_form_answers.clone())),
         }
     }
 }
@@ -196,6 +230,9 @@ pub struct MockApp {
     sharings: Arc<Mutex<HashMap<FileSharingId, FileSharing>>>,
     distributions: Arc<Mutex<HashMap<FileDistributionId, FileDistribution>>>,
     pending_projects: Arc<Mutex<HashMap<PendingProjectId, PendingProject>>>,
+    registration_forms: Arc<Mutex<HashMap<RegistrationFormId, RegistrationForm>>>,
+    registration_form_answers:
+        Arc<Mutex<HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>>>,
 }
 
 impl MockApp {
@@ -595,6 +632,153 @@ impl PendingProjectRepository for MockApp {
             .await
             .values()
             .filter(|pending_project| pending_project.author_id == user_id)
+            .cloned()
+            .collect())
+    }
+}
+
+#[async_trait::async_trait]
+impl RegistrationFormRepository for MockApp {
+    async fn store_registration_form(&self, registration_form: RegistrationForm) -> Result<()> {
+        self.registration_forms
+            .lock()
+            .await
+            .insert(registration_form.id, registration_form);
+        Ok(())
+    }
+
+    async fn get_registration_form(
+        &self,
+        id: RegistrationFormId,
+    ) -> Result<Option<RegistrationForm>> {
+        Ok(self.registration_forms.lock().await.get(&id).cloned())
+    }
+
+    async fn list_registration_forms(&self) -> Result<Vec<RegistrationForm>> {
+        Ok(self
+            .registration_forms
+            .lock()
+            .await
+            .values()
+            .cloned()
+            .collect())
+    }
+
+    async fn list_registration_forms_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<Vec<RegistrationForm>> {
+        let pending_project = self
+            .get_pending_project(pending_project_id)
+            .await?
+            .unwrap()
+            .pending_project;
+        Ok(self
+            .registration_forms
+            .lock()
+            .await
+            .values()
+            .filter(|registration_form| {
+                registration_form
+                    .query
+                    .check_pending_project(&pending_project)
+            })
+            .cloned()
+            .collect())
+    }
+
+    async fn list_registration_forms_by_project(
+        &self,
+        project_id: ProjectId,
+    ) -> Result<Vec<RegistrationForm>> {
+        let project = self.get_project(project_id).await?.unwrap().project;
+        Ok(self
+            .registration_forms
+            .lock()
+            .await
+            .values()
+            .filter(|registration_form| registration_form.query.check_project(&project))
+            .cloned()
+            .collect())
+    }
+}
+
+#[async_trait::async_trait]
+impl RegistrationFormAnswerRepository for MockApp {
+    async fn store_registration_form_answer(&self, answer: RegistrationFormAnswer) -> Result<()> {
+        self.registration_form_answers
+            .lock()
+            .await
+            .insert(answer.id, answer);
+        Ok(())
+    }
+
+    async fn get_registration_form_answer(
+        &self,
+        id: RegistrationFormAnswerId,
+    ) -> Result<Option<RegistrationFormAnswer>> {
+        Ok(self
+            .registration_form_answers
+            .lock()
+            .await
+            .get(&id)
+            .cloned())
+    }
+
+    async fn get_registration_form_answer_by_registration_form_and_project(
+        &self,
+        registration_form_id: RegistrationFormId,
+        project_id: ProjectId,
+    ) -> Result<Option<RegistrationFormAnswer>> {
+        let project = self.get_project(project_id).await?.unwrap().project;
+        Ok(self
+            .registration_form_answers
+            .lock()
+            .await
+            .values()
+            .find(|registration_form_answer| {
+                registration_form_answer.registration_form_id == registration_form_id
+                    && registration_form_answer.respondent.is_project(&project)
+            })
+            .cloned())
+    }
+
+    async fn get_registration_form_answer_by_registration_form_and_pending_project(
+        &self,
+        registration_form_id: RegistrationFormId,
+        pending_project_id: PendingProjectId,
+    ) -> Result<Option<RegistrationFormAnswer>> {
+        let pending_project = self
+            .get_pending_project(pending_project_id)
+            .await?
+            .unwrap()
+            .pending_project;
+        Ok(self
+            .registration_form_answers
+            .lock()
+            .await
+            .values()
+            .find(|registration_form_answer| {
+                registration_form_answer.registration_form_id == registration_form_id
+                    && registration_form_answer
+                        .respondent
+                        .is_pending_project(&pending_project)
+            })
+            .cloned())
+    }
+
+    async fn list_registration_form_answers(
+        &self,
+        registration_form_id: RegistrationFormId,
+    ) -> Result<Vec<RegistrationFormAnswer>> {
+        Ok(self
+            .registration_form_answers
+            .lock()
+            .await
+            .values()
+            .filter(|registration_form_answer| {
+                registration_form_answer.registration_form_id == registration_form_id
+            })
             .cloned()
             .collect())
     }

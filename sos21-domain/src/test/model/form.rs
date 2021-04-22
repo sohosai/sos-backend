@@ -4,10 +4,11 @@ use crate::model::{
         Form, FormCondition, FormConditionProjectSet, FormDescription, FormId, FormItems, FormName,
         FormPeriod,
     },
-    project::ProjectAttributes,
-    project_query::{ProjectQuery, ProjectQueryConjunction},
+    project_query::ProjectQuery,
     user::UserId,
 };
+use crate::test::model as test_model;
+
 use uuid::Uuid;
 
 mod item;
@@ -31,17 +32,9 @@ pub fn mock_form_period() -> FormPeriod {
     FormPeriod::from_datetime(starts_at, ends_at).unwrap()
 }
 
-pub fn mock_project_query() -> ProjectQuery {
-    ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
-        category: None,
-        attributes: ProjectAttributes::from_attributes(Vec::new()).unwrap(),
-    }])
-    .unwrap()
-}
-
 pub fn mock_form_condition() -> FormCondition {
     FormCondition {
-        query: mock_project_query(),
+        query: test_model::mock_project_query(),
         includes: FormConditionProjectSet::from_projects(Vec::new()).unwrap(),
         excludes: FormConditionProjectSet::from_projects(Vec::new()).unwrap(),
     }
@@ -86,5 +79,5 @@ pub fn new_form_with_query(author_id: UserId, query: ProjectQuery) -> Form {
 
 /// Mocks a new `Form` with wildcard query
 pub fn new_form(author_id: UserId) -> Form {
-    new_form_with_query(author_id, mock_project_query())
+    new_form_with_query(author_id, test_model::mock_project_query())
 }
