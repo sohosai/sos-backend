@@ -16,6 +16,9 @@ where
         project_id,
         form_answer_project_id,
         form_answer_form_id,
+        registration_form_answer_project_id,
+        registration_form_answer_pending_project_id,
+        registration_form_answer_registration_form_id,
     } = sharing;
 
     sqlx::query!(
@@ -29,8 +32,11 @@ INSERT INTO file_sharings (
     scope,
     project_id,
     form_answer_project_id,
-    form_answer_form_id
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 )
+    form_answer_form_id,
+    registration_form_answer_project_id,
+    registration_form_answer_pending_project_id,
+    registration_form_answer_registration_form_id
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )
 "#,
         id,
         created_at,
@@ -41,6 +47,9 @@ INSERT INTO file_sharings (
         project_id,
         form_answer_project_id,
         form_answer_form_id,
+        registration_form_answer_project_id,
+        registration_form_answer_pending_project_id,
+        registration_form_answer_registration_form_id,
     )
     .execute(conn)
     .await

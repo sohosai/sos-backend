@@ -1,12 +1,18 @@
 use crate::model::form::{Form, FormId};
 use crate::model::form_answer::FormAnswer;
+use crate::model::pending_project::PendingProject;
 use crate::model::project::{Project, ProjectId};
+use crate::model::registration_form::{RegistrationForm, RegistrationFormId};
+use crate::model::registration_form_answer::{
+    RegistrationFormAnswer, RegistrationFormAnswerRespondent,
+};
 use crate::model::user::User;
 
 #[derive(Debug, Clone, Copy)]
 pub enum FileSharingScope {
     Project(ProjectId),
     FormAnswer(ProjectId, FormId),
+    RegistrationFormAnswer(RegistrationFormAnswerRespondent, RegistrationFormId),
     Committee,
     CommitteeOperator,
     Public,
@@ -31,10 +37,22 @@ impl FileSharingScope {
         }
     }
 
+    pub fn registration_form_answer(
+        &self,
+    ) -> Option<(RegistrationFormAnswerRespondent, RegistrationFormId)> {
+        match self {
+            FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id) => {
+                Some((*respondent, *registration_form_id))
+            }
+            _ => None,
+        }
+    }
+
     pub fn contains_user(&self, user: &User) -> bool {
         match self {
             FileSharingScope::Project(_) => false,
             FileSharingScope::FormAnswer(_, _) => false,
+            FileSharingScope::RegistrationFormAnswer(_, _) => false,
             FileSharingScope::CommitteeOperator => user.is_committee_operator(),
             FileSharingScope::Committee => user.is_committee(),
             FileSharingScope::Public => true,
@@ -45,6 +63,7 @@ impl FileSharingScope {
         match self {
             FileSharingScope::Project(project_id) => *project_id == project.id,
             FileSharingScope::FormAnswer(_, _)
+            | FileSharingScope::RegistrationFormAnswer(_, _)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,
             FileSharingScope::Public => true,
@@ -57,6 +76,7 @@ impl FileSharingScope {
                 *project_id == answer.project_id && *form_id == answer.form_id
             }
             FileSharingScope::Project(_)
+            | FileSharingScope::RegistrationFormAnswer(_, _)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,
             FileSharingScope::Public => true,
@@ -69,6 +89,56 @@ impl FileSharingScope {
                 *project_id == project.id && *form_id == form.id
             }
             FileSharingScope::Project(_)
+            | FileSharingScope::RegistrationFormAnswer(_, _)
+            | FileSharingScope::Committee
+            | FileSharingScope::CommitteeOperator => false,
+            FileSharingScope::Public => true,
+        }
+    }
+
+    pub fn contains_registration_form_answer(&self, answer: &RegistrationFormAnswer) -> bool {
+        match self {
+            FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id) => {
+                *respondent == answer.respondent
+                    && *registration_form_id == answer.registration_form_id
+            }
+            FileSharingScope::Project(_)
+            | FileSharingScope::FormAnswer(_, _)
+            | FileSharingScope::Committee
+            | FileSharingScope::CommitteeOperator => false,
+            FileSharingScope::Public => true,
+        }
+    }
+
+    pub fn contains_pending_project_registration_form_answer(
+        &self,
+        pending_project: &PendingProject,
+        registration_form: &RegistrationForm,
+    ) -> bool {
+        match self {
+            FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id) => {
+                respondent.is_pending_project(pending_project)
+                    && *registration_form_id == registration_form.id
+            }
+            FileSharingScope::Project(_)
+            | FileSharingScope::FormAnswer(_, _)
+            | FileSharingScope::Committee
+            | FileSharingScope::CommitteeOperator => false,
+            FileSharingScope::Public => true,
+        }
+    }
+
+    pub fn contains_project_registration_form_answer(
+        &self,
+        project: &Project,
+        registration_form: &RegistrationForm,
+    ) -> bool {
+        match self {
+            FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id) => {
+                respondent.is_project(project) && *registration_form_id == registration_form.id
+            }
+            FileSharingScope::Project(_)
+            | FileSharingScope::FormAnswer(_, _)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,
             FileSharingScope::Public => true,

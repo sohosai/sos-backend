@@ -2,6 +2,7 @@ use crate::model::date_time::DateTime;
 use crate::model::file::{File, FileId};
 use crate::model::form_answer::FormAnswer;
 use crate::model::project::Project;
+use crate::model::registration_form_answer::RegistrationFormAnswer;
 use crate::model::user::User;
 
 use serde::{Deserialize, Serialize};
@@ -245,6 +246,19 @@ impl FileSharing {
         answer: &FormAnswer,
     ) -> Result<FileSharingWitness, ToWitnessError> {
         if !self.0.scope.contains_form_answer(answer) {
+            return Err(ToWitnessError {
+                kind: ToWitnessErrorKind::OutOfScope,
+            });
+        }
+
+        self.state_to_witness()
+    }
+
+    pub fn to_witness_with_registration_form_answer(
+        &self,
+        answer: &RegistrationFormAnswer,
+    ) -> Result<FileSharingWitness, ToWitnessError> {
+        if !self.0.scope.contains_registration_form_answer(answer) {
             return Err(ToWitnessError {
                 kind: ToWitnessErrorKind::OutOfScope,
             });

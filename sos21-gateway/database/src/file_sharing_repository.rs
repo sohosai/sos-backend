@@ -10,11 +10,13 @@ use sos21_domain::model::{
     file::{File, FileId},
     file_sharing::{FileSharing, FileSharingContent, FileSharingId, FileSharingScope},
     form::FormId,
+    pending_project::PendingProjectId,
     project::ProjectId,
+    registration_form::RegistrationFormId,
+    registration_form_answer::RegistrationFormAnswerRespondent,
     user::UserId,
 };
 use sqlx::{Postgres, Transaction};
-use uuid::Uuid;
 
 #[derive(Debug, RefCast)]
 #[repr(transparent)]
@@ -39,6 +41,11 @@ impl FileSharingRepository for FileSharingDatabase {
                 project_id: sharing.project_id,
                 form_answer_project_id: sharing.form_answer_project_id,
                 form_answer_form_id: sharing.form_answer_form_id,
+                registration_form_answer_project_id: sharing.registration_form_answer_project_id,
+                registration_form_answer_pending_project_id: sharing
+                    .registration_form_answer_pending_project_id,
+                registration_form_answer_registration_form_id: sharing
+                    .registration_form_answer_registration_form_id,
             };
             command::update_file_sharing(&mut *lock, input).await
         } else {
@@ -77,6 +84,25 @@ fn from_file_sharing(sharing: FileSharing) -> data::file_sharing::FileSharing {
         } else {
             (None, None)
         };
+    let (
+        registration_form_answer_project_id,
+        registration_form_answer_pending_project_id,
+        registration_form_answer_registration_form_id,
+    ) = if let Some((respondent, registration_form_id)) = sharing.scope.registration_form_answer() {
+        let registration_form_id = registration_form_id.to_uuid();
+        match respondent {
+            RegistrationFormAnswerRespondent::Project(project_id) => {
+                (Some(project_id.to_uuid()), None, Some(registration_form_id))
+            }
+            RegistrationFormAnswerRespondent::PendingProject(pending_project_id) => (
+                None,
+                Some(pending_project_id.to_uuid()),
+                Some(registration_form_id),
+            ),
+        }
+    } else {
+        (None, None, None)
+    };
     data::file_sharing::FileSharing {
         id: sharing.id.to_uuid(),
         created_at: sharing.created_at.utc(),
@@ -90,6 +116,9 @@ fn from_file_sharing(sharing: FileSharing) -> data::file_sharing::FileSharing {
             .map(|project_id| project_id.to_uuid()),
         form_answer_project_id,
         form_answer_form_id,
+        registration_form_answer_project_id,
+        registration_form_answer_pending_project_id,
+        registration_form_answer_registration_form_id,
     }
 }
 
@@ -97,6 +126,9 @@ fn from_file_sharing_scope(scope: FileSharingScope) -> data::file_sharing::FileS
     match scope {
         FileSharingScope::Project(_) => data::file_sharing::FileSharingScope::Project,
         FileSharingScope::FormAnswer(_, _) => data::file_sharing::FileSharingScope::FormAnswer,
+        FileSharingScope::RegistrationFormAnswer(_, _) => {
+            data::file_sharing::FileSharingScope::RegistrationFormAnswer
+        }
         FileSharingScope::Committee => data::file_sharing::FileSharingScope::Committee,
         FileSharingScope::CommitteeOperator => {
             data::file_sharing::FileSharingScope::CommitteeOperator
@@ -121,34 +153,52 @@ fn to_file_sharing(sharing: data::file_sharing::FileSharing) -> Result<FileShari
         file_id: FileId::from_uuid(sharing.file_id),
         is_revoked: sharing.is_revoked,
         expires_at: sharing.expires_at.map(DateTime::from_utc),
-        scope: to_file_sharing_scope(
-            sharing.scope,
-            sharing.project_id,
-            sharing.form_answer_project_id,
-            sharing.form_answer_form_id,
-        )?,
+        scope: to_file_sharing_scope(&sharing)?,
     }))
 }
 
-fn to_file_sharing_scope(
-    scope: data::file_sharing::FileSharingScope,
-    project_id: Option<Uuid>,
-    form_answer_project_id: Option<Uuid>,
-    form_answer_form_id: Option<Uuid>,
-) -> Result<FileSharingScope> {
-    match scope {
+fn to_file_sharing_scope(sharing: &data::file_sharing::FileSharing) -> Result<FileSharingScope> {
+    match sharing.scope {
         data::file_sharing::FileSharingScope::Project => {
-            let project_id = project_id.context("scope = 'project' but project_id is null")?;
+            let project_id = sharing
+                .project_id
+                .context("scope = 'project' but project_id is null")?;
             Ok(FileSharingScope::Project(ProjectId::from_uuid(project_id)))
         }
         data::file_sharing::FileSharingScope::FormAnswer => {
-            let project_id = form_answer_project_id
+            let project_id = sharing
+                .form_answer_project_id
                 .context("scope = 'form_answer' but form_answer_project_id is null")?;
-            let form_id = form_answer_form_id
+            let form_id = sharing
+                .form_answer_form_id
                 .context("scope = 'form_answer' but form_answer_form_id is null")?;
             Ok(FileSharingScope::FormAnswer(
                 ProjectId::from_uuid(project_id),
                 FormId::from_uuid(form_id),
+            ))
+        }
+        data::file_sharing::FileSharingScope::RegistrationFormAnswer => {
+            let respondent = match (sharing.registration_form_answer_project_id, sharing.registration_form_answer_pending_project_id) {
+                (Some(project_id), None) => {
+                    RegistrationFormAnswerRespondent::Project(ProjectId::from_uuid(project_id))
+                },
+                (None, Some(pending_project_id)) => {
+                    RegistrationFormAnswerRespondent::PendingProject(PendingProjectId::from_uuid(pending_project_id))
+                },
+                (Some(_), Some(_)) => anyhow::bail!(
+                    "both registration_form_answer_project_id and registration_form_answer_pending_project_id are set \
+                    when scope = 'registration_form_answer'"
+                ),
+                (None, None) => anyhow::bail!(
+                    "both registration_form_answer_project_id and registration_form_answer_pending_project_id is null \
+                    when scope = 'registration_form_answer'"
+                ),
+            };
+            let registration_form_id = sharing.registration_form_answer_registration_form_id
+                .context("scope = 'registration_form_answer' but registration_form_answer_registration_form_id is null")?;
+            Ok(FileSharingScope::RegistrationFormAnswer(
+                respondent,
+                RegistrationFormId::from_uuid(registration_form_id),
             ))
         }
         data::file_sharing::FileSharingScope::Committee => Ok(FileSharingScope::Committee),

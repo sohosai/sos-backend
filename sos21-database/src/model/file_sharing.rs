@@ -7,6 +7,7 @@ use uuid::Uuid;
 pub enum FileSharingScope {
     Project,
     FormAnswer,
+    RegistrationFormAnswer,
     Committee,
     CommitteeOperator,
     Public,
@@ -23,4 +24,7 @@ pub struct FileSharing {
     pub project_id: Option<Uuid>,
     pub form_answer_project_id: Option<Uuid>,
     pub form_answer_form_id: Option<Uuid>,
+    pub registration_form_answer_project_id: Option<Uuid>,
+    pub registration_form_answer_pending_project_id: Option<Uuid>,
+    pub registration_form_answer_registration_form_id: Option<Uuid>,
 }
