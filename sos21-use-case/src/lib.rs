@@ -39,6 +39,8 @@ pub mod get_project_form_answer_shared_file;
 pub mod get_project_form_answer_shared_file_object;
 pub mod get_project_registration_form;
 pub mod get_project_registration_form_answer;
+pub mod get_project_registration_form_answer_shared_file;
+pub mod get_project_registration_form_answer_shared_file_object;
 pub mod get_project_shared_file;
 pub mod get_project_shared_file_object;
 pub mod get_publicly_shared_file;
