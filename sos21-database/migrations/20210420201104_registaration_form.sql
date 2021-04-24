@@ -4,8 +4,7 @@ CREATE TABLE registration_forms (
     author_id varchar(64) NOT NULL REFERENCES users ON DELETE RESTRICT,
     name varchar(64) NOT NULL,
     description varchar(1024) NOT NULL,
-    items jsonb NOT NULL,
-    query jsonb NOT NULL
+    items jsonb NOT NULL
 );
 
 CREATE TABLE registration_form_project_query_conjunctions (
