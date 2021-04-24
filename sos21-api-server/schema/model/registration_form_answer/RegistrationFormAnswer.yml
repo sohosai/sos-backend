@@ -1,0 +1,25 @@
+title: RegistrationFormAnswer
+type: object
+properties:
+  id:
+    $ref: ./RegistrationFormAnswerId.yml
+  registration_form_id:
+    $ref: ../registration_form/RegistrationFormId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  author_id:
+    $ref: ../user/UserId.yml
+  project_id:
+    $ref: ../project/ProjectId.yml
+  pending_project_id:
+    $ref: ../pending_project/PendingProjectId.yml
+  items:
+    type: array
+    items:
+      $ref: ../form_answer/FormAnswerItem.yml
+required:
+  - id
+  - form_id
+  - created_at
+  - author_id
+  - items

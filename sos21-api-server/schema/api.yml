@@ -2253,6 +2253,202 @@ paths:
           description: |
             ファイル回答の表示先 URL の形式を [RFC6570](https://tools.ietf.org/html/rfc6570) の Level 4 template で指定します。
             `answer_id` 変数を回答の ID で、 `sharing_ids` 変数を回答されたファイル共有の ID のリストで展開して CSV に出力します。
+  /registration-form/get:
+    get:
+      summary: registration-form/get
+      tags:
+        - registration_form
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_form:
+                    $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_form
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/RegistrationFormNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+      description: 指定された登録申請の情報を返します。
+  /registration-form/list:
+    get:
+      summary: registration-form/list
+      tags:
+        - registration_form
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_forms:
+                    type: array
+                    items:
+                      $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_forms
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form/list
+      description: 登録申請一覧を返します。
+  /registration-form/create:
+    post:
+      summary: registration-form/create
+      operationId: registration-form/create
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_form:
+                    $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_form
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            oneOf:
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FIELD
+                                  field:
+                                    type: string
+                                required:
+                                  - type
+                                  - field
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FORM_ITEM
+                                      - DUPLICATED_FORM_ITEM_ID
+                                  id:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - id
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 登録申請を作成します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    $ref: ./model/form/item/FormItem.yml
+                query:
+                  $ref: ./model/ProjectQuery.yml
+              required:
+                - name
+                - description
+                - items
+                - query
+      tags:
+        - registration_form
+        - committee
+  /registration-form/answer/list:
+    get:
+      summary: registration-form/answer/list
+      tags:
+        - registration_form
+        - registration_form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answers:
+                    type: array
+                    items:
+                      $ref: ./model/registration_form_answer/RegistrationFormAnswer.yml
+                required:
+                  - answers
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/RegistrationFormNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form/answer/list
+      description: 登録申請の回答一覧を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
   /form-answer/get:
     get:
       summary: form-answer/get
@@ -3583,6 +3779,49 @@ components:
                   type: API
                   info:
                     type: FORM_NOT_FOUND
+    RegistrationFormNotFound:
+      description: Registration Form Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - REGISTRATION_FORM_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: REGISTRATION_FORM_NOT_FOUND
     UserNotFound:
       description: User Not Found
       content:
@@ -4030,6 +4269,7 @@ tags:
   - name: project
   - name: form
   - name: form_answer
+  - name: registration_form
   - name: file
   - name: committee
   - name: admin

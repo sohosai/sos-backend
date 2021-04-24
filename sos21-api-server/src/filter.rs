@@ -167,7 +167,13 @@ pub fn endpoints(
             / "create" => POST (handler::file_distribution::create),
             / "list" => GET (handler::file_distribution::list),
             / "get" => GET (handler::file_distribution::get),
-        }
+        },
+        / "registration-form" {
+            / "get" => GET (handler::registration_form::get),
+            / "list" => GET (handler::registration_form::list),
+            / "create" => POST (handler::registration_form::create),
+            / "answer" / "list" => GET (handler::registration_form::answer::list),
+        },
     };
 
     let cors = warp::cors()

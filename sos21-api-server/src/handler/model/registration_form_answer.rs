@@ -24,34 +24,32 @@ impl RegistrationFormAnswerId {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case", tag = "type")]
+#[serde(rename_all = "snake_case")]
 pub enum RegistrationFormAnswerRespondent {
-    Project { id: ProjectId },
-    PendingProject { id: PendingProjectId },
+    ProjectId(ProjectId),
+    PendingProjectId(PendingProjectId),
 }
 
 impl RegistrationFormAnswerRespondent {
     pub fn from_use_case(respondent: use_case::RegistrationFormAnswerRespondent) -> Self {
         match respondent {
             use_case::RegistrationFormAnswerRespondent::PendingProject(pending_project_id) => {
-                RegistrationFormAnswerRespondent::PendingProject {
-                    id: PendingProjectId::from_use_case(pending_project_id),
-                }
+                RegistrationFormAnswerRespondent::PendingProjectId(PendingProjectId::from_use_case(
+                    pending_project_id,
+                ))
             }
             use_case::RegistrationFormAnswerRespondent::Project(project_id) => {
-                RegistrationFormAnswerRespondent::Project {
-                    id: ProjectId::from_use_case(project_id),
-                }
+                RegistrationFormAnswerRespondent::ProjectId(ProjectId::from_use_case(project_id))
             }
         }
     }
 
     pub fn into_use_case(self) -> use_case::RegistrationFormAnswerRespondent {
         match self {
-            RegistrationFormAnswerRespondent::PendingProject { id } => {
+            RegistrationFormAnswerRespondent::PendingProjectId(id) => {
                 use_case::RegistrationFormAnswerRespondent::PendingProject(id.into_use_case())
             }
-            RegistrationFormAnswerRespondent::Project { id } => {
+            RegistrationFormAnswerRespondent::ProjectId(id) => {
                 use_case::RegistrationFormAnswerRespondent::Project(id.into_use_case())
             }
         }
@@ -61,6 +59,7 @@ impl RegistrationFormAnswerRespondent {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RegistrationFormAnswer {
     pub id: RegistrationFormAnswerId,
+    #[serde(flatten)]
     pub respondent: RegistrationFormAnswerRespondent,
     pub registration_form_id: RegistrationFormId,
     pub created_at: DateTime,

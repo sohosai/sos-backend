@@ -1,0 +1,28 @@
+title: RegistrationForm
+type: object
+x-examples: {}
+properties:
+  id:
+    $ref: ./RegistrationFormId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  author_id:
+    $ref: ../user/UserId.yml
+  name:
+    type: string
+  description:
+    type: string
+  items:
+    type: array
+    items:
+      $ref: ../form/item/FormItem.yml
+  query:
+    $ref: ../ProjectQuery.yml
+required:
+  - id
+  - created_at
+  - author_id
+  - name
+  - description
+  - items
+  - query
