@@ -26,7 +26,7 @@ CREATE TABLE registration_form_answers (
     pending_project_id uuid REFERENCES pending_projects ON DELETE RESTRICT,
     items jsonb NOT NULL,
     CONSTRAINT registration_form_answer_project_id CHECK ((project_id IS NULL) != (pending_project_id IS NULL)),
-    UNIQUE (registration_form_id, pending_project_id)
+    UNIQUE (registration_form_id, project_id, pending_project_id)
 );
 
 ALTER TYPE file_sharing_scope ADD VALUE 'registration_form_answer';

@@ -13,7 +13,7 @@ use crate::context::{
 use crate::model::{
     file::{File, FileId},
     file_distribution::{FileDistribution, FileDistributionId},
-    file_sharing::{FileSharing, FileSharingId},
+    file_sharing::{FileSharing, FileSharingId, FileSharingScope},
     form::{Form, FormId},
     form_answer::{FormAnswer, FormAnswerId},
     object::{Object, ObjectData, ObjectId},
@@ -551,6 +551,31 @@ impl FileSharingRepository for MockApp {
 
         Ok(result)
     }
+
+    async fn list_file_sharings_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<Vec<FileSharing>> {
+        let pending_project = self
+            .get_pending_project(pending_project_id)
+            .await?
+            .unwrap()
+            .pending_project;
+        Ok(self
+            .sharings
+            .lock()
+            .await
+            .values()
+            .filter(|sharing| {
+                matches!(
+                    sharing.scope(),
+                    FileSharingScope::RegistrationFormAnswer(respondent, _)
+                    if respondent.is_pending_project(&pending_project)
+                )
+            })
+            .cloned()
+            .collect())
+    }
 }
 
 #[async_trait::async_trait]
@@ -687,6 +712,31 @@ impl RegistrationFormRepository for MockApp {
             .collect())
     }
 
+    async fn count_registration_forms_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<u64> {
+        let pending_project = self
+            .get_pending_project(pending_project_id)
+            .await?
+            .unwrap()
+            .pending_project;
+        let len = self
+            .registration_forms
+            .lock()
+            .await
+            .values()
+            .filter(|registration_form| {
+                registration_form
+                    .query
+                    .check_pending_project(&pending_project)
+            })
+            .cloned()
+            .count();
+        let len = len.try_into()?;
+        Ok(len)
+    }
+
     async fn list_registration_forms_by_project(
         &self,
         project_id: ProjectId,
@@ -781,5 +831,53 @@ impl RegistrationFormAnswerRepository for MockApp {
             })
             .cloned()
             .collect())
+    }
+
+    async fn list_registration_form_answers_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<Vec<RegistrationFormAnswer>> {
+        let pending_project = self
+            .get_pending_project(pending_project_id)
+            .await?
+            .unwrap()
+            .pending_project;
+        Ok(self
+            .registration_form_answers
+            .lock()
+            .await
+            .values()
+            .filter(|registration_form_answer| {
+                registration_form_answer
+                    .respondent
+                    .is_pending_project(&pending_project)
+            })
+            .cloned()
+            .collect())
+    }
+
+    async fn count_registration_form_answers_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<u64> {
+        let pending_project = self
+            .get_pending_project(pending_project_id)
+            .await?
+            .unwrap()
+            .pending_project;
+        let len = self
+            .registration_form_answers
+            .lock()
+            .await
+            .values()
+            .filter(|registration_form_answer| {
+                registration_form_answer
+                    .respondent
+                    .is_pending_project(&pending_project)
+            })
+            .cloned()
+            .count();
+        let len = len.try_into()?;
+        Ok(len)
     }
 }

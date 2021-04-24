@@ -28,6 +28,15 @@ pub trait RegistrationFormAnswerRepository {
         &self,
         registration_form_id: RegistrationFormId,
     ) -> Result<Vec<RegistrationFormAnswer>>;
+    // TODO: Move to query service
+    async fn list_registration_form_answers_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<Vec<RegistrationFormAnswer>>;
+    async fn count_registration_form_answers_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<u64>;
 }
 
 #[macro_export]
@@ -85,6 +94,20 @@ macro_rules! delegate_registration_form_answer_repository {
             > {
                 $target.list_registration_form_answers(registration_form_id).await
             }
+            async fn list_registration_form_answers_by_pending_project(
+                &$sel,
+                pending_project_id: $crate::model::pending_project::PendingProjectId,
+            ) -> ::anyhow::Result<
+                Vec<$crate::model::registration_form_answer::RegistrationFormAnswer>
+            > {
+                $target.list_registration_form_answers_by_pending_project(pending_project_id).await
+            }
+            async fn count_registration_form_answers_by_pending_project(
+                &$sel,
+                pending_project_id: $crate::model::pending_project::PendingProjectId,
+            ) -> ::anyhow::Result<u64> {
+                $target.count_registration_form_answers_by_pending_project(pending_project_id).await
+            }
         }
     }
 }
@@ -130,6 +153,28 @@ impl<C: RegistrationFormAnswerRepository + Sync> RegistrationFormAnswerRepositor
         <C as RegistrationFormAnswerRepository>::list_registration_form_answers(
             self,
             registration_form_id,
+        )
+        .await
+    }
+
+    async fn list_registration_form_answers_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<Vec<RegistrationFormAnswer>> {
+        <C as RegistrationFormAnswerRepository>::list_registration_form_answers_by_pending_project(
+            self,
+            pending_project_id,
+        )
+        .await
+    }
+
+    async fn count_registration_form_answers_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<u64> {
+        <C as RegistrationFormAnswerRepository>::count_registration_form_answers_by_pending_project(
+            self,
+            pending_project_id,
         )
         .await
     }

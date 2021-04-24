@@ -74,6 +74,17 @@ impl FileSharingRepository for FileSharingDatabase {
             .try_collect()
             .await
     }
+
+    async fn list_file_sharings_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<Vec<FileSharing>> {
+        let mut lock = self.0.lock().await;
+        query::list_file_sharings_by_pending_project(&mut *lock, pending_project_id.to_uuid())
+            .and_then(|sharing| future::ready(to_file_sharing(sharing)))
+            .try_collect()
+            .await
+    }
 }
 
 fn from_file_sharing(sharing: FileSharing) -> data::file_sharing::FileSharing {

@@ -5,6 +5,7 @@ use crate::model::project::Project;
 use crate::model::registration_form_answer::RegistrationFormAnswer;
 use crate::model::user::User;
 
+use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use uuid::Uuid;
@@ -139,6 +140,17 @@ impl FileSharing {
 
     pub fn file_id(&self) -> FileId {
         self.0.file_id
+    }
+
+    pub fn set_scope_to_project_answer(&mut self, project: &Project) -> anyhow::Result<()> {
+        let (mut respondent, registration_form_id) = self
+            .0
+            .scope
+            .registration_form_answer()
+            .context("set_scope_to_project_answer on non registration_form_answer sharing")?;
+        respondent.replace_to_project(project);
+        self.0.scope = FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id);
+        Ok(())
     }
 
     pub fn scope(&self) -> FileSharingScope {

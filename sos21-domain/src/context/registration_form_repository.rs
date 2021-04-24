@@ -13,11 +13,16 @@ pub trait RegistrationFormRepository {
         &self,
         id: RegistrationFormId,
     ) -> Result<Option<RegistrationForm>>;
+    // TODO: Move to query service
     async fn list_registration_forms(&self) -> Result<Vec<RegistrationForm>>;
     async fn list_registration_forms_by_pending_project(
         &self,
         pending_project_id: PendingProjectId,
     ) -> Result<Vec<RegistrationForm>>;
+    async fn count_registration_forms_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<u64>;
     async fn list_registration_forms_by_project(
         &self,
         project_id: ProjectId,
@@ -54,6 +59,12 @@ macro_rules! delegate_registration_form_repository {
             ) -> ::anyhow::Result<Vec<$crate::model::registration_form::RegistrationForm>> {
                 $target.list_registration_forms_by_pending_project(pending_project_id).await
             }
+            async fn count_registration_forms_by_pending_project(
+                &$sel,
+                pending_project_id: $crate::model::pending_project::PendingProjectId
+            ) -> ::anyhow::Result<u64> {
+                $target.count_registration_forms_by_pending_project(pending_project_id).await
+            }
             async fn list_registration_forms_by_project(
                 &$sel,
                 project_id: $crate::model::project::ProjectId
@@ -86,6 +97,17 @@ impl<C: RegistrationFormRepository + Sync> RegistrationFormRepository for &C {
         pending_project_id: PendingProjectId,
     ) -> Result<Vec<RegistrationForm>> {
         <C as RegistrationFormRepository>::list_registration_forms_by_pending_project(
+            self,
+            pending_project_id,
+        )
+        .await
+    }
+
+    async fn count_registration_forms_by_pending_project(
+        &self,
+        pending_project_id: PendingProjectId,
+    ) -> Result<u64> {
+        <C as RegistrationFormRepository>::count_registration_forms_by_pending_project(
             self,
             pending_project_id,
         )
