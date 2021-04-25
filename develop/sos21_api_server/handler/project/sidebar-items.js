@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["export",""],["file_distribution",""],["form",""],["get",""],["list",""],["prepare",""],["registration_form",""],["update",""]]});
+initSidebarItems({"mod":[["export",""],["file_distribution",""],["file_sharing",""],["form",""],["get",""],["list",""],["prepare",""],["registration_form",""],["update",""]]});

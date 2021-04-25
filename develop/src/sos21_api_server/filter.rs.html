@@ -220,8 +220,6 @@
 <span id="217">217</span>
 <span id="218">218</span>
 <span id="219">219</span>
-<span id="220">220</span>
-<span id="221">221</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -348,6 +346,10 @@
                     }
                 }
             },
+            <span class="op">/</span> <span class="string">&quot;file-sharing&quot;</span> {
+                <span class="op">/</span> <span class="string">&quot;get-file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file</span>),
+                <span class="op">/</span> <span class="string">&quot;get-file-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file_info</span>),
+            },
             <span class="op">/</span> <span class="string">&quot;file-distribution&quot;</span> {
                 <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">file_distribution</span>::<span class="ident">list</span>),
                 <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">file_distribution</span>::<span class="ident">get</span>),
@@ -376,6 +378,10 @@
         },
         <span class="op">/</span> <span class="string">&quot;form-answer&quot;</span> {
             <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">form_answer</span>::<span class="ident">get</span>),
+            <span class="op">/</span> <span class="string">&quot;file-sharing&quot;</span> {
+                <span class="op">/</span> <span class="string">&quot;get-file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">form_answer</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file</span>),
+                <span class="op">/</span> <span class="string">&quot;get-file-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">form_answer</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file_info</span>),
+            }
         },
         <span class="op">/</span> <span class="string">&quot;user&quot;</span> {
             <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">user</span>::<span class="ident">get</span>),
@@ -394,18 +400,8 @@
             <span class="op">/</span> <span class="string">&quot;revoke&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">revoke</span>),
             <span class="op">/</span> <span class="string">&quot;get-file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file</span>),
             <span class="op">/</span> <span class="string">&quot;get-file-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file_info</span>),
-            <span class="op">/</span> <span class="string">&quot;public&quot;</span> {
-                <span class="op">/</span> <span class="string">&quot;get-file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">public</span>::<span class="ident">get_file</span>),
-                <span class="op">/</span> <span class="string">&quot;get-file-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">public</span>::<span class="ident">get_file_info</span>),
-            },
-            <span class="op">/</span> <span class="string">&quot;project&quot;</span> {
-                <span class="op">/</span> <span class="string">&quot;get-file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">project</span>::<span class="ident">get_file</span>),
-                <span class="op">/</span> <span class="string">&quot;get-file-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">project</span>::<span class="ident">get_file_info</span>),
-            },
-            <span class="op">/</span> <span class="string">&quot;form-answer&quot;</span> {
-                <span class="op">/</span> <span class="string">&quot;get-file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">form_answer</span>::<span class="ident">get_file</span>),
-                <span class="op">/</span> <span class="string">&quot;get-file-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">form_answer</span>::<span class="ident">get_file_info</span>),
-            }
+            <span class="op">/</span> <span class="string">&quot;get-public-file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">get_public_file</span>),
+            <span class="op">/</span> <span class="string">&quot;get-public-file-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {<span class="ident">noauth</span>} <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">file_sharing</span>::<span class="ident">get_public_file_info</span>),
         },
         <span class="op">/</span> <span class="string">&quot;file-distribution&quot;</span> {
             <span class="op">/</span> <span class="string">&quot;create&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">file_distribution</span>::<span class="ident">create</span>),
