@@ -515,7 +515,7 @@ paths:
       summary: me/file-sharing/list
       tags:
         - me
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -640,6 +640,7 @@ paths:
                 - attributes
       tags:
         - project
+        - pending_project
     parameters: []
   /pending-project/get:
     get:
@@ -1067,7 +1068,6 @@ paths:
     get:
       summary: pending-project/registration-form/answer/get
       tags:
-        - registration_form
         - pending_project
         - registration_form_answer
       responses:
@@ -1899,7 +1899,6 @@ paths:
     get:
       summary: project/form/answer/get
       tags:
-        - form
         - project
         - form_answer
       responses:
@@ -1985,9 +1984,8 @@ paths:
       summary: project/form/answer/file-sharing/get-file
       tags:
         - project
-        - form
         - form_answer
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -2069,9 +2067,8 @@ paths:
       summary: project/form/answer/file-sharing/get-file-info
       tags:
         - project
-        - form
         - form_answer
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -2367,7 +2364,7 @@ paths:
       tags:
         - project
         - registration_form_answer
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -2450,7 +2447,7 @@ paths:
       tags:
         - project
         - registration_form_answer
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -2540,7 +2537,7 @@ paths:
     get:
       summary: project/file-sharing/get-file
       tags:
-        - file
+        - file_sharing
         - project
       responses:
         "200":
@@ -2614,7 +2611,7 @@ paths:
     get:
       summary: project/file-sharing/get-file-info
       tags:
-        - file
+        - file_sharing
         - project
       responses:
         "200":
@@ -2988,7 +2985,6 @@ paths:
     get:
       summary: form/answer/list
       tags:
-        - form
         - form_answer
         - committee
       responses:
@@ -3026,7 +3022,6 @@ paths:
     get:
       summary: form/answer/export
       tags:
-        - form
         - form_answer
         - committee
       responses:
@@ -3245,7 +3240,6 @@ paths:
     get:
       summary: registration-form/answer/list
       tags:
-        - registration_form
         - registration_form_answer
         - committee
       responses:
@@ -3283,7 +3277,6 @@ paths:
     get:
       summary: registration-form/answer/export
       tags:
-        - registration_form
         - registration_form_answer
         - committee
       responses:
@@ -3385,8 +3378,9 @@ paths:
     get:
       summary: form-answer/file-sharing/get-file
       tags:
-        - file
+        - file_sharing
         - form_answer
+        - committee
       responses:
         "200":
           description: OK
@@ -3459,8 +3453,9 @@ paths:
     get:
       summary: form-answer/file-sharing/get-file-info
       tags:
-        - file
+        - file_sharing
         - form_answer
+        - committee
       responses:
         "200":
           description: OK
@@ -3578,7 +3573,7 @@ paths:
     get:
       summary: registration-form-answer/file-sharing/get-file
       tags:
-        - file
+        - file_sharing
         - registration_form_answer
         - committee
       responses:
@@ -3653,7 +3648,7 @@ paths:
     get:
       summary: registration-form-answer/file-sharing/get-file-info
       tags:
-        - file
+        - file_sharing
         - registration_form_answer
         - committee
       responses:
@@ -3925,6 +3920,7 @@ paths:
       summary: file/share
       tags:
         - file
+        - file_sharing
       responses:
         "201":
           description: Created
@@ -4006,7 +4002,7 @@ paths:
     post:
       summary: file-sharing/revoke
       tags:
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -4077,7 +4073,7 @@ paths:
     get:
       summary: file-sharing/get
       tags:
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -4111,7 +4107,7 @@ paths:
     get:
       summary: file-sharing/get-file
       tags:
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -4136,7 +4132,7 @@ paths:
     get:
       summary: file-sharing/get-file-info
       tags:
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -4170,7 +4166,7 @@ paths:
     get:
       summary: file-sharing/get-public-file
       tags:
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -4240,7 +4236,7 @@ paths:
     get:
       summary: file-sharing/get-public-file-info
       tags:
-        - file
+        - file_sharing
       responses:
         "200":
           description: OK
@@ -5250,6 +5246,7 @@ tags:
   - name: registration_form
   - name: registration_form_answer
   - name: file
+  - name: file_sharing
   - name: committee
   - name: admin
   - name: meta
