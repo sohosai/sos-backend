@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["new_pending_project",""],["new_pending_project_id",""]]});
+initSidebarItems({"fn":[["new_general_pending_project",""],["new_pending_project",""],["new_pending_project_id",""],["new_pending_project_with_attributes","PanicsThis function panics when `attributes` contains duplicated elements."],["new_stage_pending_project",""]]});

@@ -29,11 +29,30 @@
 <span id="26">26</span>
 <span id="27">27</span>
 <span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
     <span class="ident">pending_project</span>::{<span class="ident">PendingProject</span>, <span class="ident">PendingProjectId</span>},
-    <span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>},
+    <span class="ident">project</span>::{<span class="ident">ProjectAttribute</span>, <span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>},
     <span class="ident">user</span>::<span class="ident">UserId</span>,
 };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">test</span>::<span class="ident">model</span> <span class="kw">as</span> <span class="ident">test_model</span>;
@@ -44,7 +63,14 @@
     <span class="ident">PendingProjectId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>())
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_pending_project</span>(<span class="ident">author_id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PendingProject</span> {
+<span class="doccomment">/// # Panics</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This function panics when `attributes` contains duplicated elements.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_pending_project_with_attributes</span>(
+    <span class="ident">author_id</span>: <span class="ident">UserId</span>,
+    <span class="ident">category</span>: <span class="ident">ProjectCategory</span>,
+    <span class="ident">attributes</span>: <span class="kw-2">&amp;</span>[<span class="ident">ProjectAttribute</span>],
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PendingProject</span> {
     <span class="ident">PendingProject</span> {
         <span class="ident">id</span>: <span class="ident">new_pending_project_id</span>(),
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">now</span>(),
@@ -54,9 +80,21 @@
         <span class="ident">group_name</span>: <span class="ident">test_model</span>::<span class="ident">mock_project_group_name</span>(),
         <span class="ident">kana_group_name</span>: <span class="ident">test_model</span>::<span class="ident">mock_project_kana_group_name</span>(),
         <span class="ident">description</span>: <span class="ident">test_model</span>::<span class="ident">mock_project_description</span>(),
-        <span class="ident">category</span>: <span class="ident">ProjectCategory</span>::<span class="ident">General</span>,
-        <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),
+        <span class="ident">category</span>,
+        <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="ident">attributes</span>.<span class="ident">iter</span>().<span class="ident">copied</span>()).<span class="ident">unwrap</span>(),
     }
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_pending_project</span>(<span class="ident">author_id</span>: <span class="ident">UserId</span>, <span class="ident">category</span>: <span class="ident">ProjectCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PendingProject</span> {
+    <span class="ident">new_pending_project_with_attributes</span>(<span class="ident">author_id</span>, <span class="ident">category</span>, <span class="kw-2">&amp;</span>[])
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_general_pending_project</span>(<span class="ident">author_id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PendingProject</span> {
+    <span class="ident">new_pending_project</span>(<span class="ident">author_id</span>, <span class="ident">ProjectCategory</span>::<span class="ident">General</span>)
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_stage_pending_project</span>(<span class="ident">author_id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PendingProject</span> {
+    <span class="ident">new_pending_project</span>(<span class="ident">author_id</span>, <span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>)
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="sos21_domain"></div>

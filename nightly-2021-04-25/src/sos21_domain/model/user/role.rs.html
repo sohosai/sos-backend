@@ -74,6 +74,13 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">permissions</span>::<span class="ident">Permissions</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">UserFileUsageQuota</span>;
@@ -103,6 +110,7 @@
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_USERS</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">CREATE_FORMS</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">DISTRIBUTE_FILES</span>
+                    <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">CREATE_REGISTRATION_FORMS</span>
             }
             <span class="ident">UserRole</span>::<span class="ident">Committee</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">UserRole</span>::<span class="ident">General</span>.<span class="ident">permissions</span>()
@@ -110,8 +118,14 @@
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_FORMS</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_FORM_ANSWERS</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_FILE_DISTRIBUTIONS</span>
+                    <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_REGISTRATION_FORMS</span>
+                    <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_REGISTRATION_FORM_ANSWERS</span>
             }
-            <span class="ident">UserRole</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Permissions</span>::<span class="ident">CREATE_FILES</span> <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">SHARE_FILES</span>,
+            <span class="ident">UserRole</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">Permissions</span>::<span class="ident">CREATE_FILES</span>
+                    <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">SHARE_FILES</span>
+                    <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">ANSWER_REGISTRATION_FORMS</span>
+            }
         }
     }
 

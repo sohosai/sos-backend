@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FormAnswerItemBody",""]],"struct":[["FormAnswerItem",""],["GridRadioRowAnswer",""]]});
+initSidebarItems({"enum":[["FormAnswerItemBody",""],["RequestFormAnswerItemBody",""],["RequestFormAnswerItemFile",""]],"struct":[["FormAnswerItem",""],["GridRadioRowAnswer",""],["RequestFormAnswerItem",""]]});

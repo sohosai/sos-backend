@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["file",""],["file_distribution",""],["file_sharing",""],["form",""],["form_answer",""],["pending_project",""],["project",""],["project_query",""],["stream",""],["user",""]]});
+initSidebarItems({"mod":[["file",""],["file_distribution",""],["file_sharing",""],["form",""],["form_answer",""],["pending_project",""],["project",""],["project_query",""],["registration_form",""],["registration_form_answer",""],["stream",""],["user",""]]});
