@@ -2157,6 +2157,385 @@ paths:
           name: form_id
           required: true
       description: 指定されたファイル共有で申請の回答に対して共有されているファイルの情報を返します。
+  /project/registration-form/get:
+    get:
+      summary: project/registration-form/get
+      tags:
+        - project
+        - registration_form
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_form:
+                    $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_form
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "Registration Form or Project Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: REGISTRATION_FORM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+      description: 指定された登録申請の情報を返します。
+  /project/registration-form/list:
+    get:
+      summary: project/registration-form/list
+      tags:
+        - project
+        - registration_form
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_forms:
+                    type: array
+                    items:
+                      $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_forms
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/list
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+      description: 指定された企画向けの登録申請の一覧を返します。
+  /project/registration-form/answer/get:
+    get:
+      summary: project/registration-form/answer/get
+      tags:
+        - project
+        - registration_form_answer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    $ref: ./model/registration_form_answer/RegistrationFormAnswer.yml
+                required:
+                  - answer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "Registration Form, Project, or Registration Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: REGISTRATION_FORM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/answer/get
+      description: 登録申請の回答を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+  /project/registration-form/answer/file-sharing/get-file:
+    get:
+      summary: project/registration-form/answer/file-sharing/get-file
+      tags:
+        - project
+        - registration_form_answer
+        - file
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing, Project, Registration Form or Registration Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/answer/file-sharing/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+      description: 指定されたファイル共有で登録申請の回答に対して共有されているファイルを返します。
+  /project/registration-form/answer/file-sharing/get-file-info:
+    get:
+      summary: project/registration-form/answer/file-sharing/get-file-info
+      tags:
+        - project
+        - registration_form_answer
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing, Project, Registration Form or Registration Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/answer/file-sharing/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+      description: 指定されたファイル共有で登録申請の回答に対して共有されているファイルの情報を返します。
   /project/file-distribution/get:
     get:
       summary: project/file-distribution/get

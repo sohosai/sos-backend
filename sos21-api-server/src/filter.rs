@@ -112,6 +112,17 @@ pub fn endpoints(
                     }
                 }
             },
+            / "registration-form" {
+                / "get" => GET (handler::project::registration_form::get),
+                / "list" => GET (handler::project::registration_form::list),
+                / "answer" {
+                    / "get" => GET (handler::project::registration_form::answer::get),
+                    / "file-sharing" {
+                        / "get-file" => GET (handler::project::registration_form::answer::file_sharing::get_file),
+                        / "get-file-info" => GET (handler::project::registration_form::answer::file_sharing::get_file_info),
+                    }
+                }
+            },
             / "file-distribution" {
                 / "list" => GET (handler::project::file_distribution::list),
                 / "get" => GET (handler::project::file_distribution::get),
