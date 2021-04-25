@@ -123,6 +123,10 @@ pub fn endpoints(
                     }
                 }
             },
+            / "file-sharing" {
+                / "get-file" => GET (handler::project::file_sharing::get_file),
+                / "get-file-info" => GET (handler::project::file_sharing::get_file_info),
+            },
             / "file-distribution" {
                 / "list" => GET (handler::project::file_distribution::list),
                 / "get" => GET (handler::project::file_distribution::get),
@@ -151,6 +155,10 @@ pub fn endpoints(
         },
         / "form-answer" {
             / "get" => GET (handler::form_answer::get),
+            / "file-sharing" {
+                / "get-file" => GET (handler::form_answer::file_sharing::get_file),
+                / "get-file-info" => GET (handler::form_answer::file_sharing::get_file_info),
+            }
         },
         / "user" {
             / "get" => GET (handler::user::get),
@@ -172,14 +180,6 @@ pub fn endpoints(
             / "public" {
                 / "get-file" => {noauth} GET (handler::file_sharing::public::get_file),
                 / "get-file-info" => {noauth} GET (handler::file_sharing::public::get_file_info),
-            },
-            / "project" {
-                / "get-file" => GET (handler::file_sharing::project::get_file),
-                / "get-file-info" => GET (handler::file_sharing::project::get_file_info),
-            },
-            / "form-answer" {
-                / "get-file" => GET (handler::file_sharing::form_answer::get_file),
-                / "get-file-info" => GET (handler::file_sharing::form_answer::get_file_info),
             }
         },
         / "file-distribution" {
