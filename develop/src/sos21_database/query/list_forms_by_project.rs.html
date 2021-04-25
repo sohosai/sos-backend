@@ -101,6 +101,8 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::{<span class="ident">Form</span>, <span class="ident">FormData</span>, <span class="ident">FormProjectQueryConjunction</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
@@ -153,6 +155,8 @@ SELECT
             form_project_query_conjunctions.category,
             form_project_query_conjunctions.attributes
         ))
+        /* works because attributes column in form_project_query_conjunctions table is NOT NULL */
+        FILTER (WHERE form_project_query_conjunctions.attributes IS NOT NULL)
         AS &quot;query: Vec&lt;(Option&lt;ProjectCategory&gt;, ProjectAttributes)&gt;&quot;
 FROM project_forms
 INNER JOIN forms
