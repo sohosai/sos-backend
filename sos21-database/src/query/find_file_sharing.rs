@@ -28,6 +28,9 @@ SELECT
     file_sharings.project_id,
     file_sharings.form_answer_project_id,
     file_sharings.form_answer_form_id,
+    file_sharings.registration_form_answer_project_id,
+    file_sharings.registration_form_answer_pending_project_id,
+    file_sharings.registration_form_answer_registration_form_id,
     files.created_at AS file_created_at,
     files.author_id AS file_author_id,
     files.object_id AS file_object_id,
@@ -60,6 +63,11 @@ WHERE file_sharings.id = $1
         project_id: row.project_id,
         form_answer_project_id: row.form_answer_project_id,
         form_answer_form_id: row.form_answer_form_id,
+        registration_form_answer_project_id: row.registration_form_answer_project_id,
+        registration_form_answer_pending_project_id: row
+            .registration_form_answer_pending_project_id,
+        registration_form_answer_registration_form_id: row
+            .registration_form_answer_registration_form_id,
     };
 
     let file = File {

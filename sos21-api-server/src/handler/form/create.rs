@@ -5,7 +5,7 @@ use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::create_form;
+use sos21_use_case::{create_form, interface};
 use warp::http::StatusCode;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -58,17 +58,23 @@ impl From<create_form::Error> for Error {
             create_form::Error::InvalidDescription => Error::InvalidField {
                 field: "description",
             },
-            create_form::Error::NoItems => Error::InvalidField { field: "items" },
-            create_form::Error::TooManyItems => Error::InvalidField { field: "items" },
-            // TODO: break down invalid item errors
-            create_form::Error::InvalidItem(id, _) => Error::InvalidFormItem {
-                id: FormItemId::from_use_case(id),
+            create_form::Error::InvalidItems(err) => match err {
+                interface::form::FormItemsError::NoItems => Error::InvalidField { field: "items" },
+                interface::form::FormItemsError::TooManyItems => {
+                    Error::InvalidField { field: "items" }
+                }
+                // TODO: break down invalid item errors
+                interface::form::FormItemsError::InvalidItem(id, _) => Error::InvalidFormItem {
+                    id: FormItemId::from_use_case(id),
+                },
+                interface::form::FormItemsError::DuplicatedItemId(id) => {
+                    Error::DuplicatedFormItemId {
+                        id: FormItemId::from_use_case(id),
+                    }
+                }
             },
             create_form::Error::InvalidCondition(_) => Error::InvalidField { field: "condition" },
             create_form::Error::InvalidPeriod => Error::InvalidFormPeriod,
-            create_form::Error::DuplicatedItemId(id) => Error::DuplicatedFormItemId {
-                id: FormItemId::from_use_case(id),
-            },
             create_form::Error::InsufficientPermissions => Error::InsufficientPermissions,
         }
     }

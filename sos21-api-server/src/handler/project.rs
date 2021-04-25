@@ -11,3 +11,4 @@ pub use export::handler as export;
 
 pub mod file_distribution;
 pub mod form;
+pub mod registration_form;

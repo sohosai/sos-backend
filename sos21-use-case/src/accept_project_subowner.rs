@@ -3,18 +3,27 @@ use crate::model::pending_project::PendingProjectId;
 use crate::model::project::{Project, ProjectFromEntityInput};
 
 use anyhow::Context;
-use sos21_domain::context::{Login, PendingProjectRepository, ProjectRepository};
+use sos21_domain::context::{
+    FileSharingRepository, Login, PendingProjectRepository, ProjectRepository,
+    RegistrationFormAnswerRepository, RegistrationFormRepository,
+};
 use sos21_domain::model::pending_project;
 
 #[derive(Debug, Clone)]
 pub enum Error {
     PendingProjectNotFound,
     TooManyProjects,
+    NotAnsweredRegistrationForm,
 }
 
 impl Error {
-    fn from_accept_error(_err: pending_project::TooManyProjectsError) -> Self {
-        Error::TooManyProjects
+    fn from_accept_error(err: pending_project::AcceptSubownerError) -> Self {
+        match err.kind() {
+            pending_project::AcceptSubownerErrorKind::TooManyProjects => Error::TooManyProjects,
+            pending_project::AcceptSubownerErrorKind::NotAnsweredRegistrationForm => {
+                Error::NotAnsweredRegistrationForm
+            }
+        }
     }
 }
 
@@ -24,7 +33,13 @@ pub async fn run<C>(
     pending_project_id: PendingProjectId,
 ) -> UseCaseResult<Project, Error>
 where
-    C: ProjectRepository + PendingProjectRepository + Send + Sync,
+    C: ProjectRepository
+        + PendingProjectRepository
+        + FileSharingRepository
+        + RegistrationFormRepository
+        + RegistrationFormAnswerRepository
+        + Send
+        + Sync,
 {
     let login_user = ctx.login_user();
 
@@ -32,17 +47,15 @@ where
         .get_pending_project(pending_project_id.into_entity())
         .await
         .context("Failed to get a pending project")?;
-    let result = match result {
-        Some(result) if result.pending_project.is_visible_to(login_user) => result,
+    let (pending_project, author) = match result {
+        Some(result) if result.pending_project.is_visible_to(login_user) => {
+            (result.pending_project, result.author)
+        }
         _ => return Err(UseCaseError::UseCase(Error::PendingProjectNotFound)),
     };
 
-    ctx.delete_pending_project(result.pending_project.id)
-        .await
-        .context("Failed to delete a pending project")?;
-
-    let project = result
-        .pending_project
+    let pending_project_id = pending_project.id;
+    let project = pending_project
         .accept_subowner(&ctx, login_user)
         .await?
         .map_err(|err| UseCaseError::UseCase(Error::from_accept_error(err)))?;
@@ -51,11 +64,43 @@ where
         .await
         .context("Failed to store a project")?;
 
+    // TODO: Split these heavy (O(n)) processes into a separate asynchronous job
+    //       or reduce the number of storings
+    {
+        let answers = ctx
+            .list_registration_form_answers_by_pending_project(pending_project_id)
+            .await
+            .context("Failed to list registration form answers")?;
+        for mut answer in answers {
+            answer.respondent.replace_to_project(&project);
+            ctx.store_registration_form_answer(answer)
+                .await
+                .context("Failed to store a registration form answer")?;
+        }
+
+        let sharings = ctx
+            .list_file_sharings_by_pending_project(pending_project_id)
+            .await
+            .context("Failed to list file sharings")?;
+        for mut sharing in sharings {
+            use_case_ensure!(sharing.scope().registration_form_answer().is_some());
+            sharing.set_scope_to_project_answer(&project)?;
+            ctx.store_file_sharing(sharing)
+                .await
+                .context("Failed to store a file sharing")?;
+        }
+
+        ctx.delete_pending_project(pending_project_id)
+            .await
+            .context("Failed to delete a pending project")?;
+    }
+
     use_case_ensure!(project.is_visible_to(login_user));
+    use_case_ensure!(project.subowner_id == login_user.id);
     Ok(Project::from_entity(ProjectFromEntityInput {
         project,
-        owner_name: result.author.name,
-        owner_kana_name: result.author.kana_name,
+        owner_name: author.name,
+        owner_kana_name: author.kana_name,
         subowner_name: login_user.name.clone(),
         subowner_kana_name: login_user.kana_name.clone(),
     }))
@@ -71,7 +116,7 @@ mod tests {
     #[tokio::test]
     async fn test_owner() {
         let user = test::model::new_general_user();
-        let pending_project = test::model::new_pending_project(user.id.clone());
+        let pending_project = test::model::new_general_pending_project(user.id.clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -99,7 +144,7 @@ mod tests {
     async fn test_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let pending_project = test::model::new_pending_project(other.id.clone());
+        let pending_project = test::model::new_general_pending_project(other.id.clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -120,6 +165,174 @@ mod tests {
         assert!(matches!(
             get_pending_project::run(&app, pending_project_id).await,
             Err(UseCaseError::UseCase(get_pending_project::Error::NotFound))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_other_with_registration_form_not_answered() {
+        let owner = test::model::new_general_user();
+        let subowner = test::model::new_general_user();
+        let pending_project = test::model::new_general_pending_project(owner.id.clone());
+
+        let operator = test::model::new_general_user();
+        let registration_form1 = test::model::new_registration_form(operator.id.clone());
+        let registration_form2 = test::model::new_registration_form(operator.id.clone());
+
+        let answer1 = test::model::new_registration_form_answer_with_pending_project(
+            owner.id.clone(),
+            pending_project.id,
+            &registration_form1,
+        );
+
+        let app = test::build_mock_app()
+            .users(vec![owner.clone(), subowner.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .registration_forms(vec![registration_form1.clone(), registration_form2.clone()])
+            .registration_form_answers(vec![answer1.clone()])
+            .build()
+            .login_as(subowner.clone())
+            .await;
+
+        assert!(matches!(
+            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id))
+                .await,
+            Err(UseCaseError::UseCase(
+                accept_project_subowner::Error::NotAnsweredRegistrationForm { .. }
+            ))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_other_with_registration_form_answered() {
+        use sos21_domain::model::{project, project_query};
+
+        let owner = test::model::new_general_user();
+        let subowner = test::model::new_general_user();
+        let pending_project = test::model::new_general_pending_project(owner.id.clone());
+
+        let operator = test::model::new_general_user();
+        let registration_form1 = test::model::new_registration_form(operator.id.clone());
+        let registration_form2 = test::model::new_registration_form(operator.id.clone());
+        let registration_form3 = test::model::new_registration_form_with_query(
+            operator.id.clone(),
+            project_query::ProjectQuery::from_conjunctions(vec![
+                project_query::ProjectQueryConjunction {
+                    category: Some(project::ProjectCategory::Stage),
+                    attributes: project::ProjectAttributes::from_attributes(vec![]).unwrap(),
+                },
+            ])
+            .unwrap(),
+        );
+
+        let answer1 = test::model::new_registration_form_answer_with_pending_project(
+            owner.id.clone(),
+            pending_project.id,
+            &registration_form1,
+        );
+        let answer2 = test::model::new_registration_form_answer_with_pending_project(
+            owner.id.clone(),
+            pending_project.id,
+            &registration_form2,
+        );
+
+        let app = test::build_mock_app()
+            .users(vec![owner.clone(), subowner.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .registration_forms(vec![
+                registration_form1.clone(),
+                registration_form2.clone(),
+                registration_form3.clone(),
+            ])
+            .registration_form_answers(vec![answer1.clone(), answer2.clone()])
+            .build()
+            .login_as(subowner.clone())
+            .await;
+
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+
+        assert!(matches!(
+            accept_project_subowner::run(&app, pending_project_id).await,
+            Ok(got)
+            if got.owner_id == UserId::from_entity(owner.id)
+            && got.subowner_id == UserId::from_entity(subowner.id)
+        ));
+
+        assert!(matches!(
+            get_pending_project::run(&app, pending_project_id).await,
+            Err(UseCaseError::UseCase(get_pending_project::Error::NotFound))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_other_with_registration_form_subowner_visibility() {
+        use crate::model::{
+            file::FileId, file_sharing::FileSharingId, registration_form::RegistrationFormId,
+            registration_form_answer::RegistrationFormAnswerId,
+        };
+        use crate::{
+            get_project_registration_form_answer, get_project_registration_form_answer_shared_file,
+        };
+
+        use sos21_domain::model::{file_sharing, registration_form_answer};
+
+        let owner = test::model::new_general_user();
+        let subowner = test::model::new_general_user();
+        let pending_project = test::model::new_general_pending_project(owner.id.clone());
+
+        let operator = test::model::new_general_user();
+        let registration_form = test::model::new_registration_form(operator.id.clone());
+        let answer = test::model::new_registration_form_answer_with_pending_project(
+            owner.id.clone(),
+            pending_project.id,
+            &registration_form,
+        );
+        let (file, object) = test::model::new_file(owner.id.clone());
+        let sharing = file_sharing::FileSharing::new(
+            file.id,
+            file_sharing::FileSharingScope::RegistrationFormAnswer(
+                registration_form_answer::RegistrationFormAnswerRespondent::PendingProject(
+                    pending_project.id,
+                ),
+                registration_form.id,
+            ),
+        );
+
+        let subowner_app = test::build_mock_app()
+            .users(vec![owner.clone(), subowner.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .registration_forms(vec![registration_form.clone()])
+            .registration_form_answers(vec![answer.clone()])
+            .sharings(vec![sharing.clone()])
+            .files(vec![file.clone()])
+            .objects(vec![object])
+            .await
+            .build()
+            .login_as(subowner.clone())
+            .await;
+
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let project = accept_project_subowner::run(&subowner_app, pending_project_id)
+            .await
+            .unwrap();
+        assert_eq!(project.owner_id, UserId::from_entity(owner.id));
+        assert_eq!(project.subowner_id, UserId::from_entity(subowner.id));
+
+        let registration_form_id = RegistrationFormId::from_entity(registration_form.id);
+        assert!(matches!(
+            get_project_registration_form_answer::run(&subowner_app, project.id, registration_form_id).await,
+            Ok(got)
+            if got.id == RegistrationFormAnswerId::from_entity(answer.id)
+        ));
+
+        let input = get_project_registration_form_answer_shared_file::Input {
+            project_id: project.id,
+            registration_form_id,
+            sharing_id: FileSharingId::from_entity(sharing.id()),
+        };
+        assert!(matches!(
+            get_project_registration_form_answer_shared_file::run(&subowner_app, input).await,
+            Ok(got)
+            if got.id == FileId::from_entity(file.id)
         ));
     }
 }

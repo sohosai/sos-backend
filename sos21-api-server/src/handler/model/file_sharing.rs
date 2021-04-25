@@ -2,6 +2,8 @@ use crate::handler::model::date_time::DateTime;
 use crate::handler::model::file::FileId;
 use crate::handler::model::form::FormId;
 use crate::handler::model::project::ProjectId;
+use crate::handler::model::registration_form::RegistrationFormId;
+use crate::handler::model::registration_form_answer::RegistrationFormAnswerRespondent;
 
 use mime::Mime;
 use serde::{Deserialize, Serialize};
@@ -32,6 +34,11 @@ pub enum FileSharingScope {
         project_id: ProjectId,
         form_id: FormId,
     },
+    RegistrationFormAnswer {
+        #[serde(flatten)]
+        respondent: RegistrationFormAnswerRespondent,
+        registration_form_id: RegistrationFormId,
+    },
     Committee,
     CommitteeOperator,
     Public,
@@ -49,6 +56,13 @@ impl FileSharingScope {
                     form_id: FormId::from_use_case(form_id),
                 }
             }
+            use_case::FileSharingScope::RegistrationFormAnswer(
+                respondent,
+                registration_form_id,
+            ) => FileSharingScope::RegistrationFormAnswer {
+                respondent: RegistrationFormAnswerRespondent::from_use_case(respondent),
+                registration_form_id: RegistrationFormId::from_use_case(registration_form_id),
+            },
             use_case::FileSharingScope::Committee => FileSharingScope::Committee,
             use_case::FileSharingScope::CommitteeOperator => FileSharingScope::CommitteeOperator,
             use_case::FileSharingScope::Public => FileSharingScope::Public,

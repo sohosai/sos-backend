@@ -29,6 +29,7 @@ impl HandlerResponse for Response {
 pub enum Error {
     PendingProjectNotFound,
     TooManyProjects,
+    NotAnsweredRegistrationForm,
 }
 
 impl HandlerResponse for Error {
@@ -36,6 +37,7 @@ impl HandlerResponse for Error {
         match self {
             Error::PendingProjectNotFound => StatusCode::NOT_FOUND,
             Error::TooManyProjects => StatusCode::CONFLICT,
+            Error::NotAnsweredRegistrationForm => StatusCode::CONFLICT,
         }
     }
 }
@@ -45,6 +47,9 @@ impl From<accept_project_subowner::Error> for Error {
         match err {
             accept_project_subowner::Error::PendingProjectNotFound => Error::PendingProjectNotFound,
             accept_project_subowner::Error::TooManyProjects => Error::TooManyProjects,
+            accept_project_subowner::Error::NotAnsweredRegistrationForm => {
+                Error::NotAnsweredRegistrationForm
+            }
         }
     }
 }

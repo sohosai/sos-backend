@@ -8,6 +8,8 @@ mod pending_project_repository;
 use pending_project_repository::PendingProjectDatabase;
 mod form_repository;
 use form_repository::FormDatabase;
+mod registration_form_repository;
+use registration_form_repository::RegistrationFormDatabase;
 mod file_repository;
 use file_repository::FileDatabase;
 mod file_distribution_repository;
@@ -16,6 +18,8 @@ mod file_sharing_repository;
 use file_sharing_repository::FileSharingDatabase;
 mod form_answer_repository;
 use form_answer_repository::FormAnswerDatabase;
+mod registration_form_answer_repository;
+use registration_form_answer_repository::RegistrationFormAnswerDatabase;
 mod user_repository;
 use user_repository::UserDatabase;
 
@@ -81,5 +85,17 @@ sos21_domain::delegate_file_distribution_repository! {
 sos21_domain::delegate_pending_project_repository! {
     impl PendingProjectRepository for Database {
         self { PendingProjectDatabase::ref_cast(&self.connection) }
+    }
+}
+
+sos21_domain::delegate_registration_form_repository! {
+    impl RegistrationFormRepository for Database {
+        self { RegistrationFormDatabase::ref_cast(&self.connection) }
+    }
+}
+
+sos21_domain::delegate_registration_form_answer_repository! {
+    impl RegistrationFormAnswerRepository for Database {
+        self { RegistrationFormAnswerDatabase::ref_cast(&self.connection) }
     }
 }

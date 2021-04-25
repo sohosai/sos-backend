@@ -2,8 +2,10 @@ use crate::model::date_time::DateTime;
 use crate::model::file::{File, FileId};
 use crate::model::form_answer::FormAnswer;
 use crate::model::project::Project;
+use crate::model::registration_form_answer::RegistrationFormAnswer;
 use crate::model::user::User;
 
+use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use uuid::Uuid;
@@ -140,6 +142,17 @@ impl FileSharing {
         self.0.file_id
     }
 
+    pub fn set_scope_to_project_answer(&mut self, project: &Project) -> anyhow::Result<()> {
+        let (mut respondent, registration_form_id) = self
+            .0
+            .scope
+            .registration_form_answer()
+            .context("set_scope_to_project_answer on non registration_form_answer sharing")?;
+        respondent.replace_to_project(project);
+        self.0.scope = FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id);
+        Ok(())
+    }
+
     pub fn scope(&self) -> FileSharingScope {
         self.0.scope
     }
@@ -245,6 +258,19 @@ impl FileSharing {
         answer: &FormAnswer,
     ) -> Result<FileSharingWitness, ToWitnessError> {
         if !self.0.scope.contains_form_answer(answer) {
+            return Err(ToWitnessError {
+                kind: ToWitnessErrorKind::OutOfScope,
+            });
+        }
+
+        self.state_to_witness()
+    }
+
+    pub fn to_witness_with_registration_form_answer(
+        &self,
+        answer: &RegistrationFormAnswer,
+    ) -> Result<FileSharingWitness, ToWitnessError> {
+        if !self.0.scope.contains_registration_form_answer(answer) {
             return Err(ToWitnessError {
                 kind: ToWitnessErrorKind::OutOfScope,
             });

@@ -24,7 +24,7 @@ impl FormCondition {
             return false;
         }
 
-        self.query.check(project) || self.includes.contains(project.id)
+        self.query.check_project(project) || self.includes.contains(project.id)
     }
 }
 

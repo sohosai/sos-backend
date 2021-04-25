@@ -426,7 +426,7 @@ paths:
       summary: me/pending-project/list
       tags:
         - me
-        - project
+        - pending_project
       responses:
         "200":
           description: OK
@@ -645,7 +645,7 @@ paths:
     get:
       summary: pending-project/get
       tags:
-        - project
+        - pending_project
       responses:
         "200":
           description: OK
@@ -681,6 +681,7 @@ paths:
       operationId: pending-project/accept-subowner
       tags:
         - project
+        - pending_project
       responses:
         "201":
           description: Created
@@ -731,6 +732,7 @@ paths:
                                 type: string
                                 enum:
                                   - TOO_MANY_PROJECTS
+                                  - NOT_ANSWERED_REGISTRATION_FORM
                     required:
                       - status
                       - error
@@ -748,6 +750,404 @@ paths:
               required:
                 - pending_project_id
     parameters: []
+  /pending-project/registration-form/get:
+    get:
+      summary: pending-project/registration-form/get
+      tags:
+        - pending_project
+        - registration_form
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_form:
+                    $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_form
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Registration Form or Pending Project Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - PENDING_PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: REGISTRATION_FORM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: pending-project/registration-form/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: pending_project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+      description: 指定された登録申請の情報を返します。
+  /pending-project/registration-form/list:
+    get:
+      summary: pending-project/registration-form/list
+      tags:
+        - pending_project
+        - registration_form
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_forms:
+                    type: array
+                    items:
+                      $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_forms
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/PendingProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: pending-project/registration-form/list
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: pending_project_id
+          required: true
+      description: 指定された企画向けの登録申請の一覧を返します。
+  /pending-project/registration-form/answer:
+    post:
+      summary: pending-project/registration-form/answer
+      operationId: pending-project/registration-form/answer
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    $ref: ./model/registration_form_answer/RegistrationFormAnswer.yml
+                required:
+                  - answer
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        required:
+                          - type
+                          - info
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            oneOf:
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - NO_FORM_ANSWER_ITEMS
+                                      - TOO_MANY_FORM_ANSWER_ITEMS
+                                      - MISMATCHED_FORM_ITEMS_LENGTH
+                                required:
+                                  - type
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FORM_ANSWER_ITEM
+                                  id:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - id
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - MISMATCHED_FORM_ITEM_ID
+                                  got:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                  expected:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - got
+                                  - expected
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Registration Form or Pending Project Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - PENDING_PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: REGISTRATION_FORM_NOT_FOUND
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        required:
+                          - type
+                          - info
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - ALREADY_ANSWERED_REGISTRATION_FORM
+                    required:
+                      - status
+                      - error
+              examples:
+                Already answered registration form:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: ALREADY_ANSWERED_REGISTRATION_FORM
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 登録申請に回答します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pending_project_id:
+                  $ref: ./model/pending_project/PendingProjectId.yml
+                registration_form_id:
+                  $ref: ./model/registration_form/RegistrationFormId.yml
+                items:
+                  type: array
+                  items:
+                    $ref: ./model/form_answer/RequestFormAnswerItem.yml
+              required:
+                - pending_project_id
+                - registration_form_id
+                - items
+      tags:
+        - registration_form
+        - pending_project
+        - registration_form_answer
+  /pending-project/registration-form/answer/get:
+    get:
+      summary: pending-project/registration-form/answer/get
+      tags:
+        - registration_form
+        - pending_project
+        - registration_form_answer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    $ref: ./model/registration_form_answer/RegistrationFormAnswer.yml
+                required:
+                  - answer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "Registration Form, Pending Project, or the Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - PENDING_PROJECT_NOT_FOUND
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: REGISTRATION_FORM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: pending-project/registration-form/answer/get
+      description: 登録申請の回答を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: pending_project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
   /project/get:
     get:
       summary: project/get
@@ -1486,112 +1886,7 @@ paths:
                 items:
                   type: array
                   items:
-                    allOf:
-                      - type: object
-                        properties:
-                          item_id:
-                            $ref: ./model/form/item/FormItemId.yml
-                        required:
-                          - item_id
-                      - nullable: true
-                        oneOf:
-                          - type: object
-                            properties:
-                              type:
-                                type: string
-                                enum:
-                                  - text
-                              answer:
-                                type: string
-                                nullable: true
-                            required:
-                              - type
-                              - answer
-                          - type: object
-                            properties:
-                              type:
-                                type: string
-                                enum:
-                                  - integer
-                              answer:
-                                type: integer
-                                nullable: true
-                            required:
-                              - type
-                              - answer
-                          - type: object
-                            properties:
-                              type:
-                                type: string
-                                enum:
-                                  - checkbox
-                              answer:
-                                type: array
-                                items:
-                                  $ref: ./model/form/item/CheckboxId.yml
-                            required:
-                              - type
-                              - answer
-                          - type: object
-                            properties:
-                              type:
-                                type: string
-                                enum:
-                                  - radio
-                              answer:
-                                oneOf:
-                                  - $ref: ./model/Null.yml
-                                  - $ref: ./model/form/item/RadioId.yml
-                            required:
-                              - type
-                              - answer
-                          - type: object
-                            properties:
-                              type:
-                                type: string
-                                enum:
-                                  - grid_radio
-                              answer:
-                                type: array
-                                items:
-                                  type: object
-                                  properties:
-                                    row_id:
-                                      $ref: ./model/form/item/GridRadioRowId.yml
-                                    value:
-                                      oneOf:
-                                        - $ref: ./model/Null.yml
-                                        - $ref: ./model/form/item/GridRadioColumnId.yml
-                                  required:
-                                    - row_id
-                                    - value
-                            required:
-                              - type
-                              - answer
-                          - type: object
-                            properties:
-                              type:
-                                type: string
-                                enum:
-                                  - file
-                              answer:
-                                type: array
-                                items:
-                                  type: object
-                                  oneOf:
-                                    - properties:
-                                        file_id:
-                                          $ref: ./model/file/FileId.yml
-                                      required:
-                                        - file_id
-                                    - properties:
-                                        sharing_id:
-                                          $ref: ./model/file_sharing/FileSharingId.yml
-                                      required:
-                                        - sharing_id
-                            required:
-                              - type
-                              - answer
+                    $ref: ./model/form_answer/RequestFormAnswerItem.yml
               required:
                 - project_id
                 - form_id
@@ -1862,6 +2157,385 @@ paths:
           name: form_id
           required: true
       description: 指定されたファイル共有で申請の回答に対して共有されているファイルの情報を返します。
+  /project/registration-form/get:
+    get:
+      summary: project/registration-form/get
+      tags:
+        - project
+        - registration_form
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_form:
+                    $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_form
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "Registration Form or Project Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: REGISTRATION_FORM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+      description: 指定された登録申請の情報を返します。
+  /project/registration-form/list:
+    get:
+      summary: project/registration-form/list
+      tags:
+        - project
+        - registration_form
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_forms:
+                    type: array
+                    items:
+                      $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_forms
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/list
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+      description: 指定された企画向けの登録申請の一覧を返します。
+  /project/registration-form/answer/get:
+    get:
+      summary: project/registration-form/answer/get
+      tags:
+        - project
+        - registration_form_answer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    $ref: ./model/registration_form_answer/RegistrationFormAnswer.yml
+                required:
+                  - answer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "Registration Form, Project, or Registration Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: REGISTRATION_FORM_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/answer/get
+      description: 登録申請の回答を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+  /project/registration-form/answer/file-sharing/get-file:
+    get:
+      summary: project/registration-form/answer/file-sharing/get-file
+      tags:
+        - project
+        - registration_form_answer
+        - file
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing, Project, Registration Form or Registration Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/answer/file-sharing/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+      description: 指定されたファイル共有で登録申請の回答に対して共有されているファイルを返します。
+  /project/registration-form/answer/file-sharing/get-file-info:
+    get:
+      summary: project/registration-form/answer/file-sharing/get-file-info
+      tags:
+        - project
+        - registration_form_answer
+        - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing, Project, Registration Form or Registration Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - PROJECT_NOT_FOUND
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: project/registration-form/answer/file-sharing/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: project_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+      description: 指定されたファイル共有で登録申請の回答に対して共有されているファイルの情報を返します。
   /project/file-distribution/get:
     get:
       summary: project/file-distribution/get
@@ -2252,6 +2926,268 @@ paths:
           description: |
             ファイル回答の表示先 URL の形式を [RFC6570](https://tools.ietf.org/html/rfc6570) の Level 4 template で指定します。
             `answer_id` 変数を回答の ID で、 `sharing_ids` 変数を回答されたファイル共有の ID のリストで展開して CSV に出力します。
+  /registration-form/get:
+    get:
+      summary: registration-form/get
+      tags:
+        - registration_form
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_form:
+                    $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_form
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/RegistrationFormNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+      description: 指定された登録申請の情報を返します。
+  /registration-form/list:
+    get:
+      summary: registration-form/list
+      tags:
+        - registration_form
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_forms:
+                    type: array
+                    items:
+                      $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_forms
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form/list
+      description: 登録申請一覧を返します。
+  /registration-form/create:
+    post:
+      summary: registration-form/create
+      operationId: registration-form/create
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  registration_form:
+                    $ref: ./model/registration_form/RegistrationForm.yml
+                required:
+                  - registration_form
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            oneOf:
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FIELD
+                                  field:
+                                    type: string
+                                required:
+                                  - type
+                                  - field
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FORM_ITEM
+                                      - DUPLICATED_FORM_ITEM_ID
+                                  id:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - id
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 登録申請を作成します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                items:
+                  type: array
+                  items:
+                    $ref: ./model/form/item/FormItem.yml
+                query:
+                  $ref: ./model/ProjectQuery.yml
+              required:
+                - name
+                - description
+                - items
+                - query
+      tags:
+        - registration_form
+        - committee
+  /registration-form/answer/list:
+    get:
+      summary: registration-form/answer/list
+      tags:
+        - registration_form
+        - registration_form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answers:
+                    type: array
+                    items:
+                      $ref: ./model/registration_form_answer/RegistrationFormAnswer.yml
+                required:
+                  - answers
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/RegistrationFormNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form/answer/list
+      description: 登録申請の回答一覧を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+  /registration-form/answer/export:
+    get:
+      summary: registration-form/answer/export
+      tags:
+        - registration_form
+        - registration_form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: string
+                description: カンマ区切り、CRLF 改行の CSV
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FormNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form/answer/export
+      description: 登録申請の回答一覧を CSV で出力します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+          description: 回答一覧を取得する登録申請の ID を指定します。
+        - schema:
+            type: string
+          in: query
+          name: field_id
+          description: 与えられた場合、その名前の列で回答の ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_created_at
+          description: 与えられた場合、その名前の列で回答日時を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_project_id
+          description: 与えられた場合、その名前の列で回答した企画の ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_pending_project_id
+          description: 与えられた場合、その名前の列で回答した承認待ち企画の ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_author_id
+          description: 与えられた場合、その名前の列で回答したユーザーの ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: file_answer_template
+          required: true
+          description: |
+            ファイル回答の表示先 URL の形式を [RFC6570](https://tools.ietf.org/html/rfc6570) の Level 4 template で指定します。
+            `answer_id` 変数を回答の ID で、 `sharing_ids` 変数を回答されたファイル共有の ID のリストで展開して CSV に出力します。
   /form-answer/get:
     get:
       summary: form-answer/get
@@ -2288,6 +3224,201 @@ paths:
           name: answer_id
           required: true
     parameters: []
+  /registration-form-answer/get:
+    get:
+      summary: registration-form-answer/get
+      tags:
+        - registration_form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    $ref: ./model/registration_form_answer/RegistrationFormAnswer.yml
+                required:
+                  - answer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/RegistrationFormAnswerNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form-answer/get
+      description: 指定された登録申請回答の情報を返します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: answer_id
+          required: true
+    parameters: []
+  /registration-form-answer/file-sharing/get-file:
+    get:
+      summary: registration-form-answer/file-sharing/get-file
+      tags:
+        - file
+        - registration_form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing or Registration Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form-answer/file-sharing/get-file
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: answer_id
+          required: true
+      description: 指定されたファイル共有で登録申請の回答に対して共有されているファイルを返します。
+  /registration-form-answer/file-sharing/get-file-info:
+    get:
+      summary: registration-form-answer/file-sharing/get-file-info
+      tags:
+        - file
+        - registration_form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  file:
+                    $ref: ./model/file/File.yml
+                required:
+                  - file
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: "File Sharing or Registration Form Answer Not Found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                                  - FILE_SHARING_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: FILE_SHARING_NOT_FOUND
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form-answer/file-sharing/get-file-info
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: sharing_id
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: answer_id
+          required: true
+      description: 指定されたファイル共有で登録申請の回答に対して共有されているファイルの情報を返します。
   /file/create:
     post:
       summary: file/create
@@ -3582,6 +4713,49 @@ components:
                   type: API
                   info:
                     type: FORM_NOT_FOUND
+    RegistrationFormNotFound:
+      description: Registration Form Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - REGISTRATION_FORM_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: REGISTRATION_FORM_NOT_FOUND
     UserNotFound:
       description: User Not Found
       content:
@@ -3668,6 +4842,49 @@ components:
                   type: API
                   info:
                     type: FORM_ANSWER_NOT_FOUND
+    RegistrationFormAnswerNotFound:
+      description: Registration Form Answer Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: REGISTRATION_FORM_ANSWER_NOT_FOUND
     FileNotFound:
       description: File Not Found
       content:
@@ -4027,8 +5244,11 @@ tags:
   - name: me
   - name: user
   - name: project
+  - name: pending_project
   - name: form
   - name: form_answer
+  - name: registration_form
+  - name: registration_form_answer
   - name: file
   - name: committee
   - name: admin

@@ -30,6 +30,21 @@ oneOf:
       type:
         type: string
         enum:
+          - registration_form_answer
+      project_id:
+        $ref: ../project/ProjectId.yml
+      pending_project_id:
+        $ref: ../pending_project/PendingProjectId.yml
+      form_id:
+        $ref: ../registration_form/RegistrationFormId.yml
+    required:
+      - type
+      - registration_form_id
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
           - committee
           - committee_operator
           - public

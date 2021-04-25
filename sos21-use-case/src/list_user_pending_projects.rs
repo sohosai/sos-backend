@@ -39,10 +39,10 @@ mod tests {
         use std::collections::HashSet;
 
         let user = test::model::new_general_user();
-        let pending_project1 = test::model::new_pending_project(user.id.clone());
-        let pending_project2 = test::model::new_pending_project(user.id.clone());
+        let pending_project1 = test::model::new_general_pending_project(user.id.clone());
+        let pending_project2 = test::model::new_general_pending_project(user.id.clone());
         let other = test::model::new_general_user();
-        let pending_project3 = test::model::new_pending_project(other.id.clone());
+        let pending_project3 = test::model::new_general_pending_project(other.id.clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])

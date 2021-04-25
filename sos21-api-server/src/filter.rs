@@ -112,6 +112,17 @@ pub fn endpoints(
                     }
                 }
             },
+            / "registration-form" {
+                / "get" => GET (handler::project::registration_form::get),
+                / "list" => GET (handler::project::registration_form::list),
+                / "answer" {
+                    / "get" => GET (handler::project::registration_form::answer::get),
+                    / "file-sharing" {
+                        / "get-file" => GET (handler::project::registration_form::answer::file_sharing::get_file),
+                        / "get-file-info" => GET (handler::project::registration_form::answer::file_sharing::get_file_info),
+                    }
+                }
+            },
             / "file-distribution" {
                 / "list" => GET (handler::project::file_distribution::list),
                 / "get" => GET (handler::project::file_distribution::get),
@@ -120,6 +131,14 @@ pub fn endpoints(
         / "pending-project" {
             / "get" => GET (handler::pending_project::get),
             / "accept-subowner" => POST (handler::pending_project::accept_subowner),
+            / "registration-form" {
+                / "get" => GET (handler::pending_project::registration_form::get),
+                / "list" => GET (handler::pending_project::registration_form::list),
+                / "answer" {
+                    / => POST (handler::pending_project::registration_form::answer),
+                    / "get" => GET (handler::pending_project::registration_form::answer::get),
+                }
+            }
         },
         / "form" {
             / "get" => GET (handler::form::get),
@@ -167,6 +186,22 @@ pub fn endpoints(
             / "create" => POST (handler::file_distribution::create),
             / "list" => GET (handler::file_distribution::list),
             / "get" => GET (handler::file_distribution::get),
+        },
+        / "registration-form" {
+            / "get" => GET (handler::registration_form::get),
+            / "list" => GET (handler::registration_form::list),
+            / "create" => POST (handler::registration_form::create),
+            / "answer" {
+                / "list" => GET (handler::registration_form::answer::list),
+                / "export" => GET (handler::registration_form::answer::export),
+            }
+        },
+        / "registration-form-answer" {
+            / "get" => GET (handler::registration_form_answer::get),
+            / "file-sharing" {
+                / "get-file" => GET (handler::registration_form_answer::file_sharing::get_file),
+                / "get-file-info" => GET (handler::registration_form_answer::file_sharing::get_file_info),
+            }
         }
     };
 

@@ -14,6 +14,9 @@ pub struct Input {
     pub project_id: Option<Uuid>,
     pub form_answer_project_id: Option<Uuid>,
     pub form_answer_form_id: Option<Uuid>,
+    pub registration_form_answer_project_id: Option<Uuid>,
+    pub registration_form_answer_pending_project_id: Option<Uuid>,
+    pub registration_form_answer_registration_form_id: Option<Uuid>,
 }
 
 pub async fn update_file_sharing<'a, E>(conn: E, input: Input) -> Result<()>
@@ -30,7 +33,10 @@ UPDATE file_sharings
     scope = $5,
     project_id = $6,
     form_answer_project_id = $7,
-    form_answer_form_id = $8
+    form_answer_form_id = $8,
+    registration_form_answer_project_id = $9,
+    registration_form_answer_pending_project_id = $10,
+    registration_form_answer_registration_form_id = $11
   WHERE id = $1
 "#,
         input.id,
@@ -41,6 +47,9 @@ UPDATE file_sharings
         input.project_id,
         input.form_answer_project_id,
         input.form_answer_form_id,
+        input.registration_form_answer_project_id,
+        input.registration_form_answer_pending_project_id,
+        input.registration_form_answer_registration_form_id,
     )
     .execute(conn)
     .await

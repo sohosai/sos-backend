@@ -1,6 +1,8 @@
 use crate::model::file::FileId;
 use crate::model::form::FormId;
 use crate::model::project::ProjectId;
+use crate::model::registration_form::RegistrationFormId;
+use crate::model::registration_form_answer::RegistrationFormAnswerRespondent;
 
 use chrono::{DateTime, Utc};
 use mime::Mime;
@@ -24,6 +26,7 @@ impl FileSharingId {
 pub enum FileSharingScope {
     Project(ProjectId),
     FormAnswer(ProjectId, FormId),
+    RegistrationFormAnswer(RegistrationFormAnswerRespondent, RegistrationFormId),
     Committee,
     CommitteeOperator,
     Public,
@@ -41,6 +44,12 @@ impl FileSharingScope {
                     FormId::from_entity(form_id),
                 )
             }
+            entity::FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id) => {
+                FileSharingScope::RegistrationFormAnswer(
+                    RegistrationFormAnswerRespondent::from_entity(respondent),
+                    RegistrationFormId::from_entity(registration_form_id),
+                )
+            }
             entity::FileSharingScope::Committee => FileSharingScope::Committee,
             entity::FileSharingScope::CommitteeOperator => FileSharingScope::CommitteeOperator,
             entity::FileSharingScope::Public => FileSharingScope::Public,
@@ -56,6 +65,12 @@ impl FileSharingScope {
                 entity::FileSharingScope::FormAnswer(
                     project_id.into_entity(),
                     form_id.into_entity(),
+                )
+            }
+            FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id) => {
+                entity::FileSharingScope::RegistrationFormAnswer(
+                    respondent.into_entity(),
+                    registration_form_id.into_entity(),
                 )
             }
             FileSharingScope::Committee => entity::FileSharingScope::Committee,

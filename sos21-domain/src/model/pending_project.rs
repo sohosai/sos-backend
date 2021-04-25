@@ -1,6 +1,8 @@
 use std::convert::TryInto;
 
-use crate::context::ProjectRepository;
+use crate::context::{
+    ProjectRepository, RegistrationFormAnswerRepository, RegistrationFormRepository,
+};
 use crate::model::date_time::DateTime;
 use crate::model::project::{
     self, Project, ProjectAttributes, ProjectCategory, ProjectDescription, ProjectGroupName,
@@ -39,19 +41,33 @@ pub struct PendingProject {
     pub attributes: ProjectAttributes,
 }
 
-#[derive(Debug, Error, Clone)]
-#[error("too many projects")]
-pub struct TooManyProjectsError {
-    _priv: (),
+#[derive(Debug, Clone, Copy)]
+pub enum AcceptSubownerErrorKind {
+    TooManyProjects,
+    NotAnsweredRegistrationForm,
 }
 
-impl TooManyProjectsError {
+#[derive(Debug, Error, Clone)]
+#[error("failed to accept subowner")]
+pub struct AcceptSubownerError {
+    kind: AcceptSubownerErrorKind,
+}
+
+impl AcceptSubownerError {
+    pub fn kind(&self) -> AcceptSubownerErrorKind {
+        self.kind
+    }
+
     fn from_count_integer_error(_err: std::num::TryFromIntError) -> Self {
-        TooManyProjectsError { _priv: () }
+        AcceptSubownerError {
+            kind: AcceptSubownerErrorKind::TooManyProjects,
+        }
     }
 
     fn from_index_error(_err: project::index::FromU16Error) -> Self {
-        TooManyProjectsError { _priv: () }
+        AcceptSubownerError {
+            kind: AcceptSubownerErrorKind::TooManyProjects,
+        }
     }
 }
 
@@ -64,21 +80,35 @@ impl PendingProject {
         self,
         ctx: C,
         subowner: &User,
-    ) -> anyhow::Result<Result<Project, TooManyProjectsError>>
+    ) -> anyhow::Result<Result<Project, AcceptSubownerError>>
     where
-        C: ProjectRepository,
+        C: ProjectRepository + RegistrationFormRepository + RegistrationFormAnswerRepository,
     {
-        let count = ctx
+        let forms_count = ctx
+            .count_registration_forms_by_pending_project(self.id)
+            .await
+            .context("Failed to count registration forms")?;
+        let answers_count = ctx
+            .count_registration_form_answers_by_pending_project(self.id)
+            .await
+            .context("Failed to count registration form answers")?;
+        if forms_count != answers_count {
+            return Ok(Err(AcceptSubownerError {
+                kind: AcceptSubownerErrorKind::NotAnsweredRegistrationForm,
+            }));
+        }
+
+        let projects_count = ctx
             .count_projects()
             .await
             .context("Failed to count projects")?;
-        let count = match count.try_into() {
+        let projects_count = match projects_count.try_into() {
             Ok(count) => count,
-            Err(err) => return Ok(Err(TooManyProjectsError::from_count_integer_error(err))),
+            Err(err) => return Ok(Err(AcceptSubownerError::from_count_integer_error(err))),
         };
-        let index = match ProjectIndex::from_u16(count) {
+        let index = match ProjectIndex::from_u16(projects_count) {
             Ok(index) => index,
-            Err(err) => return Ok(Err(TooManyProjectsError::from_index_error(err))),
+            Err(err) => return Ok(Err(AcceptSubownerError::from_index_error(err))),
         };
 
         Ok(Ok(Project {
@@ -107,8 +137,12 @@ mod tests {
         let owner = test::model::new_general_user();
         let subowner = test::model::new_general_user();
 
-        let app = test::build_mock_app().build();
-        let pending_project = test::model::new_pending_project(owner.id.clone());
+        let pending_project = test::model::new_general_pending_project(owner.id.clone());
+        let app = test::build_mock_app()
+            .users(vec![owner.clone(), subowner.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .build();
+
         let project = pending_project
             .accept_subowner(&app, &subowner)
             .await

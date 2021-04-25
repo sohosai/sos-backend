@@ -152,3 +152,15 @@ sos21_domain::delegate_pending_project_repository! {
         self { &self.database }
     }
 }
+
+sos21_domain::delegate_registration_form_repository! {
+    impl RegistrationFormRepository for Context {
+        self { &self.database }
+    }
+}
+
+sos21_domain::delegate_registration_form_answer_repository! {
+    impl RegistrationFormAnswerRepository for Context {
+        self { &self.database }
+    }
+}
