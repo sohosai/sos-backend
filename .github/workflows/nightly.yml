@@ -45,7 +45,7 @@ jobs:
         if: ${{ steps.check-changes.outputs.changed == 'true' }}
         uses: sohosai/sos21-backend-infrastructure/actions/deploy-staging@main
         with:
-          target: direct.online-api-nightly.sohosai.com
+          target: api.nightly.online.sohosai.com
           ssh_private_key: ./ssh_private_key
           configurations: ./nix/deployment/nightly.nix
       - name: Delete ssh private key file
