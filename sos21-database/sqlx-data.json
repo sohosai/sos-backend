@@ -1694,6 +1694,86 @@
       ]
     }
   },
+  "69a6ae03bc00325d907fb8d9c52db7df5f50602adf2b7ffab297b8b1ddac15ed": {
+    "query": "\nWITH project_forms AS (\n    SELECT forms.id\n    FROM forms\n    LEFT OUTER JOIN form_condition_includes\n        ON form_condition_includes.form_id = forms.id\n    LEFT OUTER JOIN form_condition_excludes\n        ON form_condition_excludes.form_id = forms.id\n    WHERE (\n        (\n            form_condition_excludes.project_id IS NULL\n            OR form_condition_excludes.project_id <> $1\n        )\n        AND (\n            form_condition_includes.project_id = $1\n            OR (\n                SELECT\n                    bool_or((\n                        form_project_query_conjunctions.category = projects.category IS NOT FALSE\n                        AND form_project_query_conjunctions.attributes | projects.attributes = projects.attributes\n                    ))\n                FROM form_project_query_conjunctions, projects\n                WHERE form_project_query_conjunctions.form_id = forms.id AND projects.id = $1\n            )\n        )\n    )\n)\nSELECT\n    forms.*,\n    array_agg(DISTINCT form_condition_includes.project_id)\n        FILTER (WHERE form_condition_includes.project_id IS NOT NULL)\n        AS include_ids,\n    array_agg(DISTINCT form_condition_excludes.project_id)\n        FILTER (WHERE form_condition_excludes.project_id IS NOT NULL)\n        AS exclude_ids,\n    array_agg(DISTINCT (\n            form_project_query_conjunctions.category,\n            form_project_query_conjunctions.attributes\n        ))\n        /* works because attributes column in form_project_query_conjunctions table is NOT NULL */\n        FILTER (WHERE form_project_query_conjunctions.attributes IS NOT NULL)\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM project_forms\nINNER JOIN forms\n    ON forms.id = project_forms.id\nLEFT OUTER JOIN form_condition_includes\n    ON forms.id = form_condition_includes.form_id\nLEFT OUTER JOIN form_condition_excludes\n    ON forms.id = form_condition_excludes.form_id\nLEFT OUTER JOIN form_project_query_conjunctions\n    ON forms.id = form_project_query_conjunctions.form_id\nGROUP BY forms.id\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "starts_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 6,
+          "name": "ends_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 7,
+          "name": "items",
+          "type_info": "Jsonb"
+        },
+        {
+          "ordinal": 8,
+          "name": "include_ids",
+          "type_info": "UuidArray"
+        },
+        {
+          "ordinal": 9,
+          "name": "exclude_ids",
+          "type_info": "UuidArray"
+        },
+        {
+          "ordinal": 10,
+          "name": "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
+          "type_info": "RecordArray"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
+        null
+      ]
+    }
+  },
   "6ee7b82d26d234682db6577ea100ee044582cb3f68ed6da5f927d9a865c6159a": {
     "query": "SELECT * FROM registration_form_answers WHERE registration_form_id = $1",
     "describe": {
@@ -2108,86 +2188,6 @@
         ]
       },
       "nullable": []
-    }
-  },
-  "7fe7f07a0a796342208ddcfbabf7bd624437ac7f3c079a39556ffa14ea08b10e": {
-    "query": "\nWITH project_forms AS (\n    SELECT forms.id\n    FROM forms\n    LEFT OUTER JOIN form_condition_includes\n        ON form_condition_includes.form_id = forms.id\n    LEFT OUTER JOIN form_condition_excludes\n        ON form_condition_excludes.form_id = forms.id\n    WHERE (\n        (\n            form_condition_excludes.project_id IS NULL\n            OR form_condition_excludes.project_id <> $1\n        )\n        AND (\n            form_condition_includes.project_id = $1\n            OR (\n                SELECT\n                    bool_or((\n                        form_project_query_conjunctions.category = projects.category IS NOT FALSE\n                        AND form_project_query_conjunctions.attributes | projects.attributes = projects.attributes\n                    ))\n                FROM form_project_query_conjunctions, projects\n                WHERE form_project_query_conjunctions.form_id = forms.id AND projects.id = $1\n            )\n        )\n    )\n)\nSELECT\n    forms.*,\n    array_agg(DISTINCT form_condition_includes.project_id)\n        FILTER (WHERE form_condition_includes.project_id IS NOT NULL)\n        AS include_ids,\n    array_agg(DISTINCT form_condition_excludes.project_id)\n        FILTER (WHERE form_condition_excludes.project_id IS NOT NULL)\n        AS exclude_ids,\n    array_agg(DISTINCT (\n            form_project_query_conjunctions.category,\n            form_project_query_conjunctions.attributes\n        ))\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM project_forms\nINNER JOIN forms\n    ON forms.id = project_forms.id\nLEFT OUTER JOIN form_condition_includes\n    ON forms.id = form_condition_includes.form_id\nLEFT OUTER JOIN form_condition_excludes\n    ON forms.id = form_condition_excludes.form_id\nLEFT OUTER JOIN form_project_query_conjunctions\n    ON forms.id = form_project_query_conjunctions.form_id\nGROUP BY forms.id\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 2,
-          "name": "author_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 3,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 4,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "starts_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 6,
-          "name": "ends_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 7,
-          "name": "items",
-          "type_info": "Jsonb"
-        },
-        {
-          "ordinal": 8,
-          "name": "include_ids",
-          "type_info": "UuidArray"
-        },
-        {
-          "ordinal": 9,
-          "name": "exclude_ids",
-          "type_info": "UuidArray"
-        },
-        {
-          "ordinal": 10,
-          "name": "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
-          "type_info": "RecordArray"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        null,
-        null,
-        null
-      ]
     }
   },
   "8098443d10c160a69ebcb3f37ce1a0d3530c464d70622ae5d626a36468131c40": {
