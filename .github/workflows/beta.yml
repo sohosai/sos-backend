@@ -26,7 +26,7 @@ jobs:
       - name: Deploy
         uses: sohosai/sos21-backend-infrastructure/actions/deploy-staging@main
         with:
-          target: direct.online-api-beta.sohosai.com
+          target: api.beta.online.sohosai.com
           ssh_private_key: ./ssh_private_key
           configurations: ./nix/deployment/beta.nix
       - name: Delete ssh private key file
