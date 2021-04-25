@@ -23,7 +23,7 @@ with the HTTP API interface being the "public API".
 ### Removed
 ### Fixed
 
-- 500 when an empty query is used in the form condition ([#63](https://github.com/sohosai/sos21-backend/pull/63))
+- 500 when an empty query is used in the form condition ([#63](https://github.com/sohosai/sos21-backend/pull/63), [#75](https://github.com/sohosai/sos21-backend/pull/75))
 
 ### Security
 
