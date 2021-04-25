@@ -19,6 +19,7 @@ pub mod create_registration_form;
 pub mod distribute_files;
 pub mod export_form_answers;
 pub mod export_projects;
+pub mod export_registration_form_answers;
 pub mod export_users;
 pub mod get_distributed_file;
 pub mod get_file;

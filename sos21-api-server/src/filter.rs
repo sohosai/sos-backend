@@ -191,7 +191,10 @@ pub fn endpoints(
             / "get" => GET (handler::registration_form::get),
             / "list" => GET (handler::registration_form::list),
             / "create" => POST (handler::registration_form::create),
-            / "answer" / "list" => GET (handler::registration_form::answer::list),
+            / "answer" {
+                / "list" => GET (handler::registration_form::answer::list),
+                / "export" => GET (handler::registration_form::answer::export),
+            }
         },
         / "registration-form-answer" {
             / "get" => GET (handler::registration_form_answer::get),

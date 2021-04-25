@@ -3122,6 +3122,72 @@ paths:
           in: query
           name: registration_form_id
           required: true
+  /registration-form/answer/export:
+    get:
+      summary: registration-form/answer/export
+      tags:
+        - registration_form
+        - registration_form_answer
+        - committee
+      responses:
+        "200":
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: string
+                description: カンマ区切り、CRLF 改行の CSV
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FormNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: registration-form/answer/export
+      description: 登録申請の回答一覧を CSV で出力します。
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: registration_form_id
+          required: true
+          description: 回答一覧を取得する登録申請の ID を指定します。
+        - schema:
+            type: string
+          in: query
+          name: field_id
+          description: 与えられた場合、その名前の列で回答の ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_created_at
+          description: 与えられた場合、その名前の列で回答日時を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_project_id
+          description: 与えられた場合、その名前の列で回答した企画の ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_pending_project_id
+          description: 与えられた場合、その名前の列で回答した承認待ち企画の ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_author_id
+          description: 与えられた場合、その名前の列で回答したユーザーの ID を出力します。
+        - schema:
+            type: string
+          in: query
+          name: file_answer_template
+          required: true
+          description: |
+            ファイル回答の表示先 URL の形式を [RFC6570](https://tools.ietf.org/html/rfc6570) の Level 4 template で指定します。
+            `answer_id` 変数を回答の ID で、 `sharing_ids` 変数を回答されたファイル共有の ID のリストで展開して CSV に出力します。
   /form-answer/get:
     get:
       summary: form-answer/get
