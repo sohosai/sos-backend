@@ -4166,9 +4166,9 @@ paths:
           name: sharing_id
           required: true
       description: 指定されたファイル共有で共有されているファイルの情報を返します。
-  /file-sharing/public/get-file:
+  /file-sharing/get-public-file:
     get:
-      summary: file-sharing/public/get-file
+      summary: file-sharing/get-public-file
       tags:
         - file
       responses:
@@ -4226,7 +4226,7 @@ paths:
           $ref: "#/components/responses/FileSharingNotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: file-sharing/public/get-file
+      operationId: file-sharing/get-public-file
       parameters:
         - schema:
             type: string
@@ -4236,9 +4236,9 @@ paths:
           required: true
       description: 指定されたファイル共有で共有されているファイルを認証無しで返します。
       security: []
-  /file-sharing/public/get-file-info:
+  /file-sharing/get-public-file-info:
     get:
-      summary: file-sharing/public/get-file-info
+      summary: file-sharing/get-public-file-info
       tags:
         - file
       responses:
@@ -4305,7 +4305,7 @@ paths:
           $ref: "#/components/responses/FileSharingNotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: file-sharing/public/get-file-info
+      operationId: file-sharing/get-public-file-info
       parameters:
         - schema:
             type: string

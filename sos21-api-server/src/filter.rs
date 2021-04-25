@@ -177,10 +177,8 @@ pub fn endpoints(
             / "revoke" => POST (handler::file_sharing::revoke),
             / "get-file" => GET (handler::file_sharing::get_file),
             / "get-file-info" => GET (handler::file_sharing::get_file_info),
-            / "public" {
-                / "get-file" => {noauth} GET (handler::file_sharing::public::get_file),
-                / "get-file-info" => {noauth} GET (handler::file_sharing::public::get_file_info),
-            }
+            / "get-public-file" => {noauth} GET (handler::file_sharing::get_public_file),
+            / "get-public-file-info" => {noauth} GET (handler::file_sharing::get_public_file_info),
         },
         / "file-distribution" {
             / "create" => POST (handler::file_distribution::create),
