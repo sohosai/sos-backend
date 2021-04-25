@@ -27,6 +27,10 @@
 <span id="24">24</span>
 <span id="25">25</span>
 <span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
@@ -37,6 +41,7 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">FileSharingScope</span> {
     <span class="ident">Project</span>,
     <span class="ident">FormAnswer</span>,
+    <span class="ident">RegistrationFormAnswer</span>,
     <span class="ident">Committee</span>,
     <span class="ident">CommitteeOperator</span>,
     <span class="ident">Public</span>,
@@ -53,6 +58,9 @@
     <span class="kw">pub</span> <span class="ident">project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">form_answer_project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">form_answer_form_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">registration_form_answer_project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">registration_form_answer_pending_project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">registration_form_answer_registration_form_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="sos21_database"></div>

@@ -78,6 +78,14 @@
 <span id="75">75</span>
 <span id="76">76</span>
 <span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">file</span>::<span class="ident">File</span>,
@@ -109,6 +117,9 @@ SELECT
     file_sharings.project_id,
     file_sharings.form_answer_project_id,
     file_sharings.form_answer_form_id,
+    file_sharings.registration_form_answer_project_id,
+    file_sharings.registration_form_answer_pending_project_id,
+    file_sharings.registration_form_answer_registration_form_id,
     files.created_at AS file_created_at,
     files.author_id AS file_author_id,
     files.object_id AS file_object_id,
@@ -141,6 +152,11 @@ WHERE file_sharings.id = $1
         <span class="ident">project_id</span>: <span class="ident">row</span>.<span class="ident">project_id</span>,
         <span class="ident">form_answer_project_id</span>: <span class="ident">row</span>.<span class="ident">form_answer_project_id</span>,
         <span class="ident">form_answer_form_id</span>: <span class="ident">row</span>.<span class="ident">form_answer_form_id</span>,
+        <span class="ident">registration_form_answer_project_id</span>: <span class="ident">row</span>.<span class="ident">registration_form_answer_project_id</span>,
+        <span class="ident">registration_form_answer_pending_project_id</span>: <span class="ident">row</span>
+            .<span class="ident">registration_form_answer_pending_project_id</span>,
+        <span class="ident">registration_form_answer_registration_form_id</span>: <span class="ident">row</span>
+            .<span class="ident">registration_form_answer_registration_form_id</span>,
     };
 
     <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">File</span> {

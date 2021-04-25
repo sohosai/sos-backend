@@ -111,10 +111,24 @@
 <span id="108">108</span>
 <span id="109">109</span>
 <span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{
     <span class="ident">FileDistributionRepository</span>, <span class="ident">FileRepository</span>, <span class="ident">FileSharingRepository</span>, <span class="ident">FormAnswerRepository</span>,
-    <span class="ident">FormRepository</span>, <span class="ident">ObjectRepository</span>, <span class="ident">PendingProjectRepository</span>, <span class="ident">ProjectRepository</span>, <span class="ident">UserRepository</span>,
+    <span class="ident">FormRepository</span>, <span class="ident">ObjectRepository</span>, <span class="ident">PendingProjectRepository</span>, <span class="ident">ProjectRepository</span>,
+    <span class="ident">RegistrationFormAnswerRepository</span>, <span class="ident">RegistrationFormRepository</span>, <span class="ident">UserRepository</span>,
 };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">email</span>, <span class="ident">UserEmailAddress</span>, <span class="ident">UserId</span>};
 
@@ -219,6 +233,18 @@
 
 <span class="kw">crate</span>::<span class="macro">delegate_pending_project_repository</span><span class="macro">!</span> {
     <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">C</span>: <span class="ident">PendingProjectRepository</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="ident">PendingProjectRepository</span> <span class="kw">for</span> <span class="ident">Authentication</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span> {
+        <span class="self">self</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span> }
+    }
+}
+
+<span class="kw">crate</span>::<span class="macro">delegate_registration_form_repository</span><span class="macro">!</span> {
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">C</span>: <span class="ident">RegistrationFormRepository</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="ident">RegistrationFormRepository</span> <span class="kw">for</span> <span class="ident">Authentication</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span> {
+        <span class="self">self</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span> }
+    }
+}
+
+<span class="kw">crate</span>::<span class="macro">delegate_registration_form_answer_repository</span><span class="macro">!</span> {
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">C</span>: <span class="ident">RegistrationFormAnswerRepository</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="ident">RegistrationFormAnswerRepository</span> <span class="kw">for</span> <span class="ident">Authentication</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span> {
         <span class="self">self</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span> }
     }
 }
