@@ -12,6 +12,7 @@ with the HTTP API interface being the "public API".
 
 - Subowner ([#54](https://github.com/sohosai/sos21-backend/pull/54))
 - Users' category ([#57](https://github.com/sohosai/sos21-backend/pull/57))
+- Registration form ([#73](https://github.com/sohosai/sos21-backend/pull/73))
 
 ### Changed
 
