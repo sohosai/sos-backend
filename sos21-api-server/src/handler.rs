@@ -243,6 +243,7 @@ pub mod form_answer;
 pub mod pending_project;
 pub mod project;
 pub mod registration_form;
+pub mod registration_form_answer;
 pub mod signup;
 pub mod user;
 pub use signup::handler as signup;
