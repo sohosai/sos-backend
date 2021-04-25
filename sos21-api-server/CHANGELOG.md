@@ -17,6 +17,7 @@ with the HTTP API interface being the "public API".
 ### Changed
 
 - Change the specification around text and integer placeholders ([#65](https://github.com/sohosai/sos21-backend/pull/65))
+- Rename some endpoints ([#76](https://github.com/sohosai/sos21-backend/pull/76))
 
 ### Deprecated
 ### Removed

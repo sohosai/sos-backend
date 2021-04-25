@@ -1,7 +1,3 @@
-pub mod form_answer;
-pub mod project;
-pub mod public;
-
 pub mod get;
 pub use get::handler as get;
 pub mod revoke;
@@ -10,3 +6,7 @@ pub mod get_file;
 pub use get_file::handler as get_file;
 pub mod get_file_info;
 pub use get_file_info::handler as get_file_info;
+pub mod get_public_file;
+pub use get_public_file::handler as get_public_file;
+pub mod get_public_file_info;
+pub use get_public_file_info::handler as get_public_file_info;
