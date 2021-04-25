@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Change the specification around text and integer placeholders ([#65](https://github.com/sohosai/sos21-backend/pull/65))
 - Change the specification around the project name and description length ([#69](https://github.com/sohosai/sos21-backend/pull/69))
 - Require stripped texts ([#70](https://github.com/sohosai/sos21-backend/pull/70))
+- Refactor endpoint and API specs ([#76](https://github.com/sohosai/sos21-backend/pull/76))
 
 ### Deprecated
 ### Removed
