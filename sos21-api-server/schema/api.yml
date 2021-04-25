@@ -426,7 +426,7 @@ paths:
       summary: me/pending-project/list
       tags:
         - me
-        - project
+        - pending_project
       responses:
         "200":
           description: OK
@@ -645,7 +645,7 @@ paths:
     get:
       summary: pending-project/get
       tags:
-        - project
+        - pending_project
       responses:
         "200":
           description: OK
@@ -681,6 +681,7 @@ paths:
       operationId: pending-project/accept-subowner
       tags:
         - project
+        - pending_project
       responses:
         "201":
           description: Created
@@ -4267,6 +4268,7 @@ tags:
   - name: me
   - name: user
   - name: project
+  - name: pending_project
   - name: form
   - name: form_answer
   - name: registration_form
