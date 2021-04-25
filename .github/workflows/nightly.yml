@@ -24,6 +24,7 @@ jobs:
       - name: Check changes
         id: check-changes
         run: |
+          git pull --tags
           last_nightly=$(git tag --list --sort=taggerdate 'nightly-*' | tail -n 1)
           if [ -z "$last_nightly" ]; then
             echo "::set-output name=changed::true"
