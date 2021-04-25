@@ -120,6 +120,14 @@ pub fn endpoints(
         / "pending-project" {
             / "get" => GET (handler::pending_project::get),
             / "accept-subowner" => POST (handler::pending_project::accept_subowner),
+            / "registration-form" {
+                / "get" => GET (handler::pending_project::registration_form::get),
+                / "list" => GET (handler::pending_project::registration_form::list),
+                / "answer" {
+                    / => POST (handler::pending_project::registration_form::answer),
+                    / "get" => GET (handler::pending_project::registration_form::answer::get),
+                }
+            }
         },
         / "form" {
             / "get" => GET (handler::form::get),
