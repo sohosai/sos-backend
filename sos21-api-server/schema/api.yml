@@ -4609,6 +4609,7 @@ paths:
                   - version
                   - profile
                   - out
+                  - git
         "403":
           $ref: "#/components/responses/CorsForbidden"
         "500":
