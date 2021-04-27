@@ -7,7 +7,7 @@ use sos21_domain::context::{
     FileSharingRepository, Login, PendingProjectRepository, ProjectRepository,
     RegistrationFormAnswerRepository, RegistrationFormRepository,
 };
-use sos21_domain::model::pending_project;
+use sos21_domain::model::project;
 
 #[derive(Debug, Clone)]
 pub enum Error {
@@ -18,13 +18,13 @@ pub enum Error {
 }
 
 impl Error {
-    fn from_accept_error(err: pending_project::AcceptSubownerError) -> Self {
+    fn from_new_project_error(err: project::NewProjectError) -> Self {
         match err.kind() {
-            pending_project::AcceptSubownerErrorKind::TooManyProjects => Error::TooManyProjects,
-            pending_project::AcceptSubownerErrorKind::NotAnsweredRegistrationForm => {
+            project::NewProjectErrorKind::TooManyProjects => Error::TooManyProjects,
+            project::NewProjectErrorKind::NotAnsweredRegistrationForm => {
                 Error::NotAnsweredRegistrationForm
             }
-            pending_project::AcceptSubownerErrorKind::SameOwnerSubowner => Error::SameOwnerSubowner,
+            project::NewProjectErrorKind::SameOwnerSubowner => Error::SameOwnerSubowner,
         }
     }
 }
@@ -57,10 +57,9 @@ where
     };
 
     let pending_project_id = pending_project.id;
-    let project = pending_project
-        .accept_subowner(&ctx, login_user)
+    let project = project::Project::new(ctx, pending_project, login_user)
         .await?
-        .map_err(|err| UseCaseError::UseCase(Error::from_accept_error(err)))?;
+        .map_err(|err| UseCaseError::UseCase(Error::from_new_project_error(err)))?;
 
     ctx.store_project(project.clone())
         .await

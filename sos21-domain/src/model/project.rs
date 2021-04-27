@@ -1,7 +1,14 @@
+use std::convert::TryInto;
+
+use crate::context::{
+    ProjectRepository, RegistrationFormAnswerRepository, RegistrationFormRepository,
+};
 use crate::model::date_time::DateTime;
+use crate::model::pending_project::PendingProject;
 use crate::model::permissions::Permissions;
 use crate::model::user::{User, UserId};
 
+use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use uuid::Uuid;
@@ -58,7 +65,101 @@ pub struct SameOwnerSubownerError {
     _priv: (),
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NewProjectErrorKind {
+    TooManyProjects,
+    SameOwnerSubowner,
+    NotAnsweredRegistrationForm,
+}
+
+#[derive(Debug, Clone, Error)]
+#[error("failed to create a project")]
+pub struct NewProjectError {
+    kind: NewProjectErrorKind,
+}
+
+impl NewProjectError {
+    pub fn kind(&self) -> NewProjectErrorKind {
+        self.kind
+    }
+
+    fn from_count_integer_error(_err: std::num::TryFromIntError) -> Self {
+        NewProjectError {
+            kind: NewProjectErrorKind::TooManyProjects,
+        }
+    }
+
+    fn from_index_error(_err: index::FromU16Error) -> Self {
+        NewProjectError {
+            kind: NewProjectErrorKind::TooManyProjects,
+        }
+    }
+
+    fn from_content_error(_err: SameOwnerSubownerError) -> Self {
+        NewProjectError {
+            kind: NewProjectErrorKind::SameOwnerSubowner,
+        }
+    }
+}
+
 impl Project {
+    pub async fn new<C>(
+        ctx: C,
+        pending_project: PendingProject,
+        subowner: &User,
+    ) -> anyhow::Result<Result<Self, NewProjectError>>
+    where
+        C: ProjectRepository + RegistrationFormRepository + RegistrationFormAnswerRepository,
+    {
+        let forms_count = ctx
+            .count_registration_forms_by_pending_project(pending_project.id)
+            .await
+            .context("Failed to count registration forms")?;
+        let answers_count = ctx
+            .count_registration_form_answers_by_pending_project(pending_project.id)
+            .await
+            .context("Failed to count registration form answers")?;
+        if forms_count != answers_count {
+            return Ok(Err(NewProjectError {
+                kind: NewProjectErrorKind::NotAnsweredRegistrationForm,
+            }));
+        }
+
+        let projects_count = ctx
+            .count_projects()
+            .await
+            .context("Failed to count projects")?;
+        let projects_count = match projects_count.try_into() {
+            Ok(count) => count,
+            Err(err) => return Ok(Err(NewProjectError::from_count_integer_error(err))),
+        };
+        let index = match ProjectIndex::from_u16(projects_count) {
+            Ok(index) => index,
+            Err(err) => return Ok(Err(NewProjectError::from_index_error(err))),
+        };
+
+        Ok(Project::from_content(ProjectContent {
+            id: ProjectId::from_uuid(Uuid::new_v4()),
+            created_at: DateTime::now(),
+            index,
+            owner_id: pending_project.author_id,
+            subowner_id: subowner.id.clone(),
+            name: pending_project.name,
+            kana_name: pending_project.kana_name,
+            group_name: pending_project.group_name,
+            kana_group_name: pending_project.kana_group_name,
+            description: pending_project.description,
+            category: pending_project.category,
+            attributes: pending_project.attributes,
+        })
+        .map_err(NewProjectError::from_content_error))
+    }
+
+    /// Restore `Project` from `ProjectContent`.
+    ///
+    /// This is intended to be used when the data is taken out of the implementation by [`Project::into_content`]
+    /// for persistence, internal serialization, etc.
+    /// Use [`Project::new`] to create a project.
     pub fn from_content(content: ProjectContent) -> Result<Self, SameOwnerSubownerError> {
         if content.owner_id == content.subowner_id {
             return Err(SameOwnerSubownerError { _priv: () });
@@ -67,6 +168,7 @@ impl Project {
         Ok(Project(content))
     }
 
+    /// Convert `Project` into `ProjectContent`.
     pub fn into_content(self) -> ProjectContent {
         self.0
     }
@@ -172,6 +274,7 @@ impl Project {
 
 #[cfg(test)]
 mod tests {
+    use super::{NewProjectErrorKind, Project};
     use crate::test::model as test_model;
 
     #[test]
@@ -213,5 +316,69 @@ mod tests {
         let other = test_model::new_general_user();
         let project = test_model::new_general_project(other.id.clone());
         assert!(project.is_visible_to(&user));
+    }
+
+    #[tokio::test]
+    async fn test_new_ok() {
+        let owner = test_model::new_general_user();
+        let subowner = test_model::new_general_user();
+        let pending_project = test_model::new_general_pending_project(owner.id.clone());
+
+        let app = crate::test::build_mock_app()
+            .users(vec![owner.clone(), subowner.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .build();
+
+        let project = Project::new(&app, pending_project, &subowner)
+            .await
+            .unwrap()
+            .unwrap();
+        assert_eq!(project.owner_id(), &owner.id);
+        assert_eq!(project.subowner_id(), &subowner.id);
+    }
+
+    #[tokio::test]
+    async fn test_new_not_answered() {
+        let owner = test_model::new_general_user();
+        let subowner = test_model::new_general_user();
+        let pending_project = test_model::new_general_pending_project(owner.id.clone());
+
+        let operator = test_model::new_general_user();
+        let registration_form = test_model::new_registration_form(operator.id.clone());
+
+        let app = crate::test::build_mock_app()
+            .users(vec![owner.clone(), subowner.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .registration_forms(vec![registration_form])
+            .build();
+
+        assert_eq!(
+            Project::new(&app, pending_project, &owner)
+                .await
+                .unwrap()
+                .unwrap_err()
+                .kind(),
+            NewProjectErrorKind::NotAnsweredRegistrationForm
+        );
+    }
+
+    #[tokio::test]
+    async fn test_new_same_owner_subowner() {
+        let owner = test_model::new_general_user();
+        let pending_project = test_model::new_general_pending_project(owner.id.clone());
+
+        let app = crate::test::build_mock_app()
+            .users(vec![owner.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .build();
+
+        assert_eq!(
+            Project::new(&app, pending_project, &owner)
+                .await
+                .unwrap()
+                .unwrap_err()
+                .kind(),
+            NewProjectErrorKind::SameOwnerSubowner
+        );
     }
 }
