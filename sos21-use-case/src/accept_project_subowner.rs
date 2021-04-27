@@ -14,6 +14,7 @@ pub enum Error {
     PendingProjectNotFound,
     TooManyProjects,
     NotAnsweredRegistrationForm,
+    SameOwnerSubowner,
 }
 
 impl Error {
@@ -23,6 +24,7 @@ impl Error {
             pending_project::AcceptSubownerErrorKind::NotAnsweredRegistrationForm => {
                 Error::NotAnsweredRegistrationForm
             }
+            pending_project::AcceptSubownerErrorKind::SameOwnerSubowner => Error::SameOwnerSubowner,
         }
     }
 }
@@ -96,7 +98,7 @@ where
     }
 
     use_case_ensure!(project.is_visible_to(login_user));
-    use_case_ensure!(project.subowner_id == login_user.id);
+    use_case_ensure!(project.subowner_id() == &login_user.id);
     Ok(Project::from_entity(ProjectFromEntityInput {
         project,
         owner_name: author.name,
@@ -125,18 +127,12 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
-
         assert!(matches!(
-            accept_project_subowner::run(&app, pending_project_id).await,
-            Ok(got)
-            if got.owner_id == UserId::from_entity(user.id.clone())
-            && got.subowner_id == UserId::from_entity(user.id)
-        ));
-
-        assert!(matches!(
-            get_pending_project::run(&app, pending_project_id).await,
-            Err(UseCaseError::UseCase(get_pending_project::Error::NotFound))
+            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id))
+                .await,
+            Err(UseCaseError::UseCase(
+                accept_project_subowner::Error::SameOwnerSubowner
+            ))
         ));
     }
 

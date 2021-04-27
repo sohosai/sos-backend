@@ -61,7 +61,7 @@ impl FileSharingScope {
 
     pub fn contains_project(&self, project: &Project) -> bool {
         match self {
-            FileSharingScope::Project(project_id) => *project_id == project.id,
+            FileSharingScope::Project(project_id) => *project_id == project.id(),
             FileSharingScope::FormAnswer(_, _)
             | FileSharingScope::RegistrationFormAnswer(_, _)
             | FileSharingScope::Committee
@@ -86,7 +86,7 @@ impl FileSharingScope {
     pub fn contains_project_form_answer(&self, project: &Project, form: &Form) -> bool {
         match self {
             FileSharingScope::FormAnswer(project_id, form_id) => {
-                *project_id == project.id && *form_id == form.id
+                *project_id == project.id() && *form_id == form.id
             }
             FileSharingScope::Project(_)
             | FileSharingScope::RegistrationFormAnswer(_, _)

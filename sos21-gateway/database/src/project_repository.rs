@@ -12,9 +12,9 @@ use sos21_domain::context::project_repository::{ProjectRepository, ProjectWithOw
 use sos21_domain::model::{
     date_time::DateTime,
     project::{
-        Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
-        ProjectGroupName, ProjectId, ProjectIndex, ProjectKanaGroupName, ProjectKanaName,
-        ProjectName,
+        Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectContent,
+        ProjectDescription, ProjectGroupName, ProjectId, ProjectIndex, ProjectKanaGroupName,
+        ProjectKanaName, ProjectName,
     },
     user::UserId,
 };
@@ -103,7 +103,7 @@ fn to_project_with_owner(
 }
 
 fn from_project(project: Project) -> data::project::Project {
-    let Project {
+    let ProjectContent {
         id,
         index,
         created_at,
@@ -116,7 +116,7 @@ fn from_project(project: Project) -> data::project::Project {
         description,
         category,
         attributes,
-    } = project;
+    } = project.into_content();
     data::project::Project {
         id: id.to_uuid(),
         index: index.to_i16(),
@@ -170,7 +170,7 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         attributes,
     } = project;
 
-    Ok(Project {
+    let project = Project::from_content(ProjectContent {
         id: ProjectId::from_uuid(id),
         index: ProjectIndex::from_u16(index.try_into()?)?,
         created_at: DateTime::from_utc(created_at),
@@ -183,7 +183,9 @@ fn to_project(project: data::project::Project) -> Result<Project> {
         description: ProjectDescription::from_string(description)?,
         category: to_project_category(category),
         attributes: to_project_attributes(attributes)?,
-    })
+    })?;
+
+    Ok(project)
 }
 
 pub fn to_project_category(category: data::project::ProjectCategory) -> ProjectCategory {

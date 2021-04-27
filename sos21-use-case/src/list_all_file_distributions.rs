@@ -77,7 +77,7 @@ mod tests {
         let (file, object) = test::model::new_file(user.id.clone());
         let sharing = file_sharing::FileSharing::new(
             file.id,
-            file_sharing::FileSharingScope::Project(other_project.id),
+            file_sharing::FileSharingScope::Project(other_project.id()),
         );
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution = test::model::new_file_distribution_with_files(user.id.clone(), files);

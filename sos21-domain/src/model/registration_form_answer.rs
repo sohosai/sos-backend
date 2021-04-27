@@ -73,7 +73,7 @@ mod tests {
         let registration_form = test_model::new_registration_form(operator.id);
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
             user.id.clone(),
-            user_project.id,
+            user_project.id(),
             &registration_form,
         );
         assert!(!registration_form_answer.is_visible_to(&user));
@@ -87,7 +87,7 @@ mod tests {
         let registration_form = test_model::new_registration_form(operator.id);
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
             user.id.clone(),
-            user_project.id,
+            user_project.id(),
             &registration_form,
         );
         assert!(registration_form_answer.is_visible_to(&user));
@@ -101,7 +101,7 @@ mod tests {
         let registration_form = test_model::new_registration_form(operator.id);
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
             user.id.clone(),
-            user_project.id,
+            user_project.id(),
             &registration_form,
         );
         assert!(registration_form_answer.is_visible_to(&user));
@@ -115,7 +115,7 @@ mod tests {
         let registration_form = test_model::new_registration_form(operator.id);
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
             user.id.clone(),
-            user_project.id,
+            user_project.id(),
             &registration_form,
         );
         assert!(registration_form_answer.is_visible_to_with_project(&user, &user_project));
@@ -145,7 +145,7 @@ mod tests {
         let registration_form = test_model::new_registration_form(operator.id);
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
             user.id.clone(),
-            operator_project.id,
+            operator_project.id(),
             &registration_form,
         );
         assert!(!registration_form_answer.is_visible_to_with_project(&user, &operator_project));

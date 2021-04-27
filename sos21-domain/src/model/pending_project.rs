@@ -45,6 +45,7 @@ pub struct PendingProject {
 pub enum AcceptSubownerErrorKind {
     TooManyProjects,
     NotAnsweredRegistrationForm,
+    SameOwnerSubowner,
 }
 
 #[derive(Debug, Error, Clone)]
@@ -67,6 +68,12 @@ impl AcceptSubownerError {
     fn from_index_error(_err: project::index::FromU16Error) -> Self {
         AcceptSubownerError {
             kind: AcceptSubownerErrorKind::TooManyProjects,
+        }
+    }
+
+    fn from_project_error(_err: project::SameOwnerSubownerError) -> Self {
+        AcceptSubownerError {
+            kind: AcceptSubownerErrorKind::SameOwnerSubowner,
         }
     }
 }
@@ -111,7 +118,7 @@ impl PendingProject {
             Err(err) => return Ok(Err(AcceptSubownerError::from_index_error(err))),
         };
 
-        Ok(Ok(Project {
+        Ok(Project::from_content(project::ProjectContent {
             id: ProjectId::from_uuid(Uuid::new_v4()),
             index,
             created_at: DateTime::now(),
@@ -124,7 +131,8 @@ impl PendingProject {
             description: self.description,
             category: self.category,
             attributes: self.attributes,
-        }))
+        })
+        .map_err(AcceptSubownerError::from_project_error))
     }
 }
 
@@ -149,7 +157,7 @@ mod tests {
             .unwrap()
             .unwrap();
 
-        assert_eq!(project.owner_id, owner.id);
-        assert_eq!(project.subowner_id, subowner.id);
+        assert_eq!(project.owner_id(), &owner.id);
+        assert_eq!(project.subowner_id(), &subowner.id);
     }
 }

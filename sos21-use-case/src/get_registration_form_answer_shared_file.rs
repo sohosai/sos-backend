@@ -94,7 +94,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            other_project.id,
+            other_project.id(),
             &registration_form,
         );
 
@@ -102,7 +102,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
-                    other_project.id,
+                    other_project.id(),
                 ),
                 other_answer.registration_form_id,
             ),
@@ -144,7 +144,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            other_project.id,
+            other_project.id(),
             &registration_form,
         );
 
@@ -152,7 +152,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
-                    other_project.id,
+                    other_project.id(),
                 ),
                 other_answer.registration_form_id,
             ),
@@ -196,12 +196,12 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let answer = test::model::new_registration_form_answer_with_project(
             user.id.clone(),
-            project.id,
+            project.id(),
             &registration_form,
         );
         let other_answer = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            other_project.id,
+            other_project.id(),
             &registration_form,
         );
 
@@ -209,7 +209,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
-                    other_project.id,
+                    other_project.id(),
                 ),
                 other_answer.registration_form_id,
             ),
@@ -253,7 +253,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            other_project.id,
+            other_project.id(),
             &registration_form,
         );
 
@@ -261,7 +261,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
-                    other_project.id,
+                    other_project.id(),
                 ),
                 other_answer.registration_form_id,
             ),
@@ -306,7 +306,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            other_project.id,
+            other_project.id(),
             &registration_form,
         );
 
@@ -314,7 +314,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
-                    other_project.id,
+                    other_project.id(),
                 ),
                 other_answer.registration_form_id,
             ),

@@ -180,7 +180,12 @@ mod tests {
 
         let registration_form_id = RegistrationFormId::from_entity(registration_form.id);
         assert!(matches!(
-            get_pending_project_registration_form::run(&app, PendingProjectId::from_entity(pending_project_other.id), registration_form_id).await,
+            get_pending_project_registration_form::run(
+                &app,
+                PendingProjectId::from_entity(pending_project_other.id),
+                registration_form_id,
+            )
+            .await,
             Ok(got)
             if got.id == registration_form_id && got.name == registration_form.name.into_string()
         ));
@@ -204,7 +209,12 @@ mod tests {
 
         let registration_form_id = RegistrationFormId::from_entity(registration_form.id);
         assert!(matches!(
-            get_pending_project_registration_form::run(&app, PendingProjectId::from_entity(pending_project_other.id), registration_form_id).await,
+            get_pending_project_registration_form::run(
+                &app,
+                PendingProjectId::from_entity(pending_project_other.id),
+                registration_form_id,
+            )
+            .await,
             Ok(got)
             if got.id == registration_form_id && got.name == registration_form.name.into_string()
         ));

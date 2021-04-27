@@ -83,7 +83,7 @@ mod tests {
         let other = test::model::new_general_user();
         let other_project = test::model::new_general_project(other.id.clone());
 
-        let scope = file_sharing::FileSharingScope::Project(project.id);
+        let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =
@@ -102,7 +102,7 @@ mod tests {
             .await;
 
         let input = get_distributed_file::Input {
-            project_id: ProjectId::from_entity(other_project.id),
+            project_id: ProjectId::from_entity(other_project.id()),
             distribution_id: FileDistributionId::from_entity(distribution.id),
         };
         assert!(matches!(
@@ -124,7 +124,7 @@ mod tests {
         let other = test::model::new_general_user();
         let other_project = test::model::new_general_project(other.id.clone());
 
-        let scope = file_sharing::FileSharingScope::Project(other_project.id);
+        let scope = file_sharing::FileSharingScope::Project(other_project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =
@@ -143,7 +143,7 @@ mod tests {
             .await;
 
         let input = get_distributed_file::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             distribution_id: FileDistributionId::from_entity(distribution.id),
         };
         assert!(matches!(
@@ -162,7 +162,7 @@ mod tests {
         let user = test::model::new_general_user();
         let project = test::model::new_general_project(user.id.clone());
 
-        let scope = file_sharing::FileSharingScope::Project(project.id);
+        let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =
@@ -181,7 +181,7 @@ mod tests {
             .await;
 
         let input = get_distributed_file::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             distribution_id: FileDistributionId::from_entity(distribution.id),
         };
         assert!(matches!(
@@ -201,7 +201,7 @@ mod tests {
         let project =
             test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
 
-        let scope = file_sharing::FileSharingScope::Project(project.id);
+        let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =
@@ -220,7 +220,7 @@ mod tests {
             .await;
 
         let input = get_distributed_file::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             distribution_id: FileDistributionId::from_entity(distribution.id),
         };
         assert!(matches!(

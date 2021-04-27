@@ -62,7 +62,7 @@ mod tests {
         let (file, object) = test::model::new_file(operator.id.clone());
         let sharing = file_sharing::FileSharing::new(
             file.id,
-            file_sharing::FileSharingScope::Project(other_project.id),
+            file_sharing::FileSharingScope::Project(other_project.id()),
         );
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =
@@ -100,7 +100,7 @@ mod tests {
         let (file, object) = test::model::new_file(operator.id.clone());
         let sharing = file_sharing::FileSharing::new(
             file.id,
-            file_sharing::FileSharingScope::Project(other_project.id),
+            file_sharing::FileSharingScope::Project(other_project.id()),
         );
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =

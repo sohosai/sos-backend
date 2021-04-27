@@ -26,7 +26,7 @@ where
     };
 
     let forms = ctx
-        .list_forms_by_project(project.id)
+        .list_forms_by_project(project.id())
         .await
         .context("Failed to list forms")?;
 
@@ -64,7 +64,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let result = list_project_forms::run(&app, ProjectId::from_entity(project.id)).await;
+        let result = list_project_forms::run(&app, ProjectId::from_entity(project.id())).await;
         assert!(result.is_ok());
 
         let got: HashSet<_> = result.unwrap().into_iter().map(|form| form.id).collect();
@@ -120,7 +120,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let result = list_project_forms::run(&app, ProjectId::from_entity(project.id)).await;
+        let result = list_project_forms::run(&app, ProjectId::from_entity(project.id())).await;
         assert!(result.is_ok());
 
         let got: HashSet<_> = result.unwrap().into_iter().map(|form| form.id).collect();

@@ -30,6 +30,7 @@ pub enum Error {
     PendingProjectNotFound,
     TooManyProjects,
     NotAnsweredRegistrationForm,
+    SameOwnerSubowner,
 }
 
 impl HandlerResponse for Error {
@@ -38,6 +39,7 @@ impl HandlerResponse for Error {
             Error::PendingProjectNotFound => StatusCode::NOT_FOUND,
             Error::TooManyProjects => StatusCode::CONFLICT,
             Error::NotAnsweredRegistrationForm => StatusCode::CONFLICT,
+            Error::SameOwnerSubowner => StatusCode::CONFLICT,
         }
     }
 }
@@ -50,6 +52,7 @@ impl From<accept_project_subowner::Error> for Error {
             accept_project_subowner::Error::NotAnsweredRegistrationForm => {
                 Error::NotAnsweredRegistrationForm
             }
+            accept_project_subowner::Error::SameOwnerSubowner => Error::SameOwnerSubowner,
         }
     }
 }

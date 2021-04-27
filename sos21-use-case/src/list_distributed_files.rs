@@ -30,7 +30,7 @@ where
     };
 
     let distributions = ctx
-        .list_file_distributions_by_project(project.id)
+        .list_file_distributions_by_project(project.id())
         .await
         .context("Failed to list file distributions")?;
 
@@ -73,7 +73,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            list_distributed_files::run(&app, ProjectId::from_entity(other_project.id)).await,
+            list_distributed_files::run(&app, ProjectId::from_entity(other_project.id())).await,
             Err(UseCaseError::UseCase(
                 list_distributed_files::Error::ProjectNotFound
             ))
@@ -112,11 +112,11 @@ mod tests {
 
         let operator = test::model::new_operator_user();
         let (file1, object1, sharing1, distribution1) =
-            mock_distribution(operator.id.clone(), project.id);
+            mock_distribution(operator.id.clone(), project.id());
         let (file2, object2, sharing2, distribution2) =
-            mock_distribution(operator.id.clone(), project.id);
+            mock_distribution(operator.id.clone(), project.id());
         let (file3, object3, sharing3, distribution3) =
-            mock_distribution(operator.id.clone(), other_project.id);
+            mock_distribution(operator.id.clone(), other_project.id());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone(), operator.clone()])
@@ -134,7 +134,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let got = list_distributed_files::run(&app, ProjectId::from_entity(project.id))
+        let got = list_distributed_files::run(&app, ProjectId::from_entity(project.id()))
             .await
             .unwrap();
         let got: HashMap<_, _> = got

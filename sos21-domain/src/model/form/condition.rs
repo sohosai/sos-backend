@@ -20,11 +20,11 @@ pub struct FormCondition {
 
 impl FormCondition {
     pub fn check(&self, project: &Project) -> bool {
-        if self.excludes.contains(project.id) {
+        if self.excludes.contains(project.id()) {
             return false;
         }
 
-        self.query.check_project(project) || self.includes.contains(project.id)
+        self.query.check_project(project) || self.includes.contains(project.id())
     }
 }
 
@@ -154,7 +154,7 @@ mod tests {
         let condition = FormCondition {
             query,
             includes: FormConditionProjectSet::from_projects(vec![]).unwrap(),
-            excludes: FormConditionProjectSet::from_projects(vec![project1.id]).unwrap(),
+            excludes: FormConditionProjectSet::from_projects(vec![project1.id()]).unwrap(),
         };
 
         assert!(!condition.check(&project1));
@@ -193,7 +193,7 @@ mod tests {
         let query = ProjectQuery::from_conjunctions(vec![]).unwrap();
         let condition = FormCondition {
             query,
-            includes: FormConditionProjectSet::from_projects(vec![project1.id]).unwrap(),
+            includes: FormConditionProjectSet::from_projects(vec![project1.id()]).unwrap(),
             excludes: FormConditionProjectSet::from_projects(vec![]).unwrap(),
         };
 
@@ -219,8 +219,8 @@ mod tests {
         let query = ProjectQuery::from_conjunctions(vec![conj]).unwrap();
         let condition = FormCondition {
             query,
-            includes: FormConditionProjectSet::from_projects(vec![project1.id]).unwrap(),
-            excludes: FormConditionProjectSet::from_projects(vec![project2.id]).unwrap(),
+            includes: FormConditionProjectSet::from_projects(vec![project1.id()]).unwrap(),
+            excludes: FormConditionProjectSet::from_projects(vec![project2.id()]).unwrap(),
         };
 
         assert!(condition.check(&project1));

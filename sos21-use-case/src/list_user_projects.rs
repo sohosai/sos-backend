@@ -81,7 +81,7 @@ mod tests {
         let got: HashSet<_> = got.into_iter().map(|project| project.id).collect();
         let expected: HashSet<_> = vec![project1, project2, project4]
             .into_iter()
-            .map(|project| ProjectId::from_entity(project.id))
+            .map(|project| ProjectId::from_entity(project.id()))
             .collect();
         assert_eq!(got, expected);
     }

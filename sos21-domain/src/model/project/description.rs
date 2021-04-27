@@ -33,6 +33,10 @@ impl ProjectDescription {
         Ok(ProjectDescription(inner))
     }
 
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
+    }
+
     pub fn into_string(self) -> String {
         self.0.into_inner().into_inner()
     }

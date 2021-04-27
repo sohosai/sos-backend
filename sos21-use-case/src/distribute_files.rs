@@ -111,7 +111,7 @@ where
         };
 
         let sharing = to_file_sharing(ctx, &project, input.file).await?;
-        sharings.push((project.id, sharing.id()));
+        sharings.push((project.id(), sharing.id()));
     }
     let files = file_distribution::FileDistributionFiles::from_sharings(sharings)
         .map_err(|err| UseCaseError::UseCase(Error::from_files_error(err)))?;
@@ -153,7 +153,7 @@ where
                 _ => return Err(UseCaseError::UseCase(Error::FileNotFound)),
             };
 
-            let scope = file_sharing::FileSharingScope::Project(project.id);
+            let scope = file_sharing::FileSharingScope::Project(project.id());
             let sharing = file
                 .share_by(login_user, scope)
                 .map_err(|err| UseCaseError::UseCase(Error::from_share_error(err)))?;
@@ -215,7 +215,7 @@ mod tests {
         let user = test::model::new_general_user();
         let project = test::model::new_general_project(user.id.clone());
         let (file, object) = test::model::new_file(user.id.clone());
-        let scope = file_sharing::FileSharingScope::Project(project.id);
+        let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
 
         let app = test::build_mock_app()
@@ -230,7 +230,7 @@ mod tests {
             .await;
 
         let input = mock_input(vec![(
-            ProjectId::from_entity(project.id),
+            ProjectId::from_entity(project.id()),
             distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing.id())),
         )]);
         assert!(matches!(
@@ -247,7 +247,7 @@ mod tests {
         let user = test::model::new_committee_user();
         let project = test::model::new_general_project(user.id.clone());
         let (file, object) = test::model::new_file(user.id.clone());
-        let scope = file_sharing::FileSharingScope::Project(project.id);
+        let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
 
         let app = test::build_mock_app()
@@ -262,7 +262,7 @@ mod tests {
             .await;
 
         let input = mock_input(vec![(
-            ProjectId::from_entity(project.id),
+            ProjectId::from_entity(project.id()),
             distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing.id())),
         )]);
         assert!(matches!(
@@ -282,7 +282,7 @@ mod tests {
         let other = test::model::new_general_user();
         let other_project = test::model::new_general_project(other.id.clone());
 
-        let scope = file_sharing::FileSharingScope::Project(other_project.id);
+        let scope = file_sharing::FileSharingScope::Project(other_project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
 
         let app = test::build_mock_app()
@@ -296,7 +296,7 @@ mod tests {
 
         let user_app = app.clone().login_as(user.clone()).await;
 
-        let other_project_id = ProjectId::from_entity(other_project.id);
+        let other_project_id = ProjectId::from_entity(other_project.id());
         let sharing_id = FileSharingId::from_entity(sharing.id());
         let input = mock_input(vec![(
             other_project_id,
@@ -306,7 +306,7 @@ mod tests {
         assert!(distribution
             .files
             .iter()
-            .find(|mapping| mapping.project_id == ProjectId::from_entity(other_project.id))
+            .find(|mapping| mapping.project_id == ProjectId::from_entity(other_project.id()))
             .is_some());
 
         let other_app = app.clone().login_as(other.clone()).await;
@@ -346,7 +346,7 @@ mod tests {
             .await;
 
         let input = mock_input(vec![(
-            ProjectId::from_entity(other_project.id),
+            ProjectId::from_entity(other_project.id()),
             distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing.id())),
         )]);
         assert!(matches!(
@@ -371,9 +371,9 @@ mod tests {
         let other1_project = test::model::new_general_project(other1.id.clone());
         let other2_project = test::model::new_general_project(other2.id.clone());
 
-        let scope1 = file_sharing::FileSharingScope::Project(other1_project.id);
+        let scope1 = file_sharing::FileSharingScope::Project(other1_project.id());
         let sharing1 = file_sharing::FileSharing::new(file1.id, scope1);
-        let scope2 = file_sharing::FileSharingScope::Project(other2_project.id);
+        let scope2 = file_sharing::FileSharingScope::Project(other2_project.id());
         let sharing2 = file_sharing::FileSharing::new(file2.id, scope2);
 
         let app = test::build_mock_app()
@@ -389,11 +389,11 @@ mod tests {
 
         let input = mock_input(vec![
             (
-                ProjectId::from_entity(other1_project.id),
+                ProjectId::from_entity(other1_project.id()),
                 distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing1.id())),
             ),
             (
-                ProjectId::from_entity(other2_project.id),
+                ProjectId::from_entity(other2_project.id()),
                 distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing2.id())),
             ),
         ]);
@@ -403,7 +403,7 @@ mod tests {
             .iter()
             .map(|mapping| mapping.project_id)
             .collect();
-        let expected: HashSet<ProjectId> = vec![other1_project.id, other2_project.id]
+        let expected: HashSet<ProjectId> = vec![other1_project.id(), other2_project.id()]
             .into_iter()
             .map(ProjectId::from_entity)
             .collect();
@@ -429,7 +429,7 @@ mod tests {
 
         let user_app = app.clone().login_as(user.clone()).await;
 
-        let other_project_id = ProjectId::from_entity(other_project.id);
+        let other_project_id = ProjectId::from_entity(other_project.id());
         let file_id = FileId::from_entity(file.id);
         let input = mock_input(vec![(
             other_project_id,

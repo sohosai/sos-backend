@@ -75,7 +75,7 @@ mod tests {
         assert!(matches!(
             get_project_form::run(
                 &app,
-                ProjectId::from_entity(project_other.id),
+                ProjectId::from_entity(project_other.id()),
                 FormId::from_entity(form.id)
             )
             .await,
@@ -102,7 +102,7 @@ mod tests {
 
         let form_id = FormId::from_entity(form.id);
         assert!(matches!(
-            get_project_form::run(&app, ProjectId::from_entity(project.id), form_id).await,
+            get_project_form::run(&app, ProjectId::from_entity(project.id()), form_id).await,
             Ok(got)
             if got.id == form_id && got.name == form.name.into_string()
         ));
@@ -127,7 +127,7 @@ mod tests {
 
         let form_id = FormId::from_entity(form.id);
         assert!(matches!(
-            get_project_form::run(&app, ProjectId::from_entity(project.id), form_id).await,
+            get_project_form::run(&app, ProjectId::from_entity(project.id()), form_id).await,
             Ok(got)
             if got.id == form_id && got.name == form.name.into_string()
         ));
@@ -168,7 +168,7 @@ mod tests {
         assert!(matches!(
             get_project_form::run(
                 &app,
-                ProjectId::from_entity(project.id),
+                ProjectId::from_entity(project.id()),
                 FormId::from_entity(form.id)
             )
             .await,
@@ -194,7 +194,7 @@ mod tests {
 
         let form_id = FormId::from_entity(form.id);
         assert!(matches!(
-            get_project_form::run(&app, ProjectId::from_entity(project_other.id), form_id).await,
+            get_project_form::run(&app, ProjectId::from_entity(project_other.id()), form_id).await,
             Ok(got)
             if got.id == form_id && got.name == form.name.into_string()
         ));
@@ -218,7 +218,7 @@ mod tests {
 
         let form_id = FormId::from_entity(form.id);
         assert!(matches!(
-            get_project_form::run(&app, ProjectId::from_entity(project_other.id), form_id).await,
+            get_project_form::run(&app, ProjectId::from_entity(project_other.id()), form_id).await,
             Ok(got)
             if got.id == form_id && got.name == form.name.into_string()
         ));
