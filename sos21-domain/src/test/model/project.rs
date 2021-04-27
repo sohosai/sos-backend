@@ -54,20 +54,22 @@ pub fn new_project_with_attributes(
     category: ProjectCategory,
     attributes: &[ProjectAttribute],
 ) -> Project {
-    Project::from_content(ProjectContent {
-        id: new_project_id(),
-        index: new_project_index(),
-        created_at: DateTime::now(),
+    Project::from_content(
+        ProjectContent {
+            id: new_project_id(),
+            index: new_project_index(),
+            created_at: DateTime::now(),
+            name: mock_project_name(),
+            kana_name: mock_project_kana_name(),
+            group_name: mock_project_group_name(),
+            kana_group_name: mock_project_kana_group_name(),
+            description: mock_project_description(),
+            category,
+            attributes: ProjectAttributes::from_attributes(attributes.iter().copied()).unwrap(),
+        },
         owner_id,
-        subowner_id: test_model::KNOWN_MOCK_GENERAL_USER_ID.clone(),
-        name: mock_project_name(),
-        kana_name: mock_project_kana_name(),
-        group_name: mock_project_group_name(),
-        kana_group_name: mock_project_kana_group_name(),
-        description: mock_project_description(),
-        category,
-        attributes: ProjectAttributes::from_attributes(attributes.iter().copied()).unwrap(),
-    })
+        test_model::KNOWN_MOCK_GENERAL_USER_ID.clone(),
+    )
     .unwrap()
 }
 
@@ -76,20 +78,22 @@ pub fn new_project_with_subowner(
     subowner_id: UserId,
     category: ProjectCategory,
 ) -> Project {
-    Project::from_content(ProjectContent {
-        id: new_project_id(),
-        index: new_project_index(),
-        created_at: DateTime::now(),
+    Project::from_content(
+        ProjectContent {
+            id: new_project_id(),
+            index: new_project_index(),
+            created_at: DateTime::now(),
+            name: mock_project_name(),
+            kana_name: mock_project_kana_name(),
+            group_name: mock_project_group_name(),
+            kana_group_name: mock_project_kana_group_name(),
+            description: mock_project_description(),
+            category,
+            attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
+        },
         owner_id,
         subowner_id,
-        name: mock_project_name(),
-        kana_name: mock_project_kana_name(),
-        group_name: mock_project_group_name(),
-        kana_group_name: mock_project_kana_group_name(),
-        description: mock_project_description(),
-        category,
-        attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
-    })
+    )
     .unwrap()
 }
 

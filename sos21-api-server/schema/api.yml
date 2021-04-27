@@ -392,9 +392,9 @@ paths:
           required: true
       description: 指定されたユーザーの情報を返します。
     parameters: []
-  /me/project/list:
+  /me/project/get:
     get:
-      summary: me/project/list
+      summary: me/project/get
       tags:
         - me
         - project
@@ -406,24 +406,24 @@ paths:
               schema:
                 type: object
                 properties:
-                  projects:
-                    type: array
-                    items:
-                      $ref: ./model/project/Project.yml
+                  project:
+                    $ref: ./model/project/Project.yml
                 required:
-                  - projects
+                  - project
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: me/project/list
-      description: ログインしているユーザーの企画一覧を返します。
+      operationId: me/project/get
+      description: ログインしているユーザーの企画を返します。
     parameters: []
-  /me/pending-project/list:
+  /me/pending-project/get:
     get:
-      summary: me/pending-project/list
+      summary: me/pending-project/get
       tags:
         - me
         - pending_project
@@ -435,20 +435,20 @@ paths:
               schema:
                 type: object
                 properties:
-                  pending_projects:
-                    type: array
-                    items:
-                      $ref: ./model/pending_project/PendingProject.yml
+                  pending_project:
+                    $ref: ./model/pending_project/PendingProject.yml
                 required:
-                  - pending_projects
+                  - pending_project
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/PendingProjectNotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
-      operationId: me/pending-project/list
-      description: ログインしているユーザーの承認待ち企画一覧を返します。
+      operationId: me/pending-project/get
+      description: ログインしているユーザーの承認待ち企画を返します。
     parameters: []
   /me/file/list:
     get:
@@ -605,6 +605,43 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - ALREADY_PROJECT_OWNER
+                                  - ALREADY_PROJECT_SUBOWNER
+                                  - ALREADY_PENDING_PROJECT_OWNER
+                            required:
+                              - type
+                    required:
+                      - status
+                      - error
         "500":
           $ref: "#/components/responses/InternalServerError"
       description: 承認待ち企画を作成します。
@@ -734,6 +771,9 @@ paths:
                                 enum:
                                   - TOO_MANY_PROJECTS
                                   - NOT_ANSWERED_REGISTRATION_FORM
+                                  - ALREADY_PROJECT_OWNER
+                                  - ALREADY_PROJECT_SUBOWNER
+                                  - ALREADY_PENDING_PROJECT_OWNER
                     required:
                       - status
                       - error

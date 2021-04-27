@@ -174,7 +174,7 @@ impl<'a> ShareTarget<'a> {
                 registration_form,
             } => file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::PendingProject(
-                    pending_project.id,
+                    pending_project.id(),
                 ),
                 registration_form.id,
             ),

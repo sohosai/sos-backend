@@ -25,7 +25,7 @@ impl RegistrationFormAnswerRespondent {
     pub fn is_pending_project(&self, pending_project: &PendingProject) -> bool {
         matches!(self,
             RegistrationFormAnswerRespondent::PendingProject(id)
-            if pending_project.id == *id
+            if pending_project.id() == *id
         )
     }
 }

@@ -5,7 +5,7 @@ use crate::model::project::{Project, ProjectFromEntityInput};
 use anyhow::Context;
 use sos21_domain::context::{
     FileSharingRepository, Login, PendingProjectRepository, ProjectRepository,
-    RegistrationFormAnswerRepository, RegistrationFormRepository,
+    RegistrationFormAnswerRepository, RegistrationFormRepository, UserRepository,
 };
 use sos21_domain::model::project;
 
@@ -15,6 +15,9 @@ pub enum Error {
     TooManyProjects,
     NotAnsweredRegistrationForm,
     SameOwnerSubowner,
+    AlreadyProjectOwner,
+    AlreadyProjectSubowner,
+    AlreadyPendingProjectOwner,
 }
 
 impl Error {
@@ -25,6 +28,13 @@ impl Error {
                 Error::NotAnsweredRegistrationForm
             }
             project::NewProjectErrorKind::SameOwnerSubowner => Error::SameOwnerSubowner,
+            project::NewProjectErrorKind::AlreadyProjectOwnerSubowner => Error::AlreadyProjectOwner,
+            project::NewProjectErrorKind::AlreadyProjectSubownerSubowner => {
+                Error::AlreadyProjectSubowner
+            }
+            project::NewProjectErrorKind::AlreadyPendingProjectOwnerSubowner => {
+                Error::AlreadyPendingProjectOwner
+            }
         }
     }
 }
@@ -40,30 +50,41 @@ where
         + FileSharingRepository
         + RegistrationFormRepository
         + RegistrationFormAnswerRepository
+        + UserRepository
         + Send
         + Sync,
 {
-    let login_user = ctx.login_user();
+    let mut login_user = ctx.login_user().clone();
 
     let result = ctx
         .get_pending_project(pending_project_id.into_entity())
         .await
         .context("Failed to get a pending project")?;
-    let (pending_project, author) = match result {
-        Some(result) if result.pending_project.is_visible_to(login_user) => {
-            (result.pending_project, result.author)
+    let (pending_project, mut owner) = match result {
+        Some(result) if result.pending_project.is_visible_to(&login_user) => {
+            (result.pending_project, result.owner)
         }
         _ => return Err(UseCaseError::UseCase(Error::PendingProjectNotFound)),
     };
 
-    let pending_project_id = pending_project.id;
-    let project = project::Project::new(ctx, pending_project, login_user)
+    let pending_project_id = pending_project.id();
+    let project = project::Project::new(ctx, pending_project, &login_user)
         .await?
         .map_err(|err| UseCaseError::UseCase(Error::from_new_project_error(err)))?;
 
     ctx.store_project(project.clone())
         .await
         .context("Failed to store a project")?;
+
+    owner.assign_project_owner(&project)?;
+    login_user.assign_project_subowner(&project)?;
+
+    ctx.store_user(owner.clone())
+        .await
+        .context("Failed to store a user")?;
+    ctx.store_user(login_user.clone())
+        .await
+        .context("Failed to store a user")?;
 
     // TODO: Split these heavy (O(n)) processes into a separate asynchronous job
     //       or reduce the number of storings
@@ -96,12 +117,12 @@ where
             .context("Failed to delete a pending project")?;
     }
 
-    use_case_ensure!(project.is_visible_to(login_user));
+    use_case_ensure!(project.is_visible_to(&login_user));
     use_case_ensure!(project.subowner_id() == &login_user.id);
     Ok(Project::from_entity(ProjectFromEntityInput {
         project,
-        owner_name: author.name,
-        owner_kana_name: author.kana_name,
+        owner_name: owner.name,
+        owner_kana_name: owner.kana_name,
         subowner_name: login_user.name.clone(),
         subowner_kana_name: login_user.kana_name.clone(),
     }))
@@ -127,10 +148,36 @@ mod tests {
             .await;
 
         assert!(matches!(
-            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id))
+            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id()))
                 .await,
             Err(UseCaseError::UseCase(
                 accept_project_subowner::Error::SameOwnerSubowner
+            ))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_already_project_owner() {
+        let owner = test::model::new_general_user();
+        let mut user = test::model::new_general_user();
+        let project = test::model::new_general_project(user.id.clone());
+        user.assign_project_owner(&project).unwrap();
+
+        let pending_project = test::model::new_general_pending_project(owner.id.clone());
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone(), owner.clone()])
+            .projects(vec![project.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        assert!(matches!(
+            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id()))
+                .await,
+            Err(UseCaseError::UseCase(
+                accept_project_subowner::Error::AlreadyProjectOwner
             ))
         ));
     }
@@ -148,7 +195,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
 
         assert!(matches!(
             accept_project_subowner::run(&app, pending_project_id).await,
@@ -175,7 +222,7 @@ mod tests {
 
         let answer1 = test::model::new_registration_form_answer_with_pending_project(
             owner.id.clone(),
-            pending_project.id,
+            pending_project.id(),
             &registration_form1,
         );
 
@@ -189,7 +236,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id))
+            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id()))
                 .await,
             Err(UseCaseError::UseCase(
                 accept_project_subowner::Error::NotAnsweredRegistrationForm { .. }
@@ -221,12 +268,12 @@ mod tests {
 
         let answer1 = test::model::new_registration_form_answer_with_pending_project(
             owner.id.clone(),
-            pending_project.id,
+            pending_project.id(),
             &registration_form1,
         );
         let answer2 = test::model::new_registration_form_answer_with_pending_project(
             owner.id.clone(),
-            pending_project.id,
+            pending_project.id(),
             &registration_form2,
         );
 
@@ -243,7 +290,7 @@ mod tests {
             .login_as(subowner.clone())
             .await;
 
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
 
         assert!(matches!(
             accept_project_subowner::run(&app, pending_project_id).await,
@@ -278,7 +325,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let answer = test::model::new_registration_form_answer_with_pending_project(
             owner.id.clone(),
-            pending_project.id,
+            pending_project.id(),
             &registration_form,
         );
         let (file, object) = test::model::new_file(owner.id.clone());
@@ -286,7 +333,7 @@ mod tests {
             file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::PendingProject(
-                    pending_project.id,
+                    pending_project.id(),
                 ),
                 registration_form.id,
             ),
@@ -305,7 +352,7 @@ mod tests {
             .login_as(subowner.clone())
             .await;
 
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
         let project = accept_project_subowner::run(&subowner_app, pending_project_id)
             .await
             .unwrap();

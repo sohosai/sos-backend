@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use futures::lock::Mutex;
 use futures::{future, stream::TryStreamExt};
 use ref_cast::RefCast;
@@ -6,10 +6,12 @@ use sos21_database::{command, model as data, query};
 use sos21_domain::context::UserRepository;
 use sos21_domain::model::{
     date_time::DateTime,
+    pending_project::PendingProjectId,
     phone_number::PhoneNumber,
+    project::ProjectId,
     user::{
-        User, UserAffiliation, UserCategory, UserEmailAddress, UserId, UserKanaName, UserName,
-        UserRole,
+        User, UserAffiliation, UserAssignment, UserCategory, UserEmailAddress, UserId,
+        UserKanaName, UserName, UserRole,
     },
 };
 use sqlx::{Postgres, Transaction};
@@ -38,6 +40,10 @@ impl UserRepository for UserDatabase {
                 affiliation: user.affiliation,
                 role: user.role,
                 category: user.category,
+                assignment: user.assignment,
+                assignment_owner_project_id: user.assignment_owner_project_id,
+                assignment_subowner_project_id: user.assignment_subowner_project_id,
+                assignment_owner_pending_project_id: user.assignment_owner_pending_project_id,
             };
             command::update_user(&mut *lock, input).await
         } else {
@@ -72,9 +78,20 @@ fn from_user(user: User) -> data::user::User {
         affiliation,
         role,
         category,
+        assignment,
     } = user;
+
     let (first_name, last_name) = name.into_string();
     let (kana_first_name, kana_last_name) = kana_name.into_string();
+    let (owner_project_id, subowner_project_id, owner_pending_project_id) = match assignment {
+        Some(UserAssignment::ProjectOwner(project_id)) => (Some(project_id), None, None),
+        Some(UserAssignment::ProjectSubowner(project_id)) => (None, Some(project_id), None),
+        Some(UserAssignment::PendingProjectOwner(pending_project_id)) => {
+            (None, None, Some(pending_project_id))
+        }
+        None => (None, None, None),
+    };
+
     data::user::User {
         id: id.0,
         created_at: created_at.utc(),
@@ -96,6 +113,18 @@ fn from_user(user: User) -> data::user::User {
             UserCategory::GraduateStudent => data::user::UserCategory::GraduateStudent,
             UserCategory::AcademicStaff => data::user::UserCategory::AcademicStaff,
         },
+        assignment: assignment.map(from_user_assignment),
+        assignment_owner_project_id: owner_project_id.map(|id| id.to_uuid()),
+        assignment_subowner_project_id: subowner_project_id.map(|id| id.to_uuid()),
+        assignment_owner_pending_project_id: owner_pending_project_id.map(|id| id.to_uuid()),
+    }
+}
+
+fn from_user_assignment(assignment: UserAssignment) -> data::user::UserAssignment {
+    match assignment {
+        UserAssignment::ProjectOwner(_) => data::user::UserAssignment::ProjectOwner,
+        UserAssignment::ProjectSubowner(_) => data::user::UserAssignment::ProjectSubowner,
+        UserAssignment::PendingProjectOwner(_) => data::user::UserAssignment::PendingProjectOwner,
     }
 }
 
@@ -112,7 +141,37 @@ pub fn to_user(user: data::user::User) -> Result<User> {
         affiliation,
         role,
         category,
+        assignment,
+        assignment_owner_project_id,
+        assignment_subowner_project_id,
+        assignment_owner_pending_project_id,
     } = user;
+
+    let assignment = if let Some(assignment) = assignment {
+        Some(match assignment {
+            data::user::UserAssignment::ProjectOwner => {
+                let project_id = assignment_owner_project_id.context(
+                    "assignment = 'project_owner' but assignment_owner_project_id is null",
+                )?;
+                UserAssignment::ProjectOwner(ProjectId::from_uuid(project_id))
+            }
+            data::user::UserAssignment::ProjectSubowner => {
+                let project_id = assignment_subowner_project_id.context(
+                    "assignment = 'project_subowner' but assignment_subowner_project_id is null",
+                )?;
+                UserAssignment::ProjectSubowner(ProjectId::from_uuid(project_id))
+            }
+            data::user::UserAssignment::PendingProjectOwner => {
+                let pending_project_id = assignment_owner_pending_project_id.context(
+                "assignment = 'pending_project_owner' but assignment_owner_pending_project_id is null",
+            )?;
+                UserAssignment::PendingProjectOwner(PendingProjectId::from_uuid(pending_project_id))
+            }
+        })
+    } else {
+        None
+    };
+
     Ok(User {
         id: UserId(id),
         created_at: DateTime::from_utc(created_at),
@@ -132,5 +191,6 @@ pub fn to_user(user: data::user::User) -> Result<User> {
             data::user::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
             data::user::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
         },
+        assignment,
     })
 }

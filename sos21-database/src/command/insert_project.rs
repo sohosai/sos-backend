@@ -10,8 +10,6 @@ where
         id,
         index,
         created_at,
-        owner_id,
-        subowner_id,
         name,
         kana_name,
         group_name,
@@ -27,8 +25,6 @@ INSERT INTO projects (
     id,
     index,
     created_at,
-    owner_id,
-    subowner_id,
     name,
     kana_name,
     group_name,
@@ -36,13 +32,11 @@ INSERT INTO projects (
     description,
     category,
     attributes
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )
 "#,
         id,
         index,
         created_at,
-        owner_id,
-        subowner_id,
         name,
         kana_name,
         group_name,

@@ -1,6 +1,6 @@
 use crate::model::{
     project::{Project, ProjectId, ProjectIndex},
-    user::{User, UserId},
+    user::User,
 };
 
 use anyhow::Result;
@@ -19,7 +19,6 @@ pub trait ProjectRepository {
     async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<ProjectWithOwners>>;
     async fn count_projects(&self) -> Result<u64>;
     async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>>;
-    async fn list_projects_by_user(&self, user_id: UserId) -> Result<Vec<ProjectWithOwners>>;
 }
 
 #[macro_export]
@@ -63,12 +62,6 @@ macro_rules! delegate_project_repository {
             > {
                 $target.list_projects().await
             }
-            async fn list_projects_by_user(
-                &$sel,
-                user_id: $crate::model::user::UserId,
-            ) -> ::anyhow::Result<Vec<$crate::context::project_repository::ProjectWithOwners>> {
-                $target.list_projects_by_user(user_id).await
-            }
         }
     };
 }
@@ -93,9 +86,5 @@ impl<C: ProjectRepository + Sync> ProjectRepository for &C {
 
     async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>> {
         <C as ProjectRepository>::list_projects(self).await
-    }
-
-    async fn list_projects_by_user(&self, user_id: UserId) -> Result<Vec<ProjectWithOwners>> {
-        <C as ProjectRepository>::list_projects_by_user(self, user_id).await
     }
 }

@@ -49,6 +49,7 @@ pub fn mock_user(id: UserId, role: UserRole) -> User {
         affiliation: mock_user_affiliation(),
         role,
         category: mock_user_category(),
+        assignment: None,
     }
 }
 

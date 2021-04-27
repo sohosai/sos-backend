@@ -31,6 +31,9 @@ pub enum Error {
     TooManyProjects,
     NotAnsweredRegistrationForm,
     SameOwnerSubowner,
+    AlreadyProjectOwner,
+    AlreadyProjectSubowner,
+    AlreadyPendingProjectOwner,
 }
 
 impl HandlerResponse for Error {
@@ -40,6 +43,9 @@ impl HandlerResponse for Error {
             Error::TooManyProjects => StatusCode::CONFLICT,
             Error::NotAnsweredRegistrationForm => StatusCode::CONFLICT,
             Error::SameOwnerSubowner => StatusCode::CONFLICT,
+            Error::AlreadyProjectOwner => StatusCode::CONFLICT,
+            Error::AlreadyProjectSubowner => StatusCode::CONFLICT,
+            Error::AlreadyPendingProjectOwner => StatusCode::CONFLICT,
         }
     }
 }
@@ -53,6 +59,11 @@ impl From<accept_project_subowner::Error> for Error {
                 Error::NotAnsweredRegistrationForm
             }
             accept_project_subowner::Error::SameOwnerSubowner => Error::SameOwnerSubowner,
+            accept_project_subowner::Error::AlreadyProjectOwner => Error::AlreadyProjectOwner,
+            accept_project_subowner::Error::AlreadyProjectSubowner => Error::AlreadyProjectSubowner,
+            accept_project_subowner::Error::AlreadyPendingProjectOwner => {
+                Error::AlreadyPendingProjectOwner
+            }
         }
     }
 }

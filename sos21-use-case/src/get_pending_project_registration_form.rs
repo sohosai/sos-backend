@@ -83,7 +83,7 @@ mod tests {
         assert!(matches!(
             get_pending_project_registration_form::run(
                 &app,
-                PendingProjectId::from_entity(pending_project_other.id),
+                PendingProjectId::from_entity(pending_project_other.id()),
                 RegistrationFormId::from_entity(registration_form.id)
             )
             .await,
@@ -110,7 +110,12 @@ mod tests {
 
         let registration_form_id = RegistrationFormId::from_entity(registration_form.id);
         assert!(matches!(
-            get_pending_project_registration_form::run(&app, PendingProjectId::from_entity(pending_project.id), registration_form_id).await,
+            get_pending_project_registration_form::run(
+                &app,
+                PendingProjectId::from_entity(pending_project.id()),
+                registration_form_id
+            )
+            .await,
             Ok(got)
             if got.id == registration_form_id && got.name == registration_form.name.into_string()
         ));
@@ -152,7 +157,7 @@ mod tests {
         assert!(matches!(
             get_pending_project_registration_form::run(
                 &app,
-                PendingProjectId::from_entity(pending_project.id),
+                PendingProjectId::from_entity(pending_project.id()),
                 RegistrationFormId::from_entity(registration_form.id)
             )
             .await,
@@ -182,7 +187,7 @@ mod tests {
         assert!(matches!(
             get_pending_project_registration_form::run(
                 &app,
-                PendingProjectId::from_entity(pending_project_other.id),
+                PendingProjectId::from_entity(pending_project_other.id()),
                 registration_form_id,
             )
             .await,
@@ -211,7 +216,7 @@ mod tests {
         assert!(matches!(
             get_pending_project_registration_form::run(
                 &app,
-                PendingProjectId::from_entity(pending_project_other.id),
+                PendingProjectId::from_entity(pending_project_other.id()),
                 registration_form_id,
             )
             .await,

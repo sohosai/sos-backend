@@ -59,7 +59,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let answer = test::model::new_registration_form_answer_with_pending_project(
             user.id.clone(),
-            pending_project.id,
+            pending_project.id(),
             &registration_form,
         );
 
@@ -93,7 +93,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let answer = test::model::new_registration_form_answer_with_pending_project(
             user.id.clone(),
-            pending_project.id,
+            pending_project.id(),
             &registration_form,
         );
 
@@ -123,7 +123,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let answer = test::model::new_registration_form_answer_with_pending_project(
             user.id.clone(),
-            pending_project.id,
+            pending_project.id(),
             &registration_form,
         );
 

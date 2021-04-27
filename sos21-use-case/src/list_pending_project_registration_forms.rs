@@ -28,7 +28,7 @@ where
         _ => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
 
-    ctx.list_registration_forms_by_pending_project(pending_project.id)
+    ctx.list_registration_forms_by_pending_project(pending_project.id())
         .await
         .context("Failed to list registration forms")?
         .into_iter()
@@ -73,7 +73,7 @@ mod tests {
 
         let result = list_pending_project_registration_forms::run(
             &app,
-            PendingProjectId::from_entity(pending_project.id),
+            PendingProjectId::from_entity(pending_project.id()),
         )
         .await
         .unwrap();
@@ -141,7 +141,7 @@ mod tests {
 
         let result = list_pending_project_registration_forms::run(
             &app,
-            PendingProjectId::from_entity(pending_project.id),
+            PendingProjectId::from_entity(pending_project.id()),
         )
         .await
         .unwrap();

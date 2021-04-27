@@ -87,7 +87,7 @@ mod tests {
         let registration_form1_answer2 =
             test::model::new_registration_form_answer_with_pending_project(
                 login_user.id.clone(),
-                pending_project.id,
+                pending_project.id(),
                 &registration_form1,
             );
 
@@ -100,7 +100,7 @@ mod tests {
         let registration_form2_answer2 =
             test::model::new_registration_form_answer_with_pending_project(
                 login_user.id.clone(),
-                pending_project.id,
+                pending_project.id(),
                 &registration_form2,
             );
 

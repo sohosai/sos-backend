@@ -1,6 +1,6 @@
 use crate::model::{
     date_time::DateTime,
-    pending_project::{PendingProject, PendingProjectId},
+    pending_project::{PendingProject, PendingProjectContent, PendingProjectId},
     project::{ProjectAttribute, ProjectAttributes, ProjectCategory},
     user::UserId,
 };
@@ -20,18 +20,20 @@ pub fn new_pending_project_with_attributes(
     category: ProjectCategory,
     attributes: &[ProjectAttribute],
 ) -> PendingProject {
-    PendingProject {
-        id: new_pending_project_id(),
-        created_at: DateTime::now(),
+    PendingProject::from_content(
+        PendingProjectContent {
+            id: new_pending_project_id(),
+            created_at: DateTime::now(),
+            name: test_model::mock_project_name(),
+            kana_name: test_model::mock_project_kana_name(),
+            group_name: test_model::mock_project_group_name(),
+            kana_group_name: test_model::mock_project_kana_group_name(),
+            description: test_model::mock_project_description(),
+            category,
+            attributes: ProjectAttributes::from_attributes(attributes.iter().copied()).unwrap(),
+        },
         author_id,
-        name: test_model::mock_project_name(),
-        kana_name: test_model::mock_project_kana_name(),
-        group_name: test_model::mock_project_group_name(),
-        kana_group_name: test_model::mock_project_kana_group_name(),
-        description: test_model::mock_project_description(),
-        category,
-        attributes: ProjectAttributes::from_attributes(attributes.iter().copied()).unwrap(),
-    }
+    )
 }
 
 pub fn new_pending_project(author_id: UserId, category: ProjectCategory) -> PendingProject {

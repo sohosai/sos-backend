@@ -86,8 +86,8 @@ pub fn endpoints(
         / "signup" => POST (handler::signup),
         / "me" {
             / "get" => GET (handler::me::get),
-            / "project" / "list" => GET (handler::me::project::list),
-            / "pending-project" / "list" => GET (handler::me::pending_project::list),
+            / "project" / "get" => GET (handler::me::project::get),
+            / "pending-project" / "get" => GET (handler::me::pending_project::get),
             / "file" {
                 / "list" => GET (handler::me::file::list),
                 / "check-usage" => GET (handler::me::file::check_usage),

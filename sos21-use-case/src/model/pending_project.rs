@@ -22,7 +22,7 @@ impl PendingProjectId {
 pub struct PendingProject {
     pub id: PendingProjectId,
     pub created_at: DateTime<Utc>,
-    pub author_id: UserId,
+    pub owner_id: UserId,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -35,17 +35,17 @@ pub struct PendingProject {
 impl PendingProject {
     pub fn from_entity(pending_project: entity::PendingProject) -> Self {
         PendingProject {
-            id: PendingProjectId::from_entity(pending_project.id),
-            created_at: pending_project.created_at.utc(),
-            author_id: UserId::from_entity(pending_project.author_id),
-            name: pending_project.name.into_string(),
-            kana_name: pending_project.kana_name.into_string(),
-            group_name: pending_project.group_name.into_string(),
-            kana_group_name: pending_project.kana_group_name.into_string(),
-            description: pending_project.description.into_string(),
-            category: ProjectCategory::from_entity(pending_project.category),
+            id: PendingProjectId::from_entity(pending_project.id()),
+            created_at: pending_project.created_at().utc(),
+            owner_id: UserId::from_entity(pending_project.owner_id().clone()),
+            name: pending_project.name().clone().into_string(),
+            kana_name: pending_project.kana_name().clone().into_string(),
+            group_name: pending_project.group_name().clone().into_string(),
+            kana_group_name: pending_project.kana_group_name().clone().into_string(),
+            description: pending_project.description().clone().into_string(),
+            category: ProjectCategory::from_entity(pending_project.category()),
             attributes: pending_project
-                .attributes
+                .attributes()
                 .attributes()
                 .map(ProjectAttribute::from_entity)
                 .collect(),

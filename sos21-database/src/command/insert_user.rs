@@ -18,6 +18,10 @@ where
         affiliation,
         role,
         category,
+        assignment,
+        assignment_owner_project_id,
+        assignment_subowner_project_id,
+        assignment_owner_pending_project_id,
     } = user;
 
     sqlx::query!(
@@ -33,8 +37,12 @@ INSERT INTO users (
     phone_number,
     affiliation,
     role,
-    category
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11 )
+    category,
+    assignment,
+    assignment_owner_project_id,
+    assignment_subowner_project_id,
+    assignment_owner_pending_project_id
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15 )
 "#,
         id,
         created_at,
@@ -46,7 +54,11 @@ INSERT INTO users (
         phone_number,
         affiliation,
         role as _,
-        category as _
+        category as _,
+        assignment as _,
+        assignment_owner_project_id,
+        assignment_subowner_project_id,
+        assignment_owner_pending_project_id
     )
     .execute(conn)
     .await

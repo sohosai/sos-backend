@@ -1,14 +1,14 @@
 use crate::model::{
     pending_project::{PendingProject, PendingProjectId},
-    user::{User, UserId},
+    user::User,
 };
 
 use anyhow::Result;
 
 #[derive(Debug, Clone)]
-pub struct PendingProjectWithAuthor {
+pub struct PendingProjectWithOwner {
     pub pending_project: PendingProject,
-    pub author: User,
+    pub owner: User,
 }
 
 #[async_trait::async_trait]
@@ -18,8 +18,7 @@ pub trait PendingProjectRepository {
     async fn get_pending_project(
         &self,
         id: PendingProjectId,
-    ) -> Result<Option<PendingProjectWithAuthor>>;
-    async fn list_pending_projects_by_user(&self, user_id: UserId) -> Result<Vec<PendingProject>>;
+    ) -> Result<Option<PendingProjectWithOwner>>;
 }
 
 #[macro_export]
@@ -45,19 +44,9 @@ macro_rules! delegate_pending_project_repository {
                 &$sel,
                 id: $crate::model::pending_project::PendingProjectId,
             ) -> ::anyhow::Result<
-                Option<$crate::context::pending_project_repository::PendingProjectWithAuthor>,
+                Option<$crate::context::pending_project_repository::PendingProjectWithOwner>,
             > {
                 $target.get_pending_project(id).await
-            }
-            async fn list_pending_projects_by_user(
-                &$sel,
-                user_id: $crate::model::user::UserId,
-            ) -> ::anyhow::Result<
-                Vec<
-                    $crate::model::pending_project::PendingProject,
-                >,
-            > {
-                $target.list_pending_projects_by_user(user_id).await
             }
         }
     }
@@ -76,11 +65,7 @@ impl<C: PendingProjectRepository + Sync> PendingProjectRepository for &C {
     async fn get_pending_project(
         &self,
         id: PendingProjectId,
-    ) -> Result<Option<PendingProjectWithAuthor>> {
+    ) -> Result<Option<PendingProjectWithOwner>> {
         <C as PendingProjectRepository>::get_pending_project(self, id).await
-    }
-
-    async fn list_pending_projects_by_user(&self, user_id: UserId) -> Result<Vec<PendingProject>> {
-        <C as PendingProjectRepository>::list_pending_projects_by_user(self, user_id).await
     }
 }

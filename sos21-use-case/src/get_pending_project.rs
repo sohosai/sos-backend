@@ -50,7 +50,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
         assert!(matches!(
             get_pending_project::run(&app, pending_project_id).await,
             Ok(got)
@@ -71,7 +71,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
         assert!(matches!(
             get_pending_project::run(&app, pending_project_id).await,
             Ok(got)
@@ -91,7 +91,8 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_pending_project::run(&app, PendingProjectId::from_entity(pending_project.id)).await,
+            get_pending_project::run(&app, PendingProjectId::from_entity(pending_project.id()))
+                .await,
             Err(UseCaseError::UseCase(get_pending_project::Error::NotFound))
         ));
     }
