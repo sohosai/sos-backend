@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["PendingProject",""],["PendingProjectWithAuthor",""]]});
+initSidebarItems({"struct":[["PendingProject",""],["PendingProjectWithOwner",""]]});

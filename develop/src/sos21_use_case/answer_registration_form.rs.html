@@ -471,7 +471,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">registration_form_id</span> <span class="op">=</span> <span class="ident">RegistrationFormId</span>::<span class="ident">from_entity</span>(<span class="ident">registration_form</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">pending_project_id</span> <span class="op">=</span> <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">pending_project_id</span> <span class="op">=</span> <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">answer_registration_form</span>::<span class="ident">Input</span> {
             <span class="ident">registration_form_id</span>,
             <span class="ident">pending_project_id</span>,
@@ -507,7 +507,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">registration_form_id</span> <span class="op">=</span> <span class="ident">RegistrationFormId</span>::<span class="ident">from_entity</span>(<span class="ident">registration_form</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">pending_project_id</span> <span class="op">=</span> <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">pending_project_id</span> <span class="op">=</span> <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">answer_registration_form</span>::<span class="ident">Input</span> {
             <span class="ident">registration_form_id</span>,
             <span class="ident">pending_project_id</span>,
@@ -538,7 +538,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">registration_form_id</span> <span class="op">=</span> <span class="ident">RegistrationFormId</span>::<span class="ident">from_entity</span>(<span class="ident">registration_form</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">pending_project_id</span> <span class="op">=</span> <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">pending_project_id</span> <span class="op">=</span> <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">test_interface</span>::<span class="ident">mock_input_form_answer_item</span>(
             <span class="ident">registration_form</span>.<span class="ident">items</span>.<span class="ident">items</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>(),
         );
@@ -598,7 +598,7 @@
             ])),
         };
         <span class="kw">let</span> <span class="ident">registration_form_id</span> <span class="op">=</span> <span class="ident">RegistrationFormId</span>::<span class="ident">from_entity</span>(<span class="ident">registration_form</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">pending_project_id</span> <span class="op">=</span> <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">pending_project_id</span> <span class="op">=</span> <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">answer_registration_form</span>::<span class="ident">Input</span> {
             <span class="ident">registration_form_id</span>,
             <span class="ident">pending_project_id</span>,

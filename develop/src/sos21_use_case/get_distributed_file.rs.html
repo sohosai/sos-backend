@@ -319,7 +319,7 @@
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
 
-        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
         <span class="kw">let</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">mock_file_distribution_files_with_project_sharing</span>(<span class="kw-2">&amp;</span><span class="ident">sharing</span>);
         <span class="kw">let</span> <span class="ident">distribution</span> <span class="op">=</span>
@@ -338,7 +338,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_distributed_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">other_project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">other_project</span>.<span class="ident">id</span>()),
             <span class="ident">distribution_id</span>: <span class="ident">FileDistributionId</span>::<span class="ident">from_entity</span>(<span class="ident">distribution</span>.<span class="ident">id</span>),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -360,7 +360,7 @@
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
 
-        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">other_project</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">other_project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
         <span class="kw">let</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">mock_file_distribution_files_with_project_sharing</span>(<span class="kw-2">&amp;</span><span class="ident">sharing</span>);
         <span class="kw">let</span> <span class="ident">distribution</span> <span class="op">=</span>
@@ -379,7 +379,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_distributed_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
             <span class="ident">distribution_id</span>: <span class="ident">FileDistributionId</span>::<span class="ident">from_entity</span>(<span class="ident">distribution</span>.<span class="ident">id</span>),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -398,7 +398,7 @@
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
 
-        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
         <span class="kw">let</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">mock_file_distribution_files_with_project_sharing</span>(<span class="kw-2">&amp;</span><span class="ident">sharing</span>);
         <span class="kw">let</span> <span class="ident">distribution</span> <span class="op">=</span>
@@ -417,7 +417,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_distributed_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
             <span class="ident">distribution_id</span>: <span class="ident">FileDistributionId</span>::<span class="ident">from_entity</span>(<span class="ident">distribution</span>.<span class="ident">id</span>),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -437,7 +437,7 @@
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span>
             <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project_with_subowner</span>(<span class="ident">owner</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
 
-        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
         <span class="kw">let</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">mock_file_distribution_files_with_project_sharing</span>(<span class="kw-2">&amp;</span><span class="ident">sharing</span>);
         <span class="kw">let</span> <span class="ident">distribution</span> <span class="op">=</span>
@@ -456,7 +456,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_distributed_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
             <span class="ident">distribution_id</span>: <span class="ident">FileDistributionId</span>::<span class="ident">from_entity</span>(<span class="ident">distribution</span>.<span class="ident">id</span>),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(

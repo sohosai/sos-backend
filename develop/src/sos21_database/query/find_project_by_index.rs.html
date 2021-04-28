@@ -109,10 +109,24 @@
 <span id="106">106</span>
 <span id="107">107</span>
 <span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">project</span>::{<span class="ident">Project</span>, <span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>, <span class="ident">ProjectWithOwners</span>},
-    <span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserCategory</span>, <span class="ident">UserRole</span>},
+    <span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserAssignment</span>, <span class="ident">UserCategory</span>, <span class="ident">UserRole</span>},
 };
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
@@ -127,8 +141,6 @@ SELECT
         projects.id,
         projects.index,
         projects.created_at,
-        projects.owner_id,
-        projects.subowner_id,
         projects.name,
         projects.kana_name,
         projects.group_name,
@@ -136,6 +148,7 @@ SELECT
         projects.description,
         projects.category AS &quot;category: ProjectCategory&quot;,
         projects.attributes AS &quot;attributes: ProjectAttributes&quot;,
+        owners.id AS owner_id,
         owners.created_at AS owner_created_at,
         owners.first_name AS owner_first_name,
         owners.kana_first_name AS owner_kana_first_name,
@@ -146,6 +159,11 @@ SELECT
         owners.email AS owner_email,
         owners.role AS &quot;owner_role: UserRole&quot;,
         owners.category AS &quot;owner_category: UserCategory&quot;,
+        owners.assignment AS &quot;owner_assignment: UserAssignment&quot;,
+        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,
+        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,
+        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id,
+        subowners.id AS subowner_id,
         subowners.created_at AS subowner_created_at,
         subowners.first_name AS subowner_first_name,
         subowners.kana_first_name AS subowner_kana_first_name,
@@ -155,10 +173,14 @@ SELECT
         subowners.affiliation AS subowner_affiliation,
         subowners.email AS subowner_email,
         subowners.role AS &quot;subowner_role: UserRole&quot;,
-        subowners.category AS &quot;subowner_category: UserCategory&quot;
+        subowners.category AS &quot;subowner_category: UserCategory&quot;,
+        subowners.assignment AS &quot;subowner_assignment: UserAssignment&quot;,
+        subowners.assignment_owner_project_id AS subowner_assignment_owner_project_id,
+        subowners.assignment_subowner_project_id AS subowner_assignment_subowner_project_id,
+        subowners.assignment_owner_pending_project_id AS subowner_assignment_owner_pending_project_id
 FROM projects
-INNER JOIN users AS owners ON (projects.owner_id = owners.id)
-INNER JOIN users AS subowners ON (projects.subowner_id = subowners.id)
+INNER JOIN users AS owners ON (owners.assignment = &#39;project_owner&#39; AND owners.assignment_owner_project_id = projects.id)
+INNER JOIN users AS subowners ON (subowners.assignment = &#39;project_subowner&#39; AND subowners.assignment_subowner_project_id = projects.id)
 WHERE projects.index = $1
 &quot;#</span>,
         <span class="ident">index</span>
@@ -175,8 +197,6 @@ WHERE projects.index = $1
         <span class="ident">id</span>: <span class="ident">row</span>.<span class="ident">id</span>,
         <span class="ident">index</span>: <span class="ident">row</span>.<span class="ident">index</span>,
         <span class="ident">created_at</span>: <span class="ident">row</span>.<span class="ident">created_at</span>,
-        <span class="ident">owner_id</span>: <span class="ident">row</span>.<span class="ident">owner_id</span>.<span class="ident">clone</span>(),
-        <span class="ident">subowner_id</span>: <span class="ident">row</span>.<span class="ident">subowner_id</span>.<span class="ident">clone</span>(),
         <span class="ident">name</span>: <span class="ident">row</span>.<span class="ident">name</span>,
         <span class="ident">kana_name</span>: <span class="ident">row</span>.<span class="ident">kana_name</span>,
         <span class="ident">group_name</span>: <span class="ident">row</span>.<span class="ident">group_name</span>,
@@ -197,6 +217,10 @@ WHERE projects.index = $1
         <span class="ident">email</span>: <span class="ident">row</span>.<span class="ident">owner_email</span>,
         <span class="ident">role</span>: <span class="ident">row</span>.<span class="ident">owner_role</span>,
         <span class="ident">category</span>: <span class="ident">row</span>.<span class="ident">owner_category</span>,
+        <span class="ident">assignment</span>: <span class="ident">row</span>.<span class="ident">owner_assignment</span>,
+        <span class="ident">assignment_owner_project_id</span>: <span class="ident">row</span>.<span class="ident">owner_assignment_owner_project_id</span>,
+        <span class="ident">assignment_subowner_project_id</span>: <span class="ident">row</span>.<span class="ident">owner_assignment_subowner_project_id</span>,
+        <span class="ident">assignment_owner_pending_project_id</span>: <span class="ident">row</span>.<span class="ident">owner_assignment_owner_pending_project_id</span>,
     };
     <span class="kw">let</span> <span class="ident">subowner</span> <span class="op">=</span> <span class="ident">User</span> {
         <span class="ident">id</span>: <span class="ident">row</span>.<span class="ident">subowner_id</span>,
@@ -210,6 +234,10 @@ WHERE projects.index = $1
         <span class="ident">email</span>: <span class="ident">row</span>.<span class="ident">subowner_email</span>,
         <span class="ident">role</span>: <span class="ident">row</span>.<span class="ident">subowner_role</span>,
         <span class="ident">category</span>: <span class="ident">row</span>.<span class="ident">subowner_category</span>,
+        <span class="ident">assignment</span>: <span class="ident">row</span>.<span class="ident">subowner_assignment</span>,
+        <span class="ident">assignment_owner_project_id</span>: <span class="ident">row</span>.<span class="ident">subowner_assignment_owner_project_id</span>,
+        <span class="ident">assignment_subowner_project_id</span>: <span class="ident">row</span>.<span class="ident">subowner_assignment_subowner_project_id</span>,
+        <span class="ident">assignment_owner_pending_project_id</span>: <span class="ident">row</span>.<span class="ident">subowner_assignment_owner_pending_project_id</span>,
     };
 
     <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">ProjectWithOwners</span> {

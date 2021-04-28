@@ -580,11 +580,11 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">check_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">project</span>: <span class="kw-2">&amp;</span><span class="ident">Project</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">check_category_attributes</span>(<span class="ident">project</span>.<span class="ident">category</span>, <span class="kw-2">&amp;</span><span class="ident">project</span>.<span class="ident">attributes</span>)
+        <span class="self">self</span>.<span class="ident">check_category_attributes</span>(<span class="ident">project</span>.<span class="ident">category</span>(), <span class="ident">project</span>.<span class="ident">attributes</span>())
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">check_pending_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">pending_project</span>: <span class="kw-2">&amp;</span><span class="ident">PendingProject</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">check_category_attributes</span>(<span class="ident">pending_project</span>.<span class="ident">category</span>, <span class="kw-2">&amp;</span><span class="ident">pending_project</span>.<span class="ident">attributes</span>)
+        <span class="self">self</span>.<span class="ident">check_category_attributes</span>(<span class="ident">pending_project</span>.<span class="ident">category</span>(), <span class="ident">pending_project</span>.<span class="ident">attributes</span>())
     }
 }
 

@@ -538,14 +538,14 @@
     <span class="kw">fn</span> <span class="ident">to_scope</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">ShareTarget</span>::<span class="ident">FormAnswer</span> { <span class="ident">project</span>, <span class="ident">form</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(<span class="ident">project</span>.<span class="ident">id</span>, <span class="ident">form</span>.<span class="ident">id</span>)
+                <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(<span class="ident">project</span>.<span class="ident">id</span>(), <span class="ident">form</span>.<span class="ident">id</span>)
             }
             <span class="ident">ShareTarget</span>::<span class="ident">RegistrationFormAnswer</span> {
                 <span class="ident">pending_project</span>,
                 <span class="ident">registration_form</span>,
             } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">RegistrationFormAnswer</span>(
                 <span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">PendingProject</span>(
-                    <span class="ident">pending_project</span>.<span class="ident">id</span>,
+                    <span class="ident">pending_project</span>.<span class="ident">id</span>(),
                 ),
                 <span class="ident">registration_form</span>.<span class="ident">id</span>,
             ),

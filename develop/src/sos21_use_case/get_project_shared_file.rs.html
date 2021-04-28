@@ -382,7 +382,7 @@
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">other_project</span>.<span class="ident">id</span>),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">other_project</span>.<span class="ident">id</span>()),
         );
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -397,7 +397,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_shared_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">other_project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">other_project</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -418,7 +418,7 @@
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
         );
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -433,7 +433,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_shared_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -455,7 +455,7 @@
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
         );
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -470,7 +470,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_shared_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -491,7 +491,7 @@
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">other_project</span>.<span class="ident">id</span>),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">other_project</span>.<span class="ident">id</span>()),
         );
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -506,7 +506,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_shared_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -528,7 +528,7 @@
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
         );
         <span class="ident">sharing</span>.<span class="ident">revoke</span>().<span class="ident">unwrap</span>();
 
@@ -544,7 +544,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_shared_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -566,7 +566,7 @@
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_expired_file_sharing</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
         );
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -581,7 +581,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_shared_file</span>::<span class="ident">Input</span> {
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(

@@ -255,23 +255,23 @@
         } <span class="op">=</span> <span class="ident">input</span>;
 
         <span class="ident">Project</span> {
-            <span class="ident">id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>),
+            <span class="ident">id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
             <span class="ident">code</span>: <span class="ident">project</span>.<span class="ident">code</span>().<span class="ident">to_string</span>(),
-            <span class="ident">created_at</span>: <span class="ident">project</span>.<span class="ident">created_at</span>.<span class="ident">utc</span>(),
-            <span class="ident">owner_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">owner_id</span>),
+            <span class="ident">created_at</span>: <span class="ident">project</span>.<span class="ident">created_at</span>().<span class="ident">utc</span>(),
+            <span class="ident">owner_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">owner_id</span>().<span class="ident">clone</span>()),
             <span class="ident">owner_name</span>: <span class="ident">UserName</span>::<span class="ident">from_entity</span>(<span class="ident">owner_name</span>),
             <span class="ident">owner_kana_name</span>: <span class="ident">UserKanaName</span>::<span class="ident">from_entity</span>(<span class="ident">owner_kana_name</span>),
-            <span class="ident">subowner_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">subowner_id</span>),
+            <span class="ident">subowner_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">subowner_id</span>().<span class="ident">clone</span>()),
             <span class="ident">subowner_name</span>: <span class="ident">UserName</span>::<span class="ident">from_entity</span>(<span class="ident">subowner_name</span>),
             <span class="ident">subowner_kana_name</span>: <span class="ident">UserKanaName</span>::<span class="ident">from_entity</span>(<span class="ident">subowner_kana_name</span>),
-            <span class="ident">name</span>: <span class="ident">project</span>.<span class="ident">name</span>.<span class="ident">into_string</span>(),
-            <span class="ident">kana_name</span>: <span class="ident">project</span>.<span class="ident">kana_name</span>.<span class="ident">into_string</span>(),
-            <span class="ident">group_name</span>: <span class="ident">project</span>.<span class="ident">group_name</span>.<span class="ident">into_string</span>(),
-            <span class="ident">kana_group_name</span>: <span class="ident">project</span>.<span class="ident">kana_group_name</span>.<span class="ident">into_string</span>(),
-            <span class="ident">description</span>: <span class="ident">project</span>.<span class="ident">description</span>.<span class="ident">into_string</span>(),
-            <span class="ident">category</span>: <span class="ident">ProjectCategory</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">category</span>),
+            <span class="ident">name</span>: <span class="ident">project</span>.<span class="ident">name</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">kana_name</span>: <span class="ident">project</span>.<span class="ident">kana_name</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">group_name</span>: <span class="ident">project</span>.<span class="ident">group_name</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">kana_group_name</span>: <span class="ident">project</span>.<span class="ident">kana_group_name</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">description</span>: <span class="ident">project</span>.<span class="ident">description</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">category</span>: <span class="ident">ProjectCategory</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">category</span>()),
             <span class="ident">attributes</span>: <span class="ident">project</span>
-                .<span class="ident">attributes</span>
+                .<span class="ident">attributes</span>()
                 .<span class="ident">attributes</span>()
                 .<span class="ident">map</span>(<span class="ident">ProjectAttribute</span>::<span class="ident">from_entity</span>)
                 .<span class="ident">collect</span>(),

@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["accept_subowner",""],["get",""],["registration_form",""]]});
+initSidebarItems({"mod":[["get",""],["registration_form",""]]});

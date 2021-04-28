@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["from_user",""],["to_user",""]],"struct":[["UserDatabase",""]]});
+initSidebarItems({"fn":[["from_user",""],["from_user_assignment",""],["to_user",""]],"struct":[["UserDatabase",""]]});

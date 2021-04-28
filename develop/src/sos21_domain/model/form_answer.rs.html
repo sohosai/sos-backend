@@ -104,6 +104,7 @@
 <span id="101">101</span>
 <span id="102">102</span>
 <span id="103">103</span>
+<span id="104">104</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::<span class="ident">FormId</span>;
@@ -150,7 +151,7 @@
             <span class="kw">return</span> <span class="bool-val">true</span>;
         }
 
-        <span class="self">self</span>.<span class="ident">project_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">project</span>.<span class="ident">id</span> <span class="op">&amp;&amp;</span> <span class="ident">project</span>.<span class="ident">is_visible_to</span>(<span class="ident">user</span>)
+        <span class="self">self</span>.<span class="ident">project_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">project</span>.<span class="ident">id</span>() <span class="op">&amp;&amp;</span> <span class="ident">project</span>.<span class="ident">is_visible_to</span>(<span class="ident">user</span>)
     }
 }
 
@@ -164,7 +165,7 @@
         <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user_project</span>.<span class="ident">id</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user_project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">form_answer</span>.<span class="ident">is_visible_to</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>));
     }
 
@@ -174,7 +175,7 @@
         <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user_project</span>.<span class="ident">id</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user_project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">form_answer</span>.<span class="ident">is_visible_to</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>));
     }
 
@@ -184,7 +185,7 @@
         <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user_project</span>.<span class="ident">id</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user_project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">form_answer</span>.<span class="ident">is_visible_to</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>));
     }
 
@@ -194,7 +195,7 @@
         <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user_project</span>.<span class="ident">id</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user_project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">form_answer</span>.<span class="ident">is_visible_to_with_project</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>, <span class="kw-2">&amp;</span><span class="ident">user_project</span>));
     }
 
@@ -204,7 +205,8 @@
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">operator_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">operator</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>);
-        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">operator_project</span>.<span class="ident">id</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">form_answer</span> <span class="op">=</span>
+            <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">operator_project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">form_answer</span>.<span class="ident">is_visible_to_with_project</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>, <span class="kw-2">&amp;</span><span class="ident">operator_project</span>));
     }
 }

@@ -25,7 +25,6 @@
 <span id="22">22</span>
 <span id="23">23</span>
 <span id="24">24</span>
-<span id="25">25</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">User</span>;
@@ -37,7 +36,6 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PendingProject</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">Uuid</span>,
     <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">author_id</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">group_name</span>: <span class="ident">String</span>,
@@ -48,9 +46,9 @@
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PendingProjectWithAuthor</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PendingProjectWithOwner</span> {
     <span class="kw">pub</span> <span class="ident">pending_project</span>: <span class="ident">PendingProject</span>,
-    <span class="kw">pub</span> <span class="ident">author</span>: <span class="ident">User</span>,
+    <span class="kw">pub</span> <span class="ident">owner</span>: <span class="ident">User</span>,
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="sos21_database"></div>

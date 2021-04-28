@@ -72,33 +72,18 @@
 <span id="69">69</span>
 <span id="70">70</span>
 <span id="71">71</span>
-<span id="72">72</span>
-<span id="73">73</span>
-<span id="74">74</span>
-<span id="75">75</span>
-<span id="76">76</span>
-<span id="77">77</span>
-<span id="78">78</span>
-<span id="79">79</span>
-<span id="80">80</span>
-<span id="81">81</span>
-<span id="82">82</span>
-<span id="83">83</span>
-<span id="84">84</span>
-<span id="85">85</span>
-<span id="86">86</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">pending_project</span>::{<span class="ident">PendingProject</span>, <span class="ident">PendingProjectId</span>},
-    <span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserId</span>},
+    <span class="ident">user</span>::<span class="ident">User</span>,
 };
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PendingProjectWithAuthor</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PendingProjectWithOwner</span> {
     <span class="kw">pub</span> <span class="ident">pending_project</span>: <span class="ident">PendingProject</span>,
-    <span class="kw">pub</span> <span class="ident">author</span>: <span class="ident">User</span>,
+    <span class="kw">pub</span> <span class="ident">owner</span>: <span class="ident">User</span>,
 }
 
 <span class="attribute">#[<span class="ident">async_trait</span>::<span class="ident">async_trait</span>]</span>
@@ -108,8 +93,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_pending_project</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">id</span>: <span class="ident">PendingProjectId</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PendingProjectWithAuthor</span><span class="op">&gt;</span><span class="op">&gt;</span>;
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_pending_projects_by_user</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">user_id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PendingProject</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PendingProjectWithOwner</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 }
 
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
@@ -135,19 +119,9 @@
                 <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">sel</span>,
                 <span class="ident">id</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProjectId</span>,
             ) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>
-                <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">context</span>::<span class="ident">pending_project_repository</span>::<span class="ident">PendingProjectWithAuthor</span><span class="op">&gt;</span>,
+                <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">context</span>::<span class="ident">pending_project_repository</span>::<span class="ident">PendingProjectWithOwner</span><span class="op">&gt;</span>,
             <span class="op">&gt;</span> {
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">get_pending_project</span>(<span class="ident">id</span>).<span class="kw">await</span>
-            }
-            <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_pending_projects_by_user</span>(
-                <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">sel</span>,
-                <span class="ident">user_id</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">user</span>::<span class="ident">UserId</span>,
-            ) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>
-                <span class="ident">Vec</span><span class="op">&lt;</span>
-                    <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProject</span>,
-                <span class="op">&gt;</span>,
-            <span class="op">&gt;</span> {
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">list_pending_projects_by_user</span>(<span class="ident">user_id</span>).<span class="kw">await</span>
             }
         }
     }
@@ -166,12 +140,8 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_pending_project</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">id</span>: <span class="ident">PendingProjectId</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PendingProjectWithAuthor</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PendingProjectWithOwner</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">PendingProjectRepository</span><span class="op">&gt;</span>::<span class="ident">get_pending_project</span>(<span class="self">self</span>, <span class="ident">id</span>).<span class="kw">await</span>
-    }
-
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_pending_projects_by_user</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">user_id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PendingProject</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">PendingProjectRepository</span><span class="op">&gt;</span>::<span class="ident">list_pending_projects_by_user</span>(<span class="self">self</span>, <span class="ident">user_id</span>).<span class="kw">await</span>
     }
 }
 </pre></div>

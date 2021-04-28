@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["list",""]]});
+initSidebarItems({"mod":[["get",""]]});

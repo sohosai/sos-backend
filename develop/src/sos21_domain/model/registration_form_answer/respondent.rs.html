@@ -29,6 +29,9 @@
 <span id="26">26</span>
 <span id="27">27</span>
 <span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">pending_project</span>::{<span class="ident">PendingProject</span>, <span class="ident">PendingProjectId</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">Project</span>, <span class="ident">ProjectId</span>};
@@ -41,20 +44,23 @@
 
 <span class="kw">impl</span> <span class="ident">RegistrationFormAnswerRespondent</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">replace_to_project</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">project</span>: <span class="kw-2">&amp;</span><span class="ident">Project</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="self">self</span>, <span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>))
+        <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">replace</span>(
+            <span class="self">self</span>,
+            <span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
+        )
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">project</span>: <span class="kw-2">&amp;</span><span class="ident">Project</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>,
             <span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">Project</span>(<span class="ident">id</span>)
-            <span class="kw">if</span> <span class="ident">project</span>.<span class="ident">id</span> <span class="op">=</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">id</span>
+            <span class="kw">if</span> <span class="ident">project</span>.<span class="ident">id</span>() <span class="op">=</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">id</span>
         )
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_pending_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">pending_project</span>: <span class="kw-2">&amp;</span><span class="ident">PendingProject</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="macro">matches</span><span class="macro">!</span>(<span class="self">self</span>,
             <span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">PendingProject</span>(<span class="ident">id</span>)
-            <span class="kw">if</span> <span class="ident">pending_project</span>.<span class="ident">id</span> <span class="op">=</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">id</span>
+            <span class="kw">if</span> <span class="ident">pending_project</span>.<span class="ident">id</span>() <span class="op">=</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">id</span>
         )
     }
 }

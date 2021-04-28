@@ -80,7 +80,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PendingProject</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">PendingProjectId</span>,
     <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">author_id</span>: <span class="ident">UserId</span>,
+    <span class="kw">pub</span> <span class="ident">owner_id</span>: <span class="ident">UserId</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">group_name</span>: <span class="ident">String</span>,
@@ -93,17 +93,17 @@
 <span class="kw">impl</span> <span class="ident">PendingProject</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_entity</span>(<span class="ident">pending_project</span>: <span class="ident">entity</span>::<span class="ident">PendingProject</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">PendingProject</span> {
-            <span class="ident">id</span>: <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>),
-            <span class="ident">created_at</span>: <span class="ident">pending_project</span>.<span class="ident">created_at</span>.<span class="ident">utc</span>(),
-            <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">author_id</span>),
-            <span class="ident">name</span>: <span class="ident">pending_project</span>.<span class="ident">name</span>.<span class="ident">into_string</span>(),
-            <span class="ident">kana_name</span>: <span class="ident">pending_project</span>.<span class="ident">kana_name</span>.<span class="ident">into_string</span>(),
-            <span class="ident">group_name</span>: <span class="ident">pending_project</span>.<span class="ident">group_name</span>.<span class="ident">into_string</span>(),
-            <span class="ident">kana_group_name</span>: <span class="ident">pending_project</span>.<span class="ident">kana_group_name</span>.<span class="ident">into_string</span>(),
-            <span class="ident">description</span>: <span class="ident">pending_project</span>.<span class="ident">description</span>.<span class="ident">into_string</span>(),
-            <span class="ident">category</span>: <span class="ident">ProjectCategory</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">category</span>),
+            <span class="ident">id</span>: <span class="ident">PendingProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>()),
+            <span class="ident">created_at</span>: <span class="ident">pending_project</span>.<span class="ident">created_at</span>().<span class="ident">utc</span>(),
+            <span class="ident">owner_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">owner_id</span>().<span class="ident">clone</span>()),
+            <span class="ident">name</span>: <span class="ident">pending_project</span>.<span class="ident">name</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">kana_name</span>: <span class="ident">pending_project</span>.<span class="ident">kana_name</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">group_name</span>: <span class="ident">pending_project</span>.<span class="ident">group_name</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">kana_group_name</span>: <span class="ident">pending_project</span>.<span class="ident">kana_group_name</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">description</span>: <span class="ident">pending_project</span>.<span class="ident">description</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">category</span>: <span class="ident">ProjectCategory</span>::<span class="ident">from_entity</span>(<span class="ident">pending_project</span>.<span class="ident">category</span>()),
             <span class="ident">attributes</span>: <span class="ident">pending_project</span>
-                .<span class="ident">attributes</span>
+                .<span class="ident">attributes</span>()
                 .<span class="ident">attributes</span>()
                 .<span class="ident">map</span>(<span class="ident">ProjectAttribute</span>::<span class="ident">from_entity</span>)
                 .<span class="ident">collect</span>(),

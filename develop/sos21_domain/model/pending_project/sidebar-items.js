@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["AcceptSubownerErrorKind",""]],"struct":[["AcceptSubownerError",""],["PendingProject",""],["PendingProjectId",""]]});
+initSidebarItems({"enum":[["NewPendingProjectErrorKind",""]],"struct":[["NewPendingProjectError",""],["PendingProject",""],["PendingProjectContent",""],["PendingProjectId",""]]});

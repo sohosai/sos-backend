@@ -136,20 +136,6 @@
 <span id="133">133</span>
 <span id="134">134</span>
 <span id="135">135</span>
-<span id="136">136</span>
-<span id="137">137</span>
-<span id="138">138</span>
-<span id="139">139</span>
-<span id="140">140</span>
-<span id="141">141</span>
-<span id="142">142</span>
-<span id="143">143</span>
-<span id="144">144</span>
-<span id="145">145</span>
-<span id="146">146</span>
-<span id="147">147</span>
-<span id="148">148</span>
-<span id="149">149</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">project_repository</span>::{
     <span class="ident">from_project_attributes</span>, <span class="ident">from_project_category</span>, <span class="ident">to_project_attributes</span>, <span class="ident">to_project_category</span>,
@@ -157,15 +143,15 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">user_repository</span>::<span class="ident">to_user</span>;
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span>;
-<span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">future</span>, <span class="ident">lock</span>::<span class="ident">Mutex</span>, <span class="ident">stream</span>::<span class="ident">TryStreamExt</span>};
+<span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">lock</span>::<span class="ident">Mutex</span>;
 <span class="kw">use</span> <span class="ident">ref_cast</span>::<span class="ident">RefCast</span>;
 <span class="kw">use</span> <span class="ident">sos21_database</span>::{<span class="ident">command</span>, <span class="ident">model</span> <span class="kw">as</span> <span class="ident">data</span>, <span class="ident">query</span>};
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::<span class="ident">pending_project_repository</span>::{
-    <span class="ident">PendingProjectRepository</span>, <span class="ident">PendingProjectWithAuthor</span>,
+    <span class="ident">PendingProjectRepository</span>, <span class="ident">PendingProjectWithOwner</span>,
 };
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
-    <span class="ident">pending_project</span>::{<span class="ident">PendingProject</span>, <span class="ident">PendingProjectId</span>},
+    <span class="ident">pending_project</span>::{<span class="ident">PendingProject</span>, <span class="ident">PendingProjectContent</span>, <span class="ident">PendingProjectId</span>},
     <span class="ident">project</span>::{
         <span class="ident">ProjectDescription</span>, <span class="ident">ProjectGroupName</span>, <span class="ident">ProjectKanaGroupName</span>, <span class="ident">ProjectKanaName</span>, <span class="ident">ProjectName</span>,
     },
@@ -190,7 +176,6 @@
             <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">command</span>::<span class="ident">update_pending_project</span>::<span class="ident">Input</span> {
                 <span class="ident">id</span>: <span class="ident">pending_project</span>.<span class="ident">id</span>,
                 <span class="ident">created_at</span>: <span class="ident">pending_project</span>.<span class="ident">created_at</span>,
-                <span class="ident">author_id</span>: <span class="ident">pending_project</span>.<span class="ident">author_id</span>,
                 <span class="ident">name</span>: <span class="ident">pending_project</span>.<span class="ident">name</span>,
                 <span class="ident">kana_name</span>: <span class="ident">pending_project</span>.<span class="ident">kana_name</span>,
                 <span class="ident">group_name</span>: <span class="ident">pending_project</span>.<span class="ident">group_name</span>,
@@ -213,27 +198,18 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_pending_project</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">id</span>: <span class="ident">PendingProjectId</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PendingProjectWithAuthor</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PendingProjectWithOwner</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="kw">await</span>;
         <span class="ident">query</span>::<span class="ident">find_pending_project</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">id</span>.<span class="ident">to_uuid</span>())
             .<span class="kw">await</span>
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">opt</span><span class="op">|</span> <span class="ident">opt</span>.<span class="ident">map</span>(<span class="ident">to_pending_project_with_author</span>).<span class="ident">transpose</span>())
-    }
-
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_pending_projects_by_user</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">user_id</span>: <span class="ident">UserId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PendingProject</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="kw">await</span>;
-        <span class="ident">query</span>::<span class="ident">list_pending_projects_by_user</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">user_id</span>.<span class="number">0</span>)
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">pending_project</span><span class="op">|</span> <span class="ident">future</span>::<span class="ident">ready</span>(<span class="ident">to_pending_project</span>(<span class="ident">pending_project</span>)))
-            .<span class="ident">try_collect</span>()
-            .<span class="kw">await</span>
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">opt</span><span class="op">|</span> <span class="ident">opt</span>.<span class="ident">map</span>(<span class="ident">to_pending_project_with_owner</span>).<span class="ident">transpose</span>())
     }
 }
 
 <span class="kw">fn</span> <span class="ident">from_pending_project</span>(<span class="ident">pending_project</span>: <span class="ident">PendingProject</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProject</span> {
-    <span class="kw">let</span> <span class="ident">PendingProject</span> {
+    <span class="kw">let</span> <span class="ident">PendingProjectContent</span> {
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
-        <span class="ident">author_id</span>,
         <span class="ident">name</span>,
         <span class="ident">kana_name</span>,
         <span class="ident">group_name</span>,
@@ -241,12 +217,11 @@
         <span class="ident">description</span>,
         <span class="ident">category</span>,
         <span class="ident">attributes</span>,
-    } <span class="op">=</span> <span class="ident">pending_project</span>;
+    } <span class="op">=</span> <span class="ident">pending_project</span>.<span class="ident">into_content</span>();
 
     <span class="ident">data</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProject</span> {
         <span class="ident">id</span>: <span class="ident">id</span>.<span class="ident">to_uuid</span>(),
         <span class="ident">created_at</span>: <span class="ident">created_at</span>.<span class="ident">utc</span>(),
-        <span class="ident">author_id</span>: <span class="ident">author_id</span>.<span class="number">0</span>,
         <span class="ident">name</span>: <span class="ident">name</span>.<span class="ident">into_string</span>(),
         <span class="ident">kana_name</span>: <span class="ident">kana_name</span>.<span class="ident">into_string</span>(),
         <span class="ident">group_name</span>: <span class="ident">group_name</span>.<span class="ident">into_string</span>(),
@@ -257,27 +232,17 @@
     }
 }
 
-<span class="kw">fn</span> <span class="ident">to_pending_project_with_author</span>(
-    <span class="ident">pending_project_with_author</span>: <span class="ident">data</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProjectWithAuthor</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PendingProjectWithAuthor</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">data</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProjectWithAuthor</span> {
+<span class="kw">fn</span> <span class="ident">to_pending_project_with_owner</span>(
+    <span class="ident">pending_project_with_owner</span>: <span class="ident">data</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProjectWithOwner</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PendingProjectWithOwner</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">data</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProjectWithOwner</span> {
         <span class="ident">pending_project</span>,
-        <span class="ident">author</span>,
-    } <span class="op">=</span> <span class="ident">pending_project_with_author</span>;
+        <span class="ident">owner</span>,
+    } <span class="op">=</span> <span class="ident">pending_project_with_owner</span>;
 
-    <span class="prelude-val">Ok</span>(<span class="ident">PendingProjectWithAuthor</span> {
-        <span class="ident">pending_project</span>: <span class="ident">to_pending_project</span>(<span class="ident">pending_project</span>)<span class="question-mark">?</span>,
-        <span class="ident">author</span>: <span class="ident">to_user</span>(<span class="ident">author</span>)<span class="question-mark">?</span>,
-    })
-}
-
-<span class="kw">fn</span> <span class="ident">to_pending_project</span>(
-    <span class="ident">pending_project</span>: <span class="ident">data</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProject</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PendingProject</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">data</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProject</span> {
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
-        <span class="ident">author_id</span>,
         <span class="ident">name</span>,
         <span class="ident">kana_name</span>,
         <span class="ident">group_name</span>,
@@ -287,17 +252,24 @@
         <span class="ident">attributes</span>,
     } <span class="op">=</span> <span class="ident">pending_project</span>;
 
-    <span class="prelude-val">Ok</span>(<span class="ident">PendingProject</span> {
-        <span class="ident">id</span>: <span class="ident">PendingProjectId</span>::<span class="ident">from_uuid</span>(<span class="ident">id</span>),
-        <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
-        <span class="ident">author_id</span>: <span class="ident">UserId</span>(<span class="ident">author_id</span>),
-        <span class="ident">name</span>: <span class="ident">ProjectName</span>::<span class="ident">from_string</span>(<span class="ident">name</span>)<span class="question-mark">?</span>,
-        <span class="ident">kana_name</span>: <span class="ident">ProjectKanaName</span>::<span class="ident">from_string</span>(<span class="ident">kana_name</span>)<span class="question-mark">?</span>,
-        <span class="ident">group_name</span>: <span class="ident">ProjectGroupName</span>::<span class="ident">from_string</span>(<span class="ident">group_name</span>)<span class="question-mark">?</span>,
-        <span class="ident">kana_group_name</span>: <span class="ident">ProjectKanaGroupName</span>::<span class="ident">from_string</span>(<span class="ident">kana_group_name</span>)<span class="question-mark">?</span>,
-        <span class="ident">description</span>: <span class="ident">ProjectDescription</span>::<span class="ident">from_string</span>(<span class="ident">description</span>)<span class="question-mark">?</span>,
-        <span class="ident">category</span>: <span class="ident">to_project_category</span>(<span class="ident">category</span>),
-        <span class="ident">attributes</span>: <span class="ident">to_project_attributes</span>(<span class="ident">attributes</span>)<span class="question-mark">?</span>,
+    <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">PendingProject</span>::<span class="ident">from_content</span>(
+        <span class="ident">PendingProjectContent</span> {
+            <span class="ident">id</span>: <span class="ident">PendingProjectId</span>::<span class="ident">from_uuid</span>(<span class="ident">id</span>),
+            <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
+            <span class="ident">name</span>: <span class="ident">ProjectName</span>::<span class="ident">from_string</span>(<span class="ident">name</span>)<span class="question-mark">?</span>,
+            <span class="ident">kana_name</span>: <span class="ident">ProjectKanaName</span>::<span class="ident">from_string</span>(<span class="ident">kana_name</span>)<span class="question-mark">?</span>,
+            <span class="ident">group_name</span>: <span class="ident">ProjectGroupName</span>::<span class="ident">from_string</span>(<span class="ident">group_name</span>)<span class="question-mark">?</span>,
+            <span class="ident">kana_group_name</span>: <span class="ident">ProjectKanaGroupName</span>::<span class="ident">from_string</span>(<span class="ident">kana_group_name</span>)<span class="question-mark">?</span>,
+            <span class="ident">description</span>: <span class="ident">ProjectDescription</span>::<span class="ident">from_string</span>(<span class="ident">description</span>)<span class="question-mark">?</span>,
+            <span class="ident">category</span>: <span class="ident">to_project_category</span>(<span class="ident">category</span>),
+            <span class="ident">attributes</span>: <span class="ident">to_project_attributes</span>(<span class="ident">attributes</span>)<span class="question-mark">?</span>,
+        },
+        <span class="ident">UserId</span>(<span class="ident">owner</span>.<span class="ident">id</span>.<span class="ident">clone</span>()),
+    );
+
+    <span class="prelude-val">Ok</span>(<span class="ident">PendingProjectWithOwner</span> {
+        <span class="ident">pending_project</span>,
+        <span class="ident">owner</span>: <span class="ident">to_user</span>(<span class="ident">owner</span>)<span class="question-mark">?</span>,
     })
 }
 </pre></div>
