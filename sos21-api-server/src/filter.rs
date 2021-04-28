@@ -96,6 +96,7 @@ pub fn endpoints(
         },
         / "project" {
             / "prepare" => POST (handler::project::prepare),
+            / "create" => POST (handler::project::create),
             / "get" => GET (handler::project::get),
             / "update" => POST (handler::project::update),
             / "list" => GET (handler::project::list),
@@ -134,7 +135,6 @@ pub fn endpoints(
         },
         / "pending-project" {
             / "get" => GET (handler::pending_project::get),
-            / "accept-subowner" => POST (handler::pending_project::accept_subowner),
             / "registration-form" {
                 / "get" => GET (handler::pending_project::registration_form::get),
                 / "list" => GET (handler::pending_project::registration_form::list),

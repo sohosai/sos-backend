@@ -713,10 +713,10 @@ paths:
           in: query
           name: pending_project_id
     parameters: []
-  /pending-project/accept-subowner:
+  /project/create:
     post:
-      summary: pending-project/accept-subowner
-      operationId: pending-project/accept-subowner
+      summary: project/create
+      operationId: project/create
       tags:
         - project
         - pending_project
@@ -779,7 +779,7 @@ paths:
                       - error
         "500":
           $ref: "#/components/responses/InternalServerError"
-      description: 指定された承認待ち企画の副責任者になることを承認し、企画を作成します。
+      description: 指定された承認待ち企画を用いて、自身を副責任者として企画を作成します。
       requestBody:
         content:
           application/json:

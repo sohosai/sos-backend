@@ -132,7 +132,7 @@ where
 mod tests {
     use crate::model::pending_project::PendingProjectId;
     use crate::model::user::UserId;
-    use crate::{accept_project_subowner, get_pending_project, UseCaseError};
+    use crate::{create_project, get_pending_project, UseCaseError};
     use sos21_domain::test;
 
     #[tokio::test]
@@ -148,10 +148,9 @@ mod tests {
             .await;
 
         assert!(matches!(
-            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id()))
-                .await,
+            create_project::run(&app, PendingProjectId::from_entity(pending_project.id())).await,
             Err(UseCaseError::UseCase(
-                accept_project_subowner::Error::SameOwnerSubowner
+                create_project::Error::SameOwnerSubowner
             ))
         ));
     }
@@ -174,10 +173,9 @@ mod tests {
             .await;
 
         assert!(matches!(
-            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id()))
-                .await,
+            create_project::run(&app, PendingProjectId::from_entity(pending_project.id())).await,
             Err(UseCaseError::UseCase(
-                accept_project_subowner::Error::AlreadyProjectOwner
+                create_project::Error::AlreadyProjectOwner
             ))
         ));
     }
@@ -198,7 +196,7 @@ mod tests {
         let pending_project_id = PendingProjectId::from_entity(pending_project.id());
 
         assert!(matches!(
-            accept_project_subowner::run(&app, pending_project_id).await,
+            create_project::run(&app, pending_project_id).await,
             Ok(got)
             if got.owner_id == UserId::from_entity(other.id)
             && got.subowner_id == UserId::from_entity(user.id)
@@ -236,10 +234,9 @@ mod tests {
             .await;
 
         assert!(matches!(
-            accept_project_subowner::run(&app, PendingProjectId::from_entity(pending_project.id()))
-                .await,
+            create_project::run(&app, PendingProjectId::from_entity(pending_project.id())).await,
             Err(UseCaseError::UseCase(
-                accept_project_subowner::Error::NotAnsweredRegistrationForm { .. }
+                create_project::Error::NotAnsweredRegistrationForm { .. }
             ))
         ));
     }
@@ -293,7 +290,7 @@ mod tests {
         let pending_project_id = PendingProjectId::from_entity(pending_project.id());
 
         assert!(matches!(
-            accept_project_subowner::run(&app, pending_project_id).await,
+            create_project::run(&app, pending_project_id).await,
             Ok(got)
             if got.owner_id == UserId::from_entity(owner.id)
             && got.subowner_id == UserId::from_entity(subowner.id)
@@ -353,7 +350,7 @@ mod tests {
             .await;
 
         let pending_project_id = PendingProjectId::from_entity(pending_project.id());
-        let project = accept_project_subowner::run(&subowner_app, pending_project_id)
+        let project = create_project::run(&subowner_app, pending_project_id)
             .await
             .unwrap();
         assert_eq!(project.owner_id, UserId::from_entity(owner.id));
