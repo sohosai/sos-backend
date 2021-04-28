@@ -141,7 +141,7 @@ mod tests {
             .await;
 
         let input = update_project::Input {
-            id: ProjectId::from_entity(project.id),
+            id: ProjectId::from_entity(project.id()),
             name: Some("新しい名前".to_string()),
             kana_name: None,
             group_name: None,
@@ -172,7 +172,7 @@ mod tests {
             .await;
 
         let input = update_project::Input {
-            id: ProjectId::from_entity(project.id),
+            id: ProjectId::from_entity(project.id()),
             name: Some("新しい名前".to_string()),
             kana_name: None,
             group_name: None,
@@ -203,7 +203,7 @@ mod tests {
             .await;
 
         let input = update_project::Input {
-            id: ProjectId::from_entity(project.id),
+            id: ProjectId::from_entity(project.id()),
             name: Some("新しい名前".to_string()),
             kana_name: None,
             group_name: None,
@@ -234,7 +234,7 @@ mod tests {
             .await;
 
         let input = update_project::Input {
-            id: ProjectId::from_entity(project.id),
+            id: ProjectId::from_entity(project.id()),
             name: Some("新しい名前".to_string()),
             kana_name: None,
             group_name: None,

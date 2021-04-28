@@ -34,7 +34,7 @@ impl<Max> Debug for ProjectNameString<Max> {
 
 impl<Max> AsRef<str> for ProjectNameString<Max> {
     fn as_ref(&self) -> &str {
-        self.inner.as_ref()
+        self.as_str()
     }
 }
 
@@ -79,6 +79,10 @@ impl<Max> ProjectNameString<Max> {
         })
     }
 
+    pub fn as_str(&self) -> &str {
+        self.inner.as_ref()
+    }
+
     pub fn into_string(self) -> String {
         self.inner
     }
@@ -109,6 +113,10 @@ impl ProjectName {
             ProjectNameString::from_string(name.into()).map_err(NameError::from_length_error)?;
         let inner = StrippedString::new(inner).map_err(NameError::from_not_stripped_error)?;
         Ok(ProjectName(inner))
+    }
+
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
     }
 
     pub fn into_string(self) -> String {
@@ -150,6 +158,10 @@ impl ProjectKanaName {
         Ok(ProjectKanaName(inner))
     }
 
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
+    }
+
     pub fn into_string(self) -> String {
         self.0.into_inner().into_inner().into_inner()
     }
@@ -180,6 +192,10 @@ impl ProjectGroupName {
             .map_err(GroupNameError::from_length_error)?;
         let inner = StrippedString::new(inner).map_err(GroupNameError::from_not_stripped_error)?;
         Ok(ProjectGroupName(inner))
+    }
+
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
     }
 
     pub fn into_string(self) -> String {
@@ -220,6 +236,10 @@ impl ProjectKanaGroupName {
         let inner =
             StrippedString::new(inner).map_err(KanaGroupNameError::from_not_stripped_error)?;
         Ok(ProjectKanaGroupName(inner))
+    }
+
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
     }
 
     pub fn into_string(self) -> String {

@@ -51,7 +51,7 @@ mod tests {
         let operator = test::model::new_operator_user();
         let project = test::model::new_general_project(user.id.clone());
         let form = test::model::new_form(operator.id.clone());
-        let answer = test::model::new_form_answer(user.id.clone(), project.id, &form);
+        let answer = test::model::new_form_answer(user.id.clone(), project.id(), &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
@@ -77,7 +77,7 @@ mod tests {
         let operator = test::model::new_operator_user();
         let project = test::model::new_general_project(user.id.clone());
         let form = test::model::new_form(operator.id.clone());
-        let answer = test::model::new_form_answer(user.id.clone(), project.id, &form);
+        let answer = test::model::new_form_answer(user.id.clone(), project.id(), &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
@@ -103,7 +103,7 @@ mod tests {
         let operator = test::model::new_operator_user();
         let project = test::model::new_general_project(user.id.clone());
         let form = test::model::new_form(operator.id.clone());
-        let answer = test::model::new_form_answer(user.id.clone(), project.id, &form);
+        let answer = test::model::new_form_answer(user.id.clone(), project.id(), &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])

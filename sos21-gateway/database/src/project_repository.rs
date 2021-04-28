@@ -12,9 +12,9 @@ use sos21_domain::context::project_repository::{ProjectRepository, ProjectWithOw
 use sos21_domain::model::{
     date_time::DateTime,
     project::{
-        Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription,
-        ProjectGroupName, ProjectId, ProjectIndex, ProjectKanaGroupName, ProjectKanaName,
-        ProjectName,
+        Project, ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectContent,
+        ProjectDescription, ProjectGroupName, ProjectId, ProjectIndex, ProjectKanaGroupName,
+        ProjectKanaName, ProjectName,
     },
     user::UserId,
 };
@@ -33,7 +33,6 @@ impl ProjectRepository for ProjectDatabase {
         if query::find_project(&mut *lock, project.id).await?.is_some() {
             let input = command::update_project::Input {
                 id: project.id,
-                owner_id: project.owner_id,
                 name: project.name,
                 kana_name: project.kana_name,
                 group_name: project.group_name,
@@ -76,14 +75,6 @@ impl ProjectRepository for ProjectDatabase {
             .try_collect()
             .await
     }
-
-    async fn list_projects_by_user(&self, user_id: UserId) -> Result<Vec<ProjectWithOwners>> {
-        let mut lock = self.0.lock().await;
-        query::list_projects_by_user(&mut *lock, user_id.0)
-            .and_then(|result| future::ready(to_project_with_owner(result)))
-            .try_collect()
-            .await
-    }
 }
 
 fn to_project_with_owner(
@@ -95,20 +86,10 @@ fn to_project_with_owner(
         subowner,
     } = project_with_owners;
 
-    Ok(ProjectWithOwners {
-        project: to_project(project)?,
-        owner: to_user(owner)?,
-        subowner: to_user(subowner)?,
-    })
-}
-
-fn from_project(project: Project) -> data::project::Project {
-    let Project {
+    let data::project::Project {
         id,
         index,
         created_at,
-        owner_id,
-        subowner_id,
         name,
         kana_name,
         group_name,
@@ -117,12 +98,49 @@ fn from_project(project: Project) -> data::project::Project {
         category,
         attributes,
     } = project;
+
+    let project = Project::from_content(
+        ProjectContent {
+            id: ProjectId::from_uuid(id),
+            index: ProjectIndex::from_u16(index.try_into()?)?,
+            created_at: DateTime::from_utc(created_at),
+            name: ProjectName::from_string(name)?,
+            kana_name: ProjectKanaName::from_string(kana_name)?,
+            group_name: ProjectGroupName::from_string(group_name)?,
+            kana_group_name: ProjectKanaGroupName::from_string(kana_group_name)?,
+            description: ProjectDescription::from_string(description)?,
+            category: to_project_category(category),
+            attributes: to_project_attributes(attributes)?,
+        },
+        UserId(owner.id.clone()),
+        UserId(subowner.id.clone()),
+    )?;
+
+    Ok(ProjectWithOwners {
+        project,
+        owner: to_user(owner)?,
+        subowner: to_user(subowner)?,
+    })
+}
+
+fn from_project(project: Project) -> data::project::Project {
+    let ProjectContent {
+        id,
+        index,
+        created_at,
+        name,
+        kana_name,
+        group_name,
+        kana_group_name,
+        description,
+        category,
+        attributes,
+    } = project.into_content();
+
     data::project::Project {
         id: id.to_uuid(),
         index: index.to_i16(),
         created_at: created_at.utc(),
-        owner_id: owner_id.0,
-        subowner_id: subowner_id.0,
         name: name.into_string(),
         kana_name: kana_name.into_string(),
         group_name: group_name.into_string(),
@@ -152,38 +170,6 @@ pub fn from_project_attributes(attributes: &ProjectAttributes) -> data::project:
             ProjectAttribute::Outdoor => data::project::ProjectAttributes::OUTDOOR,
         })
         .collect()
-}
-
-fn to_project(project: data::project::Project) -> Result<Project> {
-    let data::project::Project {
-        id,
-        index,
-        created_at,
-        owner_id,
-        subowner_id,
-        name,
-        kana_name,
-        group_name,
-        kana_group_name,
-        description,
-        category,
-        attributes,
-    } = project;
-
-    Ok(Project {
-        id: ProjectId::from_uuid(id),
-        index: ProjectIndex::from_u16(index.try_into()?)?,
-        created_at: DateTime::from_utc(created_at),
-        owner_id: UserId(owner_id),
-        subowner_id: UserId(subowner_id),
-        name: ProjectName::from_string(name)?,
-        kana_name: ProjectKanaName::from_string(kana_name)?,
-        group_name: ProjectGroupName::from_string(group_name)?,
-        kana_group_name: ProjectKanaGroupName::from_string(kana_group_name)?,
-        description: ProjectDescription::from_string(description)?,
-        category: to_project_category(category),
-        attributes: to_project_attributes(attributes)?,
-    })
 }
 
 pub fn to_project_category(category: data::project::ProjectCategory) -> ProjectCategory {

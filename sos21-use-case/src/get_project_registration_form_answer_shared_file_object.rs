@@ -63,7 +63,7 @@ where
     let result = ctx
         .get_registration_form_answer_by_registration_form_and_project(
             registration_form_id,
-            project.id,
+            project.id(),
         )
         .await
         .context("Failed to get a registration form answer")?;
@@ -128,7 +128,7 @@ mod tests {
         let other_project = test::model::new_general_project(other.id.clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            other_project.id,
+            other_project.id(),
             &registration_form,
         );
 
@@ -136,7 +136,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
-                    other_project.id,
+                    other_project.id(),
                 ),
                 other_answer.registration_form_id,
             ),
@@ -156,7 +156,7 @@ mod tests {
             .await;
 
         let input = get_project_registration_form_answer_shared_file_object::Input {
-            project_id: ProjectId::from_entity(other_project.id),
+            project_id: ProjectId::from_entity(other_project.id()),
             registration_form_id: RegistrationFormId::from_entity(registration_form.id),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
@@ -179,14 +179,14 @@ mod tests {
         let project = test::model::new_general_project(user.id.clone());
         let answer = test::model::new_registration_form_answer_with_project(
             user.id.clone(),
-            project.id,
+            project.id(),
             &registration_form,
         );
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
-                registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id),
+                registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id()),
                 answer.registration_form_id,
             ),
         );
@@ -205,7 +205,7 @@ mod tests {
             .await;
 
         let input = get_project_registration_form_answer_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             registration_form_id: RegistrationFormId::from_entity(registration_form.id),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
@@ -230,14 +230,14 @@ mod tests {
             test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
         let answer = test::model::new_registration_form_answer_with_project(
             owner.id.clone(),
-            project.id,
+            project.id(),
             &registration_form,
         );
 
         let sharing = file_sharing::FileSharing::new(
             owner_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
-                registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id),
+                registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id()),
                 answer.registration_form_id,
             ),
         );
@@ -256,7 +256,7 @@ mod tests {
             .await;
 
         let input = get_project_registration_form_answer_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             registration_form_id: RegistrationFormId::from_entity(registration_form.id),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
@@ -280,13 +280,13 @@ mod tests {
         let project = test::model::new_general_project(user.id.clone());
         let answer = test::model::new_registration_form_answer_with_project(
             user.id.clone(),
-            project.id,
+            project.id(),
             &registration_form,
         );
         let other_project = test::model::new_general_project(other.id.clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            other_project.id,
+            other_project.id(),
             &registration_form,
         );
 
@@ -294,7 +294,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
-                    other_project.id,
+                    other_project.id(),
                 ),
                 other_answer.registration_form_id,
             ),
@@ -314,7 +314,7 @@ mod tests {
             .await;
 
         let input = get_project_registration_form_answer_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             registration_form_id: RegistrationFormId::from_entity(registration_form.id),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
@@ -339,14 +339,14 @@ mod tests {
         let project = test::model::new_general_project(user.id.clone());
         let answer = test::model::new_registration_form_answer_with_project(
             user.id.clone(),
-            project.id,
+            project.id(),
             &registration_form,
         );
 
         let mut sharing = file_sharing::FileSharing::new(
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
-                registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id),
+                registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id()),
                 answer.registration_form_id,
             ),
         );
@@ -367,7 +367,7 @@ mod tests {
             .await;
 
         let input = get_project_registration_form_answer_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             registration_form_id: RegistrationFormId::from_entity(registration_form.id),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
@@ -392,14 +392,14 @@ mod tests {
         let project = test::model::new_general_project(user.id.clone());
         let answer = test::model::new_registration_form_answer_with_project(
             user.id.clone(),
-            project.id,
+            project.id(),
             &registration_form,
         );
 
         let sharing = test::model::new_expired_file_sharing(
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
-                registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id),
+                registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id()),
                 answer.registration_form_id,
             ),
         );
@@ -418,7 +418,7 @@ mod tests {
             .await;
 
         let input = get_project_registration_form_answer_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             registration_form_id: RegistrationFormId::from_entity(registration_form.id),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };

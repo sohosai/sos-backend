@@ -36,11 +36,11 @@ impl ProjectQueryConjunction {
     }
 
     pub fn check_project(&self, project: &Project) -> bool {
-        self.check_category_attributes(project.category, &project.attributes)
+        self.check_category_attributes(project.category(), project.attributes())
     }
 
     pub fn check_pending_project(&self, pending_project: &PendingProject) -> bool {
-        self.check_category_attributes(pending_project.category, &pending_project.attributes)
+        self.check_category_attributes(pending_project.category(), pending_project.attributes())
     }
 }
 

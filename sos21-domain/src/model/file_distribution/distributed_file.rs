@@ -28,7 +28,7 @@ impl FileDistributionDistributedFile {
             return true;
         }
 
-        self.project_id == project.id && project.is_visible_to(user)
+        self.project_id == project.id() && project.is_visible_to(user)
     }
 }
 
@@ -45,7 +45,7 @@ mod tests {
         let operator = test_model::new_operator_user();
         let project = test_model::new_general_project(user.id.clone());
         let files = FileDistributionFiles::from_sharings(vec![(
-            project.id,
+            project.id(),
             FileSharingId::from_uuid(Uuid::new_v4()),
         )])
         .unwrap();
@@ -61,7 +61,7 @@ mod tests {
         let operator = test_model::new_operator_user();
         let project = test_model::new_general_project(user.id.clone());
         let files = FileDistributionFiles::from_sharings(vec![(
-            project.id,
+            project.id(),
             FileSharingId::from_uuid(Uuid::new_v4()),
         )])
         .unwrap();

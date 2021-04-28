@@ -35,6 +35,9 @@ impl HandlerResponse for Response {
 pub enum Error {
     InvalidField { field: &'static str },
     DuplicatedProjectAttributes,
+    AlreadyProjectOwner,
+    AlreadyProjectSubowner,
+    AlreadyPendingProjectOwner,
 }
 
 impl HandlerResponse for Error {
@@ -42,6 +45,9 @@ impl HandlerResponse for Error {
         match self {
             Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
             Error::DuplicatedProjectAttributes => StatusCode::BAD_REQUEST,
+            Error::AlreadyProjectOwner => StatusCode::CONFLICT,
+            Error::AlreadyProjectSubowner => StatusCode::CONFLICT,
+            Error::AlreadyPendingProjectOwner => StatusCode::CONFLICT,
         }
     }
 }
@@ -61,6 +67,9 @@ impl From<prepare_project::Error> for Error {
                 field: "description",
             },
             prepare_project::Error::DuplicatedAttributes => Error::DuplicatedProjectAttributes,
+            prepare_project::Error::AlreadyProjectOwner => Error::AlreadyProjectOwner,
+            prepare_project::Error::AlreadyProjectSubowner => Error::AlreadyProjectSubowner,
+            prepare_project::Error::AlreadyPendingProjectOwner => Error::AlreadyPendingProjectOwner,
         }
     }
 }

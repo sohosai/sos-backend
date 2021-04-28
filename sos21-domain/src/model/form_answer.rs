@@ -43,7 +43,7 @@ impl FormAnswer {
             return true;
         }
 
-        self.project_id == project.id && project.is_visible_to(user)
+        self.project_id == project.id() && project.is_visible_to(user)
     }
 }
 
@@ -57,7 +57,7 @@ mod tests {
         let user_project = test_model::new_general_project(user.id.clone());
         let operator = test_model::new_operator_user();
         let form = test_model::new_form(operator.id);
-        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id, &form);
+        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id(), &form);
         assert!(!form_answer.is_visible_to(&user));
     }
 
@@ -67,7 +67,7 @@ mod tests {
         let user_project = test_model::new_general_project(user.id.clone());
         let operator = test_model::new_operator_user();
         let form = test_model::new_form(operator.id);
-        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id, &form);
+        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id(), &form);
         assert!(form_answer.is_visible_to(&user));
     }
 
@@ -77,7 +77,7 @@ mod tests {
         let user_project = test_model::new_general_project(user.id.clone());
         let operator = test_model::new_operator_user();
         let form = test_model::new_form(operator.id);
-        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id, &form);
+        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id(), &form);
         assert!(form_answer.is_visible_to(&user));
     }
 
@@ -87,7 +87,7 @@ mod tests {
         let user_project = test_model::new_general_project(user.id.clone());
         let operator = test_model::new_operator_user();
         let form = test_model::new_form(operator.id);
-        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id, &form);
+        let form_answer = test_model::new_form_answer(user.id.clone(), user_project.id(), &form);
         assert!(form_answer.is_visible_to_with_project(&user, &user_project));
     }
 
@@ -97,7 +97,8 @@ mod tests {
         let operator = test_model::new_operator_user();
         let operator_project = test_model::new_general_project(operator.id.clone());
         let form = test_model::new_form(operator.id);
-        let form_answer = test_model::new_form_answer(user.id.clone(), operator_project.id, &form);
+        let form_answer =
+            test_model::new_form_answer(user.id.clone(), operator_project.id(), &form);
         assert!(!form_answer.is_visible_to_with_project(&user, &operator_project));
     }
 }

@@ -63,7 +63,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project::run(&app, ProjectId::from_entity(project_other.id)).await,
+            get_project::run(&app, ProjectId::from_entity(project_other.id())).await,
             Err(UseCaseError::UseCase(get_project::Error::NotFound))
         ));
     }
@@ -81,11 +81,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let project_id = ProjectId::from_entity(project.id);
+        let project_id = ProjectId::from_entity(project.id());
         assert!(matches!(
             get_project::run(&app, project_id).await,
             Ok(got)
-            if got.id == project_id && got.name == project.name.into_string()
+            if got.id == project_id && got.name == project.name().as_str()
         ));
     }
 
@@ -104,11 +104,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let project_id = ProjectId::from_entity(project.id);
+        let project_id = ProjectId::from_entity(project.id());
         assert!(matches!(
             get_project::run(&app, project_id).await,
             Ok(got)
-            if got.id == project_id && got.name == project.name.into_string()
+            if got.id == project_id && got.name == project.name().as_str()
         ));
     }
 
@@ -126,11 +126,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let project_id = ProjectId::from_entity(project_other.id);
+        let project_id = ProjectId::from_entity(project_other.id());
         assert!(matches!(
             get_project::run(&app, project_id).await,
             Ok(got)
-            if got.id == project_id && got.name == project_other.name.into_string()
+            if got.id == project_id && got.name == project_other.name().as_str()
         ));
     }
 
@@ -148,11 +148,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let project_id = ProjectId::from_entity(project_other.id);
+        let project_id = ProjectId::from_entity(project_other.id());
         assert!(matches!(
             get_project::run(&app, project_id).await,
             Ok(got)
-            if got.id == project_id && got.name == project_other.name.into_string()
+            if got.id == project_id && got.name == project_other.name().as_str()
         ));
     }
 
@@ -172,7 +172,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project::run(&app, ProjectId::from_entity(project_other.id)).await,
+            get_project::run(&app, ProjectId::from_entity(project_other.id())).await,
             Err(UseCaseError::UseCase(get_project::Error::NotFound))
         ));
     }

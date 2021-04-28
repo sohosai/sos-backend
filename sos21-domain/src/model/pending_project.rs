@@ -1,16 +1,10 @@
-use std::convert::TryInto;
-
-use crate::context::{
-    ProjectRepository, RegistrationFormAnswerRepository, RegistrationFormRepository,
-};
 use crate::model::date_time::DateTime;
 use crate::model::project::{
-    self, Project, ProjectAttributes, ProjectCategory, ProjectDescription, ProjectGroupName,
-    ProjectId, ProjectIndex, ProjectKanaGroupName, ProjectKanaName, ProjectName,
+    ProjectAttributes, ProjectCategory, ProjectDescription, ProjectGroupName, ProjectKanaGroupName,
+    ProjectKanaName, ProjectName,
 };
-use crate::model::user::{User, UserId};
+use crate::model::user::{User, UserAssignment, UserId};
 
-use anyhow::Context;
 use thiserror::Error;
 use uuid::Uuid;
 
@@ -28,10 +22,9 @@ impl PendingProjectId {
 }
 
 #[derive(Debug, Clone)]
-pub struct PendingProject {
+pub struct PendingProjectContent {
     pub id: PendingProjectId,
     pub created_at: DateTime,
-    pub author_id: UserId,
     pub name: ProjectName,
     pub kana_name: ProjectKanaName,
     pub group_name: ProjectGroupName,
@@ -41,115 +34,210 @@ pub struct PendingProject {
     pub attributes: ProjectAttributes,
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum AcceptSubownerErrorKind {
-    TooManyProjects,
-    NotAnsweredRegistrationForm,
+#[derive(Debug, Clone)]
+pub struct PendingProject {
+    content: PendingProjectContent,
+    owner_id: UserId,
 }
 
-#[derive(Debug, Error, Clone)]
-#[error("failed to accept subowner")]
-pub struct AcceptSubownerError {
-    kind: AcceptSubownerErrorKind,
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NewPendingProjectErrorKind {
+    AlreadyProjectOwnerOwner,
+    AlreadyProjectSubownerOwner,
+    AlreadyPendingProjectOwnerOwner,
 }
 
-impl AcceptSubownerError {
-    pub fn kind(&self) -> AcceptSubownerErrorKind {
+#[derive(Debug, Clone, Error)]
+#[error("failed to create a pending project")]
+pub struct NewPendingProjectError {
+    kind: NewPendingProjectErrorKind,
+}
+
+impl NewPendingProjectError {
+    pub fn kind(&self) -> NewPendingProjectErrorKind {
         self.kind
-    }
-
-    fn from_count_integer_error(_err: std::num::TryFromIntError) -> Self {
-        AcceptSubownerError {
-            kind: AcceptSubownerErrorKind::TooManyProjects,
-        }
-    }
-
-    fn from_index_error(_err: project::index::FromU16Error) -> Self {
-        AcceptSubownerError {
-            kind: AcceptSubownerErrorKind::TooManyProjects,
-        }
     }
 }
 
 impl PendingProject {
-    pub fn is_visible_to(&self, _user: &User) -> bool {
-        true
-    }
-
-    pub async fn accept_subowner<C>(
-        self,
-        ctx: C,
-        subowner: &User,
-    ) -> anyhow::Result<Result<Project, AcceptSubownerError>>
-    where
-        C: ProjectRepository + RegistrationFormRepository + RegistrationFormAnswerRepository,
-    {
-        let forms_count = ctx
-            .count_registration_forms_by_pending_project(self.id)
-            .await
-            .context("Failed to count registration forms")?;
-        let answers_count = ctx
-            .count_registration_form_answers_by_pending_project(self.id)
-            .await
-            .context("Failed to count registration form answers")?;
-        if forms_count != answers_count {
-            return Ok(Err(AcceptSubownerError {
-                kind: AcceptSubownerErrorKind::NotAnsweredRegistrationForm,
-            }));
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        owner: &User,
+        name: ProjectName,
+        kana_name: ProjectKanaName,
+        group_name: ProjectGroupName,
+        kana_group_name: ProjectKanaGroupName,
+        description: ProjectDescription,
+        category: ProjectCategory,
+        attributes: ProjectAttributes,
+    ) -> Result<Self, NewPendingProjectError> {
+        if let Some(assignment) = owner.assignment() {
+            let kind = match assignment {
+                UserAssignment::ProjectOwner(_) => {
+                    NewPendingProjectErrorKind::AlreadyProjectOwnerOwner
+                }
+                UserAssignment::ProjectSubowner(_) => {
+                    NewPendingProjectErrorKind::AlreadyProjectSubownerOwner
+                }
+                UserAssignment::PendingProjectOwner(_) => {
+                    NewPendingProjectErrorKind::AlreadyPendingProjectOwnerOwner
+                }
+            };
+            return Err(NewPendingProjectError { kind });
         }
 
-        let projects_count = ctx
-            .count_projects()
-            .await
-            .context("Failed to count projects")?;
-        let projects_count = match projects_count.try_into() {
-            Ok(count) => count,
-            Err(err) => return Ok(Err(AcceptSubownerError::from_count_integer_error(err))),
-        };
-        let index = match ProjectIndex::from_u16(projects_count) {
-            Ok(index) => index,
-            Err(err) => return Ok(Err(AcceptSubownerError::from_index_error(err))),
-        };
+        Ok(PendingProject::from_content(
+            PendingProjectContent {
+                id: PendingProjectId::from_uuid(Uuid::new_v4()),
+                created_at: DateTime::now(),
+                name,
+                kana_name,
+                group_name,
+                kana_group_name,
+                description,
+                category,
+                attributes,
+            },
+            owner.id.clone(),
+        ))
+    }
 
-        Ok(Ok(Project {
-            id: ProjectId::from_uuid(Uuid::new_v4()),
-            index,
-            created_at: DateTime::now(),
-            owner_id: self.author_id,
-            subowner_id: subowner.id.clone(),
-            name: self.name,
-            kana_name: self.kana_name,
-            group_name: self.group_name,
-            kana_group_name: self.kana_group_name,
-            description: self.description,
-            category: self.category,
-            attributes: self.attributes,
-        }))
+    pub fn id(&self) -> PendingProjectId {
+        self.content.id
+    }
+
+    pub fn created_at(&self) -> DateTime {
+        self.content.created_at
+    }
+
+    pub fn name(&self) -> &ProjectName {
+        &self.content.name
+    }
+
+    pub fn kana_name(&self) -> &ProjectKanaName {
+        &self.content.kana_name
+    }
+
+    pub fn group_name(&self) -> &ProjectGroupName {
+        &self.content.group_name
+    }
+
+    pub fn kana_group_name(&self) -> &ProjectKanaGroupName {
+        &self.content.kana_group_name
+    }
+
+    pub fn description(&self) -> &ProjectDescription {
+        &self.content.description
+    }
+
+    pub fn category(&self) -> ProjectCategory {
+        self.content.category
+    }
+
+    pub fn attributes(&self) -> &ProjectAttributes {
+        &self.content.attributes
+    }
+
+    pub fn owner_id(&self) -> &UserId {
+        &self.owner_id
+    }
+
+    /// Restore `PendingProject` from `PendingProjectContent`.
+    ///
+    /// This is intended to be used when the data is taken out of the implementation by [`PendingProject::into_content`]
+    /// for persistence, internal serialization, etc.
+    /// Use [`PendingProject::new`] to create a project.
+    pub fn from_content(content: PendingProjectContent, owner_id: UserId) -> Self {
+        PendingProject { content, owner_id }
+    }
+
+    /// Convert `PendingProject` into `PendingProjectContent`.
+    pub fn into_content(self) -> PendingProjectContent {
+        self.content
+    }
+
+    pub fn is_visible_to(&self, _user: &User) -> bool {
+        true
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::test;
+    use super::{NewPendingProjectErrorKind, PendingProject};
+
+    use crate::model::project::{ProjectAttributes, ProjectCategory};
+    use crate::test::model as test_model;
 
     #[tokio::test]
-    async fn test_accept_ok() {
-        let owner = test::model::new_general_user();
-        let subowner = test::model::new_general_user();
+    async fn test_new_already_project_owner() {
+        let mut owner = test_model::new_general_user();
+        let project = test_model::new_general_project(owner.id.clone());
+        owner.assign_project_owner(&project).unwrap();
 
-        let pending_project = test::model::new_general_pending_project(owner.id.clone());
-        let app = test::build_mock_app()
-            .users(vec![owner.clone(), subowner.clone()])
-            .pending_projects(vec![pending_project.clone()])
-            .build();
+        assert_eq!(
+            PendingProject::new(
+                &owner,
+                test_model::mock_project_name(),
+                test_model::mock_project_kana_name(),
+                test_model::mock_project_group_name(),
+                test_model::mock_project_kana_group_name(),
+                test_model::mock_project_description(),
+                ProjectCategory::General,
+                ProjectAttributes::from_attributes(vec![]).unwrap()
+            )
+            .unwrap_err()
+            .kind(),
+            NewPendingProjectErrorKind::AlreadyProjectOwnerOwner
+        );
+    }
 
-        let project = pending_project
-            .accept_subowner(&app, &subowner)
-            .await
-            .unwrap()
+    #[tokio::test]
+    async fn test_new_already_project_subowner() {
+        let mut owner = test_model::new_general_user();
+        let user = test_model::new_general_user();
+        let project =
+            test_model::new_general_project_with_subowner(user.id.clone(), owner.id.clone());
+        owner.assign_project_subowner(&project).unwrap();
+
+        assert_eq!(
+            PendingProject::new(
+                &owner,
+                test_model::mock_project_name(),
+                test_model::mock_project_kana_name(),
+                test_model::mock_project_group_name(),
+                test_model::mock_project_kana_group_name(),
+                test_model::mock_project_description(),
+                ProjectCategory::General,
+                ProjectAttributes::from_attributes(vec![]).unwrap()
+            )
+            .unwrap_err()
+            .kind(),
+            NewPendingProjectErrorKind::AlreadyProjectSubownerOwner
+        );
+    }
+
+    #[tokio::test]
+    async fn test_new_already_pending_project_owner() {
+        let mut owner = test_model::new_general_user();
+        let pending_project = test_model::new_general_pending_project(owner.id.clone());
+        owner
+            .assign_pending_project_owner(&pending_project)
             .unwrap();
 
-        assert_eq!(project.owner_id, owner.id);
-        assert_eq!(project.subowner_id, subowner.id);
+        assert_eq!(
+            PendingProject::new(
+                &owner,
+                test_model::mock_project_name(),
+                test_model::mock_project_kana_name(),
+                test_model::mock_project_group_name(),
+                test_model::mock_project_kana_group_name(),
+                test_model::mock_project_description(),
+                ProjectCategory::General,
+                ProjectAttributes::from_attributes(vec![]).unwrap()
+            )
+            .unwrap_err()
+            .kind(),
+            NewPendingProjectErrorKind::AlreadyPendingProjectOwnerOwner
+        );
     }
 }

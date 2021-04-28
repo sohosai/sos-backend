@@ -113,23 +113,23 @@ impl Project {
         } = input;
 
         Project {
-            id: ProjectId::from_entity(project.id),
+            id: ProjectId::from_entity(project.id()),
             code: project.code().to_string(),
-            created_at: project.created_at.utc(),
-            owner_id: UserId::from_entity(project.owner_id),
+            created_at: project.created_at().utc(),
+            owner_id: UserId::from_entity(project.owner_id().clone()),
             owner_name: UserName::from_entity(owner_name),
             owner_kana_name: UserKanaName::from_entity(owner_kana_name),
-            subowner_id: UserId::from_entity(project.subowner_id),
+            subowner_id: UserId::from_entity(project.subowner_id().clone()),
             subowner_name: UserName::from_entity(subowner_name),
             subowner_kana_name: UserKanaName::from_entity(subowner_kana_name),
-            name: project.name.into_string(),
-            kana_name: project.kana_name.into_string(),
-            group_name: project.group_name.into_string(),
-            kana_group_name: project.kana_group_name.into_string(),
-            description: project.description.into_string(),
-            category: ProjectCategory::from_entity(project.category),
+            name: project.name().clone().into_string(),
+            kana_name: project.kana_name().clone().into_string(),
+            group_name: project.group_name().clone().into_string(),
+            kana_group_name: project.kana_group_name().clone().into_string(),
+            description: project.description().clone().into_string(),
+            category: ProjectCategory::from_entity(project.category()),
             attributes: project
-                .attributes
+                .attributes()
                 .attributes()
                 .map(ProjectAttribute::from_entity)
                 .collect(),

@@ -60,11 +60,11 @@ impl FileDistributionFiles {
     }
 
     pub fn contains_project(&self, project: &Project) -> bool {
-        self.0.contains_key(&project.id)
+        self.0.contains_key(&project.id())
     }
 
     pub fn get_sharing_for(&self, project: &Project) -> Option<FileSharingId> {
-        self.0.get(&project.id).copied()
+        self.0.get(&project.id()).copied()
     }
 
     pub fn sharings(&self) -> impl Iterator<Item = (ProjectId, FileSharingId)> + '_ {

@@ -229,7 +229,7 @@ where
     } = &input.field_names;
 
     if id.is_some() {
-        writer.write_field(data.project.id.to_uuid().to_hyphenated().to_string())?;
+        writer.write_field(data.project.id().to_uuid().to_hyphenated().to_string())?;
     }
 
     if code.is_some() {
@@ -237,12 +237,12 @@ where
     }
 
     if created_at.is_some() {
-        let created_at = data.project.created_at.jst().format("%F %T").to_string();
+        let created_at = data.project.created_at().jst().format("%F %T").to_string();
         writer.write_field(created_at)?;
     }
 
     if owner_id.is_some() {
-        writer.write_field(data.project.owner_id.0)?;
+        writer.write_field(&data.project.owner_id().0)?;
     }
 
     write_user_name_fields(
@@ -260,7 +260,7 @@ where
     )?;
 
     if subowner_id.is_some() {
-        writer.write_field(data.project.subowner_id.0)?;
+        writer.write_field(&data.project.subowner_id().0)?;
     }
 
     write_user_name_fields(
@@ -278,27 +278,27 @@ where
     )?;
 
     if name.is_some() {
-        writer.write_field(data.project.name.into_string())?;
+        writer.write_field(data.project.name().as_str())?;
     }
 
     if kana_name.is_some() {
-        writer.write_field(data.project.kana_name.into_string())?;
+        writer.write_field(data.project.kana_name().as_str())?;
     }
 
     if group_name.is_some() {
-        writer.write_field(data.project.group_name.into_string())?;
+        writer.write_field(data.project.group_name().as_str())?;
     }
 
     if kana_group_name.is_some() {
-        writer.write_field(data.project.kana_group_name.into_string())?;
+        writer.write_field(data.project.kana_group_name().as_str())?;
     }
 
     if description.is_some() {
-        writer.write_field(data.project.description.into_string())?;
+        writer.write_field(data.project.description().as_str())?;
     }
 
     if category.is_some() {
-        let category_name = match data.project.category {
+        let category_name = match data.project.category() {
             project::ProjectCategory::General => &input.category_names.general,
             project::ProjectCategory::Stage => &input.category_names.stage,
             project::ProjectCategory::Cooking => &input.category_names.cooking,
@@ -310,7 +310,7 @@ where
     if attribute_academic.is_some() {
         if data
             .project
-            .attributes
+            .attributes()
             .contains(project::ProjectAttribute::Academic)
         {
             writer.write_field(b"TRUE")?;
@@ -322,7 +322,7 @@ where
     if attribute_artistic.is_some() {
         if data
             .project
-            .attributes
+            .attributes()
             .contains(project::ProjectAttribute::Artistic)
         {
             writer.write_field(b"TRUE")?;
@@ -334,7 +334,7 @@ where
     if attribute_committee.is_some() {
         if data
             .project
-            .attributes
+            .attributes()
             .contains(project::ProjectAttribute::Committee)
         {
             writer.write_field(b"TRUE")?;
@@ -346,7 +346,7 @@ where
     if attribute_outdoor.is_some() {
         if data
             .project
-            .attributes
+            .attributes()
             .contains(project::ProjectAttribute::Outdoor)
         {
             writer.write_field(b"TRUE")?;

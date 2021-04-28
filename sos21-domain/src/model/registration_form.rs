@@ -97,7 +97,7 @@ impl RegistrationForm {
     where
         C: RegistrationFormAnswerRepository,
     {
-        ensure!(user.id == pending_project.author_id);
+        ensure!(&user.id == pending_project.owner_id());
 
         if !self.query.check_pending_project(&pending_project) {
             return Ok(Err(AnswerError {
@@ -108,7 +108,7 @@ impl RegistrationForm {
         if ctx
             .get_registration_form_answer_by_registration_form_and_pending_project(
                 self.id,
-                pending_project.id,
+                pending_project.id(),
             )
             .await?
             .is_some()
@@ -128,7 +128,7 @@ impl RegistrationForm {
 
         Ok(Ok(RegistrationFormAnswer {
             id: RegistrationFormAnswerId::from_uuid(Uuid::new_v4()),
-            respondent: RegistrationFormAnswerRespondent::PendingProject(pending_project.id),
+            respondent: RegistrationFormAnswerRespondent::PendingProject(pending_project.id()),
             registration_form_id: self.id,
             created_at: DateTime::now(),
             author_id: user.id.clone(),
@@ -158,7 +158,7 @@ impl RegistrationForm {
             return true;
         }
 
-        self.query.check_pending_project(pending_project) && pending_project.author_id == user.id
+        self.query.check_pending_project(pending_project) && pending_project.owner_id() == &user.id
     }
 }
 

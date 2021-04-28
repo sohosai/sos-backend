@@ -149,7 +149,7 @@ mod tests {
             .await;
 
         let registration_form_id = RegistrationFormId::from_entity(registration_form.id);
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
         let input = answer_registration_form::Input {
             registration_form_id,
             pending_project_id,
@@ -185,7 +185,7 @@ mod tests {
             .await;
 
         let registration_form_id = RegistrationFormId::from_entity(registration_form.id);
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
         let input = answer_registration_form::Input {
             registration_form_id,
             pending_project_id,
@@ -216,7 +216,7 @@ mod tests {
             .await;
 
         let registration_form_id = RegistrationFormId::from_entity(registration_form.id);
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
         let item = test_interface::mock_input_form_answer_item(
             registration_form.items.items().next().unwrap(),
         );
@@ -276,7 +276,7 @@ mod tests {
             ])),
         };
         let registration_form_id = RegistrationFormId::from_entity(registration_form.id);
-        let pending_project_id = PendingProjectId::from_entity(pending_project.id);
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
         let input = answer_registration_form::Input {
             registration_form_id,
             pending_project_id,

@@ -1,12 +1,15 @@
 use crate::context::FileRepository;
 use crate::model::date_time::DateTime;
+use crate::model::pending_project::PendingProject;
 use crate::model::permissions::Permissions;
 use crate::model::phone_number::PhoneNumber;
+use crate::model::project::Project;
 
 use anyhow::Context;
 use thiserror::Error;
 
 pub mod affiliation;
+pub mod assignment;
 pub mod category;
 pub mod email;
 pub mod file_usage;
@@ -14,6 +17,7 @@ pub mod file_usage_quota;
 pub mod name;
 pub mod role;
 pub use affiliation::UserAffiliation;
+pub use assignment::UserAssignment;
 pub use category::UserCategory;
 pub use email::UserEmailAddress;
 pub use file_usage::UserFileUsage;
@@ -35,6 +39,7 @@ pub struct User {
     pub email: UserEmailAddress,
     pub role: UserRole,
     pub category: UserCategory,
+    pub assignment: Option<UserAssignment>,
 }
 
 #[derive(Debug, Error, Clone)]
@@ -44,6 +49,34 @@ pub struct RequirePermissionsError {
 }
 
 impl User {
+    pub fn assignment(&self) -> Option<UserAssignment> {
+        self.assignment
+    }
+
+    pub fn assign_project_owner(&mut self, project: &Project) -> anyhow::Result<()> {
+        anyhow::ensure!(project.owner_id() == &self.id);
+        self.assignment
+            .replace(UserAssignment::ProjectOwner(project.id()));
+        Ok(())
+    }
+
+    pub fn assign_project_subowner(&mut self, project: &Project) -> anyhow::Result<()> {
+        anyhow::ensure!(project.subowner_id() == &self.id);
+        self.assignment
+            .replace(UserAssignment::ProjectSubowner(project.id()));
+        Ok(())
+    }
+
+    pub fn assign_pending_project_owner(
+        &mut self,
+        pending_project: &PendingProject,
+    ) -> anyhow::Result<()> {
+        anyhow::ensure!(pending_project.owner_id() == &self.id);
+        self.assignment
+            .replace(UserAssignment::PendingProjectOwner(pending_project.id()));
+        Ok(())
+    }
+
     pub fn permissions(&self) -> Permissions {
         self.role.permissions()
     }

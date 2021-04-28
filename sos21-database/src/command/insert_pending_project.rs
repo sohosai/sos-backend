@@ -9,7 +9,6 @@ where
     let PendingProject {
         id,
         created_at,
-        author_id,
         name,
         kana_name,
         group_name,
@@ -24,7 +23,6 @@ where
 INSERT INTO pending_projects (
     id,
     created_at,
-    author_id,
     name,
     kana_name,
     group_name,
@@ -32,11 +30,10 @@ INSERT INTO pending_projects (
     description,
     category,
     attributes
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9 )
 "#,
         id,
         created_at,
-        author_id,
         name,
         kana_name,
         group_name,

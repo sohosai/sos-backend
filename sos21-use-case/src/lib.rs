@@ -10,11 +10,11 @@ macro_rules! use_case_ensure {
     };
 }
 
-pub mod accept_project_subowner;
 pub mod answer_registration_form;
 pub mod create_file;
 pub mod create_form;
 pub mod create_form_answer;
+pub mod create_project;
 pub mod create_registration_form;
 pub mod distribute_files;
 pub mod export_form_answers;
@@ -56,6 +56,8 @@ pub mod get_shared_file;
 pub mod get_shared_file_object;
 pub mod get_user;
 pub mod get_user_file_usage;
+pub mod get_user_pending_project;
+pub mod get_user_project;
 pub mod list_all_file_distributions;
 pub mod list_all_forms;
 pub mod list_all_projects;
@@ -68,8 +70,6 @@ pub mod list_project_registration_forms;
 pub mod list_registration_form_answers;
 pub mod list_user_file_sharings;
 pub mod list_user_files;
-pub mod list_user_pending_projects;
-pub mod list_user_projects;
 pub mod list_users;
 pub mod prepare_project;
 pub mod revoke_file_sharing;

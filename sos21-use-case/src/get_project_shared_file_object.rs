@@ -91,7 +91,7 @@ mod tests {
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
-            file_sharing::FileSharingScope::Project(other_project.id),
+            file_sharing::FileSharingScope::Project(other_project.id()),
         );
 
         let app = test::build_mock_app()
@@ -106,7 +106,7 @@ mod tests {
             .await;
 
         let input = get_project_shared_file_object::Input {
-            project_id: ProjectId::from_entity(other_project.id),
+            project_id: ProjectId::from_entity(other_project.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -127,7 +127,7 @@ mod tests {
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
-            file_sharing::FileSharingScope::Project(project.id),
+            file_sharing::FileSharingScope::Project(project.id()),
         );
 
         let app = test::build_mock_app()
@@ -142,7 +142,7 @@ mod tests {
             .await;
 
         let input = get_project_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -164,7 +164,7 @@ mod tests {
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
-            file_sharing::FileSharingScope::Project(project.id),
+            file_sharing::FileSharingScope::Project(project.id()),
         );
 
         let app = test::build_mock_app()
@@ -179,7 +179,7 @@ mod tests {
             .await;
 
         let input = get_project_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -200,7 +200,7 @@ mod tests {
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
-            file_sharing::FileSharingScope::Project(other_project.id),
+            file_sharing::FileSharingScope::Project(other_project.id()),
         );
 
         let app = test::build_mock_app()
@@ -215,7 +215,7 @@ mod tests {
             .await;
 
         let input = get_project_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -237,7 +237,7 @@ mod tests {
 
         let mut sharing = file_sharing::FileSharing::new(
             other_file.id,
-            file_sharing::FileSharingScope::Project(project.id),
+            file_sharing::FileSharingScope::Project(project.id()),
         );
         sharing.revoke().unwrap();
 
@@ -253,7 +253,7 @@ mod tests {
             .await;
 
         let input = get_project_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -275,7 +275,7 @@ mod tests {
 
         let sharing = test::model::new_expired_file_sharing(
             other_file.id,
-            file_sharing::FileSharingScope::Project(project.id),
+            file_sharing::FileSharingScope::Project(project.id()),
         );
 
         let app = test::build_mock_app()
@@ -290,7 +290,7 @@ mod tests {
             .await;
 
         let input = get_project_shared_file_object::Input {
-            project_id: ProjectId::from_entity(project.id),
+            project_id: ProjectId::from_entity(project.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(

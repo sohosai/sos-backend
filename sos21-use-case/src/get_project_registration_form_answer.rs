@@ -87,7 +87,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(other.id.clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            project_other.id,
+            project_other.id(),
             &registration_form,
         );
 
@@ -103,7 +103,7 @@ mod tests {
         assert!(matches!(
             get_project_registration_form_answer::run(
                 &app,
-                ProjectId::from_entity(project_other.id),
+                ProjectId::from_entity(project_other.id()),
                 RegistrationFormId::from_entity(registration_form.id),
             )
             .await,
@@ -124,7 +124,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
             subowner.id.clone(),
-            project.id,
+            project.id(),
             &registration_form,
         );
 
@@ -140,7 +140,7 @@ mod tests {
         assert!(matches!(
             get_project_registration_form_answer::run(
                 &app,
-                ProjectId::from_entity(project.id),
+                ProjectId::from_entity(project.id()),
                 RegistrationFormId::from_entity(registration_form.id),
             )
             .await,
@@ -160,7 +160,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(operator.id.clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
             owner.id.clone(),
-            project.id,
+            project.id(),
             &registration_form,
         );
 
@@ -176,7 +176,7 @@ mod tests {
         assert!(matches!(
             get_project_registration_form_answer::run(
                 &app,
-                ProjectId::from_entity(project.id),
+                ProjectId::from_entity(project.id()),
                 RegistrationFormId::from_entity(registration_form.id),
             )
             .await,
@@ -194,7 +194,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(other.id.clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            project_other.id,
+            project_other.id(),
             &registration_form,
         );
 
@@ -210,7 +210,7 @@ mod tests {
         assert!(matches!(
             get_project_registration_form_answer::run(
                 &app,
-                ProjectId::from_entity(project_other.id),
+                ProjectId::from_entity(project_other.id()),
                 RegistrationFormId::from_entity(registration_form.id)
             )
             .await,
@@ -228,7 +228,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(other.id.clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
             other.id.clone(),
-            project_other.id,
+            project_other.id(),
             &registration_form,
         );
 
@@ -244,7 +244,7 @@ mod tests {
         assert!(matches!(
             get_project_registration_form_answer::run(
                 &app,
-                ProjectId::from_entity(project_other.id),
+                ProjectId::from_entity(project_other.id()),
                 RegistrationFormId::from_entity(registration_form.id)
             )
             .await,

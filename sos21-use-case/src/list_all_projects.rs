@@ -115,7 +115,7 @@ mod tests {
             .collect();
         let expected: HashSet<_> = projects
             .into_iter()
-            .map(|project| ProjectId::from_entity(project.id))
+            .map(|project| ProjectId::from_entity(project.id()))
             .collect();
         assert_eq!(got, expected);
     }
@@ -138,7 +138,7 @@ mod tests {
             .collect();
         let expected: HashSet<_> = projects
             .into_iter()
-            .map(|project| ProjectId::from_entity(project.id))
+            .map(|project| ProjectId::from_entity(project.id()))
             .collect();
         assert_eq!(got, expected);
     }

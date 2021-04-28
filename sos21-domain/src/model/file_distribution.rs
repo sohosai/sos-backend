@@ -70,7 +70,7 @@ impl FileDistribution {
             distributed_at: self.created_at,
             name: self.name.clone(),
             description: self.description.clone(),
-            project_id: project.id,
+            project_id: project.id(),
             sharing_id,
         })
     }

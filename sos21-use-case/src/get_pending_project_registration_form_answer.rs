@@ -89,7 +89,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(other.id.clone());
         let answer_other = test::model::new_registration_form_answer_with_pending_project(
             other.id.clone(),
-            pending_project_other.id,
+            pending_project_other.id(),
             &registration_form,
         );
 
@@ -105,7 +105,7 @@ mod tests {
         assert!(matches!(
             get_pending_project_registration_form_answer::run(
                 &app,
-                PendingProjectId::from_entity(pending_project_other.id),
+                PendingProjectId::from_entity(pending_project_other.id()),
                 RegistrationFormId::from_entity(registration_form.id),
             )
             .await,
@@ -124,7 +124,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(other.id.clone());
         let answer_other = test::model::new_registration_form_answer_with_pending_project(
             other.id.clone(),
-            pending_project_other.id,
+            pending_project_other.id(),
             &registration_form,
         );
 
@@ -140,7 +140,7 @@ mod tests {
         assert!(matches!(
             get_pending_project_registration_form_answer::run(
                 &app,
-                PendingProjectId::from_entity(pending_project_other.id),
+                PendingProjectId::from_entity(pending_project_other.id()),
                 RegistrationFormId::from_entity(registration_form.id)
             )
             .await,
@@ -158,7 +158,7 @@ mod tests {
         let registration_form = test::model::new_registration_form(other.id.clone());
         let answer_other = test::model::new_registration_form_answer_with_pending_project(
             other.id.clone(),
-            pending_project_other.id,
+            pending_project_other.id(),
             &registration_form,
         );
 
@@ -174,7 +174,7 @@ mod tests {
         assert!(matches!(
             get_pending_project_registration_form_answer::run(
                 &app,
-                PendingProjectId::from_entity(pending_project_other.id),
+                PendingProjectId::from_entity(pending_project_other.id()),
                 RegistrationFormId::from_entity(registration_form.id)
             )
             .await,

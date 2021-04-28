@@ -58,6 +58,7 @@ where
         created_at: DateTime::now(),
         role: user::UserRole::General,
         category,
+        assignment: None,
     };
     ctx.store_user(user.clone())
         .await

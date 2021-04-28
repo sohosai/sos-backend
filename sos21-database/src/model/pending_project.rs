@@ -8,7 +8,6 @@ use uuid::Uuid;
 pub struct PendingProject {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
-    pub author_id: String,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -19,7 +18,7 @@ pub struct PendingProject {
 }
 
 #[derive(Debug, Clone)]
-pub struct PendingProjectWithAuthor {
+pub struct PendingProjectWithOwner {
     pub pending_project: PendingProject,
-    pub author: User,
+    pub owner: User,
 }

@@ -81,26 +81,26 @@ mod tests {
         let registration_form1 = test::model::new_registration_form(operator.id.clone());
         let registration_form1_answer1 = test::model::new_registration_form_answer_with_project(
             login_user.id.clone(),
-            project.id,
+            project.id(),
             &registration_form1,
         );
         let registration_form1_answer2 =
             test::model::new_registration_form_answer_with_pending_project(
                 login_user.id.clone(),
-                pending_project.id,
+                pending_project.id(),
                 &registration_form1,
             );
 
         let registration_form2 = test::model::new_registration_form(operator.id.clone());
         let registration_form2_answer1 = test::model::new_registration_form_answer_with_project(
             login_user.id.clone(),
-            project.id,
+            project.id(),
             &registration_form2,
         );
         let registration_form2_answer2 =
             test::model::new_registration_form_answer_with_pending_project(
                 login_user.id.clone(),
-                pending_project.id,
+                pending_project.id(),
                 &registration_form2,
             );
 

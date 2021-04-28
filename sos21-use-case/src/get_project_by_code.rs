@@ -105,7 +105,8 @@ mod tests {
         assert!(matches!(
             get_project_by_code::run(&app, project.code().to_string()).await,
             Ok(got)
-            if got.id == ProjectId::from_entity(project.id) && got.name == project.name.into_string()
+            if got.id == ProjectId::from_entity(project.id())
+            && got.name == project.name().as_str()
         ));
     }
 
@@ -127,7 +128,8 @@ mod tests {
         assert!(matches!(
             get_project_by_code::run(&app, project.code().to_string()).await,
             Ok(got)
-            if got.id == ProjectId::from_entity(project.id) && got.name == project.name.into_string()
+            if got.id == ProjectId::from_entity(project.id())
+            && got.name == project.name().as_str()
         ));
     }
 
@@ -148,7 +150,8 @@ mod tests {
         assert!(matches!(
             get_project_by_code::run(&app, project_other.code().to_string()).await,
             Ok(got)
-            if got.id == ProjectId::from_entity(project_other.id) && got.name == project_other.name.into_string()
+            if got.id == ProjectId::from_entity(project_other.id())
+            && got.name == project_other.name().as_str()
         ));
     }
 
@@ -169,7 +172,8 @@ mod tests {
         assert!(matches!(
             get_project_by_code::run(&app, project_other.code().to_string()).await,
             Ok(got)
-            if got.id == ProjectId::from_entity(project_other.id) && got.name == project_other.name.into_string()
+            if got.id == ProjectId::from_entity(project_other.id())
+            && got.name == project_other.name().as_str()
         ));
     }
 

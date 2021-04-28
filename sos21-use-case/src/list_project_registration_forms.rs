@@ -28,7 +28,7 @@ where
         _ => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
 
-    ctx.list_registration_forms_by_project(project.id)
+    ctx.list_registration_forms_by_project(project.id())
         .await
         .context("Failed to list registration forms")?
         .into_iter()
@@ -70,7 +70,7 @@ mod tests {
             .await;
 
         let result =
-            list_project_registration_forms::run(&app, ProjectId::from_entity(project.id)).await;
+            list_project_registration_forms::run(&app, ProjectId::from_entity(project.id())).await;
         assert!(result.is_ok());
 
         let got: HashSet<_> = result
@@ -137,7 +137,7 @@ mod tests {
             .await;
 
         let result =
-            list_project_registration_forms::run(&app, ProjectId::from_entity(project.id)).await;
+            list_project_registration_forms::run(&app, ProjectId::from_entity(project.id())).await;
         assert!(result.is_ok());
 
         let got: HashSet<_> = result

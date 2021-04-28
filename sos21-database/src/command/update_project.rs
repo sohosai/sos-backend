@@ -6,7 +6,6 @@ use uuid::Uuid;
 #[derive(Debug, Clone)]
 pub struct Input {
     pub id: Uuid,
-    pub owner_id: String,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -24,18 +23,16 @@ where
         r#"
 UPDATE projects
   SET
-    owner_id = $2,
-    name = $3,
-    kana_name = $4,
-    group_name = $5,
-    kana_group_name = $6,
-    description = $7,
-    category = $8,
-    attributes = $9
+    name = $2,
+    kana_name = $3,
+    group_name = $4,
+    kana_group_name = $5,
+    description = $6,
+    category = $7,
+    attributes = $8
   WHERE id = $1
 "#,
         input.id,
-        input.owner_id,
         input.name,
         input.kana_name,
         input.group_name,

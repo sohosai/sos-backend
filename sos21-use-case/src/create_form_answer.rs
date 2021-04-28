@@ -85,7 +85,7 @@ where
 
     // TODO: Enforce this in domain layer
     if ctx
-        .get_form_answer_by_form_and_project(form.id, project.id)
+        .get_form_answer_by_form_and_project(form.id, project.id())
         .await?
         .is_some()
     {
@@ -101,7 +101,7 @@ where
         id: form_answer::FormAnswerId::from_uuid(Uuid::new_v4()),
         created_at,
         author_id: login_user.id.clone(),
-        project_id: project.id,
+        project_id: project.id(),
         form_id: form.id,
         items,
     };
@@ -147,7 +147,7 @@ mod tests {
             .await;
 
         let form_id = FormId::from_entity(form.id);
-        let project_id = ProjectId::from_entity(project.id);
+        let project_id = ProjectId::from_entity(project.id());
         let input = create_form_answer::Input {
             form_id,
             project_id,
@@ -181,7 +181,7 @@ mod tests {
             .await;
 
         let form_id = FormId::from_entity(form.id);
-        let project_id = ProjectId::from_entity(project.id);
+        let project_id = ProjectId::from_entity(project.id());
         let input = create_form_answer::Input {
             form_id,
             project_id,
@@ -215,7 +215,7 @@ mod tests {
             .await;
 
         let form_id = FormId::from_entity(form.id);
-        let project_id = ProjectId::from_entity(project.id);
+        let project_id = ProjectId::from_entity(project.id());
         let input = create_form_answer::Input {
             form_id,
             project_id,
@@ -246,7 +246,7 @@ mod tests {
             .await;
 
         let form_id = FormId::from_entity(form.id);
-        let project_id = ProjectId::from_entity(project.id);
+        let project_id = ProjectId::from_entity(project.id());
         let item = test_interface::mock_input_form_answer_item(form.items.items().next().unwrap());
         let input = create_form_answer::Input {
             form_id,
@@ -298,7 +298,7 @@ mod tests {
             ])),
         };
         let form_id = FormId::from_entity(form.id);
-        let project_id = ProjectId::from_entity(project.id);
+        let project_id = ProjectId::from_entity(project.id());
         let input = create_form_answer::Input {
             form_id,
             project_id,

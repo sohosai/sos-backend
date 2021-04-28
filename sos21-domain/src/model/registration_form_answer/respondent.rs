@@ -9,20 +9,23 @@ pub enum RegistrationFormAnswerRespondent {
 
 impl RegistrationFormAnswerRespondent {
     pub fn replace_to_project(&mut self, project: &Project) -> Self {
-        std::mem::replace(self, RegistrationFormAnswerRespondent::Project(project.id))
+        std::mem::replace(
+            self,
+            RegistrationFormAnswerRespondent::Project(project.id()),
+        )
     }
 
     pub fn is_project(&self, project: &Project) -> bool {
         matches!(self,
             RegistrationFormAnswerRespondent::Project(id)
-            if project.id == *id
+            if project.id() == *id
         )
     }
 
     pub fn is_pending_project(&self, pending_project: &PendingProject) -> bool {
         matches!(self,
             RegistrationFormAnswerRespondent::PendingProject(id)
-            if pending_project.id == *id
+            if pending_project.id() == *id
         )
     }
 }

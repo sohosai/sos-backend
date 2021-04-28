@@ -5,7 +5,7 @@ use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::accept_project_subowner;
+use sos21_use_case::create_project;
 use warp::http::StatusCode;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -30,6 +30,10 @@ pub enum Error {
     PendingProjectNotFound,
     TooManyProjects,
     NotAnsweredRegistrationForm,
+    SameOwnerSubowner,
+    AlreadyProjectOwner,
+    AlreadyProjectSubowner,
+    AlreadyPendingProjectOwner,
 }
 
 impl HandlerResponse for Error {
@@ -38,18 +42,26 @@ impl HandlerResponse for Error {
             Error::PendingProjectNotFound => StatusCode::NOT_FOUND,
             Error::TooManyProjects => StatusCode::CONFLICT,
             Error::NotAnsweredRegistrationForm => StatusCode::CONFLICT,
+            Error::SameOwnerSubowner => StatusCode::CONFLICT,
+            Error::AlreadyProjectOwner => StatusCode::CONFLICT,
+            Error::AlreadyProjectSubowner => StatusCode::CONFLICT,
+            Error::AlreadyPendingProjectOwner => StatusCode::CONFLICT,
         }
     }
 }
 
-impl From<accept_project_subowner::Error> for Error {
-    fn from(err: accept_project_subowner::Error) -> Error {
+impl From<create_project::Error> for Error {
+    fn from(err: create_project::Error) -> Error {
         match err {
-            accept_project_subowner::Error::PendingProjectNotFound => Error::PendingProjectNotFound,
-            accept_project_subowner::Error::TooManyProjects => Error::TooManyProjects,
-            accept_project_subowner::Error::NotAnsweredRegistrationForm => {
+            create_project::Error::PendingProjectNotFound => Error::PendingProjectNotFound,
+            create_project::Error::TooManyProjects => Error::TooManyProjects,
+            create_project::Error::NotAnsweredRegistrationForm => {
                 Error::NotAnsweredRegistrationForm
             }
+            create_project::Error::SameOwnerSubowner => Error::SameOwnerSubowner,
+            create_project::Error::AlreadyProjectOwner => Error::AlreadyProjectOwner,
+            create_project::Error::AlreadyProjectSubowner => Error::AlreadyProjectSubowner,
+            create_project::Error::AlreadyPendingProjectOwner => Error::AlreadyPendingProjectOwner,
         }
     }
 }
@@ -57,7 +69,7 @@ impl From<accept_project_subowner::Error> for Error {
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let pending_project_id = request.pending_project_id.into_use_case();
-    let project = accept_project_subowner::run(&ctx, pending_project_id).await?;
+    let project = create_project::run(&ctx, pending_project_id).await?;
     let project = Project::from_use_case(project);
     Ok(Response { project })
 }
