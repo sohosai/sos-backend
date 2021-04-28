@@ -18,6 +18,9 @@ with the HTTP API interface being the "public API".
 
 - Change the specification around text and integer placeholders ([#65](https://github.com/sohosai/sos21-backend/pull/65))
 - Rename some endpoints ([#76](https://github.com/sohosai/sos21-backend/pull/76))
+- Restrict users to be assigned to only one project ([#78](https://github.com/sohosai/sos21-backend/pull/78))
+    - `me/project/list` and `me/pending-project/list` are renamed to `me/project/get` and `me/pending-project/get` respectively
+    - `pending-project/accept-subowner` is renamed to `project/create`
 
 ### Deprecated
 ### Removed
