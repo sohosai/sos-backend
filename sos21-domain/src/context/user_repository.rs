@@ -1,4 +1,4 @@
-use crate::model::user::{User, UserId};
+use crate::model::user::{User, UserEmailAddress, UserId};
 
 use anyhow::Result;
 
@@ -6,7 +6,9 @@ use anyhow::Result;
 pub trait UserRepository {
     async fn store_user(&self, user: User) -> Result<()>;
     async fn get_user(&self, id: UserId) -> Result<Option<User>>;
+    // TODO: Move to query service
     async fn list_users(&self) -> Result<Vec<User>>;
+    async fn get_user_by_email(&self, email: &UserEmailAddress) -> Result<Option<User>>;
 }
 
 #[macro_export]
@@ -33,6 +35,12 @@ macro_rules! delegate_user_repository {
             ) -> ::anyhow::Result<Vec<$crate::model::user::User>> {
                 $target.list_users().await
             }
+            async fn get_user_by_email(
+                &$sel,
+                email: &$crate::model::user::UserEmailAddress,
+            ) -> ::anyhow::Result<Option<$crate::model::user::User>> {
+                $target.get_user_by_email(email).await
+            }
         }
     };
 }
@@ -49,5 +57,9 @@ impl<C: UserRepository + Sync> UserRepository for &C {
 
     async fn list_users(&self) -> Result<Vec<User>> {
         <C as UserRepository>::list_users(self).await
+    }
+
+    async fn get_user_by_email(&self, email: &UserEmailAddress) -> Result<Option<User>> {
+        <C as UserRepository>::get_user_by_email(self, email).await
     }
 }

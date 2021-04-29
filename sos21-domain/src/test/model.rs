@@ -22,3 +22,5 @@ mod registration_form;
 pub use registration_form::*;
 mod registration_form_answer;
 pub use registration_form_answer::*;
+mod user_invitation;
+pub use user_invitation::*;

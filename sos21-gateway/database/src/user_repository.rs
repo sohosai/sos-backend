@@ -65,6 +65,13 @@ impl UserRepository for UserDatabase {
             .try_collect()
             .await
     }
+
+    async fn get_user_by_email(&self, email: &UserEmailAddress) -> Result<Option<User>> {
+        let mut lock = self.0.lock().await;
+        query::find_user_by_email(&mut *lock, email.as_str())
+            .await
+            .and_then(|opt| opt.map(to_user).transpose())
+    }
 }
 
 fn from_user(user: User) -> data::user::User {
