@@ -16,6 +16,7 @@ pub mod create_form;
 pub mod create_form_answer;
 pub mod create_project;
 pub mod create_registration_form;
+pub mod delete_user_invitation;
 pub mod distribute_files;
 pub mod export_form_answers;
 pub mod export_projects;
