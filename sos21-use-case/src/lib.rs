@@ -59,6 +59,7 @@ pub mod get_user_file_usage;
 pub mod get_user_invitation;
 pub mod get_user_pending_project;
 pub mod get_user_project;
+pub mod invite_user;
 pub mod list_all_file_distributions;
 pub mod list_all_forms;
 pub mod list_all_projects;
