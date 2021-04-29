@@ -1,9 +1,10 @@
-use crate::context::FileRepository;
+use crate::context::{FileRepository, UserInvitationRepository, UserRepository};
 use crate::model::date_time::DateTime;
 use crate::model::pending_project::PendingProject;
 use crate::model::permissions::Permissions;
 use crate::model::phone_number::PhoneNumber;
 use crate::model::project::Project;
+use crate::{DomainError, DomainResult};
 
 use anyhow::Context;
 use thiserror::Error;
@@ -48,12 +49,62 @@ pub struct User {
 }
 
 #[derive(Debug, Error, Clone)]
+#[error("already signed up")]
+pub struct AlreadySignedUpError {
+    _priv: (),
+}
+
+#[derive(Debug, Error, Clone)]
 #[error("insufficient permissions")]
 pub struct RequirePermissionsError {
     _priv: (),
 }
 
 impl User {
+    #[allow(clippy::too_many_arguments)]
+    pub async fn new<C>(
+        ctx: &C,
+        id: UserId,
+        name: UserName,
+        kana_name: UserKanaName,
+        phone_number: PhoneNumber,
+        affiliation: UserAffiliation,
+        email: UserEmailAddress,
+        category: UserCategory,
+    ) -> DomainResult<Self, AlreadySignedUpError>
+    where
+        C: UserRepository + UserInvitationRepository,
+    {
+        if ctx
+            .get_user(id.clone())
+            .await
+            .context("Failed to get user")?
+            .is_some()
+        {
+            return Err(DomainError::Domain(AlreadySignedUpError { _priv: () }));
+        }
+
+        let role = ctx
+            .get_user_invitation_by_email(&email)
+            .await
+            .context("Failed to get user invitation")?
+            .map(|invitation| invitation.role().to_user_role())
+            .unwrap_or(UserRole::General);
+
+        Ok(User::from_content(UserContent {
+            id,
+            created_at: DateTime::now(),
+            name,
+            kana_name,
+            email,
+            phone_number,
+            affiliation,
+            role,
+            category,
+            assignment: None,
+        }))
+    }
+
     /// Restore `User` from `UserContent`.
     ///
     /// This is intended to be used when the data is taken out of the implementation
@@ -206,7 +257,10 @@ impl User {
 
 #[cfg(test)]
 mod tests {
+    use super::{AlreadySignedUpError, User, UserEmailAddress, UserRole};
+
     use crate::test::model as test_model;
+    use crate::DomainError;
 
     #[test]
     fn test_visibility_general_self() {
@@ -233,5 +287,81 @@ mod tests {
         let user = test_model::new_operator_user();
         let other = test_model::new_general_user();
         assert!(other.is_visible_to(&user));
+    }
+
+    #[tokio::test]
+    async fn test_new_already_signed_up() {
+        let user = test_model::new_general_user();
+
+        let app = crate::test::build_mock_app()
+            .users(vec![user.clone()])
+            .build();
+        assert!(matches!(
+            User::new(
+                &app,
+                user.id().clone(),
+                test_model::mock_user_name(),
+                test_model::mock_user_kana_name(),
+                test_model::mock_phone_number(),
+                test_model::mock_user_affiliation(),
+                test_model::mock_user_email_address(),
+                test_model::mock_user_category()
+            )
+            .await,
+            Err(DomainError::Domain(AlreadySignedUpError { .. }))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_new_with_invitation() {
+        let admin = test_model::new_admin_user();
+        let email = UserEmailAddress::from_string("example-new@s.tsukuba.ac.jp").unwrap();
+        let invitation = test_model::new_operator_user_invitation(
+            admin.id().clone(),
+            email.clone().into_string(),
+        );
+
+        let app = crate::test::build_mock_app()
+            .users(vec![admin.clone()])
+            .user_invitations(vec![invitation])
+            .build();
+        assert!(matches!(
+            User::new(
+                &app,
+                test_model::new_user_id(),
+                test_model::mock_user_name(),
+                test_model::mock_user_kana_name(),
+                test_model::mock_phone_number(),
+                test_model::mock_user_affiliation(),
+                email.clone(),
+                test_model::mock_user_category()
+            )
+            .await,
+            Ok(user)
+            if user.role() == UserRole::CommitteeOperator
+            && user.email() == &email
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_new_ok() {
+        let email = UserEmailAddress::from_string("example-new@s.tsukuba.ac.jp").unwrap();
+        let app = crate::test::build_mock_app().build();
+        assert!(matches!(
+            User::new(
+                &app,
+                test_model::new_user_id(),
+                test_model::mock_user_name(),
+                test_model::mock_user_kana_name(),
+                test_model::mock_phone_number(),
+                test_model::mock_user_affiliation(),
+                email.clone(),
+                test_model::mock_user_category()
+            )
+            .await,
+            Ok(user)
+            if user.role() == UserRole::General
+            && user.email() == &email
+        ));
     }
 }

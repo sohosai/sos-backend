@@ -25,10 +25,6 @@ impl UserName {
         let (first, last) = name.into_string();
         UserName { first, last }
     }
-
-    pub fn into_entity(self) -> Option<entity::UserName> {
-        entity::UserName::from_string(self.first, self.last).ok()
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -41,10 +37,6 @@ impl UserKanaName {
     pub fn from_entity(name: entity::UserKanaName) -> UserKanaName {
         let (first, last) = name.into_string();
         UserKanaName { first, last }
-    }
-
-    pub fn into_entity(self) -> Option<entity::UserKanaName> {
-        entity::UserKanaName::from_string(self.first, self.last).ok()
     }
 }
 

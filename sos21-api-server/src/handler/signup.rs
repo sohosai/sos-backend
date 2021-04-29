@@ -47,12 +47,12 @@ impl From<signup::Error> for Error {
     fn from(err: signup::Error) -> Error {
         match err {
             signup::Error::AlreadySignedUp => Error::AlreadySignedUp,
-            signup::Error::InvalidUserName => Error::InvalidField { field: "name" },
-            signup::Error::InvalidUserKanaName => Error::InvalidField { field: "kana_name" },
+            signup::Error::InvalidName => Error::InvalidField { field: "name" },
+            signup::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
             signup::Error::InvalidPhoneNumber => Error::InvalidField {
                 field: "phone_number",
             },
-            signup::Error::InvalidUserAffiliation => Error::InvalidField {
+            signup::Error::InvalidAffiliation => Error::InvalidField {
                 field: "affiliation",
             },
         }
