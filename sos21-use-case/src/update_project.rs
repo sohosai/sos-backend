@@ -107,17 +107,17 @@ where
 
     use_case_ensure!(
         project.is_visible_to(login_user)
-            && owner.name.is_visible_to(login_user)
-            && owner.kana_name.is_visible_to(login_user)
-            && subowner.name.is_visible_to(login_user)
-            && subowner.kana_name.is_visible_to(login_user)
+            && owner.name().is_visible_to(login_user)
+            && owner.kana_name().is_visible_to(login_user)
+            && subowner.name().is_visible_to(login_user)
+            && subowner.kana_name().is_visible_to(login_user)
     );
     Ok(Project::from_entity(ProjectFromEntityInput {
         project,
-        owner_name: owner.name,
-        owner_kana_name: owner.kana_name,
-        subowner_name: subowner.name,
-        subowner_kana_name: subowner.kana_name,
+        owner_name: owner.name().clone(),
+        owner_kana_name: owner.kana_name().clone(),
+        subowner_name: subowner.name().clone(),
+        subowner_kana_name: subowner.kana_name().clone(),
     }))
 }
 
@@ -131,7 +131,7 @@ mod tests {
     #[tokio::test]
     async fn test_general() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -162,7 +162,7 @@ mod tests {
     #[tokio::test]
     async fn test_committee() {
         let user = test::model::new_committee_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -193,7 +193,7 @@ mod tests {
     #[tokio::test]
     async fn test_operator() {
         let user = test::model::new_operator_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -224,7 +224,7 @@ mod tests {
     #[tokio::test]
     async fn test_admin() {
         let user = test::model::new_admin_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])

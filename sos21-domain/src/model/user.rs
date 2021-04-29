@@ -29,7 +29,7 @@ pub use role::UserRole;
 pub struct UserId(pub String);
 
 #[derive(Debug, Clone)]
-pub struct User {
+pub struct UserContent {
     pub id: UserId,
     pub created_at: DateTime,
     pub name: UserName,
@@ -42,6 +42,11 @@ pub struct User {
     pub assignment: Option<UserAssignment>,
 }
 
+#[derive(Debug, Clone)]
+pub struct User {
+    content: UserContent,
+}
+
 #[derive(Debug, Error, Clone)]
 #[error("insufficient permissions")]
 pub struct RequirePermissionsError {
@@ -49,20 +54,72 @@ pub struct RequirePermissionsError {
 }
 
 impl User {
+    /// Restore `User` from `UserContent`.
+    ///
+    /// This is intended to be used when the data is taken out of the implementation
+    /// by [`User::into_content`] for persistence, internal serialization, etc.
+    /// Use [`User::new`] to create a project.
+    pub fn from_content(content: UserContent) -> Self {
+        User { content }
+    }
+
+    /// Convert `User` into `UserContent`.
+    pub fn into_content(self) -> UserContent {
+        self.content
+    }
+
+    pub fn id(&self) -> &UserId {
+        &self.content.id
+    }
+
+    pub fn created_at(&self) -> DateTime {
+        self.content.created_at
+    }
+
+    pub fn name(&self) -> &UserName {
+        &self.content.name
+    }
+
+    pub fn kana_name(&self) -> &UserKanaName {
+        &self.content.kana_name
+    }
+
+    pub fn phone_number(&self) -> &PhoneNumber {
+        &self.content.phone_number
+    }
+
+    pub fn affiliation(&self) -> &UserAffiliation {
+        &self.content.affiliation
+    }
+
+    pub fn email(&self) -> &UserEmailAddress {
+        &self.content.email
+    }
+
+    pub fn role(&self) -> UserRole {
+        self.content.role
+    }
+
+    pub fn category(&self) -> UserCategory {
+        self.content.category
+    }
+
     pub fn assignment(&self) -> Option<UserAssignment> {
-        self.assignment
+        self.content.assignment
     }
 
     pub fn assign_project_owner(&mut self, project: &Project) -> anyhow::Result<()> {
-        anyhow::ensure!(project.owner_id() == &self.id);
-        self.assignment
+        anyhow::ensure!(project.owner_id() == self.id());
+        self.content
+            .assignment
             .replace(UserAssignment::ProjectOwner(project.id()));
         Ok(())
     }
 
     pub fn assign_project_subowner(&mut self, project: &Project) -> anyhow::Result<()> {
-        anyhow::ensure!(project.subowner_id() == &self.id);
-        self.assignment
+        anyhow::ensure!(project.subowner_id() == self.id());
+        self.content
+            .assignment
             .replace(UserAssignment::ProjectSubowner(project.id()));
         Ok(())
     }
@@ -71,14 +128,15 @@ impl User {
         &mut self,
         pending_project: &PendingProject,
     ) -> anyhow::Result<()> {
-        anyhow::ensure!(pending_project.owner_id() == &self.id);
-        self.assignment
+        anyhow::ensure!(pending_project.owner_id() == self.id());
+        self.content
+            .assignment
             .replace(UserAssignment::PendingProjectOwner(pending_project.id()));
         Ok(())
     }
 
     pub fn permissions(&self) -> Permissions {
-        self.role.permissions()
+        self.role().permissions()
     }
 
     pub fn require_permissions(
@@ -93,7 +151,7 @@ impl User {
     }
 
     pub fn is_visible_to(&self, user: &User) -> bool {
-        if self.id == user.id {
+        if self.id() == user.id() {
             return true;
         }
 
@@ -104,45 +162,45 @@ impl User {
     where
         C: FileRepository,
     {
-        ctx.sum_file_usage_by_user(self.id.clone())
+        ctx.sum_file_usage_by_user(self.id().clone())
             .await
             .context("Failed to sum usage by user")
     }
 
     pub fn file_usage_quota(&self) -> UserFileUsageQuota {
-        self.role.file_usage_quota()
+        self.role().file_usage_quota()
     }
 
     pub fn is_committee(&self) -> bool {
-        self.role.is_committee()
+        self.role().is_committee()
     }
 
     pub fn is_committee_operator(&self) -> bool {
-        self.role.is_committee_operator()
+        self.role().is_committee_operator()
     }
 
     pub fn set_name(&mut self, name: UserName) {
-        self.name = name;
+        self.content.name = name;
     }
 
     pub fn set_kana_name(&mut self, kana_name: UserKanaName) {
-        self.kana_name = kana_name;
+        self.content.kana_name = kana_name;
     }
 
     pub fn set_phone_number(&mut self, phone_number: PhoneNumber) {
-        self.phone_number = phone_number;
+        self.content.phone_number = phone_number;
     }
 
     pub fn set_affiliation(&mut self, affiliation: UserAffiliation) {
-        self.affiliation = affiliation;
+        self.content.affiliation = affiliation;
     }
 
     pub fn set_role(&mut self, role: UserRole) {
-        self.role = role;
+        self.content.role = role;
     }
 
     pub fn set_category(&mut self, category: UserCategory) {
-        self.category = category;
+        self.content.category = category;
     }
 }
 

@@ -41,18 +41,18 @@ where
 
         use_case_ensure!(
             project.is_visible_to(login_user)
-                && owner.name.is_visible_to(login_user)
-                && owner.kana_name.is_visible_to(login_user)
-                && subowner.name.is_visible_to(login_user)
-                && subowner.kana_name.is_visible_to(login_user)
+                && owner.name().is_visible_to(login_user)
+                && owner.kana_name().is_visible_to(login_user)
+                && subowner.name().is_visible_to(login_user)
+                && subowner.kana_name().is_visible_to(login_user)
         );
 
         result.push(Project::from_entity(ProjectFromEntityInput {
             project,
-            owner_name: owner.name,
-            owner_kana_name: owner.kana_name,
-            subowner_name: subowner.name,
-            subowner_kana_name: subowner.kana_name,
+            owner_name: owner.name().clone(),
+            owner_kana_name: owner.kana_name().clone(),
+            subowner_name: subowner.name().clone(),
+            subowner_kana_name: subowner.kana_name().clone(),
         }));
     }
 
@@ -71,8 +71,8 @@ mod tests {
         login_user: domain::user::User,
     ) -> (Login<test::context::MockApp>, Vec<domain::project::Project>) {
         let other = test::model::new_general_user();
-        let project1 = test::model::new_general_project(login_user.id.clone());
-        let project2 = test::model::new_general_project(other.id.clone());
+        let project1 = test::model::new_general_project(login_user.id().clone());
+        let project2 = test::model::new_general_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![login_user.clone(), other.clone()])

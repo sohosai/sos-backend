@@ -52,10 +52,10 @@ mod tests {
     async fn test_general_any() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id.clone());
-        let registration_form1 = test::model::new_registration_form(user.id.clone());
-        let registration_form2 = test::model::new_registration_form(user.id.clone());
-        let registration_form3 = test::model::new_registration_form(other.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
+        let registration_form1 = test::model::new_registration_form(user.id().clone());
+        let registration_form2 = test::model::new_registration_form(user.id().clone());
+        let registration_form3 = test::model::new_registration_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -89,7 +89,7 @@ mod tests {
     async fn test_general_query() {
         let user = test::model::new_general_user();
         let project = test::model::new_project_with_attributes(
-            user.id.clone(),
+            user.id().clone(),
             project::ProjectCategory::General,
             &[
                 project::ProjectAttribute::Academic,
@@ -108,7 +108,7 @@ mod tests {
         ])
         .unwrap();
         let registration_form1 =
-            test::model::new_registration_form_with_query(user.id.clone(), query1);
+            test::model::new_registration_form_with_query(user.id().clone(), query1);
 
         let query2 = project_query::ProjectQuery::from_conjunctions(vec![
             project_query::ProjectQueryConjunction {
@@ -121,8 +121,8 @@ mod tests {
         ])
         .unwrap();
         let registration_form2 =
-            test::model::new_registration_form_with_query(user.id.clone(), query2);
-        let registration_form3 = test::model::new_registration_form(user.id.clone());
+            test::model::new_registration_form_with_query(user.id().clone(), query2);
+        let registration_form3 = test::model::new_registration_form(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])

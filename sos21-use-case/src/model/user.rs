@@ -117,15 +117,15 @@ pub struct User {
 impl User {
     pub fn from_entity(user: entity::User) -> User {
         User {
-            id: UserId::from_entity(user.id),
-            created_at: user.created_at.utc(),
-            name: UserName::from_entity(user.name),
-            kana_name: UserKanaName::from_entity(user.kana_name),
-            email: user.email.into_string(),
-            phone_number: user.phone_number.into_string(),
-            affiliation: user.affiliation.into_string(),
-            role: UserRole::from_entity(user.role),
-            category: UserCategory::from_entity(user.category),
+            id: UserId::from_entity(user.id().clone()),
+            created_at: user.created_at().utc(),
+            name: UserName::from_entity(user.name().clone()),
+            kana_name: UserKanaName::from_entity(user.kana_name().clone()),
+            email: user.email().clone().into_string(),
+            phone_number: user.phone_number().clone().into_string(),
+            affiliation: user.affiliation().clone().into_string(),
+            role: UserRole::from_entity(user.role()),
+            category: UserCategory::from_entity(user.category()),
         }
     }
 }

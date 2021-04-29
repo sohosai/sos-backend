@@ -108,7 +108,7 @@ mod tests {
             .await;
 
         let input = update_user::Input {
-            id: UserId::from_entity(user.id),
+            id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
             phone_number: None,
@@ -136,7 +136,7 @@ mod tests {
             .await;
 
         let input = update_user::Input {
-            id: UserId::from_entity(user.id),
+            id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
             phone_number: None,
@@ -164,7 +164,7 @@ mod tests {
             .await;
 
         let input = update_user::Input {
-            id: UserId::from_entity(user.id),
+            id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
             phone_number: None,
@@ -192,7 +192,7 @@ mod tests {
             .await;
 
         let input = update_user::Input {
-            id: UserId::from_entity(user.id),
+            id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
             phone_number: None,

@@ -70,7 +70,7 @@ mod tests {
     ) -> (Login<MockApp>, file::File, file_sharing::FileSharing) {
         let user = test::model::new_user(user_role);
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let sharing = file_sharing::FileSharing::new(other_file.id, share_scope);
 
@@ -191,7 +191,7 @@ mod tests {
     async fn test_revoked() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let mut sharing = file_sharing::FileSharing::new(
             other_file.id,
@@ -222,7 +222,7 @@ mod tests {
     async fn test_expired() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let sharing = test::model::new_expired_file_sharing(
             other_file.id,

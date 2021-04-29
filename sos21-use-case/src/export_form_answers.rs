@@ -302,15 +302,15 @@ mod tests {
     ) -> (Login<test::context::MockApp>, FormId) {
         let operator = test::model::new_operator_user();
 
-        let project1 = test::model::new_general_project(login_user.id.clone());
-        let project2 = test::model::new_general_project(login_user.id.clone());
+        let project1 = test::model::new_general_project(login_user.id().clone());
+        let project2 = test::model::new_general_project(login_user.id().clone());
 
-        let form1 = test::model::new_form(operator.id.clone());
+        let form1 = test::model::new_form(operator.id().clone());
         let form1_id = FormId::from_entity(form1.id);
         let form1_answer1 =
-            test::model::new_form_answer(login_user.id.clone(), project1.id(), &form1);
+            test::model::new_form_answer(login_user.id().clone(), project1.id(), &form1);
         let form1_answer2 =
-            test::model::new_form_answer(login_user.id.clone(), project2.id(), &form1);
+            test::model::new_form_answer(login_user.id().clone(), project2.id(), &form1);
 
         let app = test::build_mock_app()
             .users(vec![login_user.clone(), operator])

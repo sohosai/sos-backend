@@ -45,7 +45,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_owner() {
         let user = test::model::new_general_user();
-        let (file, object) = test::model::new_file(user.id.clone());
+        let (file, object) = test::model::new_file(user.id().clone());
 
         let sharing =
             file_sharing::FileSharing::new(file.id, file_sharing::FileSharingScope::Public);
@@ -73,7 +73,7 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let sharing =
             file_sharing::FileSharing::new(other_file.id, file_sharing::FileSharingScope::Public);
@@ -100,7 +100,7 @@ mod tests {
     async fn test_admin_other() {
         let user = test::model::new_admin_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let sharing =
             file_sharing::FileSharing::new(other_file.id, file_sharing::FileSharingScope::Public);

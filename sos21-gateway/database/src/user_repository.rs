@@ -10,7 +10,7 @@ use sos21_domain::model::{
     phone_number::PhoneNumber,
     project::ProjectId,
     user::{
-        User, UserAffiliation, UserAssignment, UserCategory, UserEmailAddress, UserId,
+        User, UserAffiliation, UserAssignment, UserCategory, UserContent, UserEmailAddress, UserId,
         UserKanaName, UserName, UserRole,
     },
 };
@@ -75,7 +75,7 @@ impl UserRepository for UserDatabase {
 }
 
 fn from_user(user: User) -> data::user::User {
-    let User {
+    let UserContent {
         id,
         created_at,
         name,
@@ -86,7 +86,7 @@ fn from_user(user: User) -> data::user::User {
         role,
         category,
         assignment,
-    } = user;
+    } = user.into_content();
 
     let (first_name, last_name) = name.into_string();
     let (kana_first_name, kana_last_name) = kana_name.into_string();
@@ -179,7 +179,7 @@ pub fn to_user(user: data::user::User) -> Result<User> {
         None
     };
 
-    Ok(User {
+    Ok(User::from_content(UserContent {
         id: UserId(id),
         created_at: DateTime::from_utc(created_at),
         name: UserName::from_string(first_name, last_name)?,
@@ -199,5 +199,5 @@ pub fn to_user(user: data::user::User) -> Result<User> {
             data::user::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
         },
         assignment,
-    })
+    }))
 }

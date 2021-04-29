@@ -85,10 +85,10 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let pending_project_other = test::model::new_general_pending_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(other.id.clone());
+        let pending_project_other = test::model::new_general_pending_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(other.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_pending_project(
-            other.id.clone(),
+            other.id().clone(),
             pending_project_other.id(),
             &registration_form,
         );
@@ -120,10 +120,10 @@ mod tests {
     async fn test_committee_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let pending_project_other = test::model::new_general_pending_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(other.id.clone());
+        let pending_project_other = test::model::new_general_pending_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(other.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_pending_project(
-            other.id.clone(),
+            other.id().clone(),
             pending_project_other.id(),
             &registration_form,
         );
@@ -154,10 +154,10 @@ mod tests {
     async fn test_operator_other() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let pending_project_other = test::model::new_general_pending_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(other.id.clone());
+        let pending_project_other = test::model::new_general_pending_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(other.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_pending_project(
-            other.id.clone(),
+            other.id().clone(),
             pending_project_other.id(),
             &registration_form,
         );

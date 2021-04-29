@@ -72,7 +72,7 @@ impl ShareWithExpirationError {
 
 impl File {
     pub fn is_visible_to(&self, user: &User) -> bool {
-        self.author_id == user.id
+        &self.author_id == user.id()
     }
 
     pub fn is_visible_to_with_sharing(&self, witness: &FileSharingWitness) -> bool {
@@ -80,7 +80,7 @@ impl File {
     }
 
     pub fn can_be_shared_by(&self, user: &User) -> bool {
-        self.is_visible_to(user) && self.author_id == user.id
+        self.is_visible_to(user) && &self.author_id == user.id()
     }
 
     pub fn share_by(
@@ -122,7 +122,7 @@ mod tests {
     #[test]
     fn test_visibility_general_owner() {
         let user = test_model::new_general_user();
-        let (file, _) = test_model::new_file(user.id.clone());
+        let (file, _) = test_model::new_file(user.id().clone());
         assert!(file.is_visible_to(&user));
     }
 
@@ -130,7 +130,7 @@ mod tests {
     fn test_visibility_general_other() {
         let user = test_model::new_general_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(other.id().clone());
         assert!(!file.is_visible_to(&user));
     }
 
@@ -138,7 +138,7 @@ mod tests {
     fn test_visibility_committee_other() {
         let user = test_model::new_committee_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(other.id().clone());
         assert!(!file.is_visible_to(&user));
     }
 
@@ -146,7 +146,7 @@ mod tests {
     fn test_visibility_operator_other() {
         let user = test_model::new_operator_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(other.id().clone());
         assert!(!file.is_visible_to(&user));
     }
 
@@ -154,14 +154,14 @@ mod tests {
     fn test_visibility_admin_other() {
         let user = test_model::new_admin_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(other.id().clone());
         assert!(!file.is_visible_to(&user));
     }
 
     #[test]
     fn test_can_be_shared_by_general_owner() {
         let user = test_model::new_general_user();
-        let (file, _) = test_model::new_file(user.id.clone());
+        let (file, _) = test_model::new_file(user.id().clone());
         assert!(file.can_be_shared_by(&user));
     }
 
@@ -169,7 +169,7 @@ mod tests {
     fn test_can_be_shared_by_general_other() {
         let user = test_model::new_general_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(other.id().clone());
         assert!(!file.can_be_shared_by(&user));
     }
 
@@ -177,14 +177,14 @@ mod tests {
     fn test_can_be_shared_by_admin_other() {
         let user = test_model::new_admin_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(other.id().clone());
         assert!(!file.can_be_shared_by(&user));
     }
 
     #[test]
     fn test_share_by_general_owner() {
         let user = test_model::new_general_user();
-        let (file, _) = test_model::new_file(user.id.clone());
+        let (file, _) = test_model::new_file(user.id().clone());
         assert!(matches!(
             file.share_by(&user, FileSharingScope::Public),
             Ok(sharing)
@@ -198,7 +198,7 @@ mod tests {
 
         let user = test_model::new_general_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(other.id().clone());
         assert!(matches!(
             file.share_by(&user, FileSharingScope::Public),
             Err(NonSharableFileError { .. })
@@ -211,7 +211,7 @@ mod tests {
 
         let user = test_model::new_admin_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(other.id().clone());
         assert!(matches!(
             file.share_by(&user, FileSharingScope::Public),
             Err(NonSharableFileError { .. })
@@ -221,7 +221,7 @@ mod tests {
     #[test]
     fn test_share_with_expiration_by_general_owner() {
         let user = test_model::new_general_user();
-        let (file, _) = test_model::new_file(user.id.clone());
+        let (file, _) = test_model::new_file(user.id().clone());
         let scope = FileSharingScope::Public;
         let expires_at = DateTime::from_utc(chrono::Utc::now() + chrono::Duration::days(1));
         assert!(matches!(
@@ -237,7 +237,7 @@ mod tests {
 
         let user = test_model::new_admin_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(other.id().clone());
         let scope = FileSharingScope::Public;
         let expires_at = DateTime::from_utc(chrono::Utc::now() + chrono::Duration::days(1));
         assert!(matches!(
@@ -252,7 +252,7 @@ mod tests {
         use super::ShareWithExpirationErrorKind;
 
         let user = test_model::new_general_user();
-        let (file, _) = test_model::new_file(user.id.clone());
+        let (file, _) = test_model::new_file(user.id().clone());
         let scope = FileSharingScope::Public;
         let expires_at = DateTime::from_utc(chrono::Utc::now() - chrono::Duration::days(1));
         assert!(matches!(

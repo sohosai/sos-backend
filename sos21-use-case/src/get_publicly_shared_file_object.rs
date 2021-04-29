@@ -66,7 +66,7 @@ mod tests {
     async fn test_get() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let sharing =
             file_sharing::FileSharing::new(other_file.id, file_sharing::FileSharingScope::Public);
@@ -93,7 +93,7 @@ mod tests {
     async fn test_non_public() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
@@ -123,7 +123,7 @@ mod tests {
     #[tokio::test]
     async fn test_not_found() {
         let user = test::model::new_general_user();
-        let (file, object) = test::model::new_file(user.id.clone());
+        let (file, object) = test::model::new_file(user.id().clone());
 
         let sharing =
             file_sharing::FileSharing::new(file.id, file_sharing::FileSharingScope::Public);
@@ -151,7 +151,7 @@ mod tests {
     async fn test_revoked() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let mut sharing =
             file_sharing::FileSharing::new(other_file.id, file_sharing::FileSharingScope::Public);
@@ -181,7 +181,7 @@ mod tests {
     async fn test_expired() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let sharing = test::model::new_expired_file_sharing(
             other_file.id,

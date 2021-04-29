@@ -112,7 +112,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .build()
-            .authenticate_as(user.id.0, user.email.into_string());
+            .authenticate_as(user.id().clone().0, user.email().clone().into_string());
 
         let input = mock_input();
         assert!(matches!(

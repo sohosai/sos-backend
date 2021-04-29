@@ -93,10 +93,12 @@ mod tests {
         assert!(result.is_ok());
 
         let got: HashSet<_> = result.unwrap().into_iter().map(|user| user.id).collect();
-        let expected: HashSet<_> =
-            vec![UserId::from_entity(user.id), UserId::from_entity(other.id)]
-                .into_iter()
-                .collect();
+        let expected: HashSet<_> = vec![
+            UserId::from_entity(user.id().clone()),
+            UserId::from_entity(other.id().clone()),
+        ]
+        .into_iter()
+        .collect();
         assert_eq!(got, expected);
     }
 }

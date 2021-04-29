@@ -1,7 +1,10 @@
 use crate::error::{UseCaseError, UseCaseResult};
 
 use anyhow::Context;
-use sos21_domain::context::{Login, ProjectRepository};
+use sos21_domain::context::{
+    project_repository::{self, ProjectRepository},
+    Login,
+};
 use sos21_domain::model::{permissions::Permissions, project, user};
 
 #[derive(Debug, Clone)]
@@ -72,13 +75,6 @@ where
         .list_projects()
         .await
         .context("Failed to list projects")?;
-    use_case_ensure!(projects
-        .iter()
-        .all(|result| result.project.is_visible_to(login_user)
-            && result.owner.name.is_visible_to(login_user)
-            && result.owner.kana_name.is_visible_to(login_user)
-            && result.subowner.name.is_visible_to(login_user)
-            && result.subowner.kana_name.is_visible_to(login_user)));
 
     // TODO: Tune buffer size and initial vector capacity
     let mut writer = csv::WriterBuilder::new()
@@ -88,15 +84,29 @@ where
     write_header(&mut writer, &input)?;
 
     for project_with_owners in projects {
+        let project_repository::ProjectWithOwners {
+            project,
+            owner,
+            subowner,
+        } = project_with_owners;
+
+        use_case_ensure!(
+            project.is_visible_to(login_user)
+                && owner.name().is_visible_to(login_user)
+                && owner.kana_name().is_visible_to(login_user)
+                && subowner.name().is_visible_to(login_user)
+                && subowner.kana_name().is_visible_to(login_user)
+        );
+
         write_record(
             &mut writer,
             &input,
             WriteRecordInput {
-                project: project_with_owners.project,
-                owner_name: project_with_owners.owner.name,
-                owner_kana_name: project_with_owners.owner.kana_name,
-                subowner_name: project_with_owners.subowner.name,
-                subowner_kana_name: project_with_owners.subowner.kana_name,
+                project,
+                owner_name: owner.name(),
+                owner_kana_name: owner.kana_name(),
+                subowner_name: subowner.name(),
+                subowner_kana_name: subowner.kana_name(),
             },
         )?;
     }
@@ -182,18 +192,18 @@ where
     Ok(())
 }
 
-struct WriteRecordInput {
+struct WriteRecordInput<'a> {
     project: project::Project,
-    owner_name: user::UserName,
-    owner_kana_name: user::UserKanaName,
-    subowner_name: user::UserName,
-    subowner_kana_name: user::UserKanaName,
+    owner_name: &'a user::UserName,
+    owner_kana_name: &'a user::UserKanaName,
+    subowner_name: &'a user::UserName,
+    subowner_kana_name: &'a user::UserKanaName,
 }
 
 fn write_record<W>(
     writer: &mut csv::Writer<W>,
     input: &Input,
-    data: WriteRecordInput,
+    data: WriteRecordInput<'_>,
 ) -> anyhow::Result<()>
 where
     W: std::io::Write,
@@ -370,11 +380,11 @@ struct WriteUserNameFieldsInput<'a> {
     kana_full_name: Option<&'a String>,
 }
 
-fn write_user_name_fields<W>(
+fn write_user_name_fields<'a, W>(
     writer: &mut csv::Writer<W>,
     input: WriteUserNameFieldsInput<'_>,
-    name: user::UserName,
-    kana_name: user::UserKanaName,
+    name: &'a user::UserName,
+    kana_name: &'a user::UserKanaName,
 ) -> anyhow::Result<()>
 where
     W: std::io::Write,
@@ -427,8 +437,8 @@ mod tests {
 
     async fn prepare_app(login_user: domain::user::User) -> Login<test::context::MockApp> {
         let other = test::model::new_general_user();
-        let project1 = test::model::new_general_project(login_user.id.clone());
-        let project2 = test::model::new_general_project(other.id.clone());
+        let project1 = test::model::new_general_project(login_user.id().clone());
+        let project2 = test::model::new_general_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![login_user.clone(), other.clone()])

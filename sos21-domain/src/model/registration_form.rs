@@ -97,7 +97,7 @@ impl RegistrationForm {
     where
         C: RegistrationFormAnswerRepository,
     {
-        ensure!(&user.id == pending_project.owner_id());
+        ensure!(user.id() == pending_project.owner_id());
 
         if !self.query.check_pending_project(&pending_project) {
             return Ok(Err(AnswerError {
@@ -131,7 +131,7 @@ impl RegistrationForm {
             respondent: RegistrationFormAnswerRespondent::PendingProject(pending_project.id()),
             registration_form_id: self.id,
             created_at: DateTime::now(),
-            author_id: user.id.clone(),
+            author_id: user.id().clone(),
             items,
         }))
     }
@@ -158,7 +158,7 @@ impl RegistrationForm {
             return true;
         }
 
-        self.query.check_pending_project(pending_project) && pending_project.owner_id() == &user.id
+        self.query.check_pending_project(pending_project) && pending_project.owner_id() == user.id()
     }
 }
 
@@ -174,7 +174,7 @@ mod tests {
     fn test_visibility_general() {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
-        let registration_form = test_model::new_registration_form(operator.id);
+        let registration_form = test_model::new_registration_form(operator.id().clone());
         assert!(!registration_form.is_visible_to(&user));
     }
 
@@ -182,7 +182,7 @@ mod tests {
     fn test_visibility_committee() {
         let user = test_model::new_committee_user();
         let operator = test_model::new_operator_user();
-        let registration_form = test_model::new_registration_form(operator.id);
+        let registration_form = test_model::new_registration_form(operator.id().clone());
         assert!(registration_form.is_visible_to(&user));
     }
 
@@ -190,14 +190,14 @@ mod tests {
     fn test_visibility_operator() {
         let user = test_model::new_operator_user();
         let operator = test_model::new_operator_user();
-        let registration_form = test_model::new_registration_form(operator.id);
+        let registration_form = test_model::new_registration_form(operator.id().clone());
         assert!(registration_form.is_visible_to(&user));
     }
 
     #[test]
     fn test_visibility_general_via_matching_project() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_project(user.id.clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
@@ -205,7 +205,7 @@ mod tests {
         }])
         .unwrap();
         let registration_form =
-            test_model::new_registration_form_with_query(operator.id, tautology_query);
+            test_model::new_registration_form_with_query(operator.id().clone(), tautology_query);
         assert!(registration_form.is_visible_to_with_project(&user, &user_project));
     }
 
@@ -213,35 +213,36 @@ mod tests {
     fn test_visibility_general_via_matching_non_owner_project() {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
-        let operator_project = test_model::new_general_project(operator.id.clone());
+        let operator_project = test_model::new_general_project(operator.id().clone());
         let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         }])
         .unwrap();
         let registration_form =
-            test_model::new_registration_form_with_query(operator.id, tautology_query);
+            test_model::new_registration_form_with_query(operator.id().clone(), tautology_query);
         assert!(!registration_form.is_visible_to_with_project(&user, &operator_project));
     }
 
     #[test]
     fn test_visibility_general_via_non_matching_project() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_project(user.id.clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: Some(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         }])
         .unwrap();
-        let registration_form = test_model::new_registration_form_with_query(operator.id, query);
+        let registration_form =
+            test_model::new_registration_form_with_query(operator.id().clone(), query);
         assert!(!registration_form.is_visible_to_with_project(&user, &user_project));
     }
 
     #[test]
     fn test_visibility_general_via_matching_pending_project() {
         let user = test_model::new_general_user();
-        let user_pending_project = test_model::new_general_pending_project(user.id.clone());
+        let user_pending_project = test_model::new_general_pending_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
@@ -249,7 +250,7 @@ mod tests {
         }])
         .unwrap();
         let registration_form =
-            test_model::new_registration_form_with_query(operator.id, tautology_query);
+            test_model::new_registration_form_with_query(operator.id().clone(), tautology_query);
         assert!(registration_form.is_visible_to_with_pending_project(&user, &user_pending_project));
     }
 
@@ -257,14 +258,15 @@ mod tests {
     fn test_visibility_general_via_matching_non_owner_pending_project() {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
-        let operator_pending_project = test_model::new_general_pending_project(operator.id.clone());
+        let operator_pending_project =
+            test_model::new_general_pending_project(operator.id().clone());
         let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         }])
         .unwrap();
         let registration_form =
-            test_model::new_registration_form_with_query(operator.id, tautology_query);
+            test_model::new_registration_form_with_query(operator.id().clone(), tautology_query);
         assert!(
             !registration_form.is_visible_to_with_pending_project(&user, &operator_pending_project)
         );
@@ -273,14 +275,15 @@ mod tests {
     #[test]
     fn test_visibility_general_via_non_matching_pending_project() {
         let user = test_model::new_general_user();
-        let user_pending_project = test_model::new_general_pending_project(user.id.clone());
+        let user_pending_project = test_model::new_general_pending_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: Some(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         }])
         .unwrap();
-        let registration_form = test_model::new_registration_form_with_query(operator.id, query);
+        let registration_form =
+            test_model::new_registration_form_with_query(operator.id().clone(), query);
         assert!(!registration_form.is_visible_to_with_pending_project(&user, &user_pending_project));
     }
 }

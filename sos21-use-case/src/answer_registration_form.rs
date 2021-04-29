@@ -137,8 +137,8 @@ mod tests {
     async fn test_create_author() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let pending_project = test::model::new_general_pending_project(user.id.clone());
-        let registration_form = test::model::new_registration_form(other.id.clone());
+        let pending_project = test::model::new_general_pending_project(user.id().clone());
+        let registration_form = test::model::new_registration_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -173,8 +173,8 @@ mod tests {
     async fn test_create_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let pending_project = test::model::new_general_pending_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(other.id.clone());
+        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -204,8 +204,8 @@ mod tests {
     async fn test_invalid() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let pending_project = test::model::new_general_pending_project(user.id.clone());
-        let registration_form = test::model::new_registration_form(other.id.clone());
+        let pending_project = test::model::new_general_pending_project(user.id().clone());
+        let registration_form = test::model::new_registration_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -242,7 +242,7 @@ mod tests {
 
         let user = test::model::new_general_user();
         let operator = test::model::new_operator_user();
-        let pending_project = test::model::new_general_pending_project(user.id.clone());
+        let pending_project = test::model::new_general_pending_project(user.id().clone());
 
         let (registration_form, item_id) = {
             let body = item::FormItemBody::File(item::FileFormItem {
@@ -254,10 +254,10 @@ mod tests {
             let item_id = item.id;
             let items = item::FormItems::from_items(vec![item]).unwrap();
             let registration_form =
-                test::model::new_registration_form_with_items(operator.id.clone(), items);
+                test::model::new_registration_form_with_items(operator.id().clone(), items);
             (registration_form, item_id)
         };
-        let (file, object) = test::model::new_file(user.id.clone());
+        let (file, object) = test::model::new_file(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])

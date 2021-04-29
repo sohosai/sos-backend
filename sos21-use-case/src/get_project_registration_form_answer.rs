@@ -83,10 +83,10 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(other.id.clone());
+        let project_other = test::model::new_general_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(other.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
-            other.id.clone(),
+            other.id().clone(),
             project_other.id(),
             &registration_form,
         );
@@ -119,11 +119,13 @@ mod tests {
         let user = test::model::new_general_user();
         let subowner = test::model::new_general_user();
         let operator = test::model::new_operator_user();
-        let project =
-            test::model::new_general_project_with_subowner(user.id.clone(), subowner.id.clone());
-        let registration_form = test::model::new_registration_form(operator.id.clone());
+        let project = test::model::new_general_project_with_subowner(
+            user.id().clone(),
+            subowner.id().clone(),
+        );
+        let registration_form = test::model::new_registration_form(operator.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
-            subowner.id.clone(),
+            subowner.id().clone(),
             project.id(),
             &registration_form,
         );
@@ -156,10 +158,10 @@ mod tests {
         let user = test::model::new_general_user();
         let operator = test::model::new_operator_user();
         let project =
-            test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
-        let registration_form = test::model::new_registration_form(operator.id.clone());
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
+        let registration_form = test::model::new_registration_form(operator.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
-            owner.id.clone(),
+            owner.id().clone(),
             project.id(),
             &registration_form,
         );
@@ -190,10 +192,10 @@ mod tests {
     async fn test_committee_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(other.id.clone());
+        let project_other = test::model::new_general_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(other.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
-            other.id.clone(),
+            other.id().clone(),
             project_other.id(),
             &registration_form,
         );
@@ -224,10 +226,10 @@ mod tests {
     async fn test_operator_other() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(other.id.clone());
+        let project_other = test::model::new_general_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(other.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
-            other.id.clone(),
+            other.id().clone(),
             project_other.id(),
             &registration_form,
         );

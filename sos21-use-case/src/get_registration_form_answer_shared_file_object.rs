@@ -98,12 +98,12 @@ mod tests {
         let user = test::model::new_committee_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let other_project = test::model::new_general_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(operator.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(operator.id().clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
-            other.id.clone(),
+            other.id().clone(),
             other_project.id(),
             &registration_form,
         );
@@ -148,12 +148,12 @@ mod tests {
         let user = test::model::new_general_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let other_project = test::model::new_general_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(operator.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(operator.id().clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
-            other.id.clone(),
+            other.id().clone(),
             other_project.id(),
             &registration_form,
         );
@@ -199,18 +199,18 @@ mod tests {
         let user = test::model::new_general_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let project = test::model::new_general_project(user.id.clone());
-        let other_project = test::model::new_general_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(operator.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(operator.id().clone());
         let answer = test::model::new_registration_form_answer_with_project(
-            user.id.clone(),
+            user.id().clone(),
             project.id(),
             &registration_form,
         );
         let other_answer = test::model::new_registration_form_answer_with_project(
-            other.id.clone(),
+            other.id().clone(),
             other_project.id(),
             &registration_form,
         );
@@ -257,12 +257,12 @@ mod tests {
         let user = test::model::new_committee_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let other_project = test::model::new_general_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(operator.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(operator.id().clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
-            other.id.clone(),
+            other.id().clone(),
             other_project.id(),
             &registration_form,
         );
@@ -310,12 +310,12 @@ mod tests {
         let user = test::model::new_committee_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let other_project = test::model::new_general_project(other.id.clone());
-        let registration_form = test::model::new_registration_form(operator.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let registration_form = test::model::new_registration_form(operator.id().clone());
         let other_answer = test::model::new_registration_form_answer_with_project(
-            other.id.clone(),
+            other.id().clone(),
             other_project.id(),
             &registration_form,
         );

@@ -21,6 +21,10 @@ impl PhoneNumber {
         Ok(PhoneNumber(phone_number))
     }
 
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
+    }
+
     pub fn into_string(self) -> String {
         self.0
     }

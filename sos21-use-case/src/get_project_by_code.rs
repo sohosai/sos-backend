@@ -46,20 +46,20 @@ where
 
     let login_user = ctx.login_user();
     if !project.is_visible_to(login_user)
-        || !owner.name.is_visible_to(login_user)
-        || !owner.kana_name.is_visible_to(login_user)
-        || !subowner.name.is_visible_to(login_user)
-        || !subowner.kana_name.is_visible_to(login_user)
+        || !owner.name().is_visible_to(login_user)
+        || !owner.kana_name().is_visible_to(login_user)
+        || !subowner.name().is_visible_to(login_user)
+        || !subowner.kana_name().is_visible_to(login_user)
     {
         return Err(UseCaseError::UseCase(Error::NotFound));
     }
 
     Ok(Project::from_entity(ProjectFromEntityInput {
         project,
-        owner_name: owner.name,
-        owner_kana_name: owner.kana_name,
-        subowner_name: subowner.name,
-        subowner_kana_name: subowner.kana_name,
+        owner_name: owner.name().clone(),
+        owner_kana_name: owner.kana_name().clone(),
+        subowner_name: subowner.name().clone(),
+        subowner_kana_name: subowner.kana_name().clone(),
     }))
 }
 
@@ -74,7 +74,7 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_project(other.id.clone());
+        let project_other = test::model::new_general_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -93,7 +93,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_owner() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -116,7 +116,7 @@ mod tests {
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
         let project =
-            test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![owner.clone(), user.clone()])
@@ -138,7 +138,7 @@ mod tests {
     async fn test_committee_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_project(other.id.clone());
+        let project_other = test::model::new_general_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -160,7 +160,7 @@ mod tests {
     async fn test_operator_other() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_project(other.id.clone());
+        let project_other = test::model::new_general_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -183,7 +183,7 @@ mod tests {
     async fn test_committee_nonexisting_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_project(other.id.clone());
+        let project_other = test::model::new_general_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -204,7 +204,7 @@ mod tests {
     async fn test_committee_different_kind_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_project(other.id.clone());
+        let project_other = test::model::new_general_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])

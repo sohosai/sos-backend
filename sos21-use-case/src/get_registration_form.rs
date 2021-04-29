@@ -55,7 +55,7 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let registration_form_other = test::model::new_registration_form(other.id.clone());
+        let registration_form_other = test::model::new_registration_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -81,7 +81,7 @@ mod tests {
     async fn test_committee_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let registration_form_other = test::model::new_registration_form(other.id.clone());
+        let registration_form_other = test::model::new_registration_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -103,7 +103,7 @@ mod tests {
     async fn test_operator_other() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let registration_form_other = test::model::new_registration_form(other.id.clone());
+        let registration_form_other = test::model::new_registration_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -126,7 +126,7 @@ mod tests {
     async fn test_committee_nonexisting_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let registration_form_other = test::model::new_registration_form(other.id.clone());
+        let registration_form_other = test::model::new_registration_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])

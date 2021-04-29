@@ -25,10 +25,12 @@ pub struct LengthLimitedString<Lower, Upper, S> {
 
 pub type LengthBoundedString<Min, Max, S> = LengthLimitedString<Bounded<Min>, Bounded<Max>, S>;
 
-impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
+impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S>
+where
+    S: AsRef<str>,
+{
     pub fn new(s: S) -> Result<Self, LengthError<Lower, Upper>>
     where
-        S: AsRef<str>,
         Lower: Bound<usize>,
         Upper: Bound<usize>,
     {
@@ -60,6 +62,12 @@ impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
         })
     }
 
+    pub fn as_str(&self) -> &str {
+        self.inner.as_ref()
+    }
+}
+
+impl<Lower, Upper, S> LengthLimitedString<Lower, Upper, S> {
     pub fn len(&self) -> usize {
         self.len
     }
@@ -120,7 +128,7 @@ impl<Lower, Upper> From<LengthLimitedString<Lower, Upper, String>> for String {
 
 impl<Lower, Upper, S: AsRef<str>> AsRef<str> for LengthLimitedString<Lower, Upper, S> {
     fn as_ref(&self) -> &str {
-        self.inner.as_ref()
+        self.as_str()
     }
 }
 
