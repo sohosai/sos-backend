@@ -12,3 +12,4 @@ pub mod registration_form;
 pub mod registration_form_answer;
 pub mod stream;
 pub mod user;
+pub mod user_invitation;
