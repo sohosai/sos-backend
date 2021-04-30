@@ -200,7 +200,8 @@ pub fn endpoints(
                 / "get-file" => GET (handler::registration_form_answer::file_sharing::get_file),
                 / "get-file-info" => GET (handler::registration_form_answer::file_sharing::get_file_info),
             }
-        }
+        },
+        / "invite-user" => POST (handler::invite_user),
     };
 
     let cors = warp::cors()

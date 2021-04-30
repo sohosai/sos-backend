@@ -1,0 +1,22 @@
+title: UserInvitation
+type: object
+x-tags:
+  - user_invitation
+properties:
+  id:
+    $ref: ./UserInvitationId.yml
+  created_at:
+    $ref: ../DateTime.yml
+  author_id:
+    $ref: ../user/UserId.yml
+  email:
+    type: string
+    format: email
+  role:
+    $ref: ./UserInvitationRole.yml
+required:
+  - id
+  - created_at
+  - author_id
+  - email
+  - role
