@@ -202,6 +202,10 @@ pub fn endpoints(
             }
         },
         / "invite-user" => POST (handler::invite_user),
+        / "user-invitation" {
+            / "get" => GET (handler::user_invitation::get),
+            / "list" => GET (handler::user_invitation::list),
+        }
     };
 
     let cors = warp::cors()

@@ -138,6 +138,72 @@ paths:
                 - email
                 - role
       description: ユーザーを招待します。
+  /user-invitation/get:
+    get:
+      summary: user-invitation/get
+      tags:
+        - user_invitation
+        - admin
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invitation:
+                    $ref: ./model/user_invitation/UserInvitation.yml
+                required:
+                  - invitation
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/UserInvitationNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: user-invitation/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: invitation_id
+          required: true
+      description: 指定されたユーザー招待の情報を返します。
+    parameters: []
+  /user-invitation/list:
+    get:
+      summary: user-invitation/list
+      tags:
+        - user_invitation
+        - admin
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invitations:
+                    type: array
+                    items:
+                      $ref: ./model/user_invitation/UserInvitation.yml
+                required:
+                  - invitations
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: user-invitation/list
+      parameters: []
+      description: ユーザー招待の一覧を返します。
+    parameters: []
   /me/get:
     get:
       summary: me/get
@@ -5214,6 +5280,49 @@ components:
                   type: API
                   info:
                     type: PENDING_PROJECT_NOT_FOUND
+    UserInvitationNotFound:
+      description: User Invitation Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - USER_INVITATION_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: USER_INVITATION_NOT_FOUND
     InternalServerError:
       description: Internal Server Error
       content:
