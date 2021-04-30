@@ -205,6 +205,7 @@ pub fn endpoints(
         / "user-invitation" {
             / "get" => GET (handler::user_invitation::get),
             / "list" => GET (handler::user_invitation::list),
+            / "delete" => POST (handler::user_invitation::delete),
         }
     };
 

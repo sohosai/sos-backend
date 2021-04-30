@@ -204,6 +204,38 @@ paths:
       parameters: []
       description: ユーザー招待の一覧を返します。
     parameters: []
+  /user-invitation/delete:
+    post:
+      summary: user-invitation/delete
+      tags:
+        - user_invitation
+        - admin
+      responses:
+        "204":
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/UserInvitationNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: user-invitation/delete
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: invitation_id
+          required: true
+      description: 指定されたユーザー招待を削除します。
+    parameters: []
   /me/get:
     get:
       summary: me/get
