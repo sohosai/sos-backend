@@ -8,7 +8,7 @@ use crate::context::{
     Authentication, FileDistributionRepository, FileRepository, FileSharingRepository,
     FormAnswerRepository, FormRepository, Login, ObjectRepository, PendingProjectRepository,
     ProjectRepository, RegistrationFormAnswerRepository, RegistrationFormRepository,
-    UserRepository,
+    UserInvitationRepository, UserRepository,
 };
 use crate::model::{
     file::{File, FileId},
@@ -21,7 +21,8 @@ use crate::model::{
     project::{Project, ProjectId, ProjectIndex},
     registration_form::{RegistrationForm, RegistrationFormId},
     registration_form_answer::{RegistrationFormAnswer, RegistrationFormAnswerId},
-    user::{User, UserFileUsage, UserId, UserRole},
+    user::{User, UserEmailAddress, UserFileUsage, UserId, UserRole},
+    user_invitation::{UserInvitation, UserInvitationId},
 };
 use crate::test::model as test_model;
 
@@ -47,6 +48,7 @@ pub struct MockAppBuilder {
     pending_projects: HashMap<PendingProjectId, PendingProject>,
     registration_forms: HashMap<RegistrationFormId, RegistrationForm>,
     registration_form_answers: HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>,
+    user_invitations: HashMap<UserInvitationId, UserInvitation>,
 }
 
 impl MockAppBuilder {
@@ -177,12 +179,24 @@ impl MockAppBuilder {
         self
     }
 
+    pub fn user_invitations<I>(&mut self, user_invitations: I) -> &mut Self
+    where
+        I: IntoIterator<Item = UserInvitation>,
+    {
+        self.user_invitations.extend(
+            user_invitations
+                .into_iter()
+                .map(|invitation| (invitation.id(), invitation)),
+        );
+        self
+    }
+
     pub fn build(&self) -> MockApp {
         let users = self
             .users
             .clone()
             .into_iter()
-            .map(|user| (user.id.clone(), user))
+            .map(|user| (user.id().clone(), user))
             .collect();
         let projects = self
             .projects
@@ -215,6 +229,7 @@ impl MockAppBuilder {
             pending_projects: Arc::new(Mutex::new(self.pending_projects.clone())),
             registration_forms: Arc::new(Mutex::new(self.registration_forms.clone())),
             registration_form_answers: Arc::new(Mutex::new(self.registration_form_answers.clone())),
+            user_invitations: Arc::new(Mutex::new(self.user_invitations.clone())),
         }
     }
 }
@@ -233,6 +248,7 @@ pub struct MockApp {
     registration_forms: Arc<Mutex<HashMap<RegistrationFormId, RegistrationForm>>>,
     registration_form_answers:
         Arc<Mutex<HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>>>,
+    user_invitations: Arc<Mutex<HashMap<UserInvitationId, UserInvitation>>>,
 }
 
 impl MockApp {
@@ -248,7 +264,12 @@ impl MockApp {
     /// This function panics when the login is not successful.
     pub async fn login_as(self, user: User) -> Login<MockApp> {
         Login::new(
-            Authentication::new(self, user.id.clone().0, user.email.clone().into_string()).unwrap(),
+            Authentication::new(
+                self,
+                user.id().clone().0,
+                user.email().clone().into_string(),
+            )
+            .unwrap(),
         )
         .await
         .unwrap()
@@ -258,7 +279,7 @@ impl MockApp {
 #[async_trait::async_trait]
 impl UserRepository for MockApp {
     async fn store_user(&self, user: User) -> Result<()> {
-        self.users.lock().await.insert(user.id.clone(), user);
+        self.users.lock().await.insert(user.id().clone(), user);
         Ok(())
     }
 
@@ -275,6 +296,16 @@ impl UserRepository for MockApp {
 
     async fn list_users(&self) -> Result<Vec<User>> {
         Ok(self.users.lock().await.values().cloned().collect())
+    }
+
+    async fn get_user_by_email(&self, email: &UserEmailAddress) -> Result<Option<User>> {
+        Ok(self
+            .users
+            .lock()
+            .await
+            .values()
+            .find(|user| user.email() == email)
+            .cloned())
     }
 }
 
@@ -848,5 +879,48 @@ impl RegistrationFormAnswerRepository for MockApp {
             .count();
         let len = len.try_into()?;
         Ok(len)
+    }
+}
+
+#[async_trait::async_trait]
+impl UserInvitationRepository for MockApp {
+    async fn store_user_invitation(&self, invitation: UserInvitation) -> Result<()> {
+        self.user_invitations
+            .lock()
+            .await
+            .insert(invitation.id(), invitation);
+        Ok(())
+    }
+
+    async fn delete_user_invitation(&self, id: UserInvitationId) -> Result<()> {
+        self.user_invitations.lock().await.remove(&id);
+        Ok(())
+    }
+
+    async fn get_user_invitation(&self, id: UserInvitationId) -> Result<Option<UserInvitation>> {
+        Ok(self.user_invitations.lock().await.get(&id).cloned())
+    }
+
+    async fn list_user_invitations(&self) -> Result<Vec<UserInvitation>> {
+        Ok(self
+            .user_invitations
+            .lock()
+            .await
+            .values()
+            .cloned()
+            .collect())
+    }
+
+    async fn get_user_invitation_by_email(
+        &self,
+        email: &UserEmailAddress,
+    ) -> Result<Option<UserInvitation>> {
+        Ok(self
+            .user_invitations
+            .lock()
+            .await
+            .values()
+            .find(|invitation| invitation.email() == email)
+            .cloned())
     }
 }

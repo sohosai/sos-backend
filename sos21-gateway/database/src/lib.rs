@@ -22,6 +22,8 @@ mod registration_form_answer_repository;
 use registration_form_answer_repository::RegistrationFormAnswerDatabase;
 mod user_repository;
 use user_repository::UserDatabase;
+mod user_invitation_repository;
+use user_invitation_repository::UserInvitationDatabase;
 
 #[derive(Debug)]
 pub struct Database {
@@ -97,5 +99,11 @@ sos21_domain::delegate_registration_form_repository! {
 sos21_domain::delegate_registration_form_answer_repository! {
     impl RegistrationFormAnswerRepository for Database {
         self { RegistrationFormAnswerDatabase::ref_cast(&self.connection) }
+    }
+}
+
+sos21_domain::delegate_user_invitation_repository! {
+    impl UserInvitationRepository for Database {
+        self { UserInvitationDatabase::ref_cast(&self.connection) }
     }
 }

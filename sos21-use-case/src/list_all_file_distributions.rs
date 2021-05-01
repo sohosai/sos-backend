@@ -72,15 +72,15 @@ mod tests {
         let user = test::model::new_operator_user();
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_project(other.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
 
-        let (file, object) = test::model::new_file(user.id.clone());
+        let (file, object) = test::model::new_file(user.id().clone());
         let sharing = file_sharing::FileSharing::new(
             file.id,
             file_sharing::FileSharingScope::Project(other_project.id()),
         );
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
-        let distribution = test::model::new_file_distribution_with_files(user.id.clone(), files);
+        let distribution = test::model::new_file_distribution_with_files(user.id().clone(), files);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])

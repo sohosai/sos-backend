@@ -18,6 +18,224 @@ servers:
   - url: "https://online-api-beta.sohosai.com"
     description: Beta depolyment
 paths:
+  /invite-user:
+    post:
+      summary: invite-user
+      tags:
+        - user_invitation
+        - admin
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invitation:
+                    $ref: ./model/user_invitation/UserInvitation.yml
+                required:
+                  - invitation
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_EMAIL_ADDRESS
+                                  - NOT_UNIVERSITY_EMAIL_ADDRESS
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - ALREADY_INVITED_EMAIL_ADDRESS
+                                  - ALREADY_SIGNED_UP_EMAIL_ADDRESS
+                    required:
+                      - status
+                      - error
+              examples:
+                Already signed up email address:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: ALREADY_SIGNED_UP_EMAIL_ADDRESS
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: invite-user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                role:
+                  $ref: ./model/user_invitation/UserInvitationRole.yml
+              required:
+                - email
+                - role
+      description: ユーザーを招待します。
+  /user-invitation/get:
+    get:
+      summary: user-invitation/get
+      tags:
+        - user_invitation
+        - admin
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invitation:
+                    $ref: ./model/user_invitation/UserInvitation.yml
+                required:
+                  - invitation
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/UserInvitationNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: user-invitation/get
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: invitation_id
+          required: true
+      description: 指定されたユーザー招待の情報を返します。
+    parameters: []
+  /user-invitation/list:
+    get:
+      summary: user-invitation/list
+      tags:
+        - user_invitation
+        - admin
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invitations:
+                    type: array
+                    items:
+                      $ref: ./model/user_invitation/UserInvitation.yml
+                required:
+                  - invitations
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: user-invitation/list
+      parameters: []
+      description: ユーザー招待の一覧を返します。
+    parameters: []
+  /user-invitation/delete:
+    post:
+      summary: user-invitation/delete
+      tags:
+        - user_invitation
+        - admin
+      responses:
+        "204":
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/UserInvitationNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: user-invitation/delete
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: invitation_id
+          required: true
+      description: 指定されたユーザー招待を削除します。
+    parameters: []
   /me/get:
     get:
       summary: me/get
@@ -5094,6 +5312,49 @@ components:
                   type: API
                   info:
                     type: PENDING_PROJECT_NOT_FOUND
+    UserInvitationNotFound:
+      description: User Invitation Not Found
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ./model/error/Error.yml
+              - type: object
+                properties:
+                  status:
+                    type: integer
+                    enum:
+                      - 404
+                  error:
+                    type: object
+                    required:
+                      - type
+                      - info
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - API
+                      info:
+                        type: object
+                        required:
+                          - type
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - USER_INVITATION_NOT_FOUND
+                required:
+                  - status
+                  - error
+          examples:
+            Example:
+              value:
+                status: 404
+                error:
+                  type: API
+                  info:
+                    type: USER_INVITATION_NOT_FOUND
     InternalServerError:
       description: Internal Server Error
       content:
@@ -5292,5 +5553,6 @@ tags:
   - name: admin
   - name: meta
   - name: file_distribution
+  - name: user_invitation
 security:
   - token: []

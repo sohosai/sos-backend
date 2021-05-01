@@ -1,7 +1,8 @@
 use crate::context::{
     FileDistributionRepository, FileRepository, FileSharingRepository, FormAnswerRepository,
     FormRepository, ObjectRepository, PendingProjectRepository, ProjectRepository,
-    RegistrationFormAnswerRepository, RegistrationFormRepository, UserRepository,
+    RegistrationFormAnswerRepository, RegistrationFormRepository, UserInvitationRepository,
+    UserRepository,
 };
 use crate::model::user::{email, UserEmailAddress, UserId};
 
@@ -118,6 +119,12 @@ crate::delegate_registration_form_repository! {
 
 crate::delegate_registration_form_answer_repository! {
     impl<C: RegistrationFormAnswerRepository + Send + Sync> RegistrationFormAnswerRepository for Authentication<C> {
+        self { &self.inner }
+    }
+}
+
+crate::delegate_user_invitation_repository! {
+    impl<C: UserInvitationRepository + Send + Sync> UserInvitationRepository for Authentication<C> {
         self { &self.inner }
     }
 }

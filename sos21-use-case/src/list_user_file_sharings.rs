@@ -14,7 +14,7 @@ where
     let login_user = ctx.login_user();
 
     let sharings = ctx
-        .list_file_sharings_by_user(login_user.id.clone())
+        .list_file_sharings_by_user(login_user.id().clone())
         .await
         .context("Failed to list file sharings")?;
 
@@ -43,8 +43,8 @@ mod tests {
 
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let (file1, object1) = test::model::new_file(user.id.clone());
-        let (file2, object2) = test::model::new_file(user.id.clone());
+        let (file1, object1) = test::model::new_file(user.id().clone());
+        let (file2, object2) = test::model::new_file(user.id().clone());
         let sharing1 =
             file_sharing::FileSharing::new(file1.id, file_sharing::FileSharingScope::Public);
         let sharing2 =
@@ -53,7 +53,7 @@ mod tests {
             file2.id,
             file_sharing::FileSharingScope::CommitteeOperator,
         );
-        let (file3, object3) = test::model::new_file(other.id.clone());
+        let (file3, object3) = test::model::new_file(other.id().clone());
         let sharing4 =
             file_sharing::FileSharing::new(file3.id, file_sharing::FileSharingScope::Public);
         let sharing5 =

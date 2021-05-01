@@ -2,8 +2,8 @@ use crate::model::{
     date_time::DateTime,
     phone_number::PhoneNumber,
     user::{
-        User, UserAffiliation, UserCategory, UserEmailAddress, UserId, UserKanaName, UserName,
-        UserRole,
+        User, UserAffiliation, UserCategory, UserContent, UserEmailAddress, UserId, UserKanaName,
+        UserName, UserRole,
     },
 };
 
@@ -39,7 +39,7 @@ pub fn mock_user_category() -> UserCategory {
 }
 
 pub fn mock_user(id: UserId, role: UserRole) -> User {
-    User {
+    User::from_content(UserContent {
         id,
         created_at: DateTime::now(),
         name: mock_user_name(),
@@ -50,7 +50,7 @@ pub fn mock_user(id: UserId, role: UserRole) -> User {
         role,
         category: mock_user_category(),
         assignment: None,
-    }
+    })
 }
 
 /// `UserId` that is known to be exist globally in the testing context.

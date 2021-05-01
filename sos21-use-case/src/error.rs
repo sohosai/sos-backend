@@ -1,3 +1,5 @@
+use sos21_domain::DomainError;
+
 #[derive(Debug)]
 pub enum UseCaseError<E> {
     UseCase(E),
@@ -12,6 +14,16 @@ impl<T> UseCaseError<T> {
         match self {
             UseCaseError::UseCase(err) => UseCaseError::UseCase(op(err)),
             UseCaseError::Internal(err) => UseCaseError::Internal(err),
+        }
+    }
+
+    pub fn from_domain<U, F>(err: DomainError<U>, op: F) -> Self
+    where
+        F: FnOnce(U) -> T,
+    {
+        match err {
+            DomainError::Domain(err) => UseCaseError::UseCase(op(err)),
+            DomainError::Internal(err) => UseCaseError::Internal(err),
         }
     }
 }

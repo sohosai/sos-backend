@@ -105,7 +105,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_owner() {
         let user = test::model::new_general_user();
-        let (file, object) = test::model::new_file(user.id.clone());
+        let (file, object) = test::model::new_file(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -136,7 +136,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_owner_with_expiration() {
         let user = test::model::new_general_user();
-        let (file, object) = test::model::new_file(user.id.clone());
+        let (file, object) = test::model::new_file(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -167,7 +167,7 @@ mod tests {
     #[tokio::test]
     async fn test_past_expiration() {
         let user = test::model::new_general_user();
-        let (file, object) = test::model::new_file(user.id.clone());
+        let (file, object) = test::model::new_file(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -197,7 +197,7 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other])
@@ -224,7 +224,7 @@ mod tests {
     async fn test_admin_other() {
         let user = test::model::new_admin_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other])

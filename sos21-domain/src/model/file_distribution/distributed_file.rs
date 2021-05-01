@@ -43,13 +43,14 @@ mod tests {
     fn test_visibility_general() {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
-        let project = test_model::new_general_project(user.id.clone());
+        let project = test_model::new_general_project(user.id().clone());
         let files = FileDistributionFiles::from_sharings(vec![(
             project.id(),
             FileSharingId::from_uuid(Uuid::new_v4()),
         )])
         .unwrap();
-        let distribution = test_model::new_file_distribution_with_files(operator.id, files);
+        let distribution =
+            test_model::new_file_distribution_with_files(operator.id().clone(), files);
         let distributed_file = distribution.get_distributed_file_for(&project).unwrap();
         assert!(!distributed_file.is_visible_to(&user));
         assert!(distributed_file.is_visible_to_with_project(&user, &project));
@@ -59,13 +60,14 @@ mod tests {
     fn test_visibility_committee() {
         let user = test_model::new_committee_user();
         let operator = test_model::new_operator_user();
-        let project = test_model::new_general_project(user.id.clone());
+        let project = test_model::new_general_project(user.id().clone());
         let files = FileDistributionFiles::from_sharings(vec![(
             project.id(),
             FileSharingId::from_uuid(Uuid::new_v4()),
         )])
         .unwrap();
-        let distribution = test_model::new_file_distribution_with_files(operator.id, files);
+        let distribution =
+            test_model::new_file_distribution_with_files(operator.id().clone(), files);
         let distributed_file = distribution.get_distributed_file_for(&project).unwrap();
         assert!(distributed_file.is_visible_to(&user));
         assert!(distributed_file.is_visible_to_with_project(&user, &project));

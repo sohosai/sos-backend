@@ -21,3 +21,4 @@ pub mod project_query;
 pub mod registration_form;
 pub mod registration_form_answer;
 pub mod user;
+pub mod user_invitation;

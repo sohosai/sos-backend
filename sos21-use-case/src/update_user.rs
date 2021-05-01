@@ -50,16 +50,14 @@ where
     };
 
     if let Some(name) = input.name {
-        let name = name
-            .into_entity()
-            .ok_or(UseCaseError::UseCase(Error::InvalidUserName))?;
+        let name = user::UserName::from_string(name.first, name.last)
+            .map_err(|_| UseCaseError::UseCase(Error::InvalidUserName))?;
         user.set_name(name);
     }
 
     if let Some(kana_name) = input.kana_name {
-        let kana_name = kana_name
-            .into_entity()
-            .ok_or(UseCaseError::UseCase(Error::InvalidUserKanaName))?;
+        let kana_name = user::UserKanaName::from_string(kana_name.first, kana_name.last)
+            .map_err(|_| UseCaseError::UseCase(Error::InvalidUserKanaName))?;
         user.set_kana_name(kana_name);
     }
 
@@ -108,7 +106,7 @@ mod tests {
             .await;
 
         let input = update_user::Input {
-            id: UserId::from_entity(user.id),
+            id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
             phone_number: None,
@@ -136,7 +134,7 @@ mod tests {
             .await;
 
         let input = update_user::Input {
-            id: UserId::from_entity(user.id),
+            id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
             phone_number: None,
@@ -164,7 +162,7 @@ mod tests {
             .await;
 
         let input = update_user::Input {
-            id: UserId::from_entity(user.id),
+            id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
             phone_number: None,
@@ -192,7 +190,7 @@ mod tests {
             .await;
 
         let input = update_user::Input {
-            id: UserId::from_entity(user.id),
+            id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
             phone_number: None,

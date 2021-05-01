@@ -50,6 +50,61 @@
       "nullable": []
     }
   },
+  "04632f9ab407af6a68deaa2c393b68786ab2ab6fedf2cc185e41a0af87214a7c": {
+    "query": "SELECT * FROM user_invitations WHERE email = $1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "role",
+          "type_info": {
+            "Custom": {
+              "name": "user_invitation_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
   "0bb322d4dfcd18e50cd8559f10c3775f1d7233e7b921afc32d4440d549c98274": {
     "query": "SELECT count(*) as \"count!\" FROM projects",
     "describe": {
@@ -152,6 +207,18 @@
             }
           },
           "Int4Array"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "0eaeae6702c52a45ab39e99b46d23d75adcd752e3559835d87179863503f37e1": {
+    "query": "DELETE FROM user_invitations where id = $1",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid"
         ]
       },
       "nullable": []
@@ -622,6 +689,33 @@
       "parameters": {
         "Left": [
           "Uuid"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "35d2ddc3b833f480f4c430d84f9e0c0161422d3cf1ee2095229b19a0ee18e763": {
+    "query": "\nINSERT INTO user_invitations (\n    id,\n    created_at,\n    author_id,\n    email,\n    role\n) VALUES ( $1, $2, $3, $4, $5 )\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Timestamptz",
+          "Varchar",
+          "Varchar",
+          {
+            "Custom": {
+              "name": "user_invitation_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee"
+                ]
+              }
+            }
+          }
         ]
       },
       "nullable": []
@@ -1353,6 +1447,59 @@
       "nullable": []
     }
   },
+  "58cfaf495dc3d7cb062028c81802dab5bdd88c0e1118a304911b62d654a0be1d": {
+    "query": "SELECT * FROM user_invitations",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "role",
+          "type_info": {
+            "Custom": {
+              "name": "user_invitation_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
   "5b4bbb3c17c78fbc1de17d81fa9082676e48f59f5342d4201c47dd10542f2970": {
     "query": "\nSELECT\n    registration_forms.*,\n    array_agg(DISTINCT (\n            registration_form_project_query_conjunctions.category,\n            registration_form_project_query_conjunctions.attributes\n        ))\n        /* works because attributes column in registration_form_project_query_conjunctions table is NOT NULL */\n        FILTER (WHERE registration_form_project_query_conjunctions.attributes IS NOT NULL)\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM registration_forms\nLEFT OUTER JOIN registration_form_project_query_conjunctions\n    ON registration_forms.id = registration_form_project_query_conjunctions.registration_form_id\nGROUP BY registration_forms.id\n",
     "describe": {
@@ -1920,6 +2067,61 @@
         false,
         true,
         true,
+        false
+      ]
+    }
+  },
+  "7cde175694c2b971b202adb72b21f099b8c4e959022b17939250c9f5ff00625b": {
+    "query": "SELECT * FROM user_invitations WHERE id = $1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "role",
+          "type_info": {
+            "Custom": {
+              "name": "user_invitation_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
         false
       ]
     }
@@ -3449,6 +3651,31 @@
       ]
     }
   },
+  "d31b730d7d4e60d500661efcb51d4fcfabd48c2c3bdbafaf23755848e6ab70a7": {
+    "query": "\nUPDATE user_invitations\n  SET\n    email = $2,\n    role = $3\n  WHERE id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Varchar",
+          {
+            "Custom": {
+              "name": "user_invitation_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "nullable": []
+    }
+  },
   "d3764983d9a597877252fd9c9cdd775bfe34afd497358dea6f47e51de1441c67": {
     "query": "\nSELECT\n    file_distributions.*,\n    (\n        SELECT\n            array_agg((\n                file_distribution_files.project_id,\n                file_distribution_files.sharing_id\n            ))\n        FROM file_distribution_files\n        WHERE file_distribution_files.distribution_id = file_distributions.id\n    ) AS \"files: Vec<(Uuid, Uuid)>\"\nFROM file_distributions\nWHERE file_distributions.id = $1\n",
     "describe": {
@@ -3740,6 +3967,144 @@
         ]
       },
       "nullable": []
+    }
+  },
+  "f3f58600e971f1be6cbe206bba24f77769f54c6230e28f5b3dc719b869d9cb3f": {
+    "query": "SELECT * FROM users WHERE email = $1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "kana_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "kana_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "phone_number",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "affiliation",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
+          "name": "role",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 10,
+          "name": "category",
+          "type_info": {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 11,
+          "name": "assignment",
+          "type_info": {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 12,
+          "name": "assignment_owner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 13,
+          "name": "assignment_subowner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 14,
+          "name": "assignment_owner_pending_project_id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true
+      ]
     }
   },
   "fd4e7d0c2c2b07f9543882cb1e18345abbc109ad7ac814f867495a22618e07a5": {

@@ -118,13 +118,13 @@ where
     }
 
     use_case_ensure!(project.is_visible_to(&login_user));
-    use_case_ensure!(project.subowner_id() == &login_user.id);
+    use_case_ensure!(project.subowner_id() == login_user.id());
     Ok(Project::from_entity(ProjectFromEntityInput {
         project,
-        owner_name: owner.name,
-        owner_kana_name: owner.kana_name,
-        subowner_name: login_user.name.clone(),
-        subowner_kana_name: login_user.kana_name.clone(),
+        owner_name: owner.name().clone(),
+        owner_kana_name: owner.kana_name().clone(),
+        subowner_name: login_user.name().clone(),
+        subowner_kana_name: login_user.kana_name().clone(),
     }))
 }
 
@@ -138,7 +138,7 @@ mod tests {
     #[tokio::test]
     async fn test_owner() {
         let user = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(user.id.clone());
+        let pending_project = test::model::new_general_pending_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -159,10 +159,10 @@ mod tests {
     async fn test_already_project_owner() {
         let owner = test::model::new_general_user();
         let mut user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
         user.assign_project_owner(&project).unwrap();
 
-        let pending_project = test::model::new_general_pending_project(owner.id.clone());
+        let pending_project = test::model::new_general_pending_project(owner.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), owner.clone()])
@@ -184,7 +184,7 @@ mod tests {
     async fn test_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(other.id.clone());
+        let pending_project = test::model::new_general_pending_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -198,8 +198,8 @@ mod tests {
         assert!(matches!(
             create_project::run(&app, pending_project_id).await,
             Ok(got)
-            if got.owner_id == UserId::from_entity(other.id)
-            && got.subowner_id == UserId::from_entity(user.id)
+            if got.owner_id == UserId::from_entity(other.id().clone())
+            && got.subowner_id == UserId::from_entity(user.id().clone())
         ));
 
         assert!(matches!(
@@ -212,14 +212,14 @@ mod tests {
     async fn test_other_with_registration_form_not_answered() {
         let owner = test::model::new_general_user();
         let subowner = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(owner.id.clone());
+        let pending_project = test::model::new_general_pending_project(owner.id().clone());
 
         let operator = test::model::new_general_user();
-        let registration_form1 = test::model::new_registration_form(operator.id.clone());
-        let registration_form2 = test::model::new_registration_form(operator.id.clone());
+        let registration_form1 = test::model::new_registration_form(operator.id().clone());
+        let registration_form2 = test::model::new_registration_form(operator.id().clone());
 
         let answer1 = test::model::new_registration_form_answer_with_pending_project(
-            owner.id.clone(),
+            owner.id().clone(),
             pending_project.id(),
             &registration_form1,
         );
@@ -247,13 +247,13 @@ mod tests {
 
         let owner = test::model::new_general_user();
         let subowner = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(owner.id.clone());
+        let pending_project = test::model::new_general_pending_project(owner.id().clone());
 
         let operator = test::model::new_general_user();
-        let registration_form1 = test::model::new_registration_form(operator.id.clone());
-        let registration_form2 = test::model::new_registration_form(operator.id.clone());
+        let registration_form1 = test::model::new_registration_form(operator.id().clone());
+        let registration_form2 = test::model::new_registration_form(operator.id().clone());
         let registration_form3 = test::model::new_registration_form_with_query(
-            operator.id.clone(),
+            operator.id().clone(),
             project_query::ProjectQuery::from_conjunctions(vec![
                 project_query::ProjectQueryConjunction {
                     category: Some(project::ProjectCategory::Stage),
@@ -264,12 +264,12 @@ mod tests {
         );
 
         let answer1 = test::model::new_registration_form_answer_with_pending_project(
-            owner.id.clone(),
+            owner.id().clone(),
             pending_project.id(),
             &registration_form1,
         );
         let answer2 = test::model::new_registration_form_answer_with_pending_project(
-            owner.id.clone(),
+            owner.id().clone(),
             pending_project.id(),
             &registration_form2,
         );
@@ -292,8 +292,8 @@ mod tests {
         assert!(matches!(
             create_project::run(&app, pending_project_id).await,
             Ok(got)
-            if got.owner_id == UserId::from_entity(owner.id)
-            && got.subowner_id == UserId::from_entity(subowner.id)
+            if got.owner_id == UserId::from_entity(owner.id().clone())
+            && got.subowner_id == UserId::from_entity(subowner.id().clone())
         ));
 
         assert!(matches!(
@@ -316,16 +316,16 @@ mod tests {
 
         let owner = test::model::new_general_user();
         let subowner = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(owner.id.clone());
+        let pending_project = test::model::new_general_pending_project(owner.id().clone());
 
         let operator = test::model::new_general_user();
-        let registration_form = test::model::new_registration_form(operator.id.clone());
+        let registration_form = test::model::new_registration_form(operator.id().clone());
         let answer = test::model::new_registration_form_answer_with_pending_project(
-            owner.id.clone(),
+            owner.id().clone(),
             pending_project.id(),
             &registration_form,
         );
-        let (file, object) = test::model::new_file(owner.id.clone());
+        let (file, object) = test::model::new_file(owner.id().clone());
         let sharing = file_sharing::FileSharing::new(
             file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
@@ -353,8 +353,11 @@ mod tests {
         let project = create_project::run(&subowner_app, pending_project_id)
             .await
             .unwrap();
-        assert_eq!(project.owner_id, UserId::from_entity(owner.id));
-        assert_eq!(project.subowner_id, UserId::from_entity(subowner.id));
+        assert_eq!(project.owner_id, UserId::from_entity(owner.id().clone()));
+        assert_eq!(
+            project.subowner_id,
+            UserId::from_entity(subowner.id().clone())
+        );
 
         let registration_form_id = RegistrationFormId::from_entity(registration_form.id);
         assert!(matches!(

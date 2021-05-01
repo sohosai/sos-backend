@@ -63,7 +63,6 @@ where
     }
 
     let users = ctx.list_users().await.context("Failed to list users")?;
-    use_case_ensure!(users.iter().all(|user| user.is_visible_to(login_user)));
 
     // TODO: Tune buffer size and initial vector capacity
     let mut writer = csv::WriterBuilder::new()
@@ -73,6 +72,7 @@ where
     write_header(&mut writer, &input)?;
 
     for user in users {
+        use_case_ensure!(user.is_visible_to(login_user));
         write_record(&mut writer, &input, user)?;
     }
 
@@ -154,25 +154,26 @@ where
     } = &input.field_names;
 
     if id.is_some() {
-        writer.write_field(user.id.0)?;
+        writer.write_field(user.id().clone().0)?;
     }
 
     if created_at.is_some() {
-        let created_at = user.created_at.jst().format("%F %T").to_string();
+        let created_at = user.created_at().jst().format("%F %T").to_string();
         writer.write_field(created_at)?;
     }
 
     if first_name.is_some() {
-        writer.write_field(user.name.first())?;
+        writer.write_field(user.name().first())?;
     }
 
     if last_name.is_some() {
-        writer.write_field(user.name.last())?;
+        writer.write_field(user.name().last())?;
     }
 
     if full_name.is_some() {
-        let first = user.name.first().as_bytes();
-        let last = user.name.last().as_bytes();
+        let name = user.name();
+        let first = name.first().as_bytes();
+        let last = name.last().as_bytes();
         let mut full = Vec::with_capacity(first.len() + last.len() + 1);
         full.extend(last);
         full.push(b' ');
@@ -181,16 +182,17 @@ where
     }
 
     if kana_first_name.is_some() {
-        writer.write_field(user.kana_name.first())?;
+        writer.write_field(user.kana_name().first())?;
     }
 
     if kana_last_name.is_some() {
-        writer.write_field(user.kana_name.last())?;
+        writer.write_field(user.kana_name().last())?;
     }
 
     if kana_full_name.is_some() {
-        let first = user.kana_name.first().as_bytes();
-        let last = user.kana_name.last().as_bytes();
+        let kana_name = user.kana_name();
+        let first = kana_name.first().as_bytes();
+        let last = kana_name.last().as_bytes();
         let mut full = Vec::with_capacity(first.len() + last.len() + 1);
         full.extend(last);
         full.push(b' ');
@@ -199,11 +201,11 @@ where
     }
 
     if email.is_some() {
-        writer.write_field(user.email.into_string())?;
+        writer.write_field(user.email().as_str())?;
     }
 
     if phone_number.is_some() {
-        let phone_number = user.phone_number.into_string();
+        let phone_number = user.phone_number().as_str();
 
         let mut raw = Vec::with_capacity(phone_number.len() + 3);
         raw.extend(b"=\"");
@@ -219,11 +221,11 @@ where
     }
 
     if affiliation.is_some() {
-        writer.write_field(user.affiliation.into_string())?;
+        writer.write_field(user.affiliation().as_str())?;
     }
 
     if role.is_some() {
-        let role_name = match user.role {
+        let role_name = match user.role() {
             user::UserRole::Administrator => &input.role_names.administrator,
             user::UserRole::CommitteeOperator => &input.role_names.committee_operator,
             user::UserRole::Committee => &input.role_names.committee,
@@ -233,7 +235,7 @@ where
     }
 
     if category.is_some() {
-        let category_name = match user.category {
+        let category_name = match user.category() {
             user::UserCategory::UndergraduateStudent => &input.category_names.undergraduate_student,
             user::UserCategory::GraduateStudent => &input.category_names.graduate_student,
             user::UserCategory::AcademicStaff => &input.category_names.academic_staff,

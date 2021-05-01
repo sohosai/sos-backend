@@ -49,7 +49,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_user::run(&app, UserId::from_entity(other.id)).await,
+            get_user::run(&app, UserId::from_entity(other.id().clone())).await,
             Err(UseCaseError::UseCase(get_user::Error::NotFound))
         ));
     }
@@ -67,7 +67,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_user::run(&app, UserId::from_entity(other.id)).await,
+            get_user::run(&app, UserId::from_entity(other.id().clone())).await,
             Err(UseCaseError::UseCase(get_user::Error::NotFound))
         ));
     }
@@ -84,7 +84,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let other_id = UserId::from_entity(other.id);
+        let other_id = UserId::from_entity(other.id().clone());
         assert!(matches!(
             get_user::run(&app, other_id.clone()).await,
             Ok(got)
@@ -106,7 +106,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_user::run(&app, UserId::from_entity(other.id)).await,
+            get_user::run(&app, UserId::from_entity(other.id().clone())).await,
             Err(UseCaseError::UseCase(get_user::Error::NotFound))
         ));
     }

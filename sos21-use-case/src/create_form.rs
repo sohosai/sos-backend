@@ -81,7 +81,7 @@ where
     let form = form::Form {
         id: form::FormId::from_uuid(Uuid::new_v4()),
         created_at: DateTime::now(),
-        author_id: login_user.id.clone(),
+        author_id: login_user.id().clone(),
         name,
         description,
         period,
@@ -198,7 +198,7 @@ mod tests {
 
         let got = result.unwrap();
         assert!(got.name == name);
-        assert!(got.author_id == UserId::from_entity(user.id));
+        assert!(got.author_id == UserId::from_entity(user.id().clone()));
 
         assert!(matches!(get_form::run(&app, got.id).await, Ok(_)));
     }

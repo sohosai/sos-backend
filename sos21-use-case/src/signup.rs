@@ -2,16 +2,38 @@ use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::user::{User, UserCategory, UserKanaName, UserName};
 
 use anyhow::Context;
-use sos21_domain::context::{Authentication, UserRepository};
-use sos21_domain::model::{date_time::DateTime, phone_number, user};
+use sos21_domain::context::{Authentication, UserInvitationRepository, UserRepository};
+use sos21_domain::model::{phone_number, user};
 
 #[derive(Debug, Clone)]
 pub enum Error {
     AlreadySignedUp,
-    InvalidUserName,
-    InvalidUserKanaName,
+    InvalidName,
+    InvalidKanaName,
     InvalidPhoneNumber,
-    InvalidUserAffiliation,
+    InvalidAffiliation,
+}
+
+impl Error {
+    fn from_new_user_error(_err: user::AlreadySignedUpError) -> Self {
+        Error::AlreadySignedUp
+    }
+
+    fn from_name_error(_err: user::name::NameError) -> Self {
+        Error::InvalidName
+    }
+
+    fn from_kana_name_error(_err: user::name::KanaNameError) -> Self {
+        Error::InvalidKanaName
+    }
+
+    fn from_phone_number_error(_err: phone_number::FromStringError) -> Self {
+        Error::InvalidPhoneNumber
+    }
+
+    fn from_affiliation_error(_err: user::affiliation::AffiliationError) -> Self {
+        Error::InvalidAffiliation
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -26,40 +48,32 @@ pub struct Input {
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Authentication<C>, input: Input) -> UseCaseResult<User, Error>
 where
-    Authentication<C>: UserRepository,
+    C: UserRepository + UserInvitationRepository + Send + Sync,
 {
     let id = ctx.authenticated_user();
 
-    if ctx.get_user(id.clone()).await?.is_some() {
-        return Err(UseCaseError::UseCase(Error::AlreadySignedUp));
-    }
-
-    let name = input
-        .name
-        .into_entity()
-        .ok_or(UseCaseError::UseCase(Error::InvalidUserName))?;
-    let kana_name = input
-        .kana_name
-        .into_entity()
-        .ok_or(UseCaseError::UseCase(Error::InvalidUserKanaName))?;
+    let name = user::UserName::from_string(input.name.first, input.name.last)
+        .map_err(|err| UseCaseError::UseCase(Error::from_name_error(err)))?;
+    let kana_name = user::UserKanaName::from_string(input.kana_name.first, input.kana_name.last)
+        .map_err(|err| UseCaseError::UseCase(Error::from_kana_name_error(err)))?;
     let phone_number = phone_number::PhoneNumber::from_string(input.phone_number)
-        .map_err(|_| UseCaseError::UseCase(Error::InvalidPhoneNumber))?;
+        .map_err(|err| UseCaseError::UseCase(Error::from_phone_number_error(err)))?;
     let affiliation = user::UserAffiliation::from_string(input.affiliation)
-        .map_err(|_| UseCaseError::UseCase(Error::InvalidUserAffiliation))?;
-    let category = input.category.into_entity();
+        .map_err(|err| UseCaseError::UseCase(Error::from_affiliation_error(err)))?;
 
-    let user = user::User {
+    let user = user::User::new(
+        ctx,
         id,
         name,
         kana_name,
-        email: ctx.authenticated_email(),
         phone_number,
         affiliation,
-        created_at: DateTime::now(),
-        role: user::UserRole::General,
-        category,
-        assignment: None,
-    };
+        ctx.authenticated_email(),
+        input.category.into_entity(),
+    )
+    .await
+    .map_err(|err| UseCaseError::from_domain(err, Error::from_new_user_error))?;
+
     ctx.store_user(user.clone())
         .await
         .context("Failed to create a user")?;
@@ -68,7 +82,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::model::user::{UserCategory, UserId, UserKanaName, UserName};
+    use crate::model::user::{UserCategory, UserId, UserKanaName, UserName, UserRole};
     use crate::{signup, UseCaseError};
     use sos21_domain::test;
 
@@ -101,6 +115,7 @@ mod tests {
             signup::run(&app, input).await,
             Ok(got)
             if got.id == UserId(user_id)
+            && got.role == UserRole::General
         ));
     }
 
@@ -112,7 +127,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .build()
-            .authenticate_as(user.id.0, user.email.into_string());
+            .authenticate_as(user.id().clone().0, user.email().clone().into_string());
 
         let input = mock_input();
         assert!(matches!(
@@ -136,6 +151,29 @@ mod tests {
         assert!(matches!(
             signup::run(&app, input).await,
             Err(UseCaseError::UseCase(signup::Error::AlreadySignedUp))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_invitation() {
+        let admin = test::model::new_admin_user();
+        let user_id = "test_user_id".to_string();
+        let email = "test@s.tsukuba.ac.jp".to_string();
+        let invitation =
+            test::model::new_operator_user_invitation(admin.id().clone(), email.clone());
+
+        let app = test::build_mock_app()
+            .users(vec![admin])
+            .user_invitations(vec![invitation])
+            .build()
+            .authenticate_as(user_id.clone(), email);
+
+        let input = mock_input();
+        assert!(matches!(
+            signup::run(&app, input).await,
+            Ok(got)
+            if got.id == UserId(user_id)
+            && got.role == UserRole::CommitteeOperator
         ));
     }
 }

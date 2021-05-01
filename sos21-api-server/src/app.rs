@@ -164,3 +164,9 @@ sos21_domain::delegate_registration_form_answer_repository! {
         self { &self.database }
     }
 }
+
+sos21_domain::delegate_user_invitation_repository! {
+    impl UserInvitationRepository for Context {
+        self { &self.database }
+    }
+}

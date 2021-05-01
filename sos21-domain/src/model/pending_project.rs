@@ -98,7 +98,7 @@ impl PendingProject {
                 category,
                 attributes,
             },
-            owner.id.clone(),
+            owner.id().clone(),
         ))
     }
 
@@ -171,7 +171,7 @@ mod tests {
     #[tokio::test]
     async fn test_new_already_project_owner() {
         let mut owner = test_model::new_general_user();
-        let project = test_model::new_general_project(owner.id.clone());
+        let project = test_model::new_general_project(owner.id().clone());
         owner.assign_project_owner(&project).unwrap();
 
         assert_eq!(
@@ -196,7 +196,7 @@ mod tests {
         let mut owner = test_model::new_general_user();
         let user = test_model::new_general_user();
         let project =
-            test_model::new_general_project_with_subowner(user.id.clone(), owner.id.clone());
+            test_model::new_general_project_with_subowner(user.id().clone(), owner.id().clone());
         owner.assign_project_subowner(&project).unwrap();
 
         assert_eq!(
@@ -219,7 +219,7 @@ mod tests {
     #[tokio::test]
     async fn test_new_already_pending_project_owner() {
         let mut owner = test_model::new_general_user();
-        let pending_project = test_model::new_general_pending_project(owner.id.clone());
+        let pending_project = test_model::new_general_pending_project(owner.id().clone());
         owner
             .assign_pending_project_owner(&pending_project)
             .unwrap();

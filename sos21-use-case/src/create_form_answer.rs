@@ -100,7 +100,7 @@ where
     let answer = form_answer::FormAnswer {
         id: form_answer::FormAnswerId::from_uuid(Uuid::new_v4()),
         created_at,
-        author_id: login_user.id.clone(),
+        author_id: login_user.id().clone(),
         project_id: project.id(),
         form_id: form.id,
         items,
@@ -135,8 +135,8 @@ mod tests {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
         let project =
-            test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
-        let form = test::model::new_form(other.id.clone());
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
+        let form = test::model::new_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![owner.clone(), user.clone(), other.clone()])
@@ -169,8 +169,8 @@ mod tests {
     async fn test_create_owner() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_project(user.id.clone());
-        let form = test::model::new_form(other.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
+        let form = test::model::new_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -203,8 +203,8 @@ mod tests {
     async fn test_create_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_project(other.id.clone());
-        let form = test::model::new_form(other.id.clone());
+        let project = test::model::new_general_project(other.id().clone());
+        let form = test::model::new_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -234,8 +234,8 @@ mod tests {
     async fn test_invalid() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_project(user.id.clone());
-        let form = test::model::new_form(other.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
+        let form = test::model::new_form(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -264,7 +264,7 @@ mod tests {
     async fn test_file_share() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let (form, item_id) = {
             let body = item::FormItemBody::File(item::FileFormItem {
@@ -275,10 +275,10 @@ mod tests {
             let item = test::model::new_form_item_with_body(body);
             let item_id = item.id;
             let items = item::FormItems::from_items(vec![item]).unwrap();
-            let form = test::model::new_form_with_items(other.id.clone(), items);
+            let form = test::model::new_form_with_items(other.id().clone(), items);
             (form, item_id)
         };
-        let (file, object) = test::model::new_file(user.id.clone());
+        let (file, object) = test::model::new_file(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])

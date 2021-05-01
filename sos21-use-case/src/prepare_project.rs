@@ -147,7 +147,7 @@ mod tests {
 
         let pending_project = prepare_project::run(&app, input).await.unwrap();
         assert!(pending_project.name == name);
-        assert!(pending_project.owner_id == UserId::from_entity(user.id));
+        assert!(pending_project.owner_id == UserId::from_entity(user.id().clone()));
 
         assert!(matches!(
             get_pending_project::run(&app, pending_project.id).await,
@@ -159,7 +159,7 @@ mod tests {
     #[tokio::test]
     async fn test_already_project_owner() {
         let mut user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
         user.assign_project_owner(&project).unwrap();
 
         let app = test::build_mock_app()

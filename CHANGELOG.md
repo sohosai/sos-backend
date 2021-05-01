@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Subowner ([#54](https://github.com/sohosai/sos21-backend/pull/54))
 - Users' category ([#57](https://github.com/sohosai/sos21-backend/pull/57))
 - Registration form ([#73](https://github.com/sohosai/sos21-backend/pull/73))
+- User invitation ([#79](https://github.com/sohosai/sos21-backend/pull/79))
 
 ### Changed
 

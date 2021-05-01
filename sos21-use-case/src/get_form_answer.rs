@@ -49,9 +49,9 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let operator = test::model::new_operator_user();
-        let project = test::model::new_general_project(user.id.clone());
-        let form = test::model::new_form(operator.id.clone());
-        let answer = test::model::new_form_answer(user.id.clone(), project.id(), &form);
+        let project = test::model::new_general_project(user.id().clone());
+        let form = test::model::new_form(operator.id().clone());
+        let answer = test::model::new_form_answer(user.id().clone(), project.id(), &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
@@ -75,9 +75,9 @@ mod tests {
     async fn test_committee_other() {
         let user = test::model::new_committee_user();
         let operator = test::model::new_operator_user();
-        let project = test::model::new_general_project(user.id.clone());
-        let form = test::model::new_form(operator.id.clone());
-        let answer = test::model::new_form_answer(user.id.clone(), project.id(), &form);
+        let project = test::model::new_general_project(user.id().clone());
+        let form = test::model::new_form(operator.id().clone());
+        let answer = test::model::new_form_answer(user.id().clone(), project.id(), &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
@@ -101,9 +101,9 @@ mod tests {
     async fn test_operator_other() {
         let user = test::model::new_operator_user();
         let operator = test::model::new_operator_user();
-        let project = test::model::new_general_project(user.id.clone());
-        let form = test::model::new_form(operator.id.clone());
-        let answer = test::model::new_form_answer(user.id.clone(), project.id(), &form);
+        let project = test::model::new_general_project(user.id().clone());
+        let form = test::model::new_form(operator.id().clone());
+        let answer = test::model::new_form_answer(user.id().clone(), project.id(), &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])

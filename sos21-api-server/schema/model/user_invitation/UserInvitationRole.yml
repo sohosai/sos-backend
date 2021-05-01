@@ -1,0 +1,9 @@
+type: string
+title: UserInvitationRole
+enum:
+  - administrator
+  - committee_operator
+  - committee
+x-tags:
+  - user_invitation
+example: committee

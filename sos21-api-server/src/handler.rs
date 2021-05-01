@@ -238,19 +238,24 @@ macro_rules! handler {
 }
 
 pub mod file;
+pub mod file_distribution;
+pub mod file_sharing;
 pub mod form;
 pub mod form_answer;
+pub mod me;
+pub mod meta;
 pub mod pending_project;
 pub mod project;
 pub mod registration_form;
 pub mod registration_form_answer;
-pub mod signup;
 pub mod user;
+pub mod user_invitation;
+
+pub mod signup;
 pub use signup::handler as signup;
-pub mod file_distribution;
-pub mod file_sharing;
-pub mod me;
-pub mod meta;
+
+pub mod invite_user;
+pub use invite_user::handler as invite_user;
 
 pub trait HandlerResponse: Serialize {
     /// Server errors are returned as `anyhow::Error`, not as `HandlerResponse`.

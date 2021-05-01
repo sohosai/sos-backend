@@ -52,8 +52,8 @@ mod tests {
         login_user: domain::user::User,
     ) -> (Login<test::context::MockApp>, HashSet<RegistrationFormId>) {
         let other = test::model::new_general_user();
-        let registration_form1 = test::model::new_registration_form(login_user.id.clone());
-        let registration_form2 = test::model::new_registration_form(other.id.clone());
+        let registration_form1 = test::model::new_registration_form(login_user.id().clone());
+        let registration_form2 = test::model::new_registration_form(other.id().clone());
 
         let mut expected = HashSet::new();
         expected.insert(RegistrationFormId::from_entity(registration_form1.id));

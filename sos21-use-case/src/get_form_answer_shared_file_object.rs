@@ -87,12 +87,12 @@ mod tests {
         let user = test::model::new_committee_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let other_project = test::model::new_general_project(other.id.clone());
-        let form = test::model::new_form(operator.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let form = test::model::new_form(operator.id().clone());
         let other_answer =
-            test::model::new_form_answer(other.id.clone(), other_project.id(), &form);
+            test::model::new_form_answer(other.id().clone(), other_project.id(), &form);
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
@@ -132,12 +132,12 @@ mod tests {
         let user = test::model::new_general_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let other_project = test::model::new_general_project(other.id.clone());
-        let form = test::model::new_form(operator.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let form = test::model::new_form(operator.id().clone());
         let other_answer =
-            test::model::new_form_answer(other.id.clone(), other_project.id(), &form);
+            test::model::new_form_answer(other.id().clone(), other_project.id(), &form);
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
@@ -178,14 +178,14 @@ mod tests {
         let user = test::model::new_general_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let project = test::model::new_general_project(user.id.clone());
-        let other_project = test::model::new_general_project(other.id.clone());
-        let form = test::model::new_form(operator.id.clone());
-        let answer = test::model::new_form_answer(user.id.clone(), project.id(), &form);
+        let project = test::model::new_general_project(user.id().clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let form = test::model::new_form(operator.id().clone());
+        let answer = test::model::new_form_answer(user.id().clone(), project.id(), &form);
         let other_answer =
-            test::model::new_form_answer(other.id.clone(), other_project.id(), &form);
+            test::model::new_form_answer(other.id().clone(), other_project.id(), &form);
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
@@ -225,12 +225,12 @@ mod tests {
         let user = test::model::new_committee_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let other_project = test::model::new_general_project(other.id.clone());
-        let form = test::model::new_form(operator.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let form = test::model::new_form(operator.id().clone());
         let other_answer =
-            test::model::new_form_answer(other.id.clone(), other_project.id(), &form);
+            test::model::new_form_answer(other.id().clone(), other_project.id(), &form);
 
         let mut sharing = file_sharing::FileSharing::new(
             other_file.id,
@@ -273,12 +273,12 @@ mod tests {
         let user = test::model::new_committee_user();
         let operator = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let (other_file, other_object) = test::model::new_file(other.id.clone());
+        let (other_file, other_object) = test::model::new_file(other.id().clone());
 
-        let other_project = test::model::new_general_project(other.id.clone());
-        let form = test::model::new_form(operator.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
+        let form = test::model::new_form(operator.id().clone());
         let other_answer =
-            test::model::new_form_answer(other.id.clone(), other_project.id(), &form);
+            test::model::new_form_answer(other.id().clone(), other_project.id(), &form);
 
         let sharing = test::model::new_expired_file_sharing(
             other_file.id,

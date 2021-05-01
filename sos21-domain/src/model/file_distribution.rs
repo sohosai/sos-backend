@@ -84,7 +84,7 @@ mod tests {
     fn test_visibility_general() {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
-        let distribution = test_model::new_file_distribution(operator.id);
+        let distribution = test_model::new_file_distribution(operator.id().clone());
         assert!(!distribution.is_visible_to(&user));
     }
 
@@ -92,7 +92,7 @@ mod tests {
     fn test_visibility_committee() {
         let user = test_model::new_committee_user();
         let operator = test_model::new_operator_user();
-        let distribution = test_model::new_file_distribution(operator.id);
+        let distribution = test_model::new_file_distribution(operator.id().clone());
         assert!(distribution.is_visible_to(&user));
     }
 
@@ -100,7 +100,7 @@ mod tests {
     fn test_visibility_operator() {
         let user = test_model::new_operator_user();
         let operator = test_model::new_operator_user();
-        let distribution = test_model::new_file_distribution(operator.id);
+        let distribution = test_model::new_file_distribution(operator.id().clone());
         assert!(distribution.is_visible_to(&user));
     }
 }

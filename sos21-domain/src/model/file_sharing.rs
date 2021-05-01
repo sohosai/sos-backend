@@ -334,7 +334,7 @@ mod tests {
     #[test]
     fn test_visibility_with_owner_file() {
         let user = test_model::new_general_user();
-        let (file, _) = test_model::new_file(user.id.clone());
+        let (file, _) = test_model::new_file(user.id().clone());
         let sharing = FileSharing::new(file.id, FileSharingScope::Public);
         assert!(sharing.is_visible_to_with_file(&user, &file));
     }
@@ -343,8 +343,8 @@ mod tests {
     fn test_visibility_with_other_file() {
         let user = test_model::new_general_user();
         let other = test_model::new_general_user();
-        let (file, _) = test_model::new_file(user.id.clone());
-        let (other_file, _) = test_model::new_file(other.id.clone());
+        let (file, _) = test_model::new_file(user.id().clone());
+        let (other_file, _) = test_model::new_file(other.id().clone());
         let sharing = FileSharing::new(file.id, FileSharingScope::Public);
         assert!(!sharing.is_visible_to_with_file(&user, &other_file));
     }

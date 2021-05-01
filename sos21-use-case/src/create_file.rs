@@ -98,7 +98,7 @@ where
     let file = file::File {
         id: file::FileId::from_uuid(Uuid::new_v4()),
         created_at: DateTime::now(),
-        author_id: login_user.id.clone(),
+        author_id: login_user.id().clone(),
         object_id,
         blake3_digest,
         name,
@@ -155,7 +155,7 @@ mod tests {
         // let object = test::model::new_object_with_size(limit - 50);
         let (object, digest, _) = test::model::new_object();
         let file =
-            test::model::new_file_with_object(user.id.clone(), object.id, digest, limit - 50);
+            test::model::new_file_with_object(user.id().clone(), object.id, digest, limit - 50);
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -187,7 +187,7 @@ mod tests {
         // let object = test::model::new_object_with_size(limit + 10);
         let (object, digest, _) = test::model::new_object();
         let file =
-            test::model::new_file_with_object(user.id.clone(), object.id, digest, limit + 10);
+            test::model::new_file_with_object(user.id().clone(), object.id, digest, limit + 10);
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])

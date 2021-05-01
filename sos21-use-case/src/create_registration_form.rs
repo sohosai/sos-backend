@@ -73,7 +73,7 @@ where
     let registration_form = registration_form::RegistrationForm {
         id: registration_form::RegistrationFormId::from_uuid(Uuid::new_v4()),
         created_at: DateTime::now(),
-        author_id: login_user.id.clone(),
+        author_id: login_user.id().clone(),
         name,
         description,
         items,
@@ -174,7 +174,7 @@ mod tests {
 
         let got = create_registration_form::run(&app, input).await.unwrap();
         assert!(got.name == name);
-        assert!(got.author_id == UserId::from_entity(user.id));
+        assert!(got.author_id == UserId::from_entity(user.id().clone()));
 
         assert!(matches!(
             get_registration_form::run(&app, got.id).await,

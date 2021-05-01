@@ -28,7 +28,8 @@ mod tests {
         assert!(matches!(
             get_login_user::run(&app).await,
             Ok(got)
-            if got.id == UserId::from_entity(user.id) && got.name == UserName::from_entity(user.name)
+            if got.id == UserId::from_entity(user.id().clone())
+            && got.name == UserName::from_entity(user.name().clone())
         ));
     }
 }

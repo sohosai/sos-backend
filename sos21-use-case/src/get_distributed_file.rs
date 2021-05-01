@@ -75,19 +75,19 @@ mod tests {
     #[tokio::test]
     async fn test_other_project() {
         let operator = test::model::new_operator_user();
-        let (file, object) = test::model::new_file(operator.id.clone());
+        let (file, object) = test::model::new_file(operator.id().clone());
 
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_project(other.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =
-            test::model::new_file_distribution_with_files(operator.id.clone(), files);
+            test::model::new_file_distribution_with_files(operator.id().clone(), files);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone(), operator.clone()])
@@ -116,19 +116,19 @@ mod tests {
     #[tokio::test]
     async fn test_not_targeted() {
         let operator = test::model::new_operator_user();
-        let (file, object) = test::model::new_file(operator.id.clone());
+        let (file, object) = test::model::new_file(operator.id().clone());
 
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_project(other.id.clone());
+        let other_project = test::model::new_general_project(other.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(other_project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =
-            test::model::new_file_distribution_with_files(operator.id.clone(), files);
+            test::model::new_file_distribution_with_files(operator.id().clone(), files);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone(), operator.clone()])
@@ -157,16 +157,16 @@ mod tests {
     #[tokio::test]
     async fn test_get_owner() {
         let operator = test::model::new_operator_user();
-        let (file, object) = test::model::new_file(operator.id.clone());
+        let (file, object) = test::model::new_file(operator.id().clone());
 
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id.clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =
-            test::model::new_file_distribution_with_files(operator.id.clone(), files);
+            test::model::new_file_distribution_with_files(operator.id().clone(), files);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
@@ -194,18 +194,18 @@ mod tests {
     #[tokio::test]
     async fn test_get_subowner() {
         let operator = test::model::new_operator_user();
-        let (file, object) = test::model::new_file(operator.id.clone());
+        let (file, object) = test::model::new_file(operator.id().clone());
 
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
         let project =
-            test::model::new_general_project_with_subowner(owner.id.clone(), user.id.clone());
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
         let files = test::model::mock_file_distribution_files_with_project_sharing(&sharing);
         let distribution =
-            test::model::new_file_distribution_with_files(operator.id.clone(), files);
+            test::model::new_file_distribution_with_files(operator.id().clone(), files);
 
         let app = test::build_mock_app()
             .users(vec![owner.clone(), user.clone(), operator.clone()])
