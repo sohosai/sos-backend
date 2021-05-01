@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["sos21_domain"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html\" title=\"trait core::future::future::Future\">Future</a> for <a class=\"struct\" href=\"sos21_domain/model/object/data/struct.ObjectDataSummaryReceiver.html\" title=\"struct sos21_domain::model::object::data::ObjectDataSummaryReceiver\">ObjectDataSummaryReceiver</a>","synthetic":false,"types":["sos21_domain::model::object::data::ObjectDataSummaryReceiver"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
