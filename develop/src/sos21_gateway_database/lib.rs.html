@@ -102,6 +102,14 @@
 <span id="99"> 99</span>
 <span id="100">100</span>
 <span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">lock</span>::<span class="ident">Mutex</span>;
 <span class="kw">use</span> <span class="ident">ref_cast</span>::<span class="ident">RefCast</span>;
@@ -127,6 +135,8 @@
 <span class="kw">use</span> <span class="ident">registration_form_answer_repository</span>::<span class="ident">RegistrationFormAnswerDatabase</span>;
 <span class="kw">mod</span> <span class="ident">user_repository</span>;
 <span class="kw">use</span> <span class="ident">user_repository</span>::<span class="ident">UserDatabase</span>;
+<span class="kw">mod</span> <span class="ident">user_invitation_repository</span>;
+<span class="kw">use</span> <span class="ident">user_invitation_repository</span>::<span class="ident">UserInvitationDatabase</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Database</span> {
@@ -202,6 +212,12 @@
 <span class="ident">sos21_domain</span>::<span class="macro">delegate_registration_form_answer_repository</span><span class="macro">!</span> {
     <span class="kw">impl</span> <span class="ident">RegistrationFormAnswerRepository</span> <span class="kw">for</span> <span class="ident">Database</span> {
         <span class="self">self</span> { <span class="ident">RegistrationFormAnswerDatabase</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection</span>) }
+    }
+}
+
+<span class="ident">sos21_domain</span>::<span class="macro">delegate_user_invitation_repository</span><span class="macro">!</span> {
+    <span class="kw">impl</span> <span class="ident">UserInvitationRepository</span> <span class="kw">for</span> <span class="ident">Database</span> {
+        <span class="self">self</span> { <span class="ident">UserInvitationDatabase</span>::<span class="ident">ref_cast</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">connection</span>) }
     }
 }
 </pre></div>

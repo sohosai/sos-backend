@@ -312,6 +312,11 @@
 <span id="309">309</span>
 <span id="310">310</span>
 <span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">Serialize</span>;
 <span class="kw">use</span> <span class="ident">sos21_use_case</span>::<span class="ident">UseCaseError</span>;
@@ -553,19 +558,24 @@
 }
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_distribution</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_sharing</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">form</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">form_answer</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">me</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">meta</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">pending_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">registration_form</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">registration_form_answer</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">signup</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">user</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">user_invitation</span>;
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">signup</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">signup</span>::<span class="ident">handler</span> <span class="kw">as</span> <span class="ident">signup</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_distribution</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_sharing</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">me</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">meta</span>;
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">invite_user</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">invite_user</span>::<span class="ident">handler</span> <span class="kw">as</span> <span class="ident">invite_user</span>;
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">HandlerResponse</span>: <span class="ident">Serialize</span> {
     <span class="doccomment">/// Server errors are returned as `anyhow::Error`, not as `HandlerResponse`.</span>

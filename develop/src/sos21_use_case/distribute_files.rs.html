@@ -586,7 +586,7 @@
     <span class="kw">let</span> <span class="ident">distribution</span> <span class="op">=</span> <span class="ident">file_distribution</span>::<span class="ident">FileDistribution</span> {
         <span class="ident">id</span>: <span class="ident">file_distribution</span>::<span class="ident">FileDistributionId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>()),
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">now</span>(),
-        <span class="ident">author_id</span>: <span class="ident">login_user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(),
+        <span class="ident">author_id</span>: <span class="ident">login_user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
         <span class="ident">name</span>,
         <span class="ident">description</span>,
         <span class="ident">files</span>,
@@ -680,8 +680,8 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_general</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
-        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
 
@@ -712,8 +712,8 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_committee</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_committee_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
-        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
 
@@ -744,10 +744,10 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_operator</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">other_project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
@@ -793,10 +793,10 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_invalid_scope_operator</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span>
             <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Committee</span>);
@@ -830,13 +830,13 @@
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
 
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> (<span class="ident">file1</span>, <span class="ident">object1</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
-        <span class="kw">let</span> (<span class="ident">file2</span>, <span class="ident">object2</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">file1</span>, <span class="ident">object1</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">file2</span>, <span class="ident">object2</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">other1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other2</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other1_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other1</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">other2_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other2</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">other1_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other1</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">other2_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other2</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">scope1</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">other1_project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing1</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file1</span>.<span class="ident">id</span>, <span class="ident">scope1</span>);
@@ -881,10 +881,10 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_share_operator</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>(), <span class="ident">other</span>.<span class="ident">clone</span>()])

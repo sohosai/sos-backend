@@ -74,6 +74,8 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file_distribution</span>::{
@@ -120,13 +122,14 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_general</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">FileDistributionFiles</span>::<span class="ident">from_sharings</span>(<span class="macro">vec</span><span class="macro">!</span>[(
             <span class="ident">project</span>.<span class="ident">id</span>(),
             <span class="ident">FileSharingId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>()),
         )])
         .<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">distribution</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_file_distribution_with_files</span>(<span class="ident">operator</span>.<span class="ident">id</span>, <span class="ident">files</span>);
+        <span class="kw">let</span> <span class="ident">distribution</span> <span class="op">=</span>
+            <span class="ident">test_model</span>::<span class="ident">new_file_distribution_with_files</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">files</span>);
         <span class="kw">let</span> <span class="ident">distributed_file</span> <span class="op">=</span> <span class="ident">distribution</span>.<span class="ident">get_distributed_file_for</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">distributed_file</span>.<span class="ident">is_visible_to</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>));
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">distributed_file</span>.<span class="ident">is_visible_to_with_project</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>, <span class="kw-2">&amp;</span><span class="ident">project</span>));
@@ -136,13 +139,14 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_committee</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_committee_user</span>();
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">FileDistributionFiles</span>::<span class="ident">from_sharings</span>(<span class="macro">vec</span><span class="macro">!</span>[(
             <span class="ident">project</span>.<span class="ident">id</span>(),
             <span class="ident">FileSharingId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>()),
         )])
         .<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">distribution</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_file_distribution_with_files</span>(<span class="ident">operator</span>.<span class="ident">id</span>, <span class="ident">files</span>);
+        <span class="kw">let</span> <span class="ident">distribution</span> <span class="op">=</span>
+            <span class="ident">test_model</span>::<span class="ident">new_file_distribution_with_files</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">files</span>);
         <span class="kw">let</span> <span class="ident">distributed_file</span> <span class="op">=</span> <span class="ident">distribution</span>.<span class="ident">get_distributed_file_for</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>).<span class="ident">unwrap</span>();
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">distributed_file</span>.<span class="ident">is_visible_to</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>));
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">distributed_file</span>.<span class="ident">is_visible_to_with_project</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>, <span class="kw-2">&amp;</span><span class="ident">project</span>));

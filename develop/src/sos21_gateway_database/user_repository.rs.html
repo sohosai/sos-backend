@@ -197,6 +197,13 @@
 <span id="194">194</span>
 <span id="195">195</span>
 <span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">lock</span>::<span class="ident">Mutex</span>;
@@ -210,7 +217,7 @@
     <span class="ident">phone_number</span>::<span class="ident">PhoneNumber</span>,
     <span class="ident">project</span>::<span class="ident">ProjectId</span>,
     <span class="ident">user</span>::{
-        <span class="ident">User</span>, <span class="ident">UserAffiliation</span>, <span class="ident">UserAssignment</span>, <span class="ident">UserCategory</span>, <span class="ident">UserEmailAddress</span>, <span class="ident">UserId</span>,
+        <span class="ident">User</span>, <span class="ident">UserAffiliation</span>, <span class="ident">UserAssignment</span>, <span class="ident">UserCategory</span>, <span class="ident">UserContent</span>, <span class="ident">UserEmailAddress</span>, <span class="ident">UserId</span>,
         <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>, <span class="ident">UserRole</span>,
     },
 };
@@ -265,10 +272,17 @@
             .<span class="ident">try_collect</span>()
             .<span class="kw">await</span>
     }
+
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">get_user_by_email</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">email</span>: <span class="kw-2">&amp;</span><span class="ident">UserEmailAddress</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">User</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="kw">await</span>;
+        <span class="ident">query</span>::<span class="ident">find_user_by_email</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">email</span>.<span class="ident">as_str</span>())
+            .<span class="kw">await</span>
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">opt</span><span class="op">|</span> <span class="ident">opt</span>.<span class="ident">map</span>(<span class="ident">to_user</span>).<span class="ident">transpose</span>())
+    }
 }
 
 <span class="kw">fn</span> <span class="ident">from_user</span>(<span class="ident">user</span>: <span class="ident">User</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">User</span> {
-    <span class="kw">let</span> <span class="ident">User</span> {
+    <span class="kw">let</span> <span class="ident">UserContent</span> {
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
         <span class="ident">name</span>,
@@ -279,7 +293,7 @@
         <span class="ident">role</span>,
         <span class="ident">category</span>,
         <span class="ident">assignment</span>,
-    } <span class="op">=</span> <span class="ident">user</span>;
+    } <span class="op">=</span> <span class="ident">user</span>.<span class="ident">into_content</span>();
 
     <span class="kw">let</span> (<span class="ident">first_name</span>, <span class="ident">last_name</span>) <span class="op">=</span> <span class="ident">name</span>.<span class="ident">into_string</span>();
     <span class="kw">let</span> (<span class="ident">kana_first_name</span>, <span class="ident">kana_last_name</span>) <span class="op">=</span> <span class="ident">kana_name</span>.<span class="ident">into_string</span>();
@@ -372,7 +386,7 @@
         <span class="prelude-val">None</span>
     };
 
-    <span class="prelude-val">Ok</span>(<span class="ident">User</span> {
+    <span class="prelude-val">Ok</span>(<span class="ident">User</span>::<span class="ident">from_content</span>(<span class="ident">UserContent</span> {
         <span class="ident">id</span>: <span class="ident">UserId</span>(<span class="ident">id</span>),
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
         <span class="ident">name</span>: <span class="ident">UserName</span>::<span class="ident">from_string</span>(<span class="ident">first_name</span>, <span class="ident">last_name</span>)<span class="question-mark">?</span>,
@@ -392,7 +406,7 @@
             <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
         },
         <span class="ident">assignment</span>,
-    })
+    }))
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="sos21_gateway_database"></div>

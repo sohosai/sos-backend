@@ -128,12 +128,12 @@
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">err</span>: <span class="ident">signup</span>::<span class="ident">Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Error</span> {
         <span class="kw">match</span> <span class="ident">err</span> {
             <span class="ident">signup</span>::<span class="ident">Error</span>::<span class="ident">AlreadySignedUp</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">AlreadySignedUp</span>,
-            <span class="ident">signup</span>::<span class="ident">Error</span>::<span class="ident">InvalidUserName</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="string">&quot;name&quot;</span> },
-            <span class="ident">signup</span>::<span class="ident">Error</span>::<span class="ident">InvalidUserKanaName</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="string">&quot;kana_name&quot;</span> },
+            <span class="ident">signup</span>::<span class="ident">Error</span>::<span class="ident">InvalidName</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="string">&quot;name&quot;</span> },
+            <span class="ident">signup</span>::<span class="ident">Error</span>::<span class="ident">InvalidKanaName</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="string">&quot;kana_name&quot;</span> },
             <span class="ident">signup</span>::<span class="ident">Error</span>::<span class="ident">InvalidPhoneNumber</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> {
                 <span class="ident">field</span>: <span class="string">&quot;phone_number&quot;</span>,
             },
-            <span class="ident">signup</span>::<span class="ident">Error</span>::<span class="ident">InvalidUserAffiliation</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> {
+            <span class="ident">signup</span>::<span class="ident">Error</span>::<span class="ident">InvalidAffiliation</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> {
                 <span class="ident">field</span>: <span class="string">&quot;affiliation&quot;</span>,
             },
         }

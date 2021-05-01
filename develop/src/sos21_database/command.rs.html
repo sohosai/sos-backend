@@ -63,6 +63,12 @@
 <span id="60">60</span>
 <span id="61">61</span>
 <span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_file_distribution_files</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_form_condition_excludes</span>;
@@ -70,6 +76,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_form_project_query_conjunctions</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_pending_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_registration_form_project_query_conjunctions</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">delete_user_invitation</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_file</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_file_distribution</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_file_distribution_files</span>;
@@ -85,6 +92,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_registration_form_answer</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_registration_form_project_query_conjunctions</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_user</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">insert_user_invitation</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_file</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_file_distribution</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_file_sharing</span>;
@@ -95,12 +103,14 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_registration_form</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_registration_form_answer</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_user</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_user_invitation</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_file_distribution_files</span>::<span class="ident">delete_file_distribution_files</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_form_condition_excludes</span>::<span class="ident">delete_form_condition_excludes</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_form_condition_includes</span>::<span class="ident">delete_form_condition_includes</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_form_project_query_conjunctions</span>::<span class="ident">delete_form_project_query_conjunctions</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_pending_project</span>::<span class="ident">delete_pending_project</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_registration_form_project_query_conjunctions</span>::<span class="ident">delete_registration_form_project_query_conjunctions</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">delete_user_invitation</span>::<span class="ident">delete_user_invitation</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_file</span>::<span class="ident">insert_file</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_file_distribution</span>::<span class="ident">insert_file_distribution</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_file_distribution_files</span>::<span class="ident">insert_file_distribution_files</span>;
@@ -116,6 +126,7 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_registration_form_answer</span>::<span class="ident">insert_registration_form_answer</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_registration_form_project_query_conjunctions</span>::<span class="ident">insert_registration_form_project_query_conjunctions</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_user</span>::<span class="ident">insert_user</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">insert_user_invitation</span>::<span class="ident">insert_user_invitation</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_file</span>::<span class="ident">update_file</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_file_distribution</span>::<span class="ident">update_file_distribution</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_file_sharing</span>::<span class="ident">update_file_sharing</span>;
@@ -126,6 +137,7 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_registration_form</span>::<span class="ident">update_registration_form</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_registration_form_answer</span>::<span class="ident">update_registration_form_answer</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_user</span>::<span class="ident">update_user</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">update_user_invitation</span>::<span class="ident">update_user_invitation</span>;
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="sos21_database"></div>
     <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

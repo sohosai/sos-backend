@@ -87,8 +87,8 @@
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
     <span class="ident">phone_number</span>::<span class="ident">PhoneNumber</span>,
     <span class="ident">user</span>::{
-        <span class="ident">User</span>, <span class="ident">UserAffiliation</span>, <span class="ident">UserCategory</span>, <span class="ident">UserEmailAddress</span>, <span class="ident">UserId</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>,
-        <span class="ident">UserRole</span>,
+        <span class="ident">User</span>, <span class="ident">UserAffiliation</span>, <span class="ident">UserCategory</span>, <span class="ident">UserContent</span>, <span class="ident">UserEmailAddress</span>, <span class="ident">UserId</span>, <span class="ident">UserKanaName</span>,
+        <span class="ident">UserName</span>, <span class="ident">UserRole</span>,
     },
 };
 
@@ -124,7 +124,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mock_user</span>(<span class="ident">id</span>: <span class="ident">UserId</span>, <span class="ident">role</span>: <span class="ident">UserRole</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">User</span> {
-    <span class="ident">User</span> {
+    <span class="ident">User</span>::<span class="ident">from_content</span>(<span class="ident">UserContent</span> {
         <span class="ident">id</span>,
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">now</span>(),
         <span class="ident">name</span>: <span class="ident">mock_user_name</span>(),
@@ -135,7 +135,7 @@
         <span class="ident">role</span>,
         <span class="ident">category</span>: <span class="ident">mock_user_category</span>(),
         <span class="ident">assignment</span>: <span class="prelude-val">None</span>,
-    }
+    })
 }
 
 <span class="doccomment">/// `UserId` that is known to be exist globally in the testing context.</span>

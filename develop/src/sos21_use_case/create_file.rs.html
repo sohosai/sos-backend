@@ -315,7 +315,7 @@
     <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">file</span>::<span class="ident">File</span> {
         <span class="ident">id</span>: <span class="ident">file</span>::<span class="ident">FileId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>()),
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">now</span>(),
-        <span class="ident">author_id</span>: <span class="ident">login_user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(),
+        <span class="ident">author_id</span>: <span class="ident">login_user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
         <span class="ident">object_id</span>,
         <span class="ident">blake3_digest</span>,
         <span class="ident">name</span>,
@@ -372,7 +372,7 @@
         <span class="comment">// let object = test::model::new_object_with_size(limit - 50);</span>
         <span class="kw">let</span> (<span class="ident">object</span>, <span class="ident">digest</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_object</span>();
         <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span>
-            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file_with_object</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">object</span>.<span class="ident">id</span>, <span class="ident">digest</span>, <span class="ident">limit</span> <span class="op">-</span> <span class="number">50</span>);
+            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file_with_object</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">object</span>.<span class="ident">id</span>, <span class="ident">digest</span>, <span class="ident">limit</span> <span class="op">-</span> <span class="number">50</span>);
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
@@ -404,7 +404,7 @@
         <span class="comment">// let object = test::model::new_object_with_size(limit + 10);</span>
         <span class="kw">let</span> (<span class="ident">object</span>, <span class="ident">digest</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_object</span>();
         <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span>
-            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file_with_object</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">object</span>.<span class="ident">id</span>, <span class="ident">digest</span>, <span class="ident">limit</span> <span class="op">+</span> <span class="number">10</span>);
+            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file_with_object</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">object</span>.<span class="ident">id</span>, <span class="ident">digest</span>, <span class="ident">limit</span> <span class="op">+</span> <span class="number">10</span>);
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])

@@ -170,18 +170,18 @@
 
     <span class="macro">use_case_ensure</span><span class="macro">!</span>(
         <span class="ident">project</span>.<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>)
-            <span class="op">&amp;&amp;</span> <span class="ident">owner</span>.<span class="ident">name</span>.<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>)
-            <span class="op">&amp;&amp;</span> <span class="ident">owner</span>.<span class="ident">kana_name</span>.<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>)
-            <span class="op">&amp;&amp;</span> <span class="ident">subowner</span>.<span class="ident">name</span>.<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>)
-            <span class="op">&amp;&amp;</span> <span class="ident">subowner</span>.<span class="ident">kana_name</span>.<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>)
+            <span class="op">&amp;&amp;</span> <span class="ident">owner</span>.<span class="ident">name</span>().<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>)
+            <span class="op">&amp;&amp;</span> <span class="ident">owner</span>.<span class="ident">kana_name</span>().<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>)
+            <span class="op">&amp;&amp;</span> <span class="ident">subowner</span>.<span class="ident">name</span>().<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>)
+            <span class="op">&amp;&amp;</span> <span class="ident">subowner</span>.<span class="ident">kana_name</span>().<span class="ident">is_visible_to</span>(<span class="ident">login_user</span>)
     );
 
     <span class="prelude-val">Ok</span>(<span class="ident">Project</span>::<span class="ident">from_entity</span>(<span class="ident">ProjectFromEntityInput</span> {
         <span class="ident">project</span>,
-        <span class="ident">owner_name</span>: <span class="ident">owner</span>.<span class="ident">name</span>,
-        <span class="ident">owner_kana_name</span>: <span class="ident">owner</span>.<span class="ident">kana_name</span>,
-        <span class="ident">subowner_name</span>: <span class="ident">subowner</span>.<span class="ident">name</span>,
-        <span class="ident">subowner_kana_name</span>: <span class="ident">subowner</span>.<span class="ident">kana_name</span>,
+        <span class="ident">owner_name</span>: <span class="ident">owner</span>.<span class="ident">name</span>().<span class="ident">clone</span>(),
+        <span class="ident">owner_kana_name</span>: <span class="ident">owner</span>.<span class="ident">kana_name</span>().<span class="ident">clone</span>(),
+        <span class="ident">subowner_name</span>: <span class="ident">subowner</span>.<span class="ident">name</span>().<span class="ident">clone</span>(),
+        <span class="ident">subowner_kana_name</span>: <span class="ident">subowner</span>.<span class="ident">kana_name</span>().<span class="ident">clone</span>(),
     }))
 }
 
@@ -195,9 +195,9 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_general_owner</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="ident">user</span>.<span class="ident">assign_project_owner</span>(<span class="kw-2">&amp;</span><span class="ident">project1</span>).<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">project2</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project2</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="ident">other</span>.<span class="ident">assign_project_owner</span>(<span class="kw-2">&amp;</span><span class="ident">project2</span>).<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -216,10 +216,10 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">other1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">other2</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other1</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other1</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="ident">other1</span>.<span class="ident">assign_project_owner</span>(<span class="kw-2">&amp;</span><span class="ident">project1</span>).<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">project2</span> <span class="op">=</span>
-            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project_with_subowner</span>(<span class="ident">other2</span>.<span class="ident">id</span>.<span class="ident">clone</span>(), <span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project_with_subowner</span>(<span class="ident">other2</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="ident">other2</span>.<span class="ident">assign_project_owner</span>(<span class="kw-2">&amp;</span><span class="ident">project2</span>).<span class="ident">unwrap</span>();
         <span class="ident">user</span>.<span class="ident">assign_project_subowner</span>(<span class="kw-2">&amp;</span><span class="ident">project2</span>).<span class="ident">unwrap</span>();
 
@@ -238,7 +238,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_general_not_found</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="ident">other</span>.<span class="ident">assign_project_owner</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>).<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()

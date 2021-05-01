@@ -21,25 +21,29 @@
 <span id="18">18</span>
 <span id="19">19</span>
 <span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="ident">bitflags</span>::<span class="macro">bitflags</span><span class="macro">!</span> {
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Permissions</span>: <span class="ident">u32</span> {
-        <span class="kw">const</span> <span class="ident">READ_ALL_USERS</span>                     <span class="op">=</span> <span class="number">0b0000000000000001</span>;
-        <span class="kw">const</span> <span class="ident">READ_ALL_PROJECTS</span>                  <span class="op">=</span> <span class="number">0b0000000000000010</span>;
-        <span class="kw">const</span> <span class="ident">UPDATE_ALL_USERS</span>                   <span class="op">=</span> <span class="number">0b0000000000000100</span>;
-        <span class="kw">const</span> <span class="ident">UPDATE_ALL_PROJECTS</span>                <span class="op">=</span> <span class="number">0b0000000000001000</span>;
-        <span class="kw">const</span> <span class="ident">READ_ALL_FORMS</span>                     <span class="op">=</span> <span class="number">0b0000000000010000</span>;
-        <span class="kw">const</span> <span class="ident">CREATE_FORMS</span>                       <span class="op">=</span> <span class="number">0b0000000000100000</span>;
-        <span class="kw">const</span> <span class="ident">READ_ALL_FORM_ANSWERS</span>              <span class="op">=</span> <span class="number">0b0000000001000000</span>;
-        <span class="kw">const</span> <span class="ident">CREATE_FILES</span>                       <span class="op">=</span> <span class="number">0b0000000010000000</span>;
-        <span class="kw">const</span> <span class="ident">SHARE_FILES</span>                        <span class="op">=</span> <span class="number">0b0000000100000000</span>;
-        <span class="kw">const</span> <span class="ident">DISTRIBUTE_FILES</span>                   <span class="op">=</span> <span class="number">0b0000001000000000</span>;
-        <span class="kw">const</span> <span class="ident">READ_ALL_FILE_DISTRIBUTIONS</span>        <span class="op">=</span> <span class="number">0b0000010000000000</span>;
-        <span class="kw">const</span> <span class="ident">READ_ALL_REGISTRATION_FORMS</span>        <span class="op">=</span> <span class="number">0b0000100000000000</span>;
-        <span class="kw">const</span> <span class="ident">READ_ALL_REGISTRATION_FORM_ANSWERS</span> <span class="op">=</span> <span class="number">0b0001000000000000</span>;
-        <span class="kw">const</span> <span class="ident">CREATE_REGISTRATION_FORMS</span>          <span class="op">=</span> <span class="number">0b0010000000000000</span>;
-        <span class="kw">const</span> <span class="ident">ANSWER_REGISTRATION_FORMS</span>          <span class="op">=</span> <span class="number">0b0100000000000000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_USERS</span>                     <span class="op">=</span> <span class="number">0b00000000000000000000000000000001</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_PROJECTS</span>                  <span class="op">=</span> <span class="number">0b00000000000000000000000000000010</span>;
+        <span class="kw">const</span> <span class="ident">UPDATE_ALL_USERS</span>                   <span class="op">=</span> <span class="number">0b00000000000000000000000000000100</span>;
+        <span class="kw">const</span> <span class="ident">UPDATE_ALL_PROJECTS</span>                <span class="op">=</span> <span class="number">0b00000000000000000000000000001000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_FORMS</span>                     <span class="op">=</span> <span class="number">0b00000000000000000000000000010000</span>;
+        <span class="kw">const</span> <span class="ident">CREATE_FORMS</span>                       <span class="op">=</span> <span class="number">0b00000000000000000000000000100000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_FORM_ANSWERS</span>              <span class="op">=</span> <span class="number">0b00000000000000000000000001000000</span>;
+        <span class="kw">const</span> <span class="ident">CREATE_FILES</span>                       <span class="op">=</span> <span class="number">0b00000000000000000000000010000000</span>;
+        <span class="kw">const</span> <span class="ident">SHARE_FILES</span>                        <span class="op">=</span> <span class="number">0b00000000000000000000000100000000</span>;
+        <span class="kw">const</span> <span class="ident">DISTRIBUTE_FILES</span>                   <span class="op">=</span> <span class="number">0b00000000000000000000001000000000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_FILE_DISTRIBUTIONS</span>        <span class="op">=</span> <span class="number">0b00000000000000000000010000000000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_REGISTRATION_FORMS</span>        <span class="op">=</span> <span class="number">0b00000000000000000000100000000000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_REGISTRATION_FORM_ANSWERS</span> <span class="op">=</span> <span class="number">0b00000000000000000001000000000000</span>;
+        <span class="kw">const</span> <span class="ident">CREATE_REGISTRATION_FORMS</span>          <span class="op">=</span> <span class="number">0b00000000000000000010000000000000</span>;
+        <span class="kw">const</span> <span class="ident">ANSWER_REGISTRATION_FORMS</span>          <span class="op">=</span> <span class="number">0b00000000000000000100000000000000</span>;
+        <span class="kw">const</span> <span class="ident">READ_ALL_USER_INVITATIONS</span>          <span class="op">=</span> <span class="number">0b00000000000000001000000000000000</span>;
+        <span class="kw">const</span> <span class="ident">CREATE_USER_INVITATIONS</span>            <span class="op">=</span> <span class="number">0b00000000000000010000000000000000</span>;
     }
 }
 </pre></div>

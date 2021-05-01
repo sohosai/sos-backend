@@ -220,6 +220,12 @@
 <span id="217">217</span>
 <span id="218">218</span>
 <span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -423,6 +429,12 @@
                 <span class="op">/</span> <span class="string">&quot;get-file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">registration_form_answer</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file</span>),
                 <span class="op">/</span> <span class="string">&quot;get-file-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">registration_form_answer</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file_info</span>),
             }
+        },
+        <span class="op">/</span> <span class="string">&quot;invite-user&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">invite_user</span>),
+        <span class="op">/</span> <span class="string">&quot;user-invitation&quot;</span> {
+            <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">user_invitation</span>::<span class="ident">get</span>),
+            <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">user_invitation</span>::<span class="ident">list</span>),
+            <span class="op">/</span> <span class="string">&quot;delete&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">user_invitation</span>::<span class="ident">delete</span>),
         }
     };
 
