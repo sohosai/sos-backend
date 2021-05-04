@@ -42,6 +42,7 @@ jobs:
           # GITHUB_TOKEN user cannot trigger another workflow
           token: "${{ secrets.TAGGER_PAT }}"
       - name: Calculate next beta number
+        id: calculate-beta-number
         run: |
           version=$(git branch --show-current)
           last_beta=$(git tag --list --sort=taggerdate "$version"'-beta*' | tail -n 1)
