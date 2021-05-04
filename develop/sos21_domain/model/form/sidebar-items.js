@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["condition",""],["description",""],["item",""],["name",""],["period",""]],"struct":[["Form",""],["FormId",""]]});
+initSidebarItems({"enum":[["AnswerErrorKind",""]],"mod":[["condition",""],["description",""],["item",""],["name",""],["period",""]],"struct":[["AnswerError",""],["Form",""],["FormId",""]]});
