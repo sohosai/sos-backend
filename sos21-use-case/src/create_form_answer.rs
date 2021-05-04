@@ -88,6 +88,11 @@ where
         _ => return Err(UseCaseError::UseCase(Error::FormNotFound)),
     };
 
+    // NOTE: Check the answer period before the validation for the convenience of clients
+    if !form.period.contains(DateTime::now()) {
+        return Err(UseCaseError::UseCase(Error::OutOfAnswerPeriod));
+    }
+
     let items = interface::form_answer::to_form_answer_items(ctx, &project, &form, input.items)
         .await
         .map_err(|err| err.map_use_case(Error::from_items_error))?;
