@@ -1,6 +1,6 @@
 use crate::error::{UseCaseError, UseCaseResult};
 use crate::interface;
-use crate::model::form::FormId;
+use crate::model::form::{FormId, FormItemId};
 use crate::model::form_answer::FormAnswer;
 use crate::model::project::ProjectId;
 
@@ -9,8 +9,7 @@ use sos21_domain::context::{
     FileRepository, FileSharingRepository, FormAnswerRepository, FormRepository, Login,
     ProjectRepository,
 };
-use sos21_domain::model::{date_time::DateTime, form, form_answer};
-use uuid::Uuid;
+use sos21_domain::model::{date_time::DateTime, form};
 
 #[derive(Debug, Clone)]
 pub struct Input {
@@ -34,8 +33,27 @@ impl Error {
         Error::InvalidItems(err)
     }
 
-    fn from_check_error(err: form::item::CheckAnswerError) -> Self {
-        Error::InvalidAnswer(interface::form::to_check_answer_error(err))
+    fn from_answer_error(err: form::AnswerError) -> Self {
+        match err.kind() {
+            form::AnswerErrorKind::OutOfAnswerPeriod => Error::OutOfAnswerPeriod,
+            form::AnswerErrorKind::AlreadyAnswered => Error::AlreadyAnswered,
+            form::AnswerErrorKind::NotTargeted => Error::FormNotFound,
+            form::AnswerErrorKind::MismatchedItemsLength => {
+                Error::InvalidAnswer(interface::form::CheckAnswerError::MismatchedItemsLength)
+            }
+            form::AnswerErrorKind::MismatchedItemId { expected, got } => {
+                Error::InvalidAnswer(interface::form::CheckAnswerError::MismatchedItemId {
+                    expected: FormItemId::from_entity(expected),
+                    got: FormItemId::from_entity(got),
+                })
+            }
+            form::AnswerErrorKind::InvalidItem { id, kind } => {
+                Error::InvalidAnswer(interface::form::CheckAnswerError::InvalidAnswerItem {
+                    item_id: FormItemId::from_entity(id),
+                    item_error: interface::form::to_check_answer_item_error(kind),
+                })
+            }
+        }
     }
 }
 
@@ -66,45 +84,18 @@ where
         .await
         .context("Failed to get a form")?;
     let form = match result {
-        Some(x) => x,
-        None => return Err(UseCaseError::UseCase(Error::FormNotFound)),
+        Some(form) if form.is_visible_to_with_project(login_user, &project) => form,
+        _ => return Err(UseCaseError::UseCase(Error::FormNotFound)),
     };
-
-    if !form.condition.check(&project) || !form.is_visible_to_with_project(login_user, &project) {
-        return Err(UseCaseError::UseCase(Error::FormNotFound));
-    }
 
     let items = interface::form_answer::to_form_answer_items(ctx, &project, &form, input.items)
         .await
         .map_err(|err| err.map_use_case(Error::from_items_error))?;
 
-    let created_at = DateTime::now();
-    if !form.period.contains(created_at) {
-        return Err(UseCaseError::UseCase(Error::OutOfAnswerPeriod));
-    }
-
-    // TODO: Enforce this in domain layer
-    if ctx
-        .get_form_answer_by_form_and_project(form.id, project.id())
-        .await?
-        .is_some()
-    {
-        return Err(UseCaseError::UseCase(Error::AlreadyAnswered));
-    }
-
-    form.items
-        .check_answer(&items)
-        .context("Failed to check form answers unexpectedly")?
-        .map_err(|err| UseCaseError::UseCase(Error::from_check_error(err)))?;
-
-    let answer = form_answer::FormAnswer {
-        id: form_answer::FormAnswerId::from_uuid(Uuid::new_v4()),
-        created_at,
-        author_id: login_user.id().clone(),
-        project_id: project.id(),
-        form_id: form.id,
-        items,
-    };
+    let answer = form
+        .answer_by(ctx, login_user, &project, items)
+        .await
+        .map_err(|err| UseCaseError::from_domain(err, Error::from_answer_error))?;
     ctx.store_form_answer(answer.clone())
         .await
         .context("Failed to store a form answer")?;
