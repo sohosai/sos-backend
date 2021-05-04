@@ -8,7 +8,7 @@ use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::{create_form_answer, interface};
+use sos21_use_case::{answer_form, interface};
 use warp::http::StatusCode;
 
 pub mod file_sharing;
@@ -73,14 +73,14 @@ impl HandlerResponse for Error {
     }
 }
 
-impl From<create_form_answer::Error> for Error {
-    fn from(err: create_form_answer::Error) -> Error {
+impl From<answer_form::Error> for Error {
+    fn from(err: answer_form::Error) -> Error {
         match err {
-            create_form_answer::Error::FormNotFound => Error::FormNotFound,
-            create_form_answer::Error::ProjectNotFound => Error::ProjectNotFound,
-            create_form_answer::Error::OutOfAnswerPeriod => Error::OutOfAnswerPeriod,
-            create_form_answer::Error::AlreadyAnswered => Error::AlreadyAnsweredForm,
-            create_form_answer::Error::InvalidItems(err) => match err {
+            answer_form::Error::FormNotFound => Error::FormNotFound,
+            answer_form::Error::ProjectNotFound => Error::ProjectNotFound,
+            answer_form::Error::OutOfAnswerPeriod => Error::OutOfAnswerPeriod,
+            answer_form::Error::AlreadyAnswered => Error::AlreadyAnsweredForm,
+            answer_form::Error::InvalidItems(err) => match err {
                 interface::form_answer::FormAnswerItemsError::NoItems => Error::NoFormItems,
                 interface::form_answer::FormAnswerItemsError::TooManyItems => {
                     Error::TooManyFormItems
@@ -92,7 +92,7 @@ impl From<create_form_answer::Error> for Error {
                     }
                 }
             },
-            create_form_answer::Error::InvalidAnswer(err) => match err {
+            answer_form::Error::InvalidAnswer(err) => match err {
                 interface::form::CheckAnswerError::MismatchedItemsLength => {
                     Error::MismatchedFormItemsLength
                 }
@@ -115,7 +115,7 @@ impl From<create_form_answer::Error> for Error {
 
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
-    let input = create_form_answer::Input {
+    let input = answer_form::Input {
         project_id: request.project_id.into_use_case(),
         form_id: request.form_id.into_use_case(),
         items: request
@@ -124,7 +124,7 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
             .map(RequestFormAnswerItem::into_use_case)
             .collect(),
     };
-    let answer = create_form_answer::run(&ctx, input).await?;
+    let answer = answer_form::run(&ctx, input).await?;
     let answer = FormAnswer::from_use_case(answer);
     Ok(Response { answer })
 }

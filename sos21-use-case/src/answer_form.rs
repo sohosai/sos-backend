@@ -118,8 +118,8 @@ mod tests {
     };
     use crate::test::interface as test_interface;
     use crate::{
-        create_form_answer, get_project_form_answer, get_project_form_answer_shared_file,
-        interface, UseCaseError,
+        answer_form, get_project_form_answer, get_project_form_answer_shared_file, interface,
+        UseCaseError,
     };
 
     use sos21_domain::model::form::item;
@@ -144,13 +144,13 @@ mod tests {
 
         let form_id = FormId::from_entity(form.id);
         let project_id = ProjectId::from_entity(project.id());
-        let input = create_form_answer::Input {
+        let input = answer_form::Input {
             form_id,
             project_id,
             items: test_interface::mock_input_form_answer_items(&form.items),
         };
 
-        let got = create_form_answer::run(&app, input).await.unwrap();
+        let got = answer_form::run(&app, input).await.unwrap();
         assert!(got.form_id == form_id);
         assert!(got.project_id == project_id);
 
@@ -178,13 +178,13 @@ mod tests {
 
         let form_id = FormId::from_entity(form.id);
         let project_id = ProjectId::from_entity(project.id());
-        let input = create_form_answer::Input {
+        let input = answer_form::Input {
             form_id,
             project_id,
             items: test_interface::mock_input_form_answer_items(&form.items),
         };
 
-        let got = create_form_answer::run(&app, input).await.unwrap();
+        let got = answer_form::run(&app, input).await.unwrap();
         assert!(got.form_id == form_id);
         assert!(got.project_id == project_id);
 
@@ -212,17 +212,15 @@ mod tests {
 
         let form_id = FormId::from_entity(form.id);
         let project_id = ProjectId::from_entity(project.id());
-        let input = create_form_answer::Input {
+        let input = answer_form::Input {
             form_id,
             project_id,
             items: test_interface::mock_input_form_answer_items(&form.items),
         };
 
         assert!(matches!(
-            create_form_answer::run(&app, input).await,
-            Err(UseCaseError::UseCase(
-                create_form_answer::Error::ProjectNotFound
-            ))
+            answer_form::run(&app, input).await,
+            Err(UseCaseError::UseCase(answer_form::Error::ProjectNotFound))
         ));
     }
 
@@ -244,14 +242,14 @@ mod tests {
         let form_id = FormId::from_entity(form.id);
         let project_id = ProjectId::from_entity(project.id());
         let item = test_interface::mock_input_form_answer_item(form.items.items().next().unwrap());
-        let input = create_form_answer::Input {
+        let input = answer_form::Input {
             form_id,
             project_id,
             items: vec![item.clone(), item.clone()],
         };
 
         assert!(matches!(
-            create_form_answer::run(&app, input).await,
+            answer_form::run(&app, input).await,
             Err(UseCaseError::UseCase(_))
         ));
     }
@@ -295,13 +293,13 @@ mod tests {
         };
         let form_id = FormId::from_entity(form.id);
         let project_id = ProjectId::from_entity(project.id());
-        let input = create_form_answer::Input {
+        let input = answer_form::Input {
             form_id,
             project_id,
             items: vec![answer_item],
         };
 
-        let got = create_form_answer::run(&app, input).await.unwrap();
+        let got = answer_form::run(&app, input).await.unwrap();
         assert_eq!(got.form_id, form_id);
         assert_eq!(got.project_id, project_id);
 
