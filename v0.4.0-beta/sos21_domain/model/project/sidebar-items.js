@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["NewProjectErrorKind",""]],"mod":[["attribute",""],["category",""],["code",""],["description",""],["index",""],["name",""]],"struct":[["NewProjectError",""],["Project",""],["ProjectContent",""],["ProjectId",""],["SameOwnerSubownerError",""]]});
