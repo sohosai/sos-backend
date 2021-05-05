@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ObjectData",""],["ObjectDataStream",""],["ObjectDataSummary","Summary of [`ObjectData`]."],["ObjectDataSummaryReceiver","Future that recieves [`ObjectDataSummary`] after reading all the data in [`ObjectData`]."]]});
