@@ -63,6 +63,7 @@ jobs:
         id: calculate-beta-number
         run: |
           branch=$(git branch --show-current)
+          git pull --tags
           last_beta=$(git tag --list --sort=taggerdate "v${branch#release/}"'-beta*' | tail -n 1)
           if [ -z "$last_beta" ]; then
             echo "::set-output name=number::0"
