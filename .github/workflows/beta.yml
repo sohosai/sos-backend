@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - 'v*'
+      - 'release/*'
 
 name: Beta
 
@@ -44,8 +44,8 @@ jobs:
       - name: Calculate next beta number
         id: calculate-beta-number
         run: |
-          version=$(git branch --show-current)
-          last_beta=$(git tag --list --sort=taggerdate "$version"'-beta*' | tail -n 1)
+          branch=$(git branch --show-current)
+          last_beta=$(git tag --list --sort=taggerdate "v${branch#release/}"'-beta*' | tail -n 1)
           if [ -z "$last_beta" ]; then
             echo "::set-output name=number::0"
             exit
@@ -57,7 +57,7 @@ jobs:
         env:
           BETA_NUMBER: "${{ steps.calculate-beta-number.outputs.number }}"
         run: |
-          version=$(git branch --show-current)
-          tag_name=${version}-beta${BETA_NUMBER}
+          branch=$(git branch --show-current)
+          tag_name=v${branch#release/}-beta${BETA_NUMBER}
           git tag "$tag_name"
           git push --tags
