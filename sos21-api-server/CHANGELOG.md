@@ -9,6 +9,15 @@ with the HTTP API interface being the "public API".
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.4.0-beta] - 2021-05-12
+
+### Added
 
 - Subowner ([#54](https://github.com/sohosai/sos21-backend/pull/54))
 - Users' category ([#57](https://github.com/sohosai/sos21-backend/pull/57))
@@ -23,13 +32,9 @@ with the HTTP API interface being the "public API".
     - `me/project/list` and `me/pending-project/list` are renamed to `me/project/get` and `me/pending-project/get` respectively
     - `pending-project/accept-subowner` is renamed to `project/create`
 
-### Deprecated
-### Removed
 ### Fixed
 
 - 500 when an empty query is used in the form condition ([#63](https://github.com/sohosai/sos21-backend/pull/63), [#75](https://github.com/sohosai/sos21-backend/pull/75))
-
-### Security
 
 ## [0.3.0] - 2021-03-29
 

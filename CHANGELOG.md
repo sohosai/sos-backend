@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.4.0-beta] - 2021-05-12
+
+### Added
 
 - Subowner ([#54](https://github.com/sohosai/sos21-backend/pull/54))
 - Users' category ([#57](https://github.com/sohosai/sos21-backend/pull/57))
@@ -23,15 +32,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Refactor endpoint and API specs ([#76](https://github.com/sohosai/sos21-backend/pull/76))
 - Restrict users to be assigned to only one project ([#78](https://github.com/sohosai/sos21-backend/pull/78))
 
-### Deprecated
-### Removed
 ### Fixed
 
 - Exit with non-zero exit code for errors ([#62](https://github.com/sohosai/sos21-backend/pull/62))
 - 500 when an empty query is used in the form condition ([#63](https://github.com/sohosai/sos21-backend/pull/63), [#75](https://github.com/sohosai/sos21-backend/pull/75))
 - Fix is_health query to check some missing tables ([#66](https://github.com/sohosai/sos21-backend/pull/66))
-
-### Security
 
 ## [0.3.0] - 2021-03-29
 
