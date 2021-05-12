@@ -5,6 +5,7 @@ in
 pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
     cargo
+    coreutils
     crate2nix
     findutils
     gitMinimal
