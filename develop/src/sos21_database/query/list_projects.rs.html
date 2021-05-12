@@ -235,9 +235,9 @@ INNER JOIN users AS subowners ON (subowners.assignment = &#39;project_subowner&#
         };
 
         <span class="prelude-val">Ok</span>(<span class="ident">ProjectWithOwners</span> {
+            <span class="ident">project</span>,
             <span class="ident">owner</span>,
             <span class="ident">subowner</span>,
-            <span class="ident">project</span>,
         })
     })
     .<span class="ident">boxed</span>()
