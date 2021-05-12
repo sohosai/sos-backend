@@ -1,6 +1,6 @@
 [package]
 name = "sos21-run-migrations"
-version = "0.3.0"
+version = "0.4.0-beta"
 authors = ["coord.e <me@coord-e.com>"]
 edition = "2018"
 readme = "README.md"
