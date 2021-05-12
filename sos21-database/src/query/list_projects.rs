@@ -111,9 +111,9 @@ INNER JOIN users AS subowners ON (subowners.assignment = 'project_subowner' AND 
         };
 
         Ok(ProjectWithOwners {
+            project,
             owner,
             subowner,
-            project,
         })
     })
     .boxed()

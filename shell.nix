@@ -11,4 +11,7 @@ pkgs.mkShell {
     sqlx-cli
     crate2nix
   ];
+
+  # Do not search $HOME/.cargo/bin for subcommands (rust-lang/cargo#6507)
+  CARGO_HOME = toString ./.cargo;
 }

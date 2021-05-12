@@ -116,8 +116,8 @@ WHERE projects.id = $1
     };
 
     Ok(Some(ProjectWithOwners {
+        project,
         owner,
         subowner,
-        project,
     }))
 }
