@@ -21,8 +21,8 @@ function update_cargo_version() {
   pushd "$PROJECT" &> /dev/null
   # TODO: Update value of 'package.version' precisely
   find . -name 'Cargo.toml' -exec sed -i '0,/^version = "[^"]*"$/s//version = "'"$version"'"/' {} \;
-  # TODO: find lightweight way to just update Cargo.lock from Cargo.toml
-  cargo check -q
+  # This ensures that Cargo.lock is up to date
+  cargo metadata --format-version=1 > /dev/null
   crate2nix generate > /dev/null
   popd &> /dev/null
 }
