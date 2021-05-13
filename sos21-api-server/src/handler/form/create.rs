@@ -35,6 +35,7 @@ pub enum Error {
     InvalidField { field: &'static str },
     InvalidFormItem { id: FormItemId },
     InvalidFormPeriod,
+    TooEarlyFormPeriodStart,
     DuplicatedFormItemId { id: FormItemId },
     InsufficientPermissions,
 }
@@ -45,6 +46,7 @@ impl HandlerResponse for Error {
             Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
             Error::InvalidFormItem { .. } => StatusCode::BAD_REQUEST,
             Error::InvalidFormPeriod => StatusCode::BAD_REQUEST,
+            Error::TooEarlyFormPeriodStart => StatusCode::CONFLICT,
             Error::DuplicatedFormItemId { .. } => StatusCode::BAD_REQUEST,
             Error::InsufficientPermissions => StatusCode::FORBIDDEN,
         }
@@ -75,6 +77,7 @@ impl From<create_form::Error> for Error {
             },
             create_form::Error::InvalidCondition(_) => Error::InvalidField { field: "condition" },
             create_form::Error::InvalidPeriod => Error::InvalidFormPeriod,
+            create_form::Error::TooEarlyPeriodStart => Error::TooEarlyFormPeriodStart,
             create_form::Error::InsufficientPermissions => Error::InsufficientPermissions,
         }
     }

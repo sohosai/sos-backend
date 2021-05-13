@@ -4,7 +4,7 @@ use crate::model::form_answer::item::FormAnswerItems;
 use crate::model::form_answer::{FormAnswer, FormAnswerId};
 use crate::model::permissions::Permissions;
 use crate::model::project::Project;
-use crate::model::user::{User, UserId};
+use crate::model::user::{self, User, UserId};
 use crate::{DomainError, DomainResult};
 
 use anyhow::Context;
@@ -38,6 +38,11 @@ impl FormId {
 
 #[derive(Debug, Clone)]
 pub struct Form {
+    content: FormContent,
+}
+
+#[derive(Debug, Clone)]
+pub struct FormContent {
     pub id: FormId,
     pub created_at: DateTime,
     pub author_id: UserId,
@@ -46,6 +51,30 @@ pub struct Form {
     pub period: FormPeriod,
     pub items: FormItems,
     pub condition: FormCondition,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NewFormErrorKind {
+    TooEarlyPeriodStart,
+    InsufficientPermissions,
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("failed to create a form")]
+pub struct NewFormError {
+    kind: NewFormErrorKind,
+}
+
+impl NewFormError {
+    pub fn kind(&self) -> NewFormErrorKind {
+        self.kind
+    }
+
+    fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {
+        NewFormError {
+            kind: NewFormErrorKind::InsufficientPermissions,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -91,6 +120,38 @@ impl AnswerError {
 }
 
 impl Form {
+    pub fn new(
+        author: &User,
+        name: FormName,
+        description: FormDescription,
+        period: FormPeriod,
+        items: FormItems,
+        condition: FormCondition,
+    ) -> Result<Self, NewFormError> {
+        author
+            .require_permissions(Permissions::CREATE_FORMS)
+            .map_err(NewFormError::from_permissions_error)?;
+
+        let created_at = DateTime::now();
+
+        if period.starts_at() <= created_at {
+            return Err(NewFormError {
+                kind: NewFormErrorKind::TooEarlyPeriodStart,
+            });
+        }
+
+        Ok(Form::from_content(FormContent {
+            id: FormId::from_uuid(Uuid::new_v4()),
+            created_at,
+            author_id: author.id().clone(),
+            name,
+            description,
+            period,
+            items,
+            condition,
+        }))
+    }
+
     pub async fn answer_by<C>(
         &self,
         ctx: C,
@@ -101,7 +162,7 @@ impl Form {
     where
         C: FormAnswerRepository,
     {
-        if !self.condition.check(&project) {
+        if !self.condition().check(&project) {
             return Err(DomainError::Domain(AnswerError {
                 kind: AnswerErrorKind::NotTargeted,
             }));
@@ -111,14 +172,14 @@ impl Form {
         domain_ensure!(self.is_visible_to_with_project(&user, project));
 
         let created_at = DateTime::now();
-        if !self.period.contains(created_at) {
+        if !self.period().contains(created_at) {
             return Err(DomainError::Domain(AnswerError {
                 kind: AnswerErrorKind::OutOfAnswerPeriod,
             }));
         }
 
         if ctx
-            .get_form_answer_by_form_and_project(self.id, project.id())
+            .get_form_answer_by_form_and_project(self.id(), project.id())
             .await?
             .is_some()
         {
@@ -127,7 +188,7 @@ impl Form {
             }));
         }
 
-        self.items
+        self.items()
             .check_answer(&items)
             .context("Failed to check form answers unexpectedly")?
             .map_err(|err| DomainError::Domain(AnswerError::from_check_error(err)))?;
@@ -137,9 +198,59 @@ impl Form {
             created_at,
             author_id: user.id().clone(),
             project_id: project.id(),
-            form_id: self.id,
+            form_id: self.id(),
             items,
         })
+    }
+
+    /// Restore `Form` from `FormContent`.
+    ///
+    /// This is intended to be used when the data is taken out of the implementation by [`Form::into_content`]
+    /// for persistence, internal serialization, etc.
+    /// Use [`Form::new`] to create a form.
+    pub fn from_content(content: FormContent) -> Self {
+        Form { content }
+    }
+
+    /// Convert `Form` into `FormContent`.
+    pub fn into_content(self) -> FormContent {
+        self.content
+    }
+
+    pub fn id(&self) -> FormId {
+        self.content.id
+    }
+
+    pub fn created_at(&self) -> DateTime {
+        self.content.created_at
+    }
+
+    pub fn author_id(&self) -> &UserId {
+        &self.content.author_id
+    }
+
+    pub fn name(&self) -> &FormName {
+        &self.content.name
+    }
+
+    pub fn description(&self) -> &FormDescription {
+        &self.content.description
+    }
+
+    pub fn period(&self) -> FormPeriod {
+        self.content.period
+    }
+
+    pub fn items(&self) -> &FormItems {
+        &self.content.items
+    }
+
+    pub fn condition(&self) -> &FormCondition {
+        &self.content.condition
+    }
+
+    pub fn into_items(self) -> FormItems {
+        self.content.items
     }
 
     pub fn is_visible_to(&self, user: &User) -> bool {
@@ -151,7 +262,7 @@ impl Form {
             return true;
         }
 
-        self.condition.check(project) && project.is_visible_to(user)
+        self.condition().check(project) && project.is_visible_to(user)
     }
 }
 
@@ -160,6 +271,8 @@ mod tests {
     use super::AnswerErrorKind;
 
     use crate::model::{
+        date_time::DateTime,
+        form::{Form, FormPeriod, NewFormErrorKind},
         project::{ProjectAttributes, ProjectCategory},
         project_query::{ProjectQuery, ProjectQueryConjunction},
     };
@@ -204,6 +317,79 @@ mod tests {
         assert!(form.is_visible_to_with_project(&user, &user_project));
     }
 
+    #[test]
+    fn test_create_too_early_period() {
+        let author = test_model::new_operator_user();
+        let starts_at = DateTime::from_utc(chrono::Utc::now() - chrono::Duration::hours(1));
+        let period = FormPeriod::from_datetime(starts_at, DateTime::now()).unwrap();
+        assert!(matches!(
+            Form::new(
+                &author,
+                test_model::mock_form_name(),
+                test_model::mock_form_description(),
+                period,
+                test_model::new_form_items(),
+                test_model::mock_form_condition()
+            ),
+            Err(err)
+            if err.kind() == NewFormErrorKind::TooEarlyPeriodStart
+        ));
+    }
+
+    #[test]
+    fn test_create_permission_general() {
+        let author = test_model::new_general_user();
+        assert!(matches!(
+            Form::new(
+                &author,
+                test_model::mock_form_name(),
+                test_model::mock_form_description(),
+                test_model::new_form_period_from_now(),
+                test_model::new_form_items(),
+                test_model::mock_form_condition()
+            ),
+            Err(err)
+            if err.kind() == NewFormErrorKind::InsufficientPermissions
+        ));
+    }
+
+    #[test]
+    fn test_create_permission_committee() {
+        let author = test_model::new_committee_user();
+        assert!(matches!(
+            Form::new(
+                &author,
+                test_model::mock_form_name(),
+                test_model::mock_form_description(),
+                test_model::new_form_period_from_now(),
+                test_model::new_form_items(),
+                test_model::mock_form_condition()
+            ),
+            Err(err)
+            if err.kind() == NewFormErrorKind::InsufficientPermissions
+        ));
+    }
+
+    #[test]
+    fn test_create_ok() {
+        let author = test_model::new_operator_user();
+        let starts_at = DateTime::from_utc(chrono::Utc::now() + chrono::Duration::hours(1));
+        let ends_at = DateTime::from_utc(chrono::Utc::now() + chrono::Duration::hours(2));
+        let period = FormPeriod::from_datetime(starts_at, ends_at).unwrap();
+        assert!(matches!(
+            Form::new(
+                &author,
+                test_model::mock_form_name(),
+                test_model::mock_form_description(),
+                period,
+                test_model::new_form_items(),
+                test_model::mock_form_condition()
+            ),
+            Ok(got)
+            if got.author_id() == author.id()
+        ));
+    }
+
     // TODO: test answer period
 
     #[tokio::test]
@@ -222,7 +408,7 @@ mod tests {
             .projects(vec![project.clone()])
             .forms(vec![form.clone()])
             .build();
-        let items = test_model::mock_form_answer_items(&form.items);
+        let items = test_model::mock_form_answer_items(form.items());
         assert!(matches!(
             form.answer_by(&app, &user, &project, items).await,
             Err(DomainError::Domain(err))
@@ -248,7 +434,7 @@ mod tests {
             .forms(vec![form.clone()])
             .answers(vec![answer.clone()])
             .build();
-        let items = test_model::mock_form_answer_items(&form.items);
+        let items = test_model::mock_form_answer_items(form.items());
         assert!(matches!(
             form.answer_by(&app, &user, &project, items).await,
             Err(DomainError::Domain(err))
@@ -272,11 +458,11 @@ mod tests {
             .projects(vec![project.clone()])
             .forms(vec![form.clone()])
             .build();
-        let items = test_model::mock_form_answer_items(&form.items);
+        let items = test_model::mock_form_answer_items(form.items());
         assert!(matches!(
             form.answer_by(&app, &user, &project, items).await,
             Ok(answer)
-            if answer.form_id == form.id
+            if answer.form_id == form.id()
         ));
     }
 }

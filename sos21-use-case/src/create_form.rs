@@ -4,9 +4,7 @@ use crate::model::form::{Form, FormCondition, FormItem};
 
 use anyhow::Context;
 use sos21_domain::context::{FormRepository, Login};
-use sos21_domain::model::permissions::Permissions;
-use sos21_domain::model::{date_time::DateTime, form, user};
-use uuid::Uuid;
+use sos21_domain::model::{date_time::DateTime, form};
 
 #[derive(Debug, Clone)]
 pub struct Input {
@@ -23,16 +21,13 @@ pub enum Error {
     InvalidName,
     InvalidDescription,
     InvalidPeriod,
+    TooEarlyPeriodStart,
     InvalidItems(interface::form::FormItemsError),
     InvalidCondition(interface::form::FormConditionError),
     InsufficientPermissions,
 }
 
 impl Error {
-    fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {
-        Error::InsufficientPermissions
-    }
-
     fn from_name_error(_err: form::name::NameError) -> Self {
         Error::InvalidName
     }
@@ -52,6 +47,13 @@ impl Error {
     fn from_condition_error(err: interface::form::FormConditionError) -> Self {
         Error::InvalidCondition(err)
     }
+
+    fn from_new_form_error(err: form::NewFormError) -> Self {
+        match err.kind() {
+            form::NewFormErrorKind::TooEarlyPeriodStart => Error::TooEarlyPeriodStart,
+            form::NewFormErrorKind::InsufficientPermissions => Error::InsufficientPermissions,
+        }
+    }
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -60,10 +62,6 @@ where
     C: FormRepository + Send + Sync,
 {
     let login_user = ctx.login_user();
-
-    login_user
-        .require_permissions(Permissions::CREATE_FORMS)
-        .map_err(|err| UseCaseError::UseCase(Error::from_permissions_error(err)))?;
 
     let name = form::FormName::from_string(input.name)
         .map_err(|err| UseCaseError::UseCase(Error::from_name_error(err)))?;
@@ -78,16 +76,8 @@ where
     let period = form::FormPeriod::from_datetime(starts_at, ends_at)
         .map_err(|err| UseCaseError::UseCase(Error::from_period_error(err)))?;
 
-    let form = form::Form {
-        id: form::FormId::from_uuid(Uuid::new_v4()),
-        created_at: DateTime::now(),
-        author_id: login_user.id().clone(),
-        name,
-        description,
-        period,
-        items,
-        condition,
-    };
+    let form = form::Form::new(login_user, name, description, period, items, condition)
+        .map_err(|err| UseCaseError::UseCase(Error::from_new_form_error(err)))?;
     ctx.store_form(form.clone())
         .await
         .context("Failed to store a form")?;
@@ -102,7 +92,7 @@ mod tests {
         user::UserId,
     };
     use crate::{create_form, get_form, UseCaseError};
-    use sos21_domain::test;
+    use sos21_domain::{model::date_time, test};
 
     // Checks that the normal user cannot create forms.
     #[tokio::test]
@@ -115,7 +105,9 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let period = test::model::mock_form_period();
+        let period = test::model::mock_form_period_with_start(date_time::DateTime::from_utc(
+            chrono::Utc::now() + chrono::Duration::hours(1),
+        ));
         let input = create_form::Input {
             name: test::model::mock_form_name().into_string(),
             description: test::model::mock_form_description().into_string(),
@@ -147,7 +139,9 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let period = test::model::mock_form_period();
+        let period = test::model::mock_form_period_with_start(date_time::DateTime::from_utc(
+            chrono::Utc::now() + chrono::Duration::hours(1),
+        ));
         let input = create_form::Input {
             name: test::model::mock_form_name().into_string(),
             description: test::model::mock_form_description().into_string(),
@@ -179,7 +173,9 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let period = test::model::mock_form_period();
+        let period = test::model::mock_form_period_with_start(date_time::DateTime::from_utc(
+            chrono::Utc::now() + chrono::Duration::hours(1),
+        ));
         let name = "テストテストテスト".to_string();
         let input = create_form::Input {
             name: name.clone(),
@@ -201,5 +197,38 @@ mod tests {
         assert!(got.author_id == UserId::from_entity(user.id().clone()));
 
         assert!(matches!(get_form::run(&app, got.id).await, Ok(_)));
+    }
+
+    #[tokio::test]
+    async fn test_create_too_early_period() {
+        let user = test::model::new_operator_user();
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let period = test::model::mock_form_period_with_start(date_time::DateTime::from_utc(
+            chrono::Utc::now() - chrono::Duration::hours(1),
+        ));
+        let input = create_form::Input {
+            name: test::model::mock_form_name().into_string(),
+            description: test::model::mock_form_description().into_string(),
+            starts_at: period.starts_at().utc(),
+            ends_at: period.ends_at().utc(),
+            items: test::model::new_form_items()
+                .into_items()
+                .map(FormItem::from_entity)
+                .collect(),
+            condition: FormCondition::from_entity(test::model::mock_form_condition()),
+        };
+
+        assert!(matches!(
+            create_form::run(&app, input).await,
+            Err(UseCaseError::UseCase(
+                create_form::Error::TooEarlyPeriodStart
+            ))
+        ));
     }
 }

@@ -148,7 +148,7 @@ mod tests {
 
         let input = get_project_form_answer_shared_file_object::Input {
             project_id: ProjectId::from_entity(other_project.id()),
-            form_id: FormId::from_entity(form.id),
+            form_id: FormId::from_entity(form.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -190,7 +190,7 @@ mod tests {
 
         let input = get_project_form_answer_shared_file_object::Input {
             project_id: ProjectId::from_entity(project.id()),
-            form_id: FormId::from_entity(form.id),
+            form_id: FormId::from_entity(form.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -239,7 +239,7 @@ mod tests {
 
         let input = get_project_form_answer_shared_file_object::Input {
             project_id: ProjectId::from_entity(project.id()),
-            form_id: FormId::from_entity(form.id),
+            form_id: FormId::from_entity(form.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -285,7 +285,7 @@ mod tests {
 
         let input = get_project_form_answer_shared_file_object::Input {
             project_id: ProjectId::from_entity(project.id()),
-            form_id: FormId::from_entity(form.id),
+            form_id: FormId::from_entity(form.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -329,7 +329,7 @@ mod tests {
 
         let input = get_project_form_answer_shared_file_object::Input {
             project_id: ProjectId::from_entity(project.id()),
-            form_id: FormId::from_entity(form.id),
+            form_id: FormId::from_entity(form.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(

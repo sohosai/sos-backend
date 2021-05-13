@@ -131,9 +131,9 @@ pub fn new_form_answer(author_id: UserId, project_id: ProjectId, form: &Form) ->
     FormAnswer {
         id: new_form_answer_id(),
         project_id,
-        form_id: form.id,
+        form_id: form.id(),
         created_at: DateTime::now(),
         author_id,
-        items: mock_form_answer_items(&form.items),
+        items: mock_form_answer_items(form.items()),
     }
 }

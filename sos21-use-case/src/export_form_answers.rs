@@ -67,7 +67,7 @@ where
     };
 
     let answers = ctx
-        .list_form_answers(form.id)
+        .list_form_answers(form.id())
         .await
         .context("Failed to list form answers")?;
     use_case_ensure!(answers
@@ -118,7 +118,7 @@ where
     write_field!(writer, project_id);
     write_field!(writer, author_id);
 
-    for item in form.items.items() {
+    for item in form.items().items() {
         use form::item::FormItemBody;
         match &item.body {
             FormItemBody::Checkbox(checkbox_item) => {
@@ -190,7 +190,7 @@ where
             sharing_ids,
         })
     };
-    for (item, answer_item) in form.items.items().zip(answer.items.into_items()) {
+    for (item, answer_item) in form.items().items().zip(answer.items.into_items()) {
         write_item_fields(writer, render, item, answer_item)?;
     }
 
@@ -306,7 +306,7 @@ mod tests {
         let project2 = test::model::new_general_project(login_user.id().clone());
 
         let form1 = test::model::new_form(operator.id().clone());
-        let form1_id = FormId::from_entity(form1.id);
+        let form1_id = FormId::from_entity(form1.id());
         let form1_answer1 =
             test::model::new_form_answer(login_user.id().clone(), project1.id(), &form1);
         let form1_answer2 =

@@ -42,7 +42,7 @@ where
         None => return Err(UseCaseError::UseCase(Error::FormNotFound)),
     };
 
-    if !form.condition.check(&project) || !form.is_visible_to_with_project(login_user, &project) {
+    if !form.condition().check(&project) || !form.is_visible_to_with_project(login_user, &project) {
         return Err(UseCaseError::UseCase(Error::FormNotFound));
     }
 
@@ -76,7 +76,7 @@ mod tests {
             get_project_form::run(
                 &app,
                 ProjectId::from_entity(project_other.id()),
-                FormId::from_entity(form.id)
+                FormId::from_entity(form.id())
             )
             .await,
             Err(UseCaseError::UseCase(
@@ -100,11 +100,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form.id);
+        let form_id = FormId::from_entity(form.id());
         assert!(matches!(
             get_project_form::run(&app, ProjectId::from_entity(project.id()), form_id).await,
             Ok(got)
-            if got.id == form_id && got.name == form.name.into_string()
+            if got.id == form_id && got.name == form.name().as_str()
         ));
     }
 
@@ -125,11 +125,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form.id);
+        let form_id = FormId::from_entity(form.id());
         assert!(matches!(
             get_project_form::run(&app, ProjectId::from_entity(project.id()), form_id).await,
             Ok(got)
-            if got.id == form_id && got.name == form.name.into_string()
+            if got.id == form_id && got.name == form.name().as_str()
         ));
     }
 
@@ -169,7 +169,7 @@ mod tests {
             get_project_form::run(
                 &app,
                 ProjectId::from_entity(project.id()),
-                FormId::from_entity(form.id)
+                FormId::from_entity(form.id())
             )
             .await,
             Err(UseCaseError::UseCase(get_project_form::Error::FormNotFound))
@@ -192,11 +192,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form.id);
+        let form_id = FormId::from_entity(form.id());
         assert!(matches!(
             get_project_form::run(&app, ProjectId::from_entity(project_other.id()), form_id).await,
             Ok(got)
-            if got.id == form_id && got.name == form.name.into_string()
+            if got.id == form_id && got.name == form.name().as_str()
         ));
     }
 
@@ -216,11 +216,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form.id);
+        let form_id = FormId::from_entity(form.id());
         assert!(matches!(
             get_project_form::run(&app, ProjectId::from_entity(project_other.id()), form_id).await,
             Ok(got)
-            if got.id == form_id && got.name == form.name.into_string()
+            if got.id == form_id && got.name == form.name().as_str()
         ));
     }
 }

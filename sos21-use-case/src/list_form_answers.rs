@@ -73,7 +73,7 @@ mod tests {
         let form2_answer2 =
             test::model::new_form_answer(login_user.id().clone(), project2.id(), &form2);
 
-        let form1_id = FormId::from_entity(form1.id);
+        let form1_id = FormId::from_entity(form1.id());
         let mut expected = HashSet::new();
         expected.insert(FormAnswerId::from_entity(form1_answer1.id));
         expected.insert(FormAnswerId::from_entity(form1_answer2.id));

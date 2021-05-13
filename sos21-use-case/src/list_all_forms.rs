@@ -47,8 +47,8 @@ mod tests {
         let form2 = test::model::new_form(other.id().clone());
 
         let mut expected = HashSet::new();
-        expected.insert(FormId::from_entity(form1.id));
-        expected.insert(FormId::from_entity(form2.id));
+        expected.insert(FormId::from_entity(form1.id()));
+        expected.insert(FormId::from_entity(form2.id()));
 
         let app = test::build_mock_app()
             .users(vec![login_user.clone(), other.clone()])

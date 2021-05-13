@@ -84,7 +84,7 @@ mod tests {
             get_project_form_answer::run(
                 &app,
                 ProjectId::from_entity(project_other.id()),
-                FormId::from_entity(form.id),
+                FormId::from_entity(form.id()),
             )
             .await,
             Err(UseCaseError::UseCase(
@@ -113,7 +113,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_form_answer::run(&app, ProjectId::from_entity(project_other.id()), FormId::from_entity(form.id)).await,
+            get_project_form_answer::run(&app, ProjectId::from_entity(project_other.id()), FormId::from_entity(form.id())).await,
             Ok(got)
             if got.id == FormAnswerId::from_entity(answer_other.id)
         ));
@@ -139,7 +139,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_form_answer::run(&app, ProjectId::from_entity(project_other.id()), FormId::from_entity(form.id)).await,
+            get_project_form_answer::run(&app, ProjectId::from_entity(project_other.id()), FormId::from_entity(form.id())).await,
             Ok(got)
             if got.id == FormAnswerId::from_entity(answer_other.id)
         ));

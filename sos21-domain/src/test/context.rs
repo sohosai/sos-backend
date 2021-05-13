@@ -208,7 +208,7 @@ impl MockAppBuilder {
             .forms
             .clone()
             .into_iter()
-            .map(|form| (form.id, form))
+            .map(|form| (form.id(), form))
             .collect();
         let answers = self
             .answers
@@ -376,7 +376,7 @@ impl ProjectRepository for MockApp {
 #[async_trait::async_trait]
 impl FormRepository for MockApp {
     async fn store_form(&self, form: Form) -> Result<()> {
-        self.forms.lock().await.insert(form.id, form);
+        self.forms.lock().await.insert(form.id(), form);
         Ok(())
     }
 
@@ -395,7 +395,7 @@ impl FormRepository for MockApp {
             .lock()
             .await
             .values()
-            .filter(|form| form.condition.check(&project))
+            .filter(|form| form.condition().check(&project))
             .cloned()
             .collect())
     }

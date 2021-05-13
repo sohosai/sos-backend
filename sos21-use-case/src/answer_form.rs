@@ -89,7 +89,7 @@ where
     };
 
     // NOTE: Check the answer period before the validation for the convenience of clients
-    if !form.period.contains(DateTime::now()) {
+    if !form.period().contains(DateTime::now()) {
         return Err(UseCaseError::UseCase(Error::OutOfAnswerPeriod));
     }
 
@@ -142,12 +142,12 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form.id);
+        let form_id = FormId::from_entity(form.id());
         let project_id = ProjectId::from_entity(project.id());
         let input = answer_form::Input {
             form_id,
             project_id,
-            items: test_interface::mock_input_form_answer_items(&form.items),
+            items: test_interface::mock_input_form_answer_items(form.items()),
         };
 
         let got = answer_form::run(&app, input).await.unwrap();
@@ -176,12 +176,12 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form.id);
+        let form_id = FormId::from_entity(form.id());
         let project_id = ProjectId::from_entity(project.id());
         let input = answer_form::Input {
             form_id,
             project_id,
-            items: test_interface::mock_input_form_answer_items(&form.items),
+            items: test_interface::mock_input_form_answer_items(form.items()),
         };
 
         let got = answer_form::run(&app, input).await.unwrap();
@@ -210,12 +210,12 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form.id);
+        let form_id = FormId::from_entity(form.id());
         let project_id = ProjectId::from_entity(project.id());
         let input = answer_form::Input {
             form_id,
             project_id,
-            items: test_interface::mock_input_form_answer_items(&form.items),
+            items: test_interface::mock_input_form_answer_items(form.items()),
         };
 
         assert!(matches!(
@@ -239,9 +239,10 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form.id);
+        let form_id = FormId::from_entity(form.id());
         let project_id = ProjectId::from_entity(project.id());
-        let item = test_interface::mock_input_form_answer_item(form.items.items().next().unwrap());
+        let item =
+            test_interface::mock_input_form_answer_item(form.items().items().next().unwrap());
         let input = answer_form::Input {
             form_id,
             project_id,
@@ -291,7 +292,7 @@ mod tests {
                 interface::form_answer::InputFormAnswerItemFile::File(FileId::from_entity(file.id)),
             ])),
         };
-        let form_id = FormId::from_entity(form.id);
+        let form_id = FormId::from_entity(form.id());
         let project_id = ProjectId::from_entity(project.id());
         let input = answer_form::Input {
             form_id,
