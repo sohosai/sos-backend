@@ -3282,6 +3282,172 @@ paths:
       tags:
         - form
         - committee
+  /form/update:
+    post:
+      summary: form/update
+      operationId: form/update
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  form:
+                    $ref: ./model/form/Form.yml
+                required:
+                  - form
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            oneOf:
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FIELD
+                                  field:
+                                    type: string
+                                required:
+                                  - type
+                                  - field
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FORM_ITEM
+                                      - DUPLICATED_FORM_ITEM_ID
+                                  id:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - id
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FORM_PERIOD
+                                required:
+                                  - type
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/FormNotFound"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - TOO_EARLY_FORM_PERIOD_START
+                                  - ALREADY_STARTED_FORM
+                    required:
+                      - status
+                      - error
+              examples:
+                Too early form period start:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: TOO_EARLY_FORM_PERIOD_START
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 申請を更新します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  $ref: ./model/form/FormId.yml
+                name:
+                  type: string
+                  nullable: true
+                description:
+                  type: string
+                  nullable: true
+                starts_at:
+                  oneOf:
+                    - $ref: ./model/DateTime.yml
+                    - $ref: ./model/Null.yml
+                ends_at:
+                  oneOf:
+                    - $ref: ./model/DateTime.yml
+                    - $ref: ./model/Null.yml
+                items:
+                  type: array
+                  nullable: true
+                  items:
+                    $ref: ./model/form/item/FormItem.yml
+                condition:
+                  oneOf:
+                    - $ref: ./model/form/FormCondition.yml
+                    - $ref: ./model/Null.yml
+              required:
+                - id
+                - name
+                - description
+                - starts_at
+                - ends_at
+                - items
+                - condition
+      tags:
+        - form
+        - committee
   /form/answer/list:
     get:
       summary: form/answer/list

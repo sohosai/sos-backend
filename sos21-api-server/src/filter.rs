@@ -148,6 +148,7 @@ pub fn endpoints(
             / "get" => GET (handler::form::get),
             / "list" => GET (handler::form::list),
             / "create" => POST (handler::form::create),
+            / "update" => POST (handler::form::update),
             / "answer" {
                 / "list" => GET (handler::form::answer::list),
                 / "export" => GET (handler::form::answer::export),
