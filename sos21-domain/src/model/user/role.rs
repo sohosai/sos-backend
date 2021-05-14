@@ -25,6 +25,7 @@ impl UserRole {
                 UserRole::Committee.permissions()
                     | Permissions::READ_ALL_USERS
                     | Permissions::CREATE_FORMS
+                    | Permissions::UPDATE_NOT_STARTED_OWNING_FORMS
                     | Permissions::DISTRIBUTE_FILES
                     | Permissions::CREATE_REGISTRATION_FORMS
             }

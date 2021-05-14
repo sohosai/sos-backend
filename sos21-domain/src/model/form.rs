@@ -252,6 +252,106 @@ impl Form {
     pub fn into_items(self) -> FormItems {
         self.content.items
     }
+}
+
+#[derive(Debug, Clone, Error)]
+#[error("insufficient permissions to update forms")]
+pub struct NoUpdatePermissionError {
+    _priv: (),
+}
+
+impl NoUpdatePermissionError {
+    fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {
+        NoUpdatePermissionError { _priv: () }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SetPeriodErrorKind {
+    TooEarlyPeriodStart,
+    InsufficientPermissions,
+}
+
+#[derive(Debug, Clone, Error)]
+#[error("failed to update form period")]
+pub struct SetPeriodError {
+    kind: SetPeriodErrorKind,
+}
+
+impl SetPeriodError {
+    pub fn kind(&self) -> SetPeriodErrorKind {
+        self.kind
+    }
+
+    fn from_permissions_error(_err: NoUpdatePermissionError) -> Self {
+        SetPeriodError {
+            kind: SetPeriodErrorKind::InsufficientPermissions,
+        }
+    }
+}
+
+impl Form {
+    fn require_update_permission(&self, user: &User) -> Result<(), NoUpdatePermissionError> {
+        let now = DateTime::now();
+        let permission = if self.author_id() == user.id() && now < self.period().starts_at() {
+            Permissions::UPDATE_NOT_STARTED_OWNING_FORMS
+        } else {
+            Permissions::UPDATE_ALL_FORMS
+        };
+
+        user.require_permissions(permission)
+            .map_err(NoUpdatePermissionError::from_permissions_error)
+    }
+
+    pub fn set_name(&mut self, user: &User, name: FormName) -> Result<(), NoUpdatePermissionError> {
+        self.require_update_permission(user)?;
+        self.content.name = name;
+        Ok(())
+    }
+
+    pub fn set_description(
+        &mut self,
+        user: &User,
+        description: FormDescription,
+    ) -> Result<(), NoUpdatePermissionError> {
+        self.require_update_permission(user)?;
+        self.content.description = description;
+        Ok(())
+    }
+
+    pub fn set_period(&mut self, user: &User, period: FormPeriod) -> Result<(), SetPeriodError> {
+        self.require_update_permission(user)
+            .map_err(SetPeriodError::from_permissions_error)?;
+
+        if period.starts_at() <= DateTime::now() {
+            return Err(SetPeriodError {
+                kind: SetPeriodErrorKind::TooEarlyPeriodStart,
+            });
+        }
+
+        self.content.period = period;
+        Ok(())
+    }
+
+    pub fn set_items(
+        &mut self,
+        user: &User,
+        items: FormItems,
+    ) -> Result<(), NoUpdatePermissionError> {
+        self.require_update_permission(user)?;
+        self.content.items = items;
+        Ok(())
+    }
+
+    pub fn set_condition(
+        &mut self,
+        user: &User,
+        condition: FormCondition,
+    ) -> Result<(), NoUpdatePermissionError> {
+        self.require_update_permission(user)?;
+        self.content.condition = condition;
+        Ok(())
+    }
 
     pub fn is_visible_to(&self, user: &User) -> bool {
         user.permissions().contains(Permissions::READ_ALL_FORMS)
@@ -268,11 +368,13 @@ impl Form {
 
 #[cfg(test)]
 mod tests {
-    use super::AnswerErrorKind;
+    use super::{
+        AnswerErrorKind, Form, FormName, FormPeriod, NewFormErrorKind, NoUpdatePermissionError,
+        SetPeriodErrorKind,
+    };
 
     use crate::model::{
         date_time::DateTime,
-        form::{Form, FormPeriod, NewFormErrorKind},
         project::{ProjectAttributes, ProjectCategory},
         project_query::{ProjectQuery, ProjectQueryConjunction},
     };
@@ -463,6 +565,78 @@ mod tests {
             form.answer_by(&app, &user, &project, items).await,
             Ok(answer)
             if answer.form_id == form.id()
+        ));
+    }
+
+    #[test]
+    fn test_update_name_other_operator() {
+        let author = test_model::new_operator_user();
+        let other = test_model::new_operator_user();
+        let period = test_model::new_form_period_with_hours_from_now(1);
+        let mut form = test_model::new_form_with_period(author.id().clone(), period);
+        let name = test_model::mock_form_name();
+        assert!(matches!(
+            form.set_name(&other, name),
+            Err(NoUpdatePermissionError { .. })
+        ));
+    }
+
+    #[test]
+    fn test_update_name_other_admin_after_start() {
+        let author = test_model::new_operator_user();
+        let other = test_model::new_admin_user();
+        let period = test_model::new_form_period_with_hours_from_now(-1);
+        let mut form = test_model::new_form_with_period(author.id().clone(), period);
+        let name = FormName::from_string("アアア").unwrap();
+        form.set_name(&other, name.clone()).unwrap();
+        assert_eq!(form.name(), &name);
+    }
+
+    #[test]
+    fn test_update_name_author_committee() {
+        let author = test_model::new_committee_user();
+        let period = test_model::new_form_period_with_hours_from_now(1);
+        let mut form = test_model::new_form_with_period(author.id().clone(), period);
+        let name = test_model::mock_form_name();
+        assert!(matches!(
+            form.set_name(&author, name),
+            Err(NoUpdatePermissionError { .. })
+        ));
+    }
+
+    #[test]
+    fn test_update_name_author_operator_before_start() {
+        let author = test_model::new_operator_user();
+        let period = test_model::new_form_period_with_hours_from_now(1);
+        let mut form = test_model::new_form_with_period(author.id().clone(), period);
+        let name = FormName::from_string("アアア").unwrap();
+        form.set_name(&author, name.clone()).unwrap();
+        assert_eq!(form.name(), &name);
+    }
+
+    #[test]
+    fn test_update_name_author_operator_after_start() {
+        let author = test_model::new_operator_user();
+        let period = test_model::new_form_period_with_hours_from_now(-1);
+        let mut form = test_model::new_form_with_period(author.id().clone(), period);
+        let name = FormName::from_string("アアア").unwrap();
+        assert!(matches!(
+            form.set_name(&author, name),
+            Err(NoUpdatePermissionError { .. })
+        ));
+    }
+
+    #[test]
+    fn test_update_period_too_early() {
+        let author = test_model::new_operator_user();
+        let period = test_model::new_form_period_with_hours_from_now(1);
+        let mut form = test_model::new_form_with_period(author.id().clone(), period);
+        let starts_at = DateTime::from_utc(chrono::Utc::now() - chrono::Duration::hours(1));
+        let period = FormPeriod::from_datetime(starts_at, DateTime::now()).unwrap();
+        assert!(matches!(
+            form.set_period(&author, period),
+            Err(err)
+            if err.kind() == SetPeriodErrorKind::TooEarlyPeriodStart
         ));
     }
 }

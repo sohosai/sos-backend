@@ -35,12 +35,31 @@ pub fn new_form_period_from_now() -> FormPeriod {
     mock_form_period_with_start(DateTime::now())
 }
 
+pub fn new_form_period_with_hours_from_now(hours: i64) -> FormPeriod {
+    mock_form_period_with_start(DateTime::from_utc(
+        chrono::Utc::now() + chrono::Duration::hours(hours),
+    ))
+}
+
 pub fn mock_form_condition() -> FormCondition {
     FormCondition {
         query: test_model::mock_project_query(),
         includes: FormConditionProjectSet::from_projects(Vec::new()).unwrap(),
         excludes: FormConditionProjectSet::from_projects(Vec::new()).unwrap(),
     }
+}
+
+pub fn new_form_with_period(author_id: UserId, period: FormPeriod) -> Form {
+    Form::from_content(FormContent {
+        id: new_form_id(),
+        created_at: DateTime::now(),
+        author_id,
+        name: mock_form_name(),
+        description: mock_form_description(),
+        period,
+        items: new_form_items(),
+        condition: mock_form_condition(),
+    })
 }
 
 pub fn new_form_with_items(author_id: UserId, items: FormItems) -> Form {
