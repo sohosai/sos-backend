@@ -96,10 +96,7 @@ mod tests {
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
-            file_sharing::FileSharingScope::FormAnswer(
-                other_answer.project_id,
-                other_answer.form_id,
-            ),
+            file_sharing::FileSharingScope::form_answer_scope(&other_answer),
         );
 
         let app = test::build_mock_app()
@@ -116,7 +113,7 @@ mod tests {
             .await;
 
         let input = get_form_answer_shared_file_object::Input {
-            answer_id: FormAnswerId::from_entity(other_answer.id),
+            answer_id: FormAnswerId::from_entity(other_answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -141,10 +138,7 @@ mod tests {
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
-            file_sharing::FileSharingScope::FormAnswer(
-                other_answer.project_id,
-                other_answer.form_id,
-            ),
+            file_sharing::FileSharingScope::form_answer_scope(&other_answer),
         );
 
         let app = test::build_mock_app()
@@ -161,7 +155,7 @@ mod tests {
             .await;
 
         let input = get_form_answer_shared_file_object::Input {
-            answer_id: FormAnswerId::from_entity(other_answer.id),
+            answer_id: FormAnswerId::from_entity(other_answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -189,10 +183,7 @@ mod tests {
 
         let sharing = file_sharing::FileSharing::new(
             other_file.id,
-            file_sharing::FileSharingScope::FormAnswer(
-                other_answer.project_id,
-                other_answer.form_id,
-            ),
+            file_sharing::FileSharingScope::form_answer_scope(&other_answer),
         );
 
         let app = test::build_mock_app()
@@ -209,7 +200,7 @@ mod tests {
             .await;
 
         let input = get_form_answer_shared_file_object::Input {
-            answer_id: FormAnswerId::from_entity(answer.id),
+            answer_id: FormAnswerId::from_entity(answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -234,10 +225,7 @@ mod tests {
 
         let mut sharing = file_sharing::FileSharing::new(
             other_file.id,
-            file_sharing::FileSharingScope::FormAnswer(
-                other_answer.project_id,
-                other_answer.form_id,
-            ),
+            file_sharing::FileSharingScope::form_answer_scope(&other_answer),
         );
         sharing.revoke().unwrap();
 
@@ -255,7 +243,7 @@ mod tests {
             .await;
 
         let input = get_form_answer_shared_file_object::Input {
-            answer_id: FormAnswerId::from_entity(other_answer.id),
+            answer_id: FormAnswerId::from_entity(other_answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -282,10 +270,7 @@ mod tests {
 
         let sharing = test::model::new_expired_file_sharing(
             other_file.id,
-            file_sharing::FileSharingScope::FormAnswer(
-                other_answer.project_id,
-                other_answer.form_id,
-            ),
+            file_sharing::FileSharingScope::form_answer_scope(&other_answer),
         );
 
         let app = test::build_mock_app()
@@ -302,7 +287,7 @@ mod tests {
             .await;
 
         let input = get_form_answer_shared_file_object::Input {
-            answer_id: FormAnswerId::from_entity(other_answer.id),
+            answer_id: FormAnswerId::from_entity(other_answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(

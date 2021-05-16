@@ -1,9 +1,13 @@
+use crate::context::FormAnswerRepository;
 use crate::model::date_time::DateTime;
-use crate::model::form::FormId;
+use crate::model::form::{self, Form, FormId};
 use crate::model::permissions::Permissions;
 use crate::model::project::{Project, ProjectId};
 use crate::model::user::{User, UserId};
+use crate::{DomainError, DomainResult};
 
+use anyhow::Context;
+use thiserror::Error;
 use uuid::Uuid;
 
 pub mod item;
@@ -23,7 +27,7 @@ impl FormAnswerId {
 }
 
 #[derive(Debug, Clone)]
-pub struct FormAnswer {
+pub struct FormAnswerContent {
     pub id: FormAnswerId,
     pub project_id: ProjectId,
     pub form_id: FormId,
@@ -32,7 +36,131 @@ pub struct FormAnswer {
     pub items: FormAnswerItems,
 }
 
+#[derive(Debug, Clone)]
+pub struct FormAnswer {
+    content: FormAnswerContent,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NewFormAnswerErrorKind {
+    AlreadyAnswered,
+    MismatchedItemsLength,
+    MismatchedItemId {
+        expected: form::item::FormItemId,
+        got: form::item::FormItemId,
+    },
+    InvalidItem {
+        id: form::item::FormItemId,
+        kind: form::item::CheckAnswerItemErrorKind,
+    },
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("unable to create form answer")]
+pub struct NewFormAnswerError {
+    kind: NewFormAnswerErrorKind,
+}
+
+impl NewFormAnswerError {
+    pub fn kind(&self) -> NewFormAnswerErrorKind {
+        self.kind
+    }
+
+    fn from_check_error(err: form::item::CheckAnswerError) -> Self {
+        let kind = match err.kind() {
+            form::item::CheckAnswerErrorKind::MismatchedItemsLength => {
+                NewFormAnswerErrorKind::MismatchedItemsLength
+            }
+            form::item::CheckAnswerErrorKind::MismatchedItemId { expected, got } => {
+                NewFormAnswerErrorKind::MismatchedItemId { expected, got }
+            }
+            form::item::CheckAnswerErrorKind::Item(id, kind) => {
+                NewFormAnswerErrorKind::InvalidItem { id, kind }
+            }
+        };
+
+        NewFormAnswerError { kind }
+    }
+}
+
 impl FormAnswer {
+    pub async fn new<C>(
+        ctx: C,
+        author: &User,
+        project: &Project,
+        form: &Form,
+        items: FormAnswerItems,
+    ) -> DomainResult<Self, NewFormAnswerError>
+    where
+        C: FormAnswerRepository,
+    {
+        if ctx
+            .get_form_answer_by_form_and_project(form.id(), project.id())
+            .await?
+            .is_some()
+        {
+            return Err(DomainError::Domain(NewFormAnswerError {
+                kind: NewFormAnswerErrorKind::AlreadyAnswered,
+            }));
+        }
+
+        form.items()
+            .check_answer(&items)
+            .context("Failed to check form answers unexpectedly")?
+            .map_err(|err| DomainError::Domain(NewFormAnswerError::from_check_error(err)))?;
+
+        Ok(FormAnswer::from_content(FormAnswerContent {
+            id: FormAnswerId::from_uuid(Uuid::new_v4()),
+            created_at: DateTime::now(),
+            author_id: author.id().clone(),
+            project_id: project.id(),
+            form_id: form.id(),
+            items,
+        }))
+    }
+
+    /// Restore `FormAnswer` from `FormAnswerContent`.
+    ///
+    /// This is intended to be used when the data is taken out of the implementation by [`FormAnswer::into_content`]
+    /// for persistence, internal serialization, etc.
+    /// Use [`FormAnswer::new`] to create a form answer.
+    pub fn from_content(content: FormAnswerContent) -> Self {
+        FormAnswer { content }
+    }
+
+    /// Convert `FormAnswer` into `FormAnswerContent`.
+    pub fn into_content(self) -> FormAnswerContent {
+        self.content
+    }
+
+    pub fn id(&self) -> FormAnswerId {
+        self.content.id
+    }
+
+    pub fn project_id(&self) -> ProjectId {
+        self.content.project_id
+    }
+
+    pub fn form_id(&self) -> FormId {
+        self.content.form_id
+    }
+
+    pub fn created_at(&self) -> DateTime {
+        self.content.created_at
+    }
+
+    pub fn author_id(&self) -> &UserId {
+        &self.content.author_id
+    }
+
+    pub fn items(&self) -> &FormAnswerItems {
+        &self.content.items
+    }
+
+    pub fn into_items(self) -> FormAnswerItems {
+        self.content.items
+    }
+
     pub fn is_visible_to(&self, user: &User) -> bool {
         user.permissions()
             .contains(Permissions::READ_ALL_FORM_ANSWERS)
@@ -43,7 +171,7 @@ impl FormAnswer {
             return true;
         }
 
-        self.project_id == project.id() && project.is_visible_to(user)
+        self.project_id() == project.id() && project.is_visible_to(user)
     }
 }
 

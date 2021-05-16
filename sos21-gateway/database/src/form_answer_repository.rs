@@ -6,7 +6,7 @@ use sos21_domain::context::FormAnswerRepository;
 use sos21_domain::model::{
     date_time::DateTime,
     form::FormId,
-    form_answer::{FormAnswer, FormAnswerId},
+    form_answer::{FormAnswer, FormAnswerContent, FormAnswerId},
     project::ProjectId,
     user::UserId,
 };
@@ -77,25 +77,25 @@ fn to_form_answer(answer: data::form_answer::FormAnswer) -> Result<FormAnswer> {
         items,
     } = answer;
 
-    Ok(FormAnswer {
+    Ok(FormAnswer::from_content(FormAnswerContent {
         id: FormAnswerId::from_uuid(id),
         project_id: ProjectId::from_uuid(project_id),
         form_id: FormId::from_uuid(form_id),
         created_at: DateTime::from_utc(created_at),
         author_id: UserId(author_id),
         items: serde_json::from_value(items)?,
-    })
+    }))
 }
 
 fn from_form_answer(answer: FormAnswer) -> Result<data::form_answer::FormAnswer> {
-    let FormAnswer {
+    let FormAnswerContent {
         id,
         project_id,
         form_id,
         created_at,
         author_id,
         items,
-    } = answer;
+    } = answer.into_content();
 
     Ok(data::form_answer::FormAnswer {
         id: id.to_uuid(),

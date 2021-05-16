@@ -63,7 +63,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_form_answer::run(&app, FormAnswerId::from_entity(answer.id)).await,
+            get_form_answer::run(&app, FormAnswerId::from_entity(answer.id())).await,
             Err(UseCaseError::UseCase(
                 get_form_answer::Error::InsufficientPermissions
             ))
@@ -88,7 +88,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let answer_id = FormAnswerId::from_entity(answer.id);
+        let answer_id = FormAnswerId::from_entity(answer.id());
         assert!(matches!(
             get_form_answer::run(&app, answer_id).await,
             Ok(got)
@@ -114,7 +114,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let answer_id = FormAnswerId::from_entity(answer.id);
+        let answer_id = FormAnswerId::from_entity(answer.id());
         assert!(matches!(
             get_form_answer::run(&app, answer_id).await,
             Ok(got)

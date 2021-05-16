@@ -14,7 +14,7 @@ use crate::model::{
             FormAnswerItemFileSharings, FormAnswerItemGridRows, FormAnswerItemText,
             FormAnswerItems, GridRadioRowAnswer,
         },
-        FormAnswer, FormAnswerId,
+        FormAnswer, FormAnswerContent, FormAnswerId,
     },
     project::ProjectId,
     user::UserId,
@@ -128,12 +128,12 @@ pub fn mock_form_answer_items(items: &FormItems) -> FormAnswerItems {
 }
 
 pub fn new_form_answer(author_id: UserId, project_id: ProjectId, form: &Form) -> FormAnswer {
-    FormAnswer {
+    FormAnswer::from_content(FormAnswerContent {
         id: new_form_answer_id(),
         project_id,
         form_id: form.id(),
         created_at: DateTime::now(),
         author_id,
         items: mock_form_answer_items(form.items()),
-    }
+    })
 }

@@ -1,13 +1,12 @@
 use crate::context::FormAnswerRepository;
 use crate::model::date_time::DateTime;
 use crate::model::form_answer::item::FormAnswerItems;
-use crate::model::form_answer::{FormAnswer, FormAnswerId};
+use crate::model::form_answer::{self, FormAnswer};
 use crate::model::permissions::Permissions;
 use crate::model::project::Project;
 use crate::model::user::{self, User, UserId};
 use crate::{DomainError, DomainResult};
 
-use anyhow::Context;
 use thiserror::Error;
 use uuid::Uuid;
 
@@ -104,15 +103,20 @@ impl AnswerError {
         self.kind
     }
 
-    fn from_check_error(err: item::CheckAnswerError) -> Self {
+    fn from_new_form_answer_error(err: form_answer::NewFormAnswerError) -> Self {
         let kind = match err.kind() {
-            item::CheckAnswerErrorKind::MismatchedItemsLength => {
+            form_answer::NewFormAnswerErrorKind::MismatchedItemsLength => {
                 AnswerErrorKind::MismatchedItemsLength
             }
-            item::CheckAnswerErrorKind::MismatchedItemId { expected, got } => {
+            form_answer::NewFormAnswerErrorKind::MismatchedItemId { expected, got } => {
                 AnswerErrorKind::MismatchedItemId { expected, got }
             }
-            item::CheckAnswerErrorKind::Item(id, kind) => AnswerErrorKind::InvalidItem { id, kind },
+            form_answer::NewFormAnswerErrorKind::InvalidItem { id, kind } => {
+                AnswerErrorKind::InvalidItem { id, kind }
+            }
+            form_answer::NewFormAnswerErrorKind::AlreadyAnswered => {
+                AnswerErrorKind::AlreadyAnswered
+            }
         };
 
         AnswerError { kind }
@@ -178,29 +182,9 @@ impl Form {
             }));
         }
 
-        if ctx
-            .get_form_answer_by_form_and_project(self.id(), project.id())
-            .await?
-            .is_some()
-        {
-            return Err(DomainError::Domain(AnswerError {
-                kind: AnswerErrorKind::AlreadyAnswered,
-            }));
-        }
-
-        self.items()
-            .check_answer(&items)
-            .context("Failed to check form answers unexpectedly")?
-            .map_err(|err| DomainError::Domain(AnswerError::from_check_error(err)))?;
-
-        Ok(FormAnswer {
-            id: FormAnswerId::from_uuid(Uuid::new_v4()),
-            created_at,
-            author_id: user.id().clone(),
-            project_id: project.id(),
-            form_id: self.id(),
-            items,
-        })
+        FormAnswer::new(ctx, user, project, self, items)
+            .await
+            .map_err(|err| err.map_domain(AnswerError::from_new_form_answer_error))
     }
 
     /// Restore `Form` from `FormContent`.
@@ -564,7 +548,7 @@ mod tests {
         assert!(matches!(
             form.answer_by(&app, &user, &project, items).await,
             Ok(answer)
-            if answer.form_id == form.id()
+            if answer.form_id() == form.id()
         ));
     }
 

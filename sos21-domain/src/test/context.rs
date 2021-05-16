@@ -40,7 +40,7 @@ pub struct MockAppBuilder {
     users: Vec<User>,
     projects: Vec<Project>,
     forms: Vec<Form>,
-    answers: Vec<FormAnswer>,
+    answers: HashMap<FormAnswerId, FormAnswer>,
     files: HashMap<FileId, File>,
     objects: HashMap<ObjectId, Bytes>,
     sharings: HashMap<FileSharingId, FileSharing>,
@@ -84,7 +84,8 @@ impl MockAppBuilder {
     where
         I: IntoIterator<Item = FormAnswer>,
     {
-        self.answers.extend(answers);
+        self.answers
+            .extend(answers.into_iter().map(|answer| (answer.id(), answer)));
         self
     }
 
@@ -210,18 +211,12 @@ impl MockAppBuilder {
             .into_iter()
             .map(|form| (form.id(), form))
             .collect();
-        let answers = self
-            .answers
-            .clone()
-            .into_iter()
-            .map(|answer| (answer.id, answer))
-            .collect();
 
         MockApp {
             users: Arc::new(Mutex::new(users)),
             projects: Arc::new(Mutex::new(projects)),
             forms: Arc::new(Mutex::new(forms)),
-            answers: Arc::new(Mutex::new(answers)),
+            answers: Arc::new(Mutex::new(self.answers.clone())),
             files: Arc::new(Mutex::new(self.files.clone())),
             objects: Arc::new(Mutex::new(self.objects.clone())),
             sharings: Arc::new(Mutex::new(self.sharings.clone())),
@@ -404,7 +399,7 @@ impl FormRepository for MockApp {
 #[async_trait::async_trait]
 impl FormAnswerRepository for MockApp {
     async fn store_form_answer(&self, answer: FormAnswer) -> Result<()> {
-        self.answers.lock().await.insert(answer.id, answer);
+        self.answers.lock().await.insert(answer.id(), answer);
         Ok(())
     }
 
@@ -422,7 +417,7 @@ impl FormAnswerRepository for MockApp {
             .lock()
             .await
             .values()
-            .find(|answer| answer.form_id == form_id && answer.project_id == project_id)
+            .find(|answer| answer.form_id() == form_id && answer.project_id() == project_id)
             .cloned())
     }
 
@@ -432,7 +427,7 @@ impl FormAnswerRepository for MockApp {
             .lock()
             .await
             .values()
-            .filter(|answer| answer.form_id == form_id)
+            .filter(|answer| answer.form_id() == form_id)
             .cloned()
             .collect())
     }

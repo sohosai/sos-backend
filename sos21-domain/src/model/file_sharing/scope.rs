@@ -19,6 +19,10 @@ pub enum FileSharingScope {
 }
 
 impl FileSharingScope {
+    pub fn form_answer_scope(answer: &FormAnswer) -> Self {
+        FileSharingScope::FormAnswer(answer.project_id(), answer.form_id())
+    }
+
     pub fn is_public(&self) -> bool {
         matches!(self, FileSharingScope::Public)
     }
@@ -73,7 +77,7 @@ impl FileSharingScope {
     pub fn contains_form_answer(&self, answer: &FormAnswer) -> bool {
         match self {
             FileSharingScope::FormAnswer(project_id, form_id) => {
-                *project_id == answer.project_id && *form_id == answer.form_id
+                *project_id == answer.project_id() && *form_id == answer.form_id()
             }
             FileSharingScope::Project(_)
             | FileSharingScope::RegistrationFormAnswer(_, _)
