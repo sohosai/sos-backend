@@ -1,11 +1,11 @@
-use crate::model::form::{Form, FormData, FormProjectQueryConjunction};
-use crate::model::project::{ProjectAttributes, ProjectCategory};
+crate::model::form::{Form, FormData, FormProjectQueryConjunction};
+crate::model::project::{ProjectAttributes, ProjectCategory};
 
-use anyhow::{Context, Result};
-use futures::stream::{BoxStream, StreamExt};
-use uuid::Uuid;
+anyhow::{Context};
+futures::stream::{BoxStream, StreamExt};
+uuid::Uuid;
 
-pub fn list_forms_by_project<'a, E>(conn: E, project_id: Uuid) -> BoxStream<'a, Result<FormData>>
+list_forms_by_project<'a, E>(conn: E, project_id: Uuid) -> BoxStream<'a, Result<FormData>>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres> + 'a,
 {
@@ -66,9 +66,9 @@ GROUP BY forms.id
         project_id
     )
     .fetch(conn)
-    .map(|row| {
-        let row = row.context("Failed to select from forms")?;
-        let form = Form {
+    .map(row{
+        row row.context ("Failed to select from forms")?;
+        form Form {
             id: row.id,
             created_at: row.created_at,
             author_id: row.author_id,
@@ -79,11 +79,11 @@ GROUP BY forms.id
             items: row.items,
         };
 
-        let include_ids = row.include_ids.unwrap_or_else(Vec::new);
-        let exclude_ids = row.exclude_ids.unwrap_or_else(Vec::new);
-        let query = row
+        include_ids row.include_ids.unwrap_or_else(:new);
+        exclude_ids row.exclude_ids.unwrap_or_else(:new);
+        query = row
             .query
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_else(:new)
             .into_iter()
             .map(|(category, attributes)| FormProjectQueryConjunction {
                 category,
