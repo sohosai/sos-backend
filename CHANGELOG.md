@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - Relax checkbox form item constraints ([#95](https://github.com/sohosai/sos21-backend/pull/95))
+- Enable to specify project by code when distributing files ([#96](https://github.com/sohosai/sos21-backend/pull/96))
 
 ### Deprecated
 ### Removed
