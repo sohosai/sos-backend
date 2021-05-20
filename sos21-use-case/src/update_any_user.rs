@@ -121,7 +121,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate::model::user::{UserId, UserRole};
-    use crate::{update_user, UseCaseError};
+    use crate::{update_any_user, UseCaseError};
     use sos21_domain::test;
 
     // Checks that the normal user cannot update users.
@@ -135,7 +135,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let input = update_user::Input {
+        let input = update_any_user::Input {
             id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
@@ -144,9 +144,9 @@ mod tests {
             category: None,
         };
         assert!(matches!(
-            update_user::run(&app, input).await,
+            update_any_user::run(&app, input).await,
             Err(UseCaseError::UseCase(
-                update_user::Error::InsufficientPermissions
+                update_any_user::Error::InsufficientPermissions
             ))
         ));
     }
@@ -162,7 +162,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let input = update_user::Input {
+        let input = update_any_user::Input {
             id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
@@ -171,9 +171,9 @@ mod tests {
             category: None,
         };
         assert!(matches!(
-            update_user::run(&app, input).await,
+            update_any_user::run(&app, input).await,
             Err(UseCaseError::UseCase(
-                update_user::Error::InsufficientPermissions
+                update_any_user::Error::InsufficientPermissions
             ))
         ));
     }
@@ -189,7 +189,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let input = update_user::Input {
+        let input = update_any_user::Input {
             id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
@@ -198,9 +198,9 @@ mod tests {
             category: None,
         };
         assert!(matches!(
-            update_user::run(&app, input).await,
+            update_any_user::run(&app, input).await,
             Err(UseCaseError::UseCase(
-                update_user::Error::InsufficientPermissions
+                update_any_user::Error::InsufficientPermissions
             ))
         ));
     }
@@ -216,7 +216,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let input = update_user::Input {
+        let input = update_any_user::Input {
             id: UserId::from_entity(user.id().clone()),
             name: None,
             kana_name: None,
@@ -225,7 +225,7 @@ mod tests {
             category: None,
         };
         assert!(matches!(
-            update_user::run(&app, input).await,
+            update_any_user::run(&app, input).await,
             Ok(got)
             if got.role == UserRole::CommitteeOperator
         ));
