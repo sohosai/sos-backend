@@ -228,31 +228,72 @@ impl User {
     pub fn is_committee_operator(&self) -> bool {
         self.role().is_committee_operator()
     }
+}
 
-    pub fn set_name(&mut self, name: UserName) {
+#[derive(Debug, Clone, Error)]
+#[error("insufficient permission to update users")]
+pub struct NoUpdatePermissionError {
+    _priv: (),
+}
+
+impl NoUpdatePermissionError {
+    fn from_permissions_error(_err: RequirePermissionsError) -> Self {
+        NoUpdatePermissionError { _priv: () }
+    }
+}
+
+impl User {
+    fn require_update_permission(&self, user: &User) -> Result<(), NoUpdatePermissionError> {
+        user.require_permissions(Permissions::UPDATE_ALL_USERS)
+            .map_err(NoUpdatePermissionError::from_permissions_error)
+    }
+
+    pub fn set_name(&mut self, user: &User, name: UserName) -> Result<(), NoUpdatePermissionError> {
+        self.require_update_permission(user)?;
         self.content.name = name;
+        Ok(())
     }
 
-    pub fn set_kana_name(&mut self, kana_name: UserKanaName) {
+    pub fn set_kana_name(
+        &mut self,
+        user: &User,
+        kana_name: UserKanaName,
+    ) -> Result<(), NoUpdatePermissionError> {
+        self.require_update_permission(user)?;
         self.content.kana_name = kana_name;
+        Ok(())
     }
 
-    pub fn set_phone_number(&mut self, phone_number: PhoneNumber) {
+    pub fn set_phone_number(
+        &mut self,
+        user: &User,
+        phone_number: PhoneNumber,
+    ) -> Result<(), NoUpdatePermissionError> {
+        self.require_update_permission(user)?;
         self.content.phone_number = phone_number;
+        Ok(())
     }
 
-    pub fn set_role(&mut self, role: UserRole) {
+    pub fn set_role(&mut self, user: &User, role: UserRole) -> Result<(), NoUpdatePermissionError> {
+        self.require_update_permission(user)?;
         self.content.role = role;
+        Ok(())
     }
 
-    pub fn set_category(&mut self, category: UserCategory) {
+    pub fn set_category(
+        &mut self,
+        user: &User,
+        category: UserCategory,
+    ) -> Result<(), NoUpdatePermissionError> {
+        self.require_update_permission(user)?;
         self.content.category = category;
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{AlreadySignedUpError, User, UserEmailAddress, UserRole};
+    use super::{AlreadySignedUpError, NoUpdatePermissionError, User, UserEmailAddress, UserRole};
 
     use crate::test::model as test_model;
     use crate::DomainError;
@@ -282,6 +323,33 @@ mod tests {
         let user = test_model::new_operator_user();
         let other = test_model::new_general_user();
         assert!(other.is_visible_to(&user));
+    }
+
+    #[test]
+    fn test_update_operator_other() {
+        let mut user = test_model::new_general_user();
+        let other = test_model::new_operator_user();
+        assert!(matches!(
+            user.set_role(&other, UserRole::Administrator),
+            Err(NoUpdatePermissionError { .. })
+        ));
+    }
+
+    #[test]
+    fn test_update_operator_itself() {
+        let mut user = test_model::new_operator_user();
+        assert!(matches!(
+            user.set_role(&user.clone(), UserRole::Administrator),
+            Err(NoUpdatePermissionError { .. })
+        ));
+    }
+
+    #[test]
+    fn test_update_admin_other() {
+        let mut user = test_model::new_general_user();
+        let other = test_model::new_admin_user();
+        user.set_role(&other, UserRole::Administrator).unwrap();
+        assert_eq!(user.role(), UserRole::Administrator);
     }
 
     #[tokio::test]
