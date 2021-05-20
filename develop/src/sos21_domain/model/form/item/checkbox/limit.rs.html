@@ -34,7 +34,7 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">transparent</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CheckboxFormItemLimit</span>(<span class="ident">BoundedInteger</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U1</span>, <span class="ident">typenum</span>::<span class="ident">U31</span>, <span class="ident">u64</span><span class="op">&gt;</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CheckboxFormItemLimit</span>(<span class="ident">BoundedInteger</span><span class="op">&lt;</span><span class="ident">typenum</span>::<span class="ident">U0</span>, <span class="ident">typenum</span>::<span class="ident">U31</span>, <span class="ident">u64</span><span class="op">&gt;</span>);
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid checkbox form item limit&quot;</span>)]</span>

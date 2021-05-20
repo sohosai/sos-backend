@@ -406,6 +406,8 @@
 <span id="403">403</span>
 <span id="404">404</span>
 <span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
 
@@ -548,14 +550,16 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_content</span>(
         <span class="ident">content</span>: <span class="ident">CheckboxFormItemContent</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">InconsistentCheckLimitsError</span><span class="op">&gt;</span> {
+        <span class="comment">// NOTE: We accept {min,max}_checks = boxes.len() for the sake of &quot;check all boxes to agree&quot;</span>
+
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">min_checks</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">content</span>.<span class="ident">min_checks</span> {
-            <span class="kw">if</span> <span class="ident">min_checks</span>.<span class="ident">to_u64</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">content</span>.<span class="ident">boxes</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span> {
+            <span class="kw">if</span> <span class="ident">min_checks</span>.<span class="ident">to_u64</span>() <span class="op">&gt;</span> <span class="ident">content</span>.<span class="ident">boxes</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span> {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">InconsistentCheckLimitsError</span> { <span class="ident">_priv</span>: () });
             }
         }
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">max_checks</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">content</span>.<span class="ident">max_checks</span> {
-            <span class="kw">if</span> <span class="ident">max_checks</span>.<span class="ident">to_u64</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">content</span>.<span class="ident">boxes</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span> {
+            <span class="kw">if</span> <span class="ident">max_checks</span>.<span class="ident">to_u64</span>() <span class="op">&gt;</span> <span class="ident">content</span>.<span class="ident">boxes</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span> {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">InconsistentCheckLimitsError</span> { <span class="ident">_priv</span>: () });
             }
         }
@@ -700,7 +704,7 @@
             <span class="ident">CheckboxFormItem</span>::<span class="ident">from_content</span>(<span class="ident">CheckboxFormItemContent</span> {
                 <span class="ident">boxes</span>,
                 <span class="ident">min_checks</span>: <span class="prelude-val">Some</span>(<span class="ident">CheckboxFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">1</span>).<span class="ident">unwrap</span>()),
-                <span class="ident">max_checks</span>: <span class="prelude-val">Some</span>(<span class="ident">CheckboxFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">4</span>).<span class="ident">unwrap</span>()),
+                <span class="ident">max_checks</span>: <span class="prelude-val">Some</span>(<span class="ident">CheckboxFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">5</span>).<span class="ident">unwrap</span>()),
             })
             .<span class="ident">unwrap_err</span>(),
             <span class="ident">InconsistentCheckLimitsError</span> { .. },
@@ -732,7 +736,7 @@
         <span class="kw">let</span> <span class="ident">item2</span> <span class="op">=</span> <span class="ident">CheckboxFormItem</span>::<span class="ident">from_content</span>(<span class="ident">CheckboxFormItemContent</span> {
             <span class="ident">boxes</span>: <span class="ident">boxes</span>.<span class="ident">clone</span>(),
             <span class="ident">min_checks</span>: <span class="prelude-val">Some</span>(<span class="ident">CheckboxFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">1</span>).<span class="ident">unwrap</span>()),
-            <span class="ident">max_checks</span>: <span class="prelude-val">Some</span>(<span class="ident">CheckboxFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">2</span>).<span class="ident">unwrap</span>()),
+            <span class="ident">max_checks</span>: <span class="prelude-val">Some</span>(<span class="ident">CheckboxFormItemLimit</span>::<span class="ident">from_u64</span>(<span class="number">3</span>).<span class="ident">unwrap</span>()),
         })
         .<span class="ident">unwrap</span>();
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">item2</span>
