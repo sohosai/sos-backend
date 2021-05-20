@@ -23,8 +23,14 @@ pub struct Input {
 
 #[derive(Debug, Clone)]
 pub struct InputFileMapping {
-    pub project_id: ProjectId,
+    pub project: InputProject,
     pub file: InputFile,
+}
+
+#[derive(Debug, Clone)]
+pub enum InputProject {
+    Id(ProjectId),
+    Code(String),
 }
 
 #[derive(Debug, Clone)]
@@ -36,12 +42,13 @@ pub enum InputFile {
 #[derive(Debug, Clone)]
 pub enum Error {
     InsufficientPermissions,
+    InvalidProjectCode,
     InvalidName,
     InvalidDescription,
     NonSharableFile,
     NoFiles,
     TooManyFiles,
-    DuplicatedProjectId(ProjectId),
+    DuplicatedProject(ProjectId),
     ProjectNotFound,
     FileNotFound,
     FileSharingNotFound,
@@ -49,6 +56,10 @@ pub enum Error {
 }
 
 impl Error {
+    fn from_code_error(_err: project::code::ParseCodeError) -> Self {
+        Error::InvalidProjectCode
+    }
+
     fn from_name_error(_err: file_distribution::name::NameError) -> Self {
         Error::InvalidName
     }
@@ -66,7 +77,7 @@ impl Error {
             file_distribution::files::FromSharingsErrorKind::Empty => Error::NoFiles,
             file_distribution::files::FromSharingsErrorKind::TooLong => Error::TooManyFiles,
             file_distribution::files::FromSharingsErrorKind::Duplicated(project_id) => {
-                Error::DuplicatedProjectId(ProjectId::from_entity(project_id))
+                Error::DuplicatedProject(ProjectId::from_entity(project_id))
             }
         }
     }
@@ -99,17 +110,11 @@ where
         file_distribution::FileDistributionDescription::from_string(input.description)
             .map_err(|err| UseCaseError::UseCase(Error::from_description_error(err)))?;
 
+    // TODO: Split these heavy (O(n)) processes into a separate asynchronous job
+    //       or reduce the number of storings
     let mut sharings = Vec::new();
     for input in input.files {
-        let result = ctx
-            .get_project(input.project_id.into_entity())
-            .await
-            .context("Failed to get a project")?;
-        let project = match result {
-            Some(result) if result.project.is_visible_to(login_user) => result.project,
-            _ => return Err(UseCaseError::UseCase(Error::ProjectNotFound)),
-        };
-
+        let project = to_project(ctx, &input.project).await?;
         let sharing = to_file_sharing(ctx, &project, input.file).await?;
         sharings.push((project.id(), sharing.id()));
     }
@@ -130,6 +135,37 @@ where
         .context("Failed to store a file distribution")?;
     use_case_ensure!(distribution.is_visible_to(login_user));
     Ok(FileDistribution::from_entity(distribution))
+}
+
+async fn to_project<C>(
+    ctx: &Login<C>,
+    project: &InputProject,
+) -> UseCaseResult<project::Project, Error>
+where
+    C: ProjectRepository + Send + Sync,
+{
+    let login_user = ctx.login_user();
+
+    let result = match project {
+        InputProject::Id(project_id) => ctx
+            .get_project(project_id.into_entity())
+            .await
+            .context("Failed to get a project")?,
+        InputProject::Code(project_code) => {
+            let code = project::ProjectCode::parse(&project_code)
+                .map_err(|err| UseCaseError::UseCase(Error::from_code_error(err)))?;
+
+            ctx.get_project_by_index(code.index)
+                .await
+                .context("Failed to get a project")?
+                .filter(|result| result.project.kind() == code.kind)
+        }
+    };
+
+    match result {
+        Some(result) if result.project.is_visible_to(login_user) => Ok(result.project),
+        _ => Err(UseCaseError::UseCase(Error::ProjectNotFound)),
+    }
 }
 
 async fn to_file_sharing<C>(
@@ -196,7 +232,9 @@ mod tests {
     use sos21_domain::model::file_sharing;
     use sos21_domain::test;
 
-    fn mock_input(files: Vec<(ProjectId, distribute_files::InputFile)>) -> distribute_files::Input {
+    fn mock_input(
+        files: Vec<(distribute_files::InputProject, distribute_files::InputFile)>,
+    ) -> distribute_files::Input {
         let name = test::model::mock_file_distribution_name().into_string();
         let description = test::model::mock_file_distribution_description().into_string();
         distribute_files::Input {
@@ -204,7 +242,7 @@ mod tests {
             description,
             files: files
                 .into_iter()
-                .map(|(project_id, file)| distribute_files::InputFileMapping { project_id, file })
+                .map(|(project, file)| distribute_files::InputFileMapping { project, file })
                 .collect(),
         }
     }
@@ -230,7 +268,7 @@ mod tests {
             .await;
 
         let input = mock_input(vec![(
-            ProjectId::from_entity(project.id()),
+            distribute_files::InputProject::Id(ProjectId::from_entity(project.id())),
             distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing.id())),
         )]);
         assert!(matches!(
@@ -262,7 +300,7 @@ mod tests {
             .await;
 
         let input = mock_input(vec![(
-            ProjectId::from_entity(project.id()),
+            distribute_files::InputProject::Id(ProjectId::from_entity(project.id())),
             distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing.id())),
         )]);
         assert!(matches!(
@@ -299,7 +337,7 @@ mod tests {
         let other_project_id = ProjectId::from_entity(other_project.id());
         let sharing_id = FileSharingId::from_entity(sharing.id());
         let input = mock_input(vec![(
-            other_project_id,
+            distribute_files::InputProject::Id(other_project_id),
             distribute_files::InputFile::Sharing(sharing_id),
         )]);
         let distribution = distribute_files::run(&user_app, input).await.unwrap();
@@ -313,6 +351,54 @@ mod tests {
 
         let input = get_distributed_file::Input {
             project_id: other_project_id,
+            distribution_id: distribution.id,
+        };
+        assert!(matches!(
+            get_distributed_file::run(&other_app, input).await,
+            Ok(got)
+            if got.sharing_id == sharing_id
+        ));
+    }
+
+    // Checks that the operator user can distribute files.
+    #[tokio::test]
+    async fn test_with_code_operator() {
+        let user = test::model::new_operator_user();
+        let (file, object) = test::model::new_file(user.id().clone());
+
+        let other = test::model::new_general_user();
+        let other_project = test::model::new_general_project(other.id().clone());
+
+        let scope = file_sharing::FileSharingScope::Project(other_project.id());
+        let sharing = file_sharing::FileSharing::new(file.id, scope);
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone(), other.clone()])
+            .projects(vec![other_project.clone()])
+            .files(vec![file.clone()])
+            .objects(vec![object])
+            .await
+            .sharings(vec![sharing.clone()])
+            .build();
+
+        let user_app = app.clone().login_as(user.clone()).await;
+
+        let sharing_id = FileSharingId::from_entity(sharing.id());
+        let input = mock_input(vec![(
+            distribute_files::InputProject::Code(other_project.code().to_string()),
+            distribute_files::InputFile::Sharing(sharing_id),
+        )]);
+        let distribution = distribute_files::run(&user_app, input).await.unwrap();
+        assert!(distribution
+            .files
+            .iter()
+            .find(|mapping| mapping.project_id == ProjectId::from_entity(other_project.id()))
+            .is_some());
+
+        let other_app = app.clone().login_as(other.clone()).await;
+
+        let input = get_distributed_file::Input {
+            project_id: ProjectId::from_entity(other_project.id()),
             distribution_id: distribution.id,
         };
         assert!(matches!(
@@ -346,7 +432,7 @@ mod tests {
             .await;
 
         let input = mock_input(vec![(
-            ProjectId::from_entity(other_project.id()),
+            distribute_files::InputProject::Id(ProjectId::from_entity(other_project.id())),
             distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing.id())),
         )]);
         assert!(matches!(
@@ -389,11 +475,11 @@ mod tests {
 
         let input = mock_input(vec![
             (
-                ProjectId::from_entity(other1_project.id()),
+                distribute_files::InputProject::Id(ProjectId::from_entity(other1_project.id())),
                 distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing1.id())),
             ),
             (
-                ProjectId::from_entity(other2_project.id()),
+                distribute_files::InputProject::Id(ProjectId::from_entity(other2_project.id())),
                 distribute_files::InputFile::Sharing(FileSharingId::from_entity(sharing2.id())),
             ),
         ]);
@@ -432,7 +518,7 @@ mod tests {
         let other_project_id = ProjectId::from_entity(other_project.id());
         let file_id = FileId::from_entity(file.id);
         let input = mock_input(vec![(
-            other_project_id,
+            distribute_files::InputProject::Id(other_project_id),
             distribute_files::InputFile::File(file_id),
         )]);
         let distribution = distribute_files::run(&user_app, input).await.unwrap();
