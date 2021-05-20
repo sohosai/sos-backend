@@ -166,13 +166,12 @@ impl Form {
     where
         C: FormAnswerRepository,
     {
-        if !self.condition().check(&project) {
+        if !self.can_be_answered_by(user, project) {
             return Err(DomainError::Domain(AnswerError {
                 kind: AnswerErrorKind::NotTargeted,
             }));
         }
 
-        domain_ensure!(project.is_visible_to(&user));
         domain_ensure!(self.is_visible_to_with_project(&user, project));
 
         let created_at = DateTime::now();
@@ -185,6 +184,10 @@ impl Form {
         FormAnswer::new(ctx, user, project, self, items)
             .await
             .map_err(|err| err.map_domain(AnswerError::from_new_form_answer_error))
+    }
+
+    pub fn can_be_answered_by(&self, user: &User, project: &Project) -> bool {
+        project.is_member(user) && self.condition().check(project)
     }
 
     /// Restore `Form` from `FormContent`.
@@ -513,7 +516,7 @@ mod tests {
         .unwrap();
         let operator = test_model::new_operator_user();
         let form = test_model::new_form_with_query(operator.id().clone(), query);
-        let answer = test_model::new_form_answer(user.id().clone(), project.id(), &form);
+        let answer = test_model::new_form_answer(user.id().clone(), &project, &form);
         let app = crate::test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
             .projects(vec![project.clone()])

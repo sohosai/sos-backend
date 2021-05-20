@@ -435,9 +435,10 @@ mod tests {
             FileSharingScope::FormAnswer(test_model::new_project_id(), test_model::new_form_id()),
         );
         let form = test_model::new_form(test_model::new_user_id());
+        let owner_id = test_model::new_user_id();
         let answer = test_model::new_form_answer(
-            test_model::new_user_id(),
-            test_model::new_project_id(),
+            owner_id.clone(),
+            &test_model::new_general_project(owner_id.clone()),
             &form,
         );
         assert!(matches!(

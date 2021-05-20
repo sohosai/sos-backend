@@ -57,6 +57,7 @@ pub struct ProjectContent {
 #[derive(Debug, Clone)]
 pub struct Project {
     content: ProjectContent,
+    // TODO: Query every time to make sure they are up to date
     owner_id: UserId,
     subowner_id: UserId,
 }
@@ -250,11 +251,15 @@ impl Project {
     }
 
     pub fn is_visible_to(&self, user: &User) -> bool {
-        if &self.owner_id == user.id() || &self.subowner_id == user.id() {
+        if self.is_member(user) {
             return true;
         }
 
         user.permissions().contains(Permissions::READ_ALL_PROJECTS)
+    }
+
+    pub fn is_member(&self, user: &User) -> bool {
+        &self.owner_id == user.id() || &self.subowner_id == user.id()
     }
 
     pub fn kind(&self) -> ProjectKind {

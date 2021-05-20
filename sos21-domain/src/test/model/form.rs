@@ -31,8 +31,17 @@ pub fn mock_form_period_with_start(starts_at: DateTime) -> FormPeriod {
     FormPeriod::from_datetime(starts_at, ends_at).unwrap()
 }
 
+pub fn mock_form_period_with_end(ends_at: DateTime) -> FormPeriod {
+    let starts_at = DateTime::from_utc(ends_at.utc() - chrono::Duration::hours(1));
+    FormPeriod::from_datetime(starts_at, ends_at).unwrap()
+}
+
 pub fn new_form_period_from_now() -> FormPeriod {
     mock_form_period_with_start(DateTime::now())
+}
+
+pub fn new_form_period_to_now() -> FormPeriod {
+    mock_form_period_with_end(DateTime::now())
 }
 
 pub fn new_form_period_with_hours_from_now(hours: i64) -> FormPeriod {

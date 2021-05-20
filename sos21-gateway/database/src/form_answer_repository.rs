@@ -61,7 +61,7 @@ impl FormAnswerRepository for FormAnswerDatabase {
     async fn list_form_answers(&self, form_id: FormId) -> Result<Vec<FormAnswer>> {
         let mut lock = self.0.lock().await;
         query::list_form_answers_by_form(&mut *lock, form_id.to_uuid())
-            .and_then(|user| future::ready(to_form_answer(user)))
+            .and_then(|answer| future::ready(to_form_answer(answer)))
             .try_collect()
             .await
     }

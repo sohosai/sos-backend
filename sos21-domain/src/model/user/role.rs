@@ -42,6 +42,7 @@ impl UserRole {
                 Permissions::CREATE_FILES
                     | Permissions::SHARE_FILES
                     | Permissions::ANSWER_REGISTRATION_FORMS
+                    | Permissions::UPDATE_FORM_ANSWERS_IN_PERIOD
             }
         }
     }
