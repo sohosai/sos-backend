@@ -17,8 +17,6 @@ properties:
     format: email
   phone_number:
     type: string
-  affiliation:
-    type: string
   role:
     $ref: ./UserRole.yml
   category:
@@ -30,6 +28,5 @@ required:
   - kana_name
   - email
   - phone_number
-  - affiliation
   - role
   - category

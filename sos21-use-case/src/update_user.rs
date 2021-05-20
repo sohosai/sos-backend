@@ -15,13 +15,18 @@ pub enum Error {
     InsufficientPermissions,
 }
 
+impl Error {
+    fn from_affiliation_error(_err: user::affiliation::AffiliationError) -> Self {
+        Error::InvalidUserAffiliation
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Input {
     pub id: UserId,
     pub name: Option<UserName>,
     pub kana_name: Option<UserKanaName>,
     pub phone_number: Option<String>,
-    pub affiliation: Option<String>,
     pub role: Option<UserRole>,
     pub category: Option<UserCategory>,
 }
@@ -67,18 +72,21 @@ where
         user.set_phone_number(phone_number);
     }
 
-    if let Some(affiliation) = input.affiliation {
-        let affiliation = user::UserAffiliation::from_string(affiliation)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidUserAffiliation))?;
-        user.set_affiliation(affiliation);
-    }
-
     if let Some(role) = input.role {
         user.set_role(role.into_entity());
     }
 
     if let Some(category) = input.category {
-        user.set_category(category.into_entity());
+        let category = match category {
+            UserCategory::UndergraduateStudent { affiliation } => {
+                let affiliation = user::UserAffiliation::from_string(affiliation)
+                    .map_err(|err| UseCaseError::UseCase(Error::from_affiliation_error(err)))?;
+                user::UserCategory::UndergraduateStudent(affiliation)
+            }
+            UserCategory::GraduateStudent => user::UserCategory::GraduateStudent,
+            UserCategory::AcademicStaff => user::UserCategory::AcademicStaff,
+        };
+        user.set_category(category);
     }
 
     ctx.store_user(user.clone())
@@ -110,7 +118,6 @@ mod tests {
             name: None,
             kana_name: None,
             phone_number: None,
-            affiliation: None,
             role: Some(UserRole::Administrator),
             category: None,
         };
@@ -138,7 +145,6 @@ mod tests {
             name: None,
             kana_name: None,
             phone_number: None,
-            affiliation: None,
             role: Some(UserRole::General),
             category: None,
         };
@@ -166,7 +172,6 @@ mod tests {
             name: None,
             kana_name: None,
             phone_number: None,
-            affiliation: None,
             role: Some(UserRole::Committee),
             category: None,
         };
@@ -194,7 +199,6 @@ mod tests {
             name: None,
             kana_name: None,
             phone_number: None,
-            affiliation: None,
             role: Some(UserRole::CommitteeOperator),
             category: None,
         };

@@ -43,7 +43,6 @@ pub struct Input {
     pub name: UserName,
     pub kana_name: UserKanaName,
     pub phone_number: String,
-    pub affiliation: String,
     pub category: UserCategory,
 }
 
@@ -60,8 +59,15 @@ where
         .map_err(|err| UseCaseError::UseCase(Error::from_kana_name_error(err)))?;
     let phone_number = phone_number::PhoneNumber::from_string(input.phone_number)
         .map_err(|err| UseCaseError::UseCase(Error::from_phone_number_error(err)))?;
-    let affiliation = user::UserAffiliation::from_string(input.affiliation)
-        .map_err(|err| UseCaseError::UseCase(Error::from_affiliation_error(err)))?;
+    let category = match input.category {
+        UserCategory::UndergraduateStudent { affiliation } => {
+            let affiliation = user::UserAffiliation::from_string(affiliation)
+                .map_err(|err| UseCaseError::UseCase(Error::from_affiliation_error(err)))?;
+            user::UserCategory::UndergraduateStudent(affiliation)
+        }
+        UserCategory::GraduateStudent => user::UserCategory::GraduateStudent,
+        UserCategory::AcademicStaff => user::UserCategory::AcademicStaff,
+    };
 
     let user = user::User::new(
         ctx,
@@ -69,9 +75,8 @@ where
         name,
         kana_name,
         phone_number,
-        affiliation,
         ctx.authenticated_email(),
-        input.category.into_entity(),
+        category,
     )
     .await
     .map_err(|err| UseCaseError::from_domain(err, Error::from_new_user_error))?;
@@ -92,13 +97,11 @@ mod tests {
         let name = UserName::from_entity(test::model::mock_user_name());
         let kana_name = UserKanaName::from_entity(test::model::mock_user_kana_name());
         let phone_number = test::model::mock_phone_number().into_string();
-        let affiliation = test::model::mock_user_affiliation().into_string();
         let category = UserCategory::from_entity(test::model::mock_user_category());
         signup::Input {
             name,
             kana_name,
             phone_number,
-            affiliation,
             category,
         }
     }
