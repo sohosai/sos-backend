@@ -11,7 +11,7 @@ pub struct Input {
     pub last_name: String,
     pub kana_last_name: String,
     pub phone_number: String,
-    pub affiliation: String,
+    pub affiliation: Option<String>,
     pub role: UserRole,
     pub category: UserCategory,
     pub assignment: Option<UserAssignment>,
