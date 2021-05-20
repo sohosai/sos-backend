@@ -929,13 +929,25 @@ rec {
         features = {
         };
       };
-      "cpuid-bool" = rec {
-        crateName = "cpuid-bool";
-        version = "0.1.2";
+      "cpufeatures" = rec {
+        crateName = "cpufeatures";
+        version = "0.1.4";
         edition = "2018";
-        sha256 = "0d16n378jl0n2dslspqxgsiw9frmjirdszhj5gfccgd0548wmswa";
+        sha256 = "1j0i97325c2grndsfgnm3lqk0xbyvdl2dbgn8i5dd9yhnmycc07d";
         authors = [
           "RustCrypto Developers"
+        ];
+        dependencies = [
+          {
+            name = "libc";
+            packageId = "libc";
+            target = { target, features }: (stdenv.hostPlatform.config == "aarch64-apple-darwin");
+          }
+          {
+            name = "libc";
+            packageId = "libc";
+            target = { target, features }: ((target."arch" == "aarch64") && (target."os" == "linux"));
+          }
         ];
         
       };
@@ -5206,11 +5218,11 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-      "sha-1 0.9.2" = rec {
+      "sha-1 0.9.6" = rec {
         crateName = "sha-1";
-        version = "0.9.2";
+        version = "0.9.6";
         edition = "2018";
-        sha256 = "0z2hj8br511bsarw97h82872zqn7ba4738gjws74j2k2bqdxyg6f";
+        sha256 = "05jfwssqvpcy0sr1pcdhdn9awalwsazclimbgzpx0cjq3isglk4c";
         libName = "sha1";
         authors = [
           "RustCrypto Developers"
@@ -5225,8 +5237,18 @@ rec {
             packageId = "cfg-if 1.0.0";
           }
           {
-            name = "cpuid-bool";
-            packageId = "cpuid-bool";
+            name = "cpufeatures";
+            packageId = "cpufeatures";
+            target = { target, features }: (stdenv.hostPlatform.config == "aarch64-apple-darwin");
+          }
+          {
+            name = "cpufeatures";
+            packageId = "cpufeatures";
+            target = { target, features }: ((target."arch" == "aarch64") && (target."os" == "linux"));
+          }
+          {
+            name = "cpufeatures";
+            packageId = "cpufeatures";
             target = { target, features }: ((target."arch" == "x86") || (target."arch" == "x86_64"));
           }
           {
@@ -5246,7 +5268,7 @@ rec {
           }
         ];
         features = {
-          "asm" = [ "sha1-asm" "libc" ];
+          "asm" = [ "sha1-asm" ];
           "asm-aarch64" = [ "asm" ];
           "default" = [ "std" ];
           "std" = [ "digest/std" ];
@@ -5265,9 +5287,9 @@ rec {
       };
       "sha2" = rec {
         crateName = "sha2";
-        version = "0.9.2";
+        version = "0.9.5";
         edition = "2018";
-        sha256 = "1a225akwq8k1ym827f8f72rfgxaf7zdnnq07qpcblj91zs3anykf";
+        sha256 = "04lzf4swq6cijvxnc6facr3g72h5v7a5z8lz3xrkf8gxa9bswqmk";
         authors = [
           "RustCrypto Developers"
         ];
@@ -5281,8 +5303,18 @@ rec {
             packageId = "cfg-if 1.0.0";
           }
           {
-            name = "cpuid-bool";
-            packageId = "cpuid-bool";
+            name = "cpufeatures";
+            packageId = "cpufeatures";
+            target = { target, features }: (stdenv.hostPlatform.config == "aarch64-apple-darwin");
+          }
+          {
+            name = "cpufeatures";
+            packageId = "cpufeatures";
+            target = { target, features }: ((target."arch" == "aarch64") && (target."os" == "linux"));
+          }
+          {
+            name = "cpufeatures";
+            packageId = "cpufeatures";
             target = { target, features }: ((target."arch" == "x86") || (target."arch" == "x86_64"));
           }
           {
@@ -5302,7 +5334,7 @@ rec {
           }
         ];
         features = {
-          "asm" = [ "sha2-asm" "libc" ];
+          "asm" = [ "sha2-asm" ];
           "asm-aarch64" = [ "asm" ];
           "default" = [ "std" ];
           "std" = [ "digest/std" ];
@@ -6260,7 +6292,7 @@ rec {
           }
           {
             name = "sha-1";
-            packageId = "sha-1 0.9.2";
+            packageId = "sha-1 0.9.6";
             optional = true;
             usesDefaultFeatures = false;
           }
