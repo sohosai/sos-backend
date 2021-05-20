@@ -56,12 +56,12 @@ impl From<update_user::Error> for Error {
         match err {
             update_user::Error::NotFound => Error::UserNotFound,
             update_user::Error::InsufficientPermissions => Error::InsufficientPermissions,
-            update_user::Error::InvalidUserName => Error::InvalidField { field: "name" },
-            update_user::Error::InvalidUserKanaName => Error::InvalidField { field: "kana_name" },
+            update_user::Error::InvalidName => Error::InvalidField { field: "name" },
+            update_user::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
             update_user::Error::InvalidPhoneNumber => Error::InvalidField {
                 field: "phone_number",
             },
-            update_user::Error::InvalidUserAffiliation => Error::InvalidField {
+            update_user::Error::InvalidAffiliation => Error::InvalidField {
                 field: "category.affiliation",
             },
         }

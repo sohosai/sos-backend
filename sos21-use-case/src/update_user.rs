@@ -8,16 +8,36 @@ use sos21_domain::model::{permissions::Permissions, phone_number, user};
 #[derive(Debug, Clone)]
 pub enum Error {
     NotFound,
-    InvalidUserName,
-    InvalidUserKanaName,
+    InvalidName,
+    InvalidKanaName,
     InvalidPhoneNumber,
-    InvalidUserAffiliation,
+    InvalidAffiliation,
     InsufficientPermissions,
 }
 
 impl Error {
+    fn from_name_error(_err: user::name::NameError) -> Self {
+        Error::InvalidName
+    }
+
+    fn from_kana_name_error(_err: user::name::KanaNameError) -> Self {
+        Error::InvalidKanaName
+    }
+
+    fn from_phone_number_error(_err: phone_number::FromStringError) -> Self {
+        Error::InvalidPhoneNumber
+    }
+
     fn from_affiliation_error(_err: user::affiliation::AffiliationError) -> Self {
-        Error::InvalidUserAffiliation
+        Error::InvalidAffiliation
+    }
+
+    fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {
+        Error::InsufficientPermissions
+    }
+
+    fn from_update_error(_err: user::NoUpdatePermissionError) -> Self {
+        Error::InsufficientPermissions
     }
 }
 
@@ -34,16 +54,13 @@ pub struct Input {
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<User, Error>
 where
-    Login<C>: UserRepository,
+    C: UserRepository + Send + Sync,
 {
     let login_user = ctx.login_user();
 
-    if login_user
+    login_user
         .require_permissions(Permissions::UPDATE_ALL_USERS)
-        .is_err()
-    {
-        return Err(UseCaseError::UseCase(Error::InsufficientPermissions));
-    }
+        .map_err(|err| UseCaseError::UseCase(Error::from_permissions_error(err)))?;
 
     let user = ctx
         .get_user(input.id.clone().into_entity())
@@ -56,24 +73,28 @@ where
 
     if let Some(name) = input.name {
         let name = user::UserName::from_string(name.first, name.last)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidUserName))?;
-        user.set_name(name);
+            .map_err(|err| UseCaseError::UseCase(Error::from_name_error(err)))?;
+        user.set_name(login_user, name)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     if let Some(kana_name) = input.kana_name {
         let kana_name = user::UserKanaName::from_string(kana_name.first, kana_name.last)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidUserKanaName))?;
-        user.set_kana_name(kana_name);
+            .map_err(|err| UseCaseError::UseCase(Error::from_kana_name_error(err)))?;
+        user.set_kana_name(login_user, kana_name)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     if let Some(phone_number) = input.phone_number {
         let phone_number = phone_number::PhoneNumber::from_string(phone_number)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidPhoneNumber))?;
-        user.set_phone_number(phone_number);
+            .map_err(|err| UseCaseError::UseCase(Error::from_phone_number_error(err)))?;
+        user.set_phone_number(login_user, phone_number)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     if let Some(role) = input.role {
-        user.set_role(role.into_entity());
+        user.set_role(login_user, role.into_entity())
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     if let Some(category) = input.category {
@@ -86,7 +107,8 @@ where
             UserCategory::GraduateStudent => user::UserCategory::GraduateStudent,
             UserCategory::AcademicStaff => user::UserCategory::AcademicStaff,
         };
-        user.set_category(category);
+        user.set_category(login_user, category)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     ctx.store_user(user.clone())
