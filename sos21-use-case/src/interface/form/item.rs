@@ -20,10 +20,10 @@ pub enum FormItemError {
     InvalidTextMinLength,
     InvalidTextPlaceholder,
     InconsistentTextLengthLimits,
+    InvalidIntegerPlaceholder,
     InvalidIntegerMaxLimit,
     InvalidIntegerMinLimit,
     InvalidIntegerUnit,
-    OutOfLimitsIntegerPlaceholder,
     InconsistentIntegerLimits,
     InvalidCheckboxMinChecks,
     InvalidCheckboxMaxChecks,
@@ -66,12 +66,6 @@ impl FormItemError {
 
     fn from_integer_content_error(err: item::integer::FromContentError) -> Self {
         match err.kind() {
-            item::integer::FromContentErrorKind::TooBigPlaceholder => {
-                FormItemError::OutOfLimitsIntegerPlaceholder
-            }
-            item::integer::FromContentErrorKind::TooSmallPlaceholder => {
-                FormItemError::OutOfLimitsIntegerPlaceholder
-            }
             item::integer::FromContentErrorKind::InconsistentLimits => {
                 FormItemError::InconsistentIntegerLimits
             }
@@ -202,6 +196,8 @@ pub fn to_form_item(item: FormItem) -> Result<form::FormItem, FormItemError> {
                 .map(item::integer::IntegerFormItemUnit::from_string)
                 .transpose()
                 .map_err(|_| FormItemError::InvalidIntegerUnit)?;
+            let placeholder = item::integer::IntegerFormItemPlaceholder::from_string(placeholder)
+                .map_err(|_| FormItemError::InvalidIntegerPlaceholder)?;
             let integer_item =
                 item::IntegerFormItem::from_content(item::integer::IntegerFormItemContent {
                     is_required,

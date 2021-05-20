@@ -60,8 +60,7 @@ allOf:
             type: integer
             nullable: true
           placeholder:
-            type: integer
-            nullable: true
+            type: string
           unit:
             type: string
             nullable: true
