@@ -1995,7 +1995,6 @@ paths:
                                   type:
                                     type: string
                                     enum:
-                                      - OUT_OF_ANSWER_PERIOD
                                       - NO_FORM_ITEMS
                                       - TOO_MANY_FORM_ITEMS
                                       - MISMATCHED_FORM_ITEMS_LENGTH
@@ -2030,13 +2029,13 @@ paths:
                       - status
                       - error
               examples:
-                Out of answer period:
+                No form items:
                   value:
                     status: 400
                     error:
                       type: API
                       info:
-                        type: OUT_OF_ANSWER_PERIOD
+                        type: NO_FORM_ITEMS
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -2117,6 +2116,7 @@ paths:
                                 type: string
                                 enum:
                                   - ALREADY_ANSWERED_FORM
+                                  - OUT_OF_ANSWER_PERIOD
                     required:
                       - status
                       - error
@@ -2289,6 +2289,49 @@ paths:
                       type: API
                       info:
                         type: FORM_NOT_FOUND
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        required:
+                          - type
+                          - info
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - OUT_OF_ANSWER_PERIOD
+                    required:
+                      - status
+                      - error
+              examples:
+                Out of answer period:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: OUT_OF_ANSWER_PERIOD
         "500":
           $ref: "#/components/responses/InternalServerError"
       description: 申請への回答を編集します。

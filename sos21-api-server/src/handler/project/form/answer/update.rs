@@ -58,7 +58,7 @@ impl HandlerResponse for Error {
             Error::FormNotFound => StatusCode::NOT_FOUND,
             Error::ProjectNotFound => StatusCode::NOT_FOUND,
             Error::FormAnswerNotFound => StatusCode::NOT_FOUND,
-            Error::OutOfAnswerPeriod => StatusCode::BAD_REQUEST,
+            Error::OutOfAnswerPeriod => StatusCode::CONFLICT,
             Error::NoFormItems => StatusCode::BAD_REQUEST,
             Error::TooManyFormItems => StatusCode::BAD_REQUEST,
             Error::InvalidFormItem { .. } => StatusCode::BAD_REQUEST,
