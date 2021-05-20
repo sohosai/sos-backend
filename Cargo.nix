@@ -951,16 +951,6 @@ rec {
         ];
         
       };
-      "cpuid-bool" = rec {
-        crateName = "cpuid-bool";
-        version = "0.1.2";
-        edition = "2018";
-        sha256 = "0d16n378jl0n2dslspqxgsiw9frmjirdszhj5gfccgd0548wmswa";
-        authors = [
-          "RustCrypto Developers"
-        ];
-        
-      };
       "crc" = rec {
         crateName = "crc";
         version = "1.8.1";
@@ -5228,11 +5218,11 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-      "sha-1 0.9.2" = rec {
+      "sha-1 0.9.6" = rec {
         crateName = "sha-1";
-        version = "0.9.2";
+        version = "0.9.6";
         edition = "2018";
-        sha256 = "0z2hj8br511bsarw97h82872zqn7ba4738gjws74j2k2bqdxyg6f";
+        sha256 = "05jfwssqvpcy0sr1pcdhdn9awalwsazclimbgzpx0cjq3isglk4c";
         libName = "sha1";
         authors = [
           "RustCrypto Developers"
@@ -5247,8 +5237,18 @@ rec {
             packageId = "cfg-if 1.0.0";
           }
           {
-            name = "cpuid-bool";
-            packageId = "cpuid-bool";
+            name = "cpufeatures";
+            packageId = "cpufeatures";
+            target = { target, features }: (stdenv.hostPlatform.config == "aarch64-apple-darwin");
+          }
+          {
+            name = "cpufeatures";
+            packageId = "cpufeatures";
+            target = { target, features }: ((target."arch" == "aarch64") && (target."os" == "linux"));
+          }
+          {
+            name = "cpufeatures";
+            packageId = "cpufeatures";
             target = { target, features }: ((target."arch" == "x86") || (target."arch" == "x86_64"));
           }
           {
@@ -5268,7 +5268,7 @@ rec {
           }
         ];
         features = {
-          "asm" = [ "sha1-asm" "libc" ];
+          "asm" = [ "sha1-asm" ];
           "asm-aarch64" = [ "asm" ];
           "default" = [ "std" ];
           "std" = [ "digest/std" ];
@@ -6292,7 +6292,7 @@ rec {
           }
           {
             name = "sha-1";
-            packageId = "sha-1 0.9.2";
+            packageId = "sha-1 0.9.6";
             optional = true;
             usesDefaultFeatures = false;
           }
