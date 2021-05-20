@@ -11,11 +11,17 @@ use warp::http::StatusCode;
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {
     pub id: FormId,
+    #[serde(default)]
     pub name: Option<String>,
+    #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
     pub starts_at: Option<DateTime>,
+    #[serde(default)]
     pub ends_at: Option<DateTime>,
+    #[serde(default)]
     pub items: Option<Vec<FormItem>>,
+    #[serde(default)]
     pub condition: Option<FormCondition>,
 }
 

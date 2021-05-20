@@ -3620,35 +3620,20 @@ paths:
                   $ref: ./model/form/FormId.yml
                 name:
                   type: string
-                  nullable: true
                 description:
                   type: string
-                  nullable: true
                 starts_at:
-                  oneOf:
-                    - $ref: ./model/DateTime.yml
-                    - $ref: ./model/Null.yml
+                  $ref: ./model/DateTime.yml
                 ends_at:
-                  oneOf:
-                    - $ref: ./model/DateTime.yml
-                    - $ref: ./model/Null.yml
+                  $ref: ./model/DateTime.yml
                 items:
                   type: array
-                  nullable: true
                   items:
                     $ref: ./model/form/item/FormItem.yml
                 condition:
-                  oneOf:
-                    - $ref: ./model/form/FormCondition.yml
-                    - $ref: ./model/Null.yml
+                  $ref: ./model/form/FormCondition.yml
               required:
                 - id
-                - name
-                - description
-                - starts_at
-                - ends_at
-                - items
-                - condition
       tags:
         - form
         - committee
