@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::sync::Arc;
 use std::task::Poll;
 
@@ -101,7 +102,13 @@ pub async fn handler(
             .map(|type_| type_.parse())
             .transpose()
             .map_err(|_| HandlerError::Client(Error::InvalidContentTypeInPart))?;
-        let filename = part.filename().ok().map(|filename| filename.to_owned());
+        let filename = part
+            .filename()
+            .ok()
+            .map(|filename| percent_encoding::percent_decode_str(filename).decode_utf8())
+            .transpose()
+            .context("Invalid UTF-8 filename")?
+            .map(Cow::into_owned);
 
         // We need to wait `create_file` reading `part` to the end before reading the next part
         let read_finished = Arc::new(Notify::new());

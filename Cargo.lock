@@ -1979,6 +1979,7 @@ dependencies = [
  "jsonwebtoken",
  "mime",
  "mpart-async",
+ "percent-encoding",
  "reqwest",
  "rusoto_core",
  "rusoto_credential",
