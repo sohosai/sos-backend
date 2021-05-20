@@ -36,7 +36,6 @@ pub struct UserContent {
     pub name: UserName,
     pub kana_name: UserKanaName,
     pub phone_number: PhoneNumber,
-    pub affiliation: UserAffiliation,
     pub email: UserEmailAddress,
     pub role: UserRole,
     pub category: UserCategory,
@@ -61,14 +60,12 @@ pub struct RequirePermissionsError {
 }
 
 impl User {
-    #[allow(clippy::too_many_arguments)]
     pub async fn new<C>(
         ctx: &C,
         id: UserId,
         name: UserName,
         kana_name: UserKanaName,
         phone_number: PhoneNumber,
-        affiliation: UserAffiliation,
         email: UserEmailAddress,
         category: UserCategory,
     ) -> DomainResult<Self, AlreadySignedUpError>
@@ -101,7 +98,6 @@ impl User {
             kana_name,
             email,
             phone_number,
-            affiliation,
             role,
             category,
             assignment: None,
@@ -142,8 +138,8 @@ impl User {
         &self.content.phone_number
     }
 
-    pub fn affiliation(&self) -> &UserAffiliation {
-        &self.content.affiliation
+    pub fn affiliation(&self) -> Option<&UserAffiliation> {
+        self.content.category.affiliation()
     }
 
     pub fn email(&self) -> &UserEmailAddress {
@@ -154,8 +150,8 @@ impl User {
         self.content.role
     }
 
-    pub fn category(&self) -> UserCategory {
-        self.content.category
+    pub fn category(&self) -> &UserCategory {
+        &self.content.category
     }
 
     pub fn assignment(&self) -> Option<UserAssignment> {
@@ -245,10 +241,6 @@ impl User {
         self.content.phone_number = phone_number;
     }
 
-    pub fn set_affiliation(&mut self, affiliation: UserAffiliation) {
-        self.content.affiliation = affiliation;
-    }
-
     pub fn set_role(&mut self, role: UserRole) {
         self.content.role = role;
     }
@@ -306,7 +298,6 @@ mod tests {
                 test_model::mock_user_name(),
                 test_model::mock_user_kana_name(),
                 test_model::mock_phone_number(),
-                test_model::mock_user_affiliation(),
                 test_model::mock_user_email_address(),
                 test_model::mock_user_category()
             )
@@ -335,7 +326,6 @@ mod tests {
                 test_model::mock_user_name(),
                 test_model::mock_user_kana_name(),
                 test_model::mock_phone_number(),
-                test_model::mock_user_affiliation(),
                 email.clone(),
                 test_model::mock_user_category()
             )
@@ -357,7 +347,6 @@ mod tests {
                 test_model::mock_user_name(),
                 test_model::mock_user_kana_name(),
                 test_model::mock_phone_number(),
-                test_model::mock_user_affiliation(),
                 email.clone(),
                 test_model::mock_user_category()
             )
@@ -379,7 +368,6 @@ mod tests {
                 test_model::mock_user_name(),
                 test_model::mock_user_kana_name(),
                 test_model::mock_phone_number(),
-                test_model::mock_user_affiliation(),
                 email.clone(),
                 test_model::mock_user_category()
             )
