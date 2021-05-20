@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 ### Changed
+
+- Relax checkbox form item constraints ([#95](https://github.com/sohosai/sos21-backend/pull/95))
+
 ### Deprecated
 ### Removed
 ### Fixed
