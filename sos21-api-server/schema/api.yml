@@ -4609,17 +4609,26 @@ paths:
                           type:
                             type: string
                           info:
-                            type: object
-                            properties:
-                              type:
-                                type: string
-                                enum:
-                                  - INVALID_FIELD
-                              field:
-                                type: string
-                            required:
-                              - type
-                              - field
+                            oneOf:
+                              - type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FIELD
+                                  field:
+                                    type: string
+                                required:
+                                  - type
+                                  - field
+                              - type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_PROJECT_CODE
+                                required:
+                                  - type
                     required:
                       - status
                       - error
@@ -4672,6 +4681,42 @@ paths:
                       type: API
                       info:
                         type: FILE_SHARING_NOT_FOUND
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                          info:
+                            type: object
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - DUPLICATED_PROJECT
+                              project_id:
+                                $ref: ./model/project/ProjectId.yml
+                            required:
+                              - type
+                              - project_id
+                    required:
+                      - status
+                      - error
         "500":
           $ref: "#/components/responses/InternalServerError"
       operationId: file-distribution/create
@@ -4692,6 +4737,14 @@ paths:
                     type: object
                     oneOf:
                       - properties:
+                          project_code:
+                            type: string
+                          sharing_id:
+                            $ref: ./model/file_sharing/FileSharingId.yml
+                        required:
+                          - project_code
+                          - sharing_id
+                      - properties:
                           project_id:
                             $ref: ./model/project/ProjectId.yml
                           sharing_id:
@@ -4699,6 +4752,14 @@ paths:
                         required:
                           - project_id
                           - sharing_id
+                      - properties:
+                          project_code:
+                            type: string
+                          file_id:
+                            $ref: ./model/file/FileId.yml
+                        required:
+                          - project_code
+                          - file_id
                       - properties:
                           project_id:
                             $ref: ./model/project/ProjectId.yml
