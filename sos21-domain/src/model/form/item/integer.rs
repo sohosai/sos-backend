@@ -5,9 +5,11 @@ use serde::{
 use thiserror::Error;
 
 pub mod limit;
+pub mod placeholder;
 pub mod unit;
 
 pub use limit::IntegerFormItemLimit;
+pub use placeholder::IntegerFormItemPlaceholder;
 pub use unit::IntegerFormItemUnit;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -15,7 +17,7 @@ pub struct IntegerFormItemContent {
     pub is_required: bool,
     pub max: Option<IntegerFormItemLimit>,
     pub min: Option<IntegerFormItemLimit>,
-    pub placeholder: Option<u64>,
+    pub placeholder: IntegerFormItemPlaceholder,
     pub unit: Option<IntegerFormItemUnit>,
 }
 
@@ -25,8 +27,6 @@ pub struct IntegerFormItem(IntegerFormItemContent);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FromContentErrorKind {
-    TooBigPlaceholder,
-    TooSmallPlaceholder,
     InconsistentLimits,
 }
 
@@ -70,24 +70,6 @@ impl IntegerFormItem {
                 });
             }
             _ => {}
-        }
-
-        if let Some(placeholder) = content.placeholder {
-            if let Some(min) = content.min {
-                if min.to_u64() > placeholder {
-                    return Err(FromContentError {
-                        kind: FromContentErrorKind::TooSmallPlaceholder,
-                    });
-                }
-            }
-
-            if let Some(max) = content.max {
-                if max.to_u64() < placeholder {
-                    return Err(FromContentError {
-                        kind: FromContentErrorKind::TooBigPlaceholder,
-                    });
-                }
-            }
         }
 
         Ok(IntegerFormItem(content))
@@ -150,7 +132,7 @@ impl<'de> Deserialize<'de> for IntegerFormItem {
 mod tests {
     use super::{
         CheckAnswerErrorKind, FromContentErrorKind, IntegerFormItem, IntegerFormItemContent,
-        IntegerFormItemLimit,
+        IntegerFormItemLimit, IntegerFormItemPlaceholder,
     };
 
     #[test]
@@ -159,7 +141,7 @@ mod tests {
             is_required: true,
             max: None,
             min: None,
-            placeholder: None,
+            placeholder: IntegerFormItemPlaceholder::from_string("").unwrap(),
             unit: None,
         })
         .unwrap();
@@ -168,7 +150,7 @@ mod tests {
             is_required: true,
             max: Some(IntegerFormItemLimit::from_u64(3).unwrap()),
             min: Some(IntegerFormItemLimit::from_u64(1).unwrap()),
-            placeholder: Some(1),
+            placeholder: IntegerFormItemPlaceholder::from_string("あああ").unwrap(),
             unit: None,
         })
         .unwrap();
@@ -177,7 +159,7 @@ mod tests {
             is_required: true,
             max: Some(IntegerFormItemLimit::from_u64(3).unwrap()),
             min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-            placeholder: Some(3),
+            placeholder: IntegerFormItemPlaceholder::from_string("あああ").unwrap(),
             unit: None,
         })
         .unwrap();
@@ -186,39 +168,10 @@ mod tests {
             is_required: true,
             max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
             min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-            placeholder: Some(3),
+            placeholder: IntegerFormItemPlaceholder::from_string("123456677").unwrap(),
             unit: None,
         })
         .unwrap();
-    }
-
-    #[test]
-    fn test_placeholder() {
-        assert_eq!(
-            IntegerFormItem::from_content(IntegerFormItemContent {
-                is_required: true,
-                max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
-                min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-                placeholder: Some(1),
-                unit: None,
-            })
-            .unwrap_err()
-            .kind(),
-            FromContentErrorKind::TooSmallPlaceholder,
-        );
-
-        assert_eq!(
-            IntegerFormItem::from_content(IntegerFormItemContent {
-                is_required: true,
-                max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
-                min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-                placeholder: Some(5),
-                unit: None,
-            })
-            .unwrap_err()
-            .kind(),
-            FromContentErrorKind::TooBigPlaceholder,
-        );
     }
 
     #[test]
@@ -228,7 +181,7 @@ mod tests {
                 is_required: true,
                 max: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
                 min: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
-                placeholder: Some(3),
+                placeholder: IntegerFormItemPlaceholder::from_string("").unwrap(),
                 unit: None,
             })
             .unwrap_err()
@@ -243,7 +196,7 @@ mod tests {
             is_required: true,
             max: None,
             min: None,
-            placeholder: Some(0),
+            placeholder: IntegerFormItemPlaceholder::from_string("").unwrap(),
             unit: None,
         })
         .unwrap()
@@ -254,7 +207,7 @@ mod tests {
             is_required: false,
             max: None,
             min: None,
-            placeholder: None,
+            placeholder: IntegerFormItemPlaceholder::from_string("").unwrap(),
             unit: None,
         })
         .unwrap()
@@ -265,7 +218,7 @@ mod tests {
             is_required: false,
             max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
             min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-            placeholder: Some(3),
+            placeholder: IntegerFormItemPlaceholder::from_string("").unwrap(),
             unit: None,
         })
         .unwrap()
@@ -280,7 +233,7 @@ mod tests {
                 is_required: true,
                 max: None,
                 min: None,
-                placeholder: Some(0),
+                placeholder: IntegerFormItemPlaceholder::from_string("").unwrap(),
                 unit: None,
             })
             .unwrap()
@@ -298,7 +251,7 @@ mod tests {
                 is_required: true,
                 max: None,
                 min: Some(IntegerFormItemLimit::from_u64(2).unwrap()),
-                placeholder: Some(2),
+                placeholder: IntegerFormItemPlaceholder::from_string("").unwrap(),
                 unit: None,
             })
             .unwrap()
@@ -313,7 +266,7 @@ mod tests {
                 is_required: true,
                 max: Some(IntegerFormItemLimit::from_u64(4).unwrap()),
                 min: None,
-                placeholder: None,
+                placeholder: IntegerFormItemPlaceholder::from_string("").unwrap(),
                 unit: None,
             })
             .unwrap()
