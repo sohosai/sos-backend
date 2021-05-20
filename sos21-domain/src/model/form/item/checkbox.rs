@@ -139,14 +139,16 @@ impl CheckboxFormItem {
     pub fn from_content(
         content: CheckboxFormItemContent,
     ) -> Result<Self, InconsistentCheckLimitsError> {
+        // NOTE: We accept {min,max}_checks = boxes.len() for the sake of "check all boxes to agree"
+
         if let Some(min_checks) = &content.min_checks {
-            if min_checks.to_u64() >= content.boxes.len() as u64 {
+            if min_checks.to_u64() > content.boxes.len() as u64 {
                 return Err(InconsistentCheckLimitsError { _priv: () });
             }
         }
 
         if let Some(max_checks) = &content.max_checks {
-            if max_checks.to_u64() >= content.boxes.len() as u64 {
+            if max_checks.to_u64() > content.boxes.len() as u64 {
                 return Err(InconsistentCheckLimitsError { _priv: () });
             }
         }
@@ -291,7 +293,7 @@ mod tests {
             CheckboxFormItem::from_content(CheckboxFormItemContent {
                 boxes,
                 min_checks: Some(CheckboxFormItemLimit::from_u64(1).unwrap()),
-                max_checks: Some(CheckboxFormItemLimit::from_u64(4).unwrap()),
+                max_checks: Some(CheckboxFormItemLimit::from_u64(5).unwrap()),
             })
             .unwrap_err(),
             InconsistentCheckLimitsError { .. },
@@ -323,7 +325,7 @@ mod tests {
         let item2 = CheckboxFormItem::from_content(CheckboxFormItemContent {
             boxes: boxes.clone(),
             min_checks: Some(CheckboxFormItemLimit::from_u64(1).unwrap()),
-            max_checks: Some(CheckboxFormItemLimit::from_u64(2).unwrap()),
+            max_checks: Some(CheckboxFormItemLimit::from_u64(3).unwrap()),
         })
         .unwrap();
         assert!(item2

@@ -5,7 +5,7 @@ use thiserror::Error;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(transparent)]
-pub struct CheckboxFormItemLimit(BoundedInteger<typenum::U1, typenum::U31, u64>);
+pub struct CheckboxFormItemLimit(BoundedInteger<typenum::U0, typenum::U31, u64>);
 
 #[derive(Debug, Error, Clone)]
 #[error("invalid checkbox form item limit")]
