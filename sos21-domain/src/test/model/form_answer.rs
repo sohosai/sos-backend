@@ -127,13 +127,28 @@ pub fn mock_form_answer_items(items: &FormItems) -> FormAnswerItems {
     FormAnswerItems::from_items(items.items().map(mock_form_answer_item)).unwrap()
 }
 
-pub fn new_form_answer(author_id: UserId, project: &Project, form: &Form) -> FormAnswer {
+pub fn new_form_answer_with_items(
+    author_id: UserId,
+    project: &Project,
+    form: &Form,
+    items: FormAnswerItems,
+) -> FormAnswer {
+    form.items().check_answer(&items).unwrap().unwrap();
     FormAnswer::from_content(FormAnswerContent {
         id: new_form_answer_id(),
         project_id: project.id(),
         form_id: form.id(),
         created_at: DateTime::now(),
         author_id,
-        items: mock_form_answer_items(form.items()),
+        items,
     })
+}
+
+pub fn new_form_answer(author_id: UserId, project: &Project, form: &Form) -> FormAnswer {
+    new_form_answer_with_items(
+        author_id,
+        project,
+        form,
+        mock_form_answer_items(form.items()),
+    )
 }

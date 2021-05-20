@@ -5,7 +5,7 @@ use crate::model::form::item::{
 
 use sos21_domain::model::form_answer::item as entity;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GridRadioRowAnswer {
     pub row_id: GridRadioRowId,
     pub value: Option<GridRadioColumnId>,
@@ -20,7 +20,7 @@ impl GridRadioRowAnswer {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FormAnswerItemBody {
     Text(Option<String>),
     Integer(Option<u64>),
@@ -62,7 +62,7 @@ impl FormAnswerItemBody {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FormAnswerItem {
     pub item_id: FormItemId,
     pub body: Option<FormAnswerItemBody>,
