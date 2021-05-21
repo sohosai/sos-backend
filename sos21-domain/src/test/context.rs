@@ -5,10 +5,10 @@ use std::sync::Arc;
 use crate::context::pending_project_repository::PendingProjectWithOwner;
 use crate::context::project_repository::ProjectWithOwners;
 use crate::context::{
-    Authentication, FileDistributionRepository, FileRepository, FileSharingRepository,
-    FormAnswerRepository, FormRepository, Login, ObjectRepository, PendingProjectRepository,
-    ProjectRepository, RegistrationFormAnswerRepository, RegistrationFormRepository,
-    UserInvitationRepository, UserRepository,
+    Authentication, ConfigContext, FileDistributionRepository, FileRepository,
+    FileSharingRepository, FormAnswerRepository, FormRepository, Login, ObjectRepository,
+    PendingProjectRepository, ProjectRepository, RegistrationFormAnswerRepository,
+    RegistrationFormRepository, UserInvitationRepository, UserRepository,
 };
 use crate::model::{
     file::{File, FileId},
@@ -922,5 +922,11 @@ impl UserInvitationRepository for MockApp {
             .values()
             .find(|invitation| invitation.email() == email)
             .cloned())
+    }
+}
+
+impl ConfigContext for MockApp {
+    fn administrator_email(&self) -> &UserEmailAddress {
+        &*test_model::ADMINISTRATOR_EMAIL
     }
 }
