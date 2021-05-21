@@ -1,4 +1,4 @@
-use crate::context::{FileRepository, UserInvitationRepository, UserRepository};
+use crate::context::{ConfigContext, FileRepository, UserInvitationRepository, UserRepository};
 use crate::model::date_time::DateTime;
 use crate::model::pending_project::PendingProject;
 use crate::model::permissions::Permissions;
@@ -73,7 +73,7 @@ impl User {
         category: UserCategory,
     ) -> DomainResult<Self, AlreadySignedUpError>
     where
-        C: UserRepository + UserInvitationRepository,
+        C: UserRepository + UserInvitationRepository + ConfigContext,
     {
         if ctx
             .get_user(id.clone())
@@ -84,12 +84,15 @@ impl User {
             return Err(DomainError::Domain(AlreadySignedUpError { _priv: () }));
         }
 
-        let role = ctx
-            .get_user_invitation_by_email(&email)
-            .await
-            .context("Failed to get user invitation")?
-            .map(|invitation| invitation.role().to_user_role())
-            .unwrap_or(UserRole::General);
+        let role = if ctx.administrator_email() == &email {
+            UserRole::Administrator
+        } else {
+            ctx.get_user_invitation_by_email(&email)
+                .await
+                .context("Failed to get user invitation")?
+                .map(|invitation| invitation.role().to_user_role())
+                .unwrap_or(UserRole::General)
+        };
 
         Ok(User::from_content(UserContent {
             id,
@@ -361,6 +364,28 @@ mod tests {
             .await,
             Ok(user)
             if user.role() == UserRole::General
+            && user.email() == &email
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_new_admin_ok() {
+        let email = test_model::ADMINISTRATOR_EMAIL.clone();
+        let app = crate::test::build_mock_app().build();
+        assert!(matches!(
+            User::new(
+                &app,
+                test_model::new_user_id(),
+                test_model::mock_user_name(),
+                test_model::mock_user_kana_name(),
+                test_model::mock_phone_number(),
+                test_model::mock_user_affiliation(),
+                email.clone(),
+                test_model::mock_user_category()
+            )
+            .await,
+            Ok(user)
+            if user.role() == UserRole::Administrator
             && user.email() == &email
         ));
     }

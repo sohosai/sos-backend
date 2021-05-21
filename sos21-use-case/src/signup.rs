@@ -2,7 +2,9 @@ use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::user::{User, UserCategory, UserKanaName, UserName};
 
 use anyhow::Context;
-use sos21_domain::context::{Authentication, UserInvitationRepository, UserRepository};
+use sos21_domain::context::{
+    Authentication, ConfigContext, UserInvitationRepository, UserRepository,
+};
 use sos21_domain::model::{phone_number, user};
 
 #[derive(Debug, Clone)]
@@ -48,7 +50,7 @@ pub struct Input {
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Authentication<C>, input: Input) -> UseCaseResult<User, Error>
 where
-    C: UserRepository + UserInvitationRepository + Send + Sync,
+    C: UserRepository + UserInvitationRepository + ConfigContext + Send + Sync,
 {
     let id = ctx.authenticated_user();
 
@@ -174,6 +176,24 @@ mod tests {
             Ok(got)
             if got.id == UserId(user_id)
             && got.role == UserRole::CommitteeOperator
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_admin_email() {
+        let user_id = "test_user_id".to_string();
+        let email = test::model::ADMINISTRATOR_EMAIL.clone().into_string();
+
+        let app = test::build_mock_app()
+            .build()
+            .authenticate_as(user_id.clone(), email);
+
+        let input = mock_input();
+        assert!(matches!(
+            signup::run(&app, input).await,
+            Ok(got)
+            if got.id == UserId(user_id)
+            && got.role == UserRole::Administrator
         ));
     }
 }
