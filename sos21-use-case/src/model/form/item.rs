@@ -39,7 +39,7 @@ pub enum FormItemBody {
         is_required: bool,
         max: Option<u64>,
         min: Option<u64>,
-        placeholder: Option<u64>,
+        placeholder: String,
         unit: Option<String>,
     },
     Checkbox {
@@ -83,7 +83,7 @@ impl FormItemBody {
                     is_required: item.is_required,
                     max: item.max.map(|l| l.to_u64()),
                     min: item.min.map(|l| l.to_u64()),
-                    placeholder: item.placeholder,
+                    placeholder: item.placeholder.into_string(),
                     unit: item.unit.map(|u| u.into_string()),
                 }
             }

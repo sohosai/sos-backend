@@ -13,6 +13,9 @@ with the HTTP API interface being the "public API".
 - Support for non-ASCII filenames ([#98](https://github.com/sohosai/sos21-backend/pull/98))
 
 ### Changed
+
+- Use text placeholder for integer form items ([#97](https://github.com/sohosai/sos21-backend/pull/97))
+
 ### Deprecated
 ### Removed
 ### Fixed
