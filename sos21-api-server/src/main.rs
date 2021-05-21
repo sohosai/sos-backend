@@ -36,6 +36,8 @@ struct Opt {
     s3_endpoint: String,
     #[structopt(long, env = "SOS21_API_SERVER_S3_OBJECT_BUCKET")]
     s3_object_bucket: String,
+    #[structopt(long, env = "SOS21_API_SERVER_ADMINISTRATOR_EMAIL")]
+    administrator_email: String,
     #[structopt(short, long, env = "SOS21_API_SERVER_BIND")]
     bind: SocketAddr,
 }
@@ -73,6 +75,7 @@ fn run(opt: Opt) -> Result<()> {
             s3_region: opt.s3_region,
             s3_endpoint: opt.s3_endpoint,
             s3_object_bucket: opt.s3_object_bucket,
+            administrator_email: opt.administrator_email,
         };
         let server = sos21_api_server::Server::new(config).await?;
         server.run(opt.bind).await;

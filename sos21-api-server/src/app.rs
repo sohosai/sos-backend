@@ -4,6 +4,7 @@ use crate::config::Config;
 
 use anyhow::{Context as _, Result};
 use rusoto_s3::S3Client;
+use sos21_domain::model::user::UserEmailAddress;
 use sos21_gateway_database::Database;
 use sos21_gateway_s3::S3;
 use sqlx::{
@@ -16,6 +17,7 @@ pub struct App {
     pool: PgPool,
     s3_client: S3Client,
     config: Config,
+    administrator_email: UserEmailAddress,
 }
 
 impl Debug for App {
@@ -51,10 +53,14 @@ impl App {
         };
         let s3_client = S3Client::new_with(dispatcher, credentials, region);
 
+        let administrator_email = UserEmailAddress::from_string(config.administrator_email.clone())
+            .context("invalid administrator email")?;
+
         Ok(App {
             pool,
             s3_client,
             config,
+            administrator_email,
         })
     }
 
@@ -81,7 +87,11 @@ impl App {
             .context("Failed to acquire a connection from pool")?;
         let database = Database::new(connection);
         let s3 = S3::new(self.s3_client.clone(), self.config.s3_object_bucket.clone());
-        Ok(Context { database, s3 })
+        Ok(Context {
+            database,
+            s3,
+            administrator_email: self.administrator_email.clone(),
+        })
     }
 }
 
@@ -89,6 +99,7 @@ impl App {
 pub struct Context {
     database: Database,
     s3: S3,
+    administrator_email: UserEmailAddress,
 }
 
 impl Context {
@@ -168,5 +179,11 @@ sos21_domain::delegate_registration_form_answer_repository! {
 sos21_domain::delegate_user_invitation_repository! {
     impl UserInvitationRepository for Context {
         self { &self.database }
+    }
+}
+
+impl sos21_domain::context::ConfigContext for Context {
+    fn administrator_email(&self) -> &UserEmailAddress {
+        &self.administrator_email
     }
 }
