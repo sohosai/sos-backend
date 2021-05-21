@@ -23,12 +23,22 @@ jobs:
           touch ./ssh_private_key
           chmod 600 ./ssh_private_key
           echo "$SSH_PRIVATE_KEY" > ./ssh_private_key
+      - name: Create NixOS configuration from secrets
+        run: |
+          cat << EOS > ./configuration.nix
+          { ... }:
+          {
+            sos21-api-server.administratorEmail = "$ADMINISTRATOR_EMAIL";
+          }
+          EOS
       - name: Deploy
         uses: sohosai/sos21-backend-infrastructure/actions/deploy-staging@main
         with:
           target: api.beta.online.sohosai.com
           ssh_private_key: ./ssh_private_key
-          configurations: ./nix/deployment/beta.nix
+          configurations: |
+            ./nix/deployment/beta.nix
+            ./configuration.nix
       - name: Delete ssh private key file
         if: always()
         run: rm -f ./ssh_private_key
