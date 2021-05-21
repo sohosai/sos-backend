@@ -93,11 +93,26 @@ impl FileObject {
             let mut bytes = b"attachment; filename*=UTF-8''".to_vec();
             let pct_encoded = utf8_percent_encode(&name, NON_ALPHANUMERIC).to_string();
             bytes.extend(pct_encoded.as_bytes());
+
+            // Fallback for old user agents
+            bytes.extend(b"; filename=\"");
+            bytes.extend(name.chars().map(replace_non_ascii));
+            bytes.push(b'"');
+
             bytes
         } else {
             b"attachment".to_vec()
         };
 
         reply::with_header(reply, header::CONTENT_DISPOSITION, disposition)
+    }
+}
+
+fn replace_non_ascii(c: char) -> u8 {
+    if c.is_ascii_graphic() || c == ' ' {
+        // OK because c is in ASCII range
+        c as u8
+    } else {
+        b'_'
     }
 }
