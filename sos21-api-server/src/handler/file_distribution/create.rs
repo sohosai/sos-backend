@@ -19,9 +19,17 @@ pub struct Request {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct RequestFileMapping {
-    pub project_id: ProjectId,
+    #[serde(flatten)]
+    pub project: RequestProject,
     #[serde(flatten)]
     pub file: RequestFile,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RequestProject {
+    ProjectId(ProjectId),
+    ProjectCode(String),
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -46,6 +54,8 @@ impl HandlerResponse for Response {
 #[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {
     InvalidField { field: &'static str },
+    InvalidProjectCode,
+    DuplicatedProject { project_id: ProjectId },
     ProjectNotFound,
     FileNotFound,
     FileSharingNotFound,
@@ -58,6 +68,8 @@ impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
             Error::InvalidField { .. } => StatusCode::BAD_REQUEST,
+            Error::InvalidProjectCode => StatusCode::BAD_REQUEST,
+            Error::DuplicatedProject { .. } => StatusCode::CONFLICT,
             Error::ProjectNotFound => StatusCode::NOT_FOUND,
             Error::FileNotFound => StatusCode::NOT_FOUND,
             Error::FileSharingNotFound => StatusCode::NOT_FOUND,
@@ -77,9 +89,10 @@ impl From<distribute_files::Error> for Error {
             },
             distribute_files::Error::NoFiles => Error::InvalidField { field: "files" },
             distribute_files::Error::TooManyFiles => Error::InvalidField { field: "files" },
-            distribute_files::Error::DuplicatedProjectId(_) => {
-                Error::InvalidField { field: "files" }
-            }
+            distribute_files::Error::DuplicatedProject(project_id) => Error::DuplicatedProject {
+                project_id: ProjectId::from_use_case(project_id),
+            },
+            distribute_files::Error::InvalidProjectCode => Error::InvalidProjectCode,
             distribute_files::Error::ProjectNotFound => Error::ProjectNotFound,
             distribute_files::Error::FileNotFound => Error::FileNotFound,
             distribute_files::Error::FileSharingNotFound => Error::FileSharingNotFound,
@@ -108,8 +121,19 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
 
 fn to_input_file_mapping(mapping: RequestFileMapping) -> distribute_files::InputFileMapping {
     distribute_files::InputFileMapping {
-        project_id: mapping.project_id.into_use_case(),
+        project: to_input_project(mapping.project),
         file: to_input_file(mapping.file),
+    }
+}
+
+fn to_input_project(project: RequestProject) -> distribute_files::InputProject {
+    match project {
+        RequestProject::ProjectId(project_id) => {
+            distribute_files::InputProject::Id(project_id.into_use_case())
+        }
+        RequestProject::ProjectCode(project_code) => {
+            distribute_files::InputProject::Code(project_code)
+        }
     }
 }
 
