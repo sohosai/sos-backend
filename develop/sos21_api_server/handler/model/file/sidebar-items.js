@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["File",""],["FileId",""],["FileObject",""]]});
+initSidebarItems({"fn":[["replace_non_ascii",""]],"struct":[["File",""],["FileId",""],["FileObject",""]]});

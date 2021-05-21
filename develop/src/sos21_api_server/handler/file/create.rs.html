@@ -143,7 +143,15 @@
 <span id="140">140</span>
 <span id="141">141</span>
 <span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">task</span>::<span class="ident">Poll</span>;
 
@@ -247,7 +255,13 @@
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">type_</span><span class="op">|</span> <span class="ident">type_</span>.<span class="ident">parse</span>())
             .<span class="ident">transpose</span>()
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">HandlerError</span>::<span class="ident">Client</span>(<span class="ident">Error</span>::<span class="ident">InvalidContentTypeInPart</span>))<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">filename</span> <span class="op">=</span> <span class="ident">part</span>.<span class="ident">filename</span>().<span class="ident">ok</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">filename</span><span class="op">|</span> <span class="ident">filename</span>.<span class="ident">to_owned</span>());
+        <span class="kw">let</span> <span class="ident">filename</span> <span class="op">=</span> <span class="ident">part</span>
+            .<span class="ident">filename</span>()
+            .<span class="ident">ok</span>()
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">filename</span><span class="op">|</span> <span class="ident">percent_encoding</span>::<span class="ident">percent_decode_str</span>(<span class="ident">filename</span>).<span class="ident">decode_utf8</span>())
+            .<span class="ident">transpose</span>()
+            .<span class="ident">context</span>(<span class="string">&quot;Invalid UTF-8 filename&quot;</span>)<span class="question-mark">?</span>
+            .<span class="ident">map</span>(<span class="ident">Cow</span>::<span class="ident">into_owned</span>);
 
         <span class="comment">// We need to wait `create_file` reading `part` to the end before reading the next part</span>
         <span class="kw">let</span> <span class="ident">read_finished</span> <span class="op">=</span> <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Notify</span>::<span class="ident">new</span>());

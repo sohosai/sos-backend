@@ -102,6 +102,23 @@
 <span id="99"> 99</span>
 <span id="100">100</span>
 <span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>};
 
@@ -188,20 +205,37 @@
         <span class="kw">let</span> <span class="ident">reply</span> <span class="op">=</span> <span class="ident">reply</span>::<span class="ident">with_header</span>(<span class="ident">reply</span>, <span class="ident">header</span>::<span class="ident">CONTENT_TYPE</span>, <span class="self">self</span>.<span class="ident">file</span>.<span class="ident">type_</span>.<span class="ident">to_string</span>());
         <span class="kw">let</span> <span class="ident">reply</span> <span class="op">=</span> <span class="ident">reply</span>::<span class="ident">with_header</span>(<span class="ident">reply</span>, <span class="ident">header</span>::<span class="ident">CONTENT_LENGTH</span>, <span class="self">self</span>.<span class="ident">file</span>.<span class="ident">size</span>.<span class="ident">to_string</span>());
 
-        <span class="kw">let</span> <span class="ident">disposition</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">name</span>) <span class="op">=</span> <span class="self">self</span>
-            .<span class="ident">file</span>
-            .<span class="ident">name</span>
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">name</span><span class="op">|</span> <span class="ident">header</span>::<span class="ident">HeaderValue</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">name</span>).<span class="ident">ok</span>())
-        {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="string">b&quot;attachment; filename=\&quot;&quot;</span>.<span class="ident">to_vec</span>();
-            <span class="ident">bytes</span>.<span class="ident">extend</span>(<span class="ident">name</span>.<span class="ident">as_bytes</span>());
+        <span class="kw">let</span> <span class="ident">disposition</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">name</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">file</span>.<span class="ident">name</span> {
+            <span class="kw">use</span> <span class="ident">percent_encoding</span>::{<span class="ident">utf8_percent_encode</span>, <span class="ident">NON_ALPHANUMERIC</span>};
+
+            <span class="comment">// Use filename* to return non-ascii filename as described in RFC 6266.</span>
+            <span class="comment">// We use the encoding described in RFC 8187, which obsoletes RFC 5987.</span>
+            <span class="comment">// All non-alphanumeric characters are percent-encoded conservatively</span>
+            <span class="comment">// though some of them are accepted in RFC 8187.</span>
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="string">b&quot;attachment; filename*=UTF-8&#39;&#39;&quot;</span>.<span class="ident">to_vec</span>();
+            <span class="kw">let</span> <span class="ident">pct_encoded</span> <span class="op">=</span> <span class="ident">utf8_percent_encode</span>(<span class="kw-2">&amp;</span><span class="ident">name</span>, <span class="ident">NON_ALPHANUMERIC</span>).<span class="ident">to_string</span>();
+            <span class="ident">bytes</span>.<span class="ident">extend</span>(<span class="ident">pct_encoded</span>.<span class="ident">as_bytes</span>());
+
+            <span class="comment">// Fallback for old user agents</span>
+            <span class="ident">bytes</span>.<span class="ident">extend</span>(<span class="string">b&quot;; filename=\&quot;&quot;</span>);
+            <span class="ident">bytes</span>.<span class="ident">extend</span>(<span class="ident">name</span>.<span class="ident">chars</span>().<span class="ident">map</span>(<span class="ident">replace_non_ascii</span>));
             <span class="ident">bytes</span>.<span class="ident">push</span>(<span class="string">b&#39;&quot;&#39;</span>);
+
             <span class="ident">bytes</span>
         } <span class="kw">else</span> {
             <span class="string">b&quot;attachment&quot;</span>.<span class="ident">to_vec</span>()
         };
 
         <span class="ident">reply</span>::<span class="ident">with_header</span>(<span class="ident">reply</span>, <span class="ident">header</span>::<span class="ident">CONTENT_DISPOSITION</span>, <span class="ident">disposition</span>)
+    }
+}
+
+<span class="kw">fn</span> <span class="ident">replace_non_ascii</span>(<span class="ident">c</span>: <span class="ident">char</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">if</span> <span class="ident">c</span>.<span class="ident">is_ascii_graphic</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">&#39; &#39;</span> {
+        <span class="comment">// OK because c is in ASCII range</span>
+        <span class="ident">c</span> <span class="kw">as</span> <span class="ident">u8</span>
+    } <span class="kw">else</span> {
+        <span class="string">b&#39;_&#39;</span>
     }
 }
 </pre></div>
