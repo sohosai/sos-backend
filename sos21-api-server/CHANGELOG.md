@@ -9,6 +9,9 @@ with the HTTP API interface being the "public API".
 ## [Unreleased]
 
 ### Added
+
+- Support for non-ASCII filenames ([#98](https://github.com/sohosai/sos21-backend/pull/98))
+
 ### Changed
 ### Deprecated
 ### Removed

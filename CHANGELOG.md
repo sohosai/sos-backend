@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
+- Support for non-ASCII filenames ([#98](https://github.com/sohosai/sos21-backend/pull/98))
+
 ### Changed
 
 - Relax checkbox form item constraints ([#95](https://github.com/sohosai/sos21-backend/pull/95))
