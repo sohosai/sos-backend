@@ -5539,6 +5539,10 @@ rec {
             packageId = "mpart-async";
           }
           {
+            name = "percent-encoding";
+            packageId = "percent-encoding";
+          }
+          {
             name = "reqwest";
             packageId = "reqwest";
             usesDefaultFeatures = false;

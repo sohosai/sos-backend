@@ -83,19 +83,36 @@ impl FileObject {
         let reply = reply::with_header(reply, header::CONTENT_TYPE, self.file.type_.to_string());
         let reply = reply::with_header(reply, header::CONTENT_LENGTH, self.file.size.to_string());
 
-        let disposition = if let Some(name) = self
-            .file
-            .name
-            .and_then(|name| header::HeaderValue::from_str(&name).ok())
-        {
-            let mut bytes = b"attachment; filename=\"".to_vec();
-            bytes.extend(name.as_bytes());
+        let disposition = if let Some(name) = self.file.name {
+            use percent_encoding::{utf8_percent_encode, NON_ALPHANUMERIC};
+
+            // Use filename* to return non-ascii filename as described in RFC 6266.
+            // We use the encoding described in RFC 8187, which obsoletes RFC 5987.
+            // All non-alphanumeric characters are percent-encoded conservatively
+            // though some of them are accepted in RFC 8187.
+            let mut bytes = b"attachment; filename*=UTF-8''".to_vec();
+            let pct_encoded = utf8_percent_encode(&name, NON_ALPHANUMERIC).to_string();
+            bytes.extend(pct_encoded.as_bytes());
+
+            // Fallback for old user agents
+            bytes.extend(b"; filename=\"");
+            bytes.extend(name.chars().map(replace_non_ascii));
             bytes.push(b'"');
+
             bytes
         } else {
             b"attachment".to_vec()
         };
 
         reply::with_header(reply, header::CONTENT_DISPOSITION, disposition)
+    }
+}
+
+fn replace_non_ascii(c: char) -> u8 {
+    if c.is_ascii_graphic() || c == ' ' {
+        // OK because c is in ASCII range
+        c as u8
+    } else {
+        b'_'
     }
 }
