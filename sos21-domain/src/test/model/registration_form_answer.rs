@@ -1,5 +1,6 @@
 use crate::model::{
     date_time::DateTime,
+    form_answer::FormAnswerItems,
     pending_project::PendingProjectId,
     project::ProjectId,
     registration_form::RegistrationForm,
@@ -17,10 +18,11 @@ pub fn new_registration_form_answer_id() -> RegistrationFormAnswerId {
     RegistrationFormAnswerId::from_uuid(Uuid::new_v4())
 }
 
-pub fn new_registration_form_answer(
+pub fn new_registration_form_answer_with_items(
     author_id: UserId,
     respondent: RegistrationFormAnswerRespondent,
     registration_form: &RegistrationForm,
+    items: FormAnswerItems,
 ) -> RegistrationFormAnswer {
     RegistrationFormAnswer::from_content(RegistrationFormAnswerContent {
         id: new_registration_form_answer_id(),
@@ -28,8 +30,21 @@ pub fn new_registration_form_answer(
         registration_form_id: registration_form.id,
         created_at: DateTime::now(),
         author_id,
-        items: test_model::mock_form_answer_items(&registration_form.items),
+        items,
     })
+}
+
+pub fn new_registration_form_answer(
+    author_id: UserId,
+    respondent: RegistrationFormAnswerRespondent,
+    registration_form: &RegistrationForm,
+) -> RegistrationFormAnswer {
+    new_registration_form_answer_with_items(
+        author_id,
+        respondent,
+        registration_form,
+        test_model::mock_form_answer_items(&registration_form.items),
+    )
 }
 
 pub fn new_registration_form_answer_with_project(
