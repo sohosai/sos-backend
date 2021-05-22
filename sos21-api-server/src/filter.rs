@@ -142,6 +142,7 @@ pub fn endpoints(
                 / "list" => GET (handler::pending_project::registration_form::list),
                 / "answer" {
                     / => POST (handler::pending_project::registration_form::answer),
+                    / "update" => POST (handler::pending_project::registration_form::answer::update),
                     / "get" => GET (handler::pending_project::registration_form::answer::get),
                 }
             }
