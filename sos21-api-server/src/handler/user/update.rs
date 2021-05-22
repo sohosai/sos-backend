@@ -4,7 +4,7 @@ use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::update_user;
+use sos21_use_case::update_any_user;
 use warp::http::StatusCode;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -51,17 +51,17 @@ impl HandlerResponse for Error {
     }
 }
 
-impl From<update_user::Error> for Error {
-    fn from(err: update_user::Error) -> Error {
+impl From<update_any_user::Error> for Error {
+    fn from(err: update_any_user::Error) -> Error {
         match err {
-            update_user::Error::NotFound => Error::UserNotFound,
-            update_user::Error::InsufficientPermissions => Error::InsufficientPermissions,
-            update_user::Error::InvalidUserName => Error::InvalidField { field: "name" },
-            update_user::Error::InvalidUserKanaName => Error::InvalidField { field: "kana_name" },
-            update_user::Error::InvalidPhoneNumber => Error::InvalidField {
+            update_any_user::Error::NotFound => Error::UserNotFound,
+            update_any_user::Error::InsufficientPermissions => Error::InsufficientPermissions,
+            update_any_user::Error::InvalidName => Error::InvalidField { field: "name" },
+            update_any_user::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
+            update_any_user::Error::InvalidPhoneNumber => Error::InvalidField {
                 field: "phone_number",
             },
-            update_user::Error::InvalidUserAffiliation => Error::InvalidField {
+            update_any_user::Error::InvalidAffiliation => Error::InvalidField {
                 field: "category.affiliation",
             },
         }
@@ -70,7 +70,7 @@ impl From<update_user::Error> for Error {
 
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
-    let input = update_user::Input {
+    let input = update_any_user::Input {
         id: request.id.into_use_case(),
         name: request.name.map(UserName::into_use_case),
         kana_name: request.kana_name.map(UserKanaName::into_use_case),
@@ -78,7 +78,7 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
         role: request.role.map(UserRole::into_use_case),
         category: request.category.map(UserCategory::into_use_case),
     };
-    let user = update_user::run(&ctx, input).await?;
+    let user = update_any_user::run(&ctx, input).await?;
     let user = User::from_use_case(user);
     Ok(Response { user })
 }
