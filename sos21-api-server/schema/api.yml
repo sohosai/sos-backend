@@ -1288,6 +1288,7 @@ paths:
                                 type: string
                                 enum:
                                   - ALREADY_ANSWERED_REGISTRATION_FORM
+                                  - OUT_OF_PROJECT_CREATION_PERIOD
                     required:
                       - status
                       - error
@@ -3867,6 +3868,49 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        required:
+                          - type
+                          - info
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - ALREADY_STARTED_PROJECT_CREATION_PERIOD
+                    required:
+                      - status
+                      - error
+              examples:
+                Already started project creation period:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: ALREADY_STARTED_PROJECT_CREATION_PERIOD
         "500":
           $ref: "#/components/responses/InternalServerError"
       description: 登録申請を作成します。

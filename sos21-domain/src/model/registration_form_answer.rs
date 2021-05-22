@@ -47,6 +47,7 @@ pub struct RegistrationFormAnswer {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NewRegistrationFormAnswerErrorKind {
     AlreadyAnswered,
+    OutOfProjectCreationPeriod,
     MismatchedItemsLength,
     MismatchedItemId {
         expected: form::item::FormItemId,
@@ -95,7 +96,7 @@ impl RegistrationFormAnswer {
         items: FormAnswerItems,
     ) -> DomainResult<Self, NewRegistrationFormAnswerError>
     where
-        C: RegistrationFormAnswerRepository,
+        C: RegistrationFormAnswerRepository + ConfigContext,
     {
         if ctx
             .get_registration_form_answer_by_registration_form_and_pending_project(
@@ -107,6 +108,13 @@ impl RegistrationFormAnswer {
         {
             return Err(DomainError::Domain(NewRegistrationFormAnswerError {
                 kind: NewRegistrationFormAnswerErrorKind::AlreadyAnswered,
+            }));
+        }
+
+        let created_at = DateTime::now();
+        if !ctx.project_creation_period().contains(created_at) {
+            return Err(DomainError::Domain(NewRegistrationFormAnswerError {
+                kind: NewRegistrationFormAnswerErrorKind::OutOfProjectCreationPeriod,
             }));
         }
 
@@ -123,7 +131,7 @@ impl RegistrationFormAnswer {
                 id: RegistrationFormAnswerId::from_uuid(Uuid::new_v4()),
                 respondent: RegistrationFormAnswerRespondent::PendingProject(pending_project.id()),
                 registration_form_id: registration_form.id(),
-                created_at: DateTime::now(),
+                created_at,
                 author_id: author.id().clone(),
                 items,
             },
@@ -433,5 +441,6 @@ mod tests {
             .is_visible_to_with_pending_project(&user, &operator_pending_project));
     }
 
+    // TODO: test new out of period
     // TODO: test set_items_*
 }

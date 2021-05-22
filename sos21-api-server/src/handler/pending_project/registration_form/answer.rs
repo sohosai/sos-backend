@@ -37,6 +37,7 @@ pub enum Error {
     RegistrationFormNotFound,
     PendingProjectNotFound,
     AlreadyAnsweredRegistrationForm,
+    OutOfProjectCreationPeriod,
     NoFormAnswerItems,
     TooManyFormAnswerItems,
     InvalidFormAnswerItem {
@@ -56,6 +57,7 @@ impl HandlerResponse for Error {
             Error::RegistrationFormNotFound => StatusCode::NOT_FOUND,
             Error::PendingProjectNotFound => StatusCode::NOT_FOUND,
             Error::AlreadyAnsweredRegistrationForm => StatusCode::CONFLICT,
+            Error::OutOfProjectCreationPeriod => StatusCode::CONFLICT,
             Error::NoFormAnswerItems => StatusCode::BAD_REQUEST,
             Error::TooManyFormAnswerItems => StatusCode::BAD_REQUEST,
             Error::InvalidFormAnswerItem { .. } => StatusCode::BAD_REQUEST,
@@ -77,6 +79,9 @@ impl From<answer_registration_form::Error> for Error {
             }
             answer_registration_form::Error::AlreadyAnswered => {
                 Error::AlreadyAnsweredRegistrationForm
+            }
+            answer_registration_form::Error::OutOfProjectCreationPeriod => {
+                Error::OutOfProjectCreationPeriod
             }
             answer_registration_form::Error::InvalidItems(err) => match err {
                 interface::form_answer::FormAnswerItemsError::NoItems => Error::NoFormAnswerItems,

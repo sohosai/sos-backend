@@ -1,4 +1,4 @@
-use crate::context::RegistrationFormAnswerRepository;
+use crate::context::{ConfigContext, RegistrationFormAnswerRepository};
 use crate::model::date_time::DateTime;
 use crate::model::form::item::{self, FormItemId, FormItems};
 use crate::model::form_answer::item::FormAnswerItems;
@@ -47,6 +47,7 @@ pub struct RegistrationForm {
 pub enum AnswerErrorKind {
     NotTargeted,
     AlreadyAnswered,
+    OutOfProjectCreationPeriod,
     MismatchedItemsLength,
     MismatchedItemId {
         expected: FormItemId,
@@ -87,6 +88,9 @@ impl AnswerError {
             registration_form_answer::NewRegistrationFormAnswerErrorKind::AlreadyAnswered => {
                 AnswerErrorKind::AlreadyAnswered
             }
+            registration_form_answer::NewRegistrationFormAnswerErrorKind::OutOfProjectCreationPeriod => {
+                AnswerErrorKind::OutOfProjectCreationPeriod
+            }
         };
 
         AnswerError { kind }
@@ -102,7 +106,7 @@ impl RegistrationForm {
         items: FormAnswerItems,
     ) -> DomainResult<RegistrationFormAnswer, AnswerError>
     where
-        C: RegistrationFormAnswerRepository,
+        C: RegistrationFormAnswerRepository + ConfigContext,
     {
         domain_ensure!(user.id() == pending_project.owner_id());
 

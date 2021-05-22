@@ -7,7 +7,7 @@ use crate::model::registration_form_answer::RegistrationFormAnswer;
 
 use anyhow::Context;
 use sos21_domain::context::{
-    FileRepository, FileSharingRepository, Login, PendingProjectRepository,
+    ConfigContext, FileRepository, FileSharingRepository, Login, PendingProjectRepository,
     RegistrationFormAnswerRepository, RegistrationFormRepository,
 };
 use sos21_domain::model::{permissions, registration_form, user};
@@ -24,6 +24,7 @@ pub enum Error {
     PendingProjectNotFound,
     RegistrationFormNotFound,
     AlreadyAnswered,
+    OutOfProjectCreationPeriod,
     InvalidItems(interface::form_answer::FormAnswerItemsError),
     InvalidAnswer(interface::form::CheckAnswerError),
     InsufficientPermissions,
@@ -57,6 +58,9 @@ impl Error {
                     item_error: interface::form::to_check_answer_item_error(kind),
                 })
             }
+            registration_form::AnswerErrorKind::OutOfProjectCreationPeriod => {
+                Error::OutOfProjectCreationPeriod
+            }
         }
     }
 }
@@ -69,6 +73,7 @@ where
         + RegistrationFormAnswerRepository
         + FileRepository
         + FileSharingRepository
+        + ConfigContext
         + Send
         + Sync,
 {
