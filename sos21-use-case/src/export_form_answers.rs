@@ -67,7 +67,7 @@ where
     };
 
     let answers = ctx
-        .list_form_answers(form.id)
+        .list_form_answers(form.id())
         .await
         .context("Failed to list form answers")?;
     use_case_ensure!(answers
@@ -118,7 +118,7 @@ where
     write_field!(writer, project_id);
     write_field!(writer, author_id);
 
-    for item in form.items.items() {
+    for item in form.items().items() {
         use form::item::FormItemBody;
         match &item.body {
             FormItemBody::Checkbox(checkbox_item) => {
@@ -167,30 +167,30 @@ where
     } = &input.field_names;
 
     if id.is_some() {
-        writer.write_field(answer.id.to_uuid().to_hyphenated().to_string())?;
+        writer.write_field(answer.id().to_uuid().to_hyphenated().to_string())?;
     }
 
     if created_at.is_some() {
-        let created_at = answer.created_at.jst().format("%F %T").to_string();
+        let created_at = answer.created_at().jst().format("%F %T").to_string();
         writer.write_field(created_at)?;
     }
 
     if project_id.is_some() {
-        writer.write_field(answer.project_id.to_uuid().to_hyphenated().to_string())?;
+        writer.write_field(answer.project_id().to_uuid().to_hyphenated().to_string())?;
     }
 
     if author_id.is_some() {
-        writer.write_field(answer.author_id.0)?;
+        writer.write_field(&answer.author_id().0)?;
     }
 
-    let answer_id = answer.id.to_uuid().to_hyphenated().to_string();
+    let answer_id = answer.id().to_uuid().to_hyphenated().to_string();
     let render = |sharing_ids| {
         (input.render_file_answer)(RenderFileAnswerInput {
             answer_id: answer_id.clone(),
             sharing_ids,
         })
     };
-    for (item, answer_item) in form.items.items().zip(answer.items.into_items()) {
+    for (item, answer_item) in form.items().items().zip(answer.into_items().into_items()) {
         write_item_fields(writer, render, item, answer_item)?;
     }
 
@@ -306,11 +306,11 @@ mod tests {
         let project2 = test::model::new_general_project(login_user.id().clone());
 
         let form1 = test::model::new_form(operator.id().clone());
-        let form1_id = FormId::from_entity(form1.id);
+        let form1_id = FormId::from_entity(form1.id());
         let form1_answer1 =
-            test::model::new_form_answer(login_user.id().clone(), project1.id(), &form1);
+            test::model::new_form_answer(login_user.id().clone(), &project1, &form1);
         let form1_answer2 =
-            test::model::new_form_answer(login_user.id().clone(), project2.id(), &form1);
+            test::model::new_form_answer(login_user.id().clone(), &project2, &form1);
 
         let app = test::build_mock_app()
             .users(vec![login_user.clone(), operator])

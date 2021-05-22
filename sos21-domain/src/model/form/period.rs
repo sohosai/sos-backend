@@ -2,7 +2,7 @@ use crate::model::date_time::DateTime;
 
 use thiserror::Error;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct FormPeriod {
     starts_at: DateTime,
     ends_at: DateTime,
@@ -21,6 +21,24 @@ impl FormPeriod {
         }
 
         Ok(FormPeriod { starts_at, ends_at })
+    }
+
+    pub fn set_starts_at(&mut self, starts_at: DateTime) -> Result<(), PeriodError> {
+        if starts_at >= self.ends_at {
+            return Err(PeriodError { _priv: () });
+        }
+
+        self.starts_at = starts_at;
+        Ok(())
+    }
+
+    pub fn set_ends_at(&mut self, ends_at: DateTime) -> Result<(), PeriodError> {
+        if self.starts_at >= ends_at {
+            return Err(PeriodError { _priv: () });
+        }
+
+        self.ends_at = ends_at;
+        Ok(())
     }
 
     pub fn starts_at(&self) -> DateTime {

@@ -59,7 +59,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_form::run(&app, FormId::from_entity(form_other.id)).await,
+            get_form::run(&app, FormId::from_entity(form_other.id())).await,
             Err(UseCaseError::UseCase(
                 get_form::Error::InsufficientPermissions
             ))
@@ -80,11 +80,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form_other.id);
+        let form_id = FormId::from_entity(form_other.id());
         assert!(matches!(
             get_form::run(&app, form_id).await,
             Ok(got)
-            if got.id == form_id && got.name == form_other.name.into_string()
+            if got.id == form_id && got.name == form_other.name().as_str()
         ));
     }
 
@@ -102,11 +102,11 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let form_id = FormId::from_entity(form_other.id);
+        let form_id = FormId::from_entity(form_other.id());
         assert!(matches!(
             get_form::run(&app, form_id).await,
             Ok(got)
-            if got.id == form_id && got.name == form_other.name.into_string()
+            if got.id == form_id && got.name == form_other.name().as_str()
         ));
     }
 
@@ -126,7 +126,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_form::run(&app, FormId::from_entity(form_other.id)).await,
+            get_form::run(&app, FormId::from_entity(form_other.id())).await,
             Err(UseCaseError::UseCase(get_form::Error::NotFound))
         ));
     }

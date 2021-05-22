@@ -62,21 +62,23 @@ pub struct Form {
 
 impl Form {
     pub fn from_entity(form: entity::Form) -> Form {
+        let period = form.period();
+        let condition = FormCondition::from_entity(form.condition().clone());
         Form {
-            id: FormId::from_entity(form.id),
-            created_at: form.created_at.utc(),
-            author_id: UserId::from_entity(form.author_id),
-            name: form.name.into_string(),
-            description: form.description.into_string(),
-            starts_at: form.period.starts_at().utc(),
-            ends_at: form.period.ends_at().utc(),
+            id: FormId::from_entity(form.id()),
+            created_at: form.created_at().utc(),
+            author_id: UserId::from_entity(form.author_id().clone()),
+            name: form.name().clone().into_string(),
+            description: form.description().clone().into_string(),
+            starts_at: period.starts_at().utc(),
+            ends_at: period.ends_at().utc(),
             items: form
-                .items
+                .into_items()
                 .into_items()
                 .into_iter()
                 .map(FormItem::from_entity)
                 .collect(),
-            condition: FormCondition::from_entity(form.condition),
+            condition,
         }
     }
 }

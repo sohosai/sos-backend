@@ -34,18 +34,17 @@ pub struct FormAnswer {
 
 impl FormAnswer {
     pub fn from_entity(answer: entity::FormAnswer) -> Self {
-        let items = answer
-            .items
-            .into_items()
-            .map(FormAnswerItem::from_entity)
-            .collect();
         FormAnswer {
-            id: FormAnswerId::from_entity(answer.id),
-            project_id: ProjectId::from_entity(answer.project_id),
-            form_id: FormId::from_entity(answer.form_id),
-            created_at: answer.created_at.utc(),
-            author_id: UserId::from_entity(answer.author_id),
-            items,
+            id: FormAnswerId::from_entity(answer.id()),
+            project_id: ProjectId::from_entity(answer.project_id()),
+            form_id: FormId::from_entity(answer.form_id()),
+            created_at: answer.created_at().utc(),
+            author_id: UserId::from_entity(answer.author_id().clone()),
+            items: answer
+                .into_items()
+                .into_items()
+                .map(FormAnswerItem::from_entity)
+                .collect(),
         }
     }
 }

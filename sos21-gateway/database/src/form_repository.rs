@@ -14,7 +14,8 @@ use sos21_domain::context::FormRepository;
 use sos21_domain::model::{
     date_time::DateTime,
     form::{
-        Form, FormCondition, FormConditionProjectSet, FormDescription, FormId, FormName, FormPeriod,
+        Form, FormCondition, FormConditionProjectSet, FormContent, FormDescription, FormId,
+        FormName, FormPeriod,
     },
     project::ProjectId,
     project_query::{ProjectQuery, ProjectQueryConjunction},
@@ -31,7 +32,7 @@ impl FormRepository for FormDatabase {
     async fn store_form(&self, form: Form) -> Result<()> {
         let mut lock = self.0.lock().await;
 
-        let form_id = form.id.to_uuid();
+        let form_id = form.id().to_uuid();
         if let Some(old_form) = query::find_form(&mut *lock, form_id).await? {
             let old_includes = FormConditionProjectSet::from_projects(
                 old_form.include_ids.into_iter().map(ProjectId::from_uuid),
@@ -43,7 +44,7 @@ impl FormRepository for FormDatabase {
             command::insert_form_condition_includes(
                 &mut *lock,
                 form_id,
-                form.condition
+                form.condition()
                     .includes
                     .difference(&old_includes)
                     .map(|id| id.to_uuid())
@@ -54,7 +55,7 @@ impl FormRepository for FormDatabase {
                 &mut *lock,
                 form_id,
                 old_includes
-                    .difference(&form.condition.includes)
+                    .difference(&form.condition().includes)
                     .map(|id| id.to_uuid())
                     .collect(),
             )
@@ -62,7 +63,7 @@ impl FormRepository for FormDatabase {
             command::insert_form_condition_excludes(
                 &mut *lock,
                 form_id,
-                form.condition
+                form.condition()
                     .excludes
                     .difference(&old_excludes)
                     .map(|id| id.to_uuid())
@@ -73,13 +74,13 @@ impl FormRepository for FormDatabase {
                 &mut *lock,
                 form_id,
                 old_excludes
-                    .difference(&form.condition.excludes)
+                    .difference(&form.condition().excludes)
                     .map(|id| id.to_uuid())
                     .collect(),
             )
             .await?;
 
-            let query = from_project_query(&form.condition.query);
+            let query = from_project_query(&form.condition().query);
             command::delete_form_project_query_conjunctions(&mut *lock, form_id).await?;
             command::insert_form_project_query_conjunctions(&mut *lock, form_id, query).await?;
 
@@ -95,18 +96,18 @@ impl FormRepository for FormDatabase {
             command::update_form(&mut *lock, input).await?;
         } else {
             let include_ids = form
-                .condition
+                .condition()
                 .includes
                 .projects()
                 .map(|id| id.to_uuid())
                 .collect();
             let exclude_ids = form
-                .condition
+                .condition()
                 .excludes
                 .projects()
                 .map(|id| id.to_uuid())
                 .collect();
-            let query = from_project_query(&form.condition.query);
+            let query = from_project_query(&form.condition().query);
             let form = from_form(form)?;
 
             command::insert_form(&mut *lock, form).await?;
@@ -181,7 +182,7 @@ fn to_form(data: data::form::FormData) -> Result<Form> {
         excludes,
     };
 
-    Ok(Form {
+    Ok(Form::from_content(FormContent {
         id: FormId::from_uuid(id),
         created_at: DateTime::from_utc(created_at),
         author_id: UserId(author_id),
@@ -190,11 +191,11 @@ fn to_form(data: data::form::FormData) -> Result<Form> {
         period: FormPeriod::from_datetime(starts_at, ends_at)?,
         items: serde_json::from_value(items)?,
         condition,
-    })
+    }))
 }
 
 fn from_form(form: Form) -> Result<data::form::Form> {
-    let Form {
+    let FormContent {
         id,
         created_at,
         author_id,
@@ -203,7 +204,7 @@ fn from_form(form: Form) -> Result<data::form::Form> {
         period,
         items,
         condition: _,
-    } = form;
+    } = form.into_content();
 
     Ok(data::form::Form {
         id: id.to_uuid(),

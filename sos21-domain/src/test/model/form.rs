@@ -1,8 +1,8 @@
 use crate::model::{
     date_time::DateTime,
     form::{
-        Form, FormCondition, FormConditionProjectSet, FormDescription, FormId, FormItems, FormName,
-        FormPeriod,
+        Form, FormCondition, FormConditionProjectSet, FormContent, FormDescription, FormId,
+        FormItems, FormName, FormPeriod,
     },
     project_query::ProjectQuery,
     user::UserId,
@@ -26,10 +26,28 @@ pub fn mock_form_description() -> FormDescription {
     FormDescription::from_string("テスト").unwrap()
 }
 
-pub fn mock_form_period() -> FormPeriod {
-    let starts_at = DateTime::now();
-    let ends_at = DateTime::from_utc(chrono::Utc::now() + chrono::Duration::hours(1));
+pub fn mock_form_period_with_start(starts_at: DateTime) -> FormPeriod {
+    let ends_at = DateTime::from_utc(starts_at.utc() + chrono::Duration::hours(1));
     FormPeriod::from_datetime(starts_at, ends_at).unwrap()
+}
+
+pub fn mock_form_period_with_end(ends_at: DateTime) -> FormPeriod {
+    let starts_at = DateTime::from_utc(ends_at.utc() - chrono::Duration::hours(1));
+    FormPeriod::from_datetime(starts_at, ends_at).unwrap()
+}
+
+pub fn new_form_period_from_now() -> FormPeriod {
+    mock_form_period_with_start(DateTime::now())
+}
+
+pub fn new_form_period_to_now() -> FormPeriod {
+    mock_form_period_with_end(DateTime::now())
+}
+
+pub fn new_form_period_with_hours_from_now(hours: i64) -> FormPeriod {
+    mock_form_period_with_start(DateTime::from_utc(
+        chrono::Utc::now() + chrono::Duration::hours(hours),
+    ))
 }
 
 pub fn mock_form_condition() -> FormCondition {
@@ -40,30 +58,43 @@ pub fn mock_form_condition() -> FormCondition {
     }
 }
 
-pub fn new_form_with_items(author_id: UserId, items: FormItems) -> Form {
-    Form {
+pub fn new_form_with_period(author_id: UserId, period: FormPeriod) -> Form {
+    Form::from_content(FormContent {
         id: new_form_id(),
         created_at: DateTime::now(),
         author_id,
         name: mock_form_name(),
         description: mock_form_description(),
-        period: mock_form_period(),
+        period,
+        items: new_form_items(),
+        condition: mock_form_condition(),
+    })
+}
+
+pub fn new_form_with_items(author_id: UserId, items: FormItems) -> Form {
+    Form::from_content(FormContent {
+        id: new_form_id(),
+        created_at: DateTime::now(),
+        author_id,
+        name: mock_form_name(),
+        description: mock_form_description(),
+        period: new_form_period_from_now(),
         items,
         condition: mock_form_condition(),
-    }
+    })
 }
 
 pub fn new_form_with_condition(author_id: UserId, condition: FormCondition) -> Form {
-    Form {
+    Form::from_content(FormContent {
         id: new_form_id(),
         created_at: DateTime::now(),
         author_id,
         name: mock_form_name(),
         description: mock_form_description(),
-        period: mock_form_period(),
+        period: new_form_period_from_now(),
         items: new_form_items(),
         condition,
-    }
+    })
 }
 
 pub fn new_form_with_query(author_id: UserId, query: ProjectQuery) -> Form {

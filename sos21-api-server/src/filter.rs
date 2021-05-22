@@ -107,6 +107,7 @@ pub fn endpoints(
                 / "answer" {
                     / => POST (handler::project::form::answer),
                     / "get" => GET (handler::project::form::answer::get),
+                    / "update" => POST (handler::project::form::answer::update),
                     / "file-sharing" {
                         / "get-file" => GET (handler::project::form::answer::file_sharing::get_file),
                         / "get-file-info" => GET (handler::project::form::answer::file_sharing::get_file_info),
@@ -148,6 +149,7 @@ pub fn endpoints(
             / "get" => GET (handler::form::get),
             / "list" => GET (handler::form::list),
             / "create" => POST (handler::form::create),
+            / "update" => POST (handler::form::update),
             / "answer" {
                 / "list" => GET (handler::form::answer::list),
                 / "export" => GET (handler::form::answer::export),

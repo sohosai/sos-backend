@@ -167,7 +167,7 @@ impl<'a> ShareTarget<'a> {
     fn to_scope(&self) -> file_sharing::FileSharingScope {
         match self {
             ShareTarget::FormAnswer { project, form } => {
-                file_sharing::FileSharingScope::FormAnswer(project.id(), form.id)
+                file_sharing::FileSharingScope::FormAnswer(project.id(), form.id())
             }
             ShareTarget::RegistrationFormAnswer {
                 pending_project,

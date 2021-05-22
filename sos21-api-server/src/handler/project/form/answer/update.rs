@@ -8,15 +8,8 @@ use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::{answer_form, interface};
+use sos21_use_case::{interface, update_project_form_answer};
 use warp::http::StatusCode;
-
-pub mod file_sharing;
-
-pub mod get;
-pub use get::handler as get;
-pub mod update;
-pub use update::handler as update;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {
@@ -32,7 +25,7 @@ pub struct Response {
 
 impl HandlerResponse for Response {
     fn status_code(&self) -> StatusCode {
-        StatusCode::CREATED
+        StatusCode::OK
     }
 }
 
@@ -41,8 +34,8 @@ impl HandlerResponse for Response {
 pub enum Error {
     FormNotFound,
     ProjectNotFound,
+    FormAnswerNotFound,
     OutOfAnswerPeriod,
-    AlreadyAnsweredForm,
     NoFormItems,
     TooManyFormItems,
     InvalidFormItem {
@@ -56,6 +49,7 @@ pub enum Error {
     InvalidFormAnswer {
         id: FormItemId,
     },
+    InsufficientPermissions,
 }
 
 impl HandlerResponse for Error {
@@ -63,26 +57,27 @@ impl HandlerResponse for Error {
         match self {
             Error::FormNotFound => StatusCode::NOT_FOUND,
             Error::ProjectNotFound => StatusCode::NOT_FOUND,
+            Error::FormAnswerNotFound => StatusCode::NOT_FOUND,
             Error::OutOfAnswerPeriod => StatusCode::CONFLICT,
-            Error::AlreadyAnsweredForm => StatusCode::CONFLICT,
             Error::NoFormItems => StatusCode::BAD_REQUEST,
             Error::TooManyFormItems => StatusCode::BAD_REQUEST,
             Error::InvalidFormItem { .. } => StatusCode::BAD_REQUEST,
             Error::MismatchedFormItemsLength => StatusCode::BAD_REQUEST,
             Error::MismatchedFormItemId { .. } => StatusCode::BAD_REQUEST,
             Error::InvalidFormAnswer { .. } => StatusCode::BAD_REQUEST,
+            Error::InsufficientPermissions => StatusCode::FORBIDDEN,
         }
     }
 }
 
-impl From<answer_form::Error> for Error {
-    fn from(err: answer_form::Error) -> Error {
+impl From<update_project_form_answer::Error> for Error {
+    fn from(err: update_project_form_answer::Error) -> Error {
         match err {
-            answer_form::Error::FormNotFound => Error::FormNotFound,
-            answer_form::Error::ProjectNotFound => Error::ProjectNotFound,
-            answer_form::Error::OutOfAnswerPeriod => Error::OutOfAnswerPeriod,
-            answer_form::Error::AlreadyAnswered => Error::AlreadyAnsweredForm,
-            answer_form::Error::InvalidItems(err) => match err {
+            update_project_form_answer::Error::FormNotFound => Error::FormNotFound,
+            update_project_form_answer::Error::ProjectNotFound => Error::ProjectNotFound,
+            update_project_form_answer::Error::FormAnswerNotFound => Error::FormAnswerNotFound,
+            update_project_form_answer::Error::OutOfAnswerPeriod => Error::OutOfAnswerPeriod,
+            update_project_form_answer::Error::InvalidItems(err) => match err {
                 interface::form_answer::FormAnswerItemsError::NoItems => Error::NoFormItems,
                 interface::form_answer::FormAnswerItemsError::TooManyItems => {
                     Error::TooManyFormItems
@@ -94,7 +89,7 @@ impl From<answer_form::Error> for Error {
                     }
                 }
             },
-            answer_form::Error::InvalidAnswer(err) => match err {
+            update_project_form_answer::Error::InvalidAnswer(err) => match err {
                 interface::form::CheckAnswerError::MismatchedItemsLength => {
                     Error::MismatchedFormItemsLength
                 }
@@ -111,13 +106,16 @@ impl From<answer_form::Error> for Error {
                     }
                 }
             },
+            update_project_form_answer::Error::InsufficientPermissions => {
+                Error::InsufficientPermissions
+            }
         }
     }
 }
 
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
-    let input = answer_form::Input {
+    let input = update_project_form_answer::Input {
         project_id: request.project_id.into_use_case(),
         form_id: request.form_id.into_use_case(),
         items: request
@@ -126,7 +124,7 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
             .map(RequestFormAnswerItem::into_use_case)
             .collect(),
     };
-    let answer = answer_form::run(&ctx, input).await?;
+    let answer = update_project_form_answer::run(&ctx, input).await?;
     let answer = FormAnswer::from_use_case(answer);
     Ok(Response { answer })
 }

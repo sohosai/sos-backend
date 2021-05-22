@@ -51,7 +51,7 @@ mod tests {
         let operator = test::model::new_operator_user();
         let project = test::model::new_general_project(user.id().clone());
         let form = test::model::new_form(operator.id().clone());
-        let answer = test::model::new_form_answer(user.id().clone(), project.id(), &form);
+        let answer = test::model::new_form_answer(user.id().clone(), &project, &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
@@ -63,7 +63,7 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_form_answer::run(&app, FormAnswerId::from_entity(answer.id)).await,
+            get_form_answer::run(&app, FormAnswerId::from_entity(answer.id())).await,
             Err(UseCaseError::UseCase(
                 get_form_answer::Error::InsufficientPermissions
             ))
@@ -77,7 +77,7 @@ mod tests {
         let operator = test::model::new_operator_user();
         let project = test::model::new_general_project(user.id().clone());
         let form = test::model::new_form(operator.id().clone());
-        let answer = test::model::new_form_answer(user.id().clone(), project.id(), &form);
+        let answer = test::model::new_form_answer(user.id().clone(), &project, &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
@@ -88,7 +88,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let answer_id = FormAnswerId::from_entity(answer.id);
+        let answer_id = FormAnswerId::from_entity(answer.id());
         assert!(matches!(
             get_form_answer::run(&app, answer_id).await,
             Ok(got)
@@ -103,7 +103,7 @@ mod tests {
         let operator = test::model::new_operator_user();
         let project = test::model::new_general_project(user.id().clone());
         let form = test::model::new_form(operator.id().clone());
-        let answer = test::model::new_form_answer(user.id().clone(), project.id(), &form);
+        let answer = test::model::new_form_answer(user.id().clone(), &project, &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), operator.clone()])
@@ -114,7 +114,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let answer_id = FormAnswerId::from_entity(answer.id);
+        let answer_id = FormAnswerId::from_entity(answer.id());
         assert!(matches!(
             get_form_answer::run(&app, answer_id).await,
             Ok(got)

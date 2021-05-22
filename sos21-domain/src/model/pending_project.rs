@@ -37,6 +37,7 @@ pub struct PendingProjectContent {
 #[derive(Debug, Clone)]
 pub struct PendingProject {
     content: PendingProjectContent,
+    // TODO: Query every time to make sure this is up to date
     owner_id: UserId,
 }
 

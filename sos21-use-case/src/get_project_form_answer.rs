@@ -68,8 +68,7 @@ mod tests {
         let project_other = test::model::new_general_project(other.id().clone());
         assert!(!project_other.is_visible_to(&user));
         let form = test::model::new_form(other.id().clone());
-        let answer_other =
-            test::model::new_form_answer(other.id().clone(), project_other.id(), &form);
+        let answer_other = test::model::new_form_answer(other.id().clone(), &project_other, &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -84,7 +83,7 @@ mod tests {
             get_project_form_answer::run(
                 &app,
                 ProjectId::from_entity(project_other.id()),
-                FormId::from_entity(form.id),
+                FormId::from_entity(form.id()),
             )
             .await,
             Err(UseCaseError::UseCase(
@@ -100,8 +99,7 @@ mod tests {
         let other = test::model::new_general_user();
         let project_other = test::model::new_general_project(other.id().clone());
         let form = test::model::new_form(other.id().clone());
-        let answer_other =
-            test::model::new_form_answer(other.id().clone(), project_other.id(), &form);
+        let answer_other = test::model::new_form_answer(other.id().clone(), &project_other, &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -113,9 +111,9 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_form_answer::run(&app, ProjectId::from_entity(project_other.id()), FormId::from_entity(form.id)).await,
+            get_project_form_answer::run(&app, ProjectId::from_entity(project_other.id()), FormId::from_entity(form.id())).await,
             Ok(got)
-            if got.id == FormAnswerId::from_entity(answer_other.id)
+            if got.id == FormAnswerId::from_entity(answer_other.id())
         ));
     }
 
@@ -126,8 +124,7 @@ mod tests {
         let other = test::model::new_general_user();
         let project_other = test::model::new_general_project(other.id().clone());
         let form = test::model::new_form(other.id().clone());
-        let answer_other =
-            test::model::new_form_answer(other.id().clone(), project_other.id(), &form);
+        let answer_other = test::model::new_form_answer(other.id().clone(), &project_other, &form);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -139,9 +136,9 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_form_answer::run(&app, ProjectId::from_entity(project_other.id()), FormId::from_entity(form.id)).await,
+            get_project_form_answer::run(&app, ProjectId::from_entity(project_other.id()), FormId::from_entity(form.id())).await,
             Ok(got)
-            if got.id == FormAnswerId::from_entity(answer_other.id)
+            if got.id == FormAnswerId::from_entity(answer_other.id())
         ));
     }
 }

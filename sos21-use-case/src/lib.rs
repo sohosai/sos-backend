@@ -79,7 +79,9 @@ pub mod prepare_project;
 pub mod revoke_file_sharing;
 pub mod share_file;
 pub mod signup;
+pub mod update_form;
 pub mod update_project;
+pub mod update_project_form_answer;
 pub mod update_user;
 
 mod error;

@@ -70,7 +70,7 @@ mod tests {
         let got: HashSet<_> = result.unwrap().into_iter().map(|form| form.id).collect();
         let expected: HashSet<_> = vec![form1, form2, form3]
             .into_iter()
-            .map(|form| FormId::from_entity(form.id))
+            .map(|form| FormId::from_entity(form.id()))
             .collect();
         assert_eq!(got, expected);
     }
@@ -126,7 +126,7 @@ mod tests {
         let got: HashSet<_> = result.unwrap().into_iter().map(|form| form.id).collect();
         let expected: HashSet<_> = vec![form1, form3]
             .into_iter()
-            .map(|form| FormId::from_entity(form.id))
+            .map(|form| FormId::from_entity(form.id()))
             .collect();
         assert_eq!(got, expected);
     }

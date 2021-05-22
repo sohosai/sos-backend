@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Support for non-ASCII filenames ([#98](https://github.com/sohosai/sos21-backend/pull/98))
 - Pre-configured administrator email address ([#99](https://github.com/sohosai/sos21-backend/pull/99))
+- Editing of forms and form answers ([#90](https://github.com/sohosai/sos21-backend/pull/90))
 
 ### Changed
 
