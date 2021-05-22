@@ -83,6 +83,8 @@
 <span id="80">80</span>
 <span id="81">81</span>
 <span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::<span class="ident">ProjectId</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project_query</span>::<span class="ident">ProjectQuery</span>;
@@ -148,21 +150,23 @@
 
 <span class="kw">impl</span> <span class="ident">Form</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_entity</span>(<span class="ident">form</span>: <span class="ident">entity</span>::<span class="ident">Form</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Form</span> {
+        <span class="kw">let</span> <span class="ident">period</span> <span class="op">=</span> <span class="ident">form</span>.<span class="ident">period</span>();
+        <span class="kw">let</span> <span class="ident">condition</span> <span class="op">=</span> <span class="ident">FormCondition</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">condition</span>().<span class="ident">clone</span>());
         <span class="ident">Form</span> {
-            <span class="ident">id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>),
-            <span class="ident">created_at</span>: <span class="ident">form</span>.<span class="ident">created_at</span>.<span class="ident">utc</span>(),
-            <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">author_id</span>),
-            <span class="ident">name</span>: <span class="ident">form</span>.<span class="ident">name</span>.<span class="ident">into_string</span>(),
-            <span class="ident">description</span>: <span class="ident">form</span>.<span class="ident">description</span>.<span class="ident">into_string</span>(),
-            <span class="ident">starts_at</span>: <span class="ident">form</span>.<span class="ident">period</span>.<span class="ident">starts_at</span>().<span class="ident">utc</span>(),
-            <span class="ident">ends_at</span>: <span class="ident">form</span>.<span class="ident">period</span>.<span class="ident">ends_at</span>().<span class="ident">utc</span>(),
+            <span class="ident">id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>()),
+            <span class="ident">created_at</span>: <span class="ident">form</span>.<span class="ident">created_at</span>().<span class="ident">utc</span>(),
+            <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">author_id</span>().<span class="ident">clone</span>()),
+            <span class="ident">name</span>: <span class="ident">form</span>.<span class="ident">name</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">description</span>: <span class="ident">form</span>.<span class="ident">description</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
+            <span class="ident">starts_at</span>: <span class="ident">period</span>.<span class="ident">starts_at</span>().<span class="ident">utc</span>(),
+            <span class="ident">ends_at</span>: <span class="ident">period</span>.<span class="ident">ends_at</span>().<span class="ident">utc</span>(),
             <span class="ident">items</span>: <span class="ident">form</span>
-                .<span class="ident">items</span>
+                .<span class="ident">into_items</span>()
                 .<span class="ident">into_items</span>()
                 .<span class="ident">into_iter</span>()
                 .<span class="ident">map</span>(<span class="ident">FormItem</span>::<span class="ident">from_entity</span>)
                 .<span class="ident">collect</span>(),
-            <span class="ident">condition</span>: <span class="ident">FormCondition</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">condition</span>),
+            <span class="ident">condition</span>,
         }
     }
 }

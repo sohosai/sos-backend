@@ -118,7 +118,7 @@
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
     <span class="ident">form</span>::<span class="ident">FormId</span>,
-    <span class="ident">form_answer</span>::{<span class="ident">FormAnswer</span>, <span class="ident">FormAnswerId</span>},
+    <span class="ident">form_answer</span>::{<span class="ident">FormAnswer</span>, <span class="ident">FormAnswerContent</span>, <span class="ident">FormAnswerId</span>},
     <span class="ident">project</span>::<span class="ident">ProjectId</span>,
     <span class="ident">user</span>::<span class="ident">UserId</span>,
 };
@@ -173,7 +173,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_form_answers</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">form_id</span>: <span class="ident">FormId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FormAnswer</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="kw">await</span>;
         <span class="ident">query</span>::<span class="ident">list_form_answers_by_form</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">form_id</span>.<span class="ident">to_uuid</span>())
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">user</span><span class="op">|</span> <span class="ident">future</span>::<span class="ident">ready</span>(<span class="ident">to_form_answer</span>(<span class="ident">user</span>)))
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">answer</span><span class="op">|</span> <span class="ident">future</span>::<span class="ident">ready</span>(<span class="ident">to_form_answer</span>(<span class="ident">answer</span>)))
             .<span class="ident">try_collect</span>()
             .<span class="kw">await</span>
     }
@@ -189,25 +189,25 @@
         <span class="ident">items</span>,
     } <span class="op">=</span> <span class="ident">answer</span>;
 
-    <span class="prelude-val">Ok</span>(<span class="ident">FormAnswer</span> {
+    <span class="prelude-val">Ok</span>(<span class="ident">FormAnswer</span>::<span class="ident">from_content</span>(<span class="ident">FormAnswerContent</span> {
         <span class="ident">id</span>: <span class="ident">FormAnswerId</span>::<span class="ident">from_uuid</span>(<span class="ident">id</span>),
         <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_uuid</span>(<span class="ident">project_id</span>),
         <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_uuid</span>(<span class="ident">form_id</span>),
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
         <span class="ident">author_id</span>: <span class="ident">UserId</span>(<span class="ident">author_id</span>),
         <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">from_value</span>(<span class="ident">items</span>)<span class="question-mark">?</span>,
-    })
+    }))
 }
 
 <span class="kw">fn</span> <span class="ident">from_form_answer</span>(<span class="ident">answer</span>: <span class="ident">FormAnswer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">data</span>::<span class="ident">form_answer</span>::<span class="ident">FormAnswer</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">FormAnswer</span> {
+    <span class="kw">let</span> <span class="ident">FormAnswerContent</span> {
         <span class="ident">id</span>,
         <span class="ident">project_id</span>,
         <span class="ident">form_id</span>,
         <span class="ident">created_at</span>,
         <span class="ident">author_id</span>,
         <span class="ident">items</span>,
-    } <span class="op">=</span> <span class="ident">answer</span>;
+    } <span class="op">=</span> <span class="ident">answer</span>.<span class="ident">into_content</span>();
 
     <span class="prelude-val">Ok</span>(<span class="ident">data</span>::<span class="ident">form_answer</span>::<span class="ident">FormAnswer</span> {
         <span class="ident">id</span>: <span class="ident">id</span>.<span class="ident">to_uuid</span>(),

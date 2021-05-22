@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["answer",""],["create",""],["get",""],["list",""]]});
+initSidebarItems({"mod":[["answer",""],["create",""],["get",""],["list",""],["update",""]]});

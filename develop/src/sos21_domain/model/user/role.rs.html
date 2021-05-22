@@ -81,6 +81,8 @@
 <span id="78">78</span>
 <span id="79">79</span>
 <span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">permissions</span>::<span class="ident">Permissions</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">UserFileUsageQuota</span>;
@@ -109,6 +111,7 @@
                 <span class="ident">UserRole</span>::<span class="ident">Committee</span>.<span class="ident">permissions</span>()
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">READ_ALL_USERS</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">CREATE_FORMS</span>
+                    <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">UPDATE_NOT_STARTED_OWNING_FORMS</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">DISTRIBUTE_FILES</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">CREATE_REGISTRATION_FORMS</span>
             }
@@ -125,6 +128,7 @@
                 <span class="ident">Permissions</span>::<span class="ident">CREATE_FILES</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">SHARE_FILES</span>
                     <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">ANSWER_REGISTRATION_FORMS</span>
+                    <span class="op">|</span> <span class="ident">Permissions</span>::<span class="ident">UPDATE_FORM_ANSWERS_IN_PERIOD</span>
             }
         }
     }

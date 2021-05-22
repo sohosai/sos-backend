@@ -244,6 +244,7 @@
 <span id="241">241</span>
 <span id="242">242</span>
 <span id="243">243</span>
+<span id="244">244</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{
@@ -284,6 +285,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PendingProject</span> {
     <span class="ident">content</span>: <span class="ident">PendingProjectContent</span>,
+    <span class="comment">// TODO: Query every time to make sure this is up to date</span>
     <span class="ident">owner_id</span>: <span class="ident">UserId</span>,
 }
 

@@ -226,6 +226,8 @@
 <span id="223">223</span>
 <span id="224">224</span>
 <span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -336,6 +338,7 @@
                 <span class="op">/</span> <span class="string">&quot;answer&quot;</span> {
                     <span class="op">/</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">form</span>::<span class="ident">answer</span>),
                     <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">form</span>::<span class="ident">answer</span>::<span class="ident">get</span>),
+                    <span class="op">/</span> <span class="string">&quot;update&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">form</span>::<span class="ident">answer</span>::<span class="ident">update</span>),
                     <span class="op">/</span> <span class="string">&quot;file-sharing&quot;</span> {
                         <span class="op">/</span> <span class="string">&quot;get-file&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">form</span>::<span class="ident">answer</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file</span>),
                         <span class="op">/</span> <span class="string">&quot;get-file-info&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">form</span>::<span class="ident">answer</span>::<span class="ident">file_sharing</span>::<span class="ident">get_file_info</span>),
@@ -377,6 +380,7 @@
             <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">form</span>::<span class="ident">get</span>),
             <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">form</span>::<span class="ident">list</span>),
             <span class="op">/</span> <span class="string">&quot;create&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">form</span>::<span class="ident">create</span>),
+            <span class="op">/</span> <span class="string">&quot;update&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">form</span>::<span class="ident">update</span>),
             <span class="op">/</span> <span class="string">&quot;answer&quot;</span> {
                 <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">form</span>::<span class="ident">answer</span>::<span class="ident">list</span>),
                 <span class="op">/</span> <span class="string">&quot;export&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">form</span>::<span class="ident">answer</span>::<span class="ident">export</span>),

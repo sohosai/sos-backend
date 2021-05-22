@@ -87,7 +87,7 @@
 
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::<span class="ident">form_answer</span>::<span class="ident">item</span> <span class="kw">as</span> <span class="ident">entity</span>;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GridRadioRowAnswer</span> {
     <span class="kw">pub</span> <span class="ident">row_id</span>: <span class="ident">GridRadioRowId</span>,
     <span class="kw">pub</span> <span class="ident">value</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">GridRadioColumnId</span><span class="op">&gt;</span>,
@@ -102,7 +102,7 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">FormAnswerItemBody</span> {
     <span class="ident">Text</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>),
     <span class="ident">Integer</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>),
@@ -144,7 +144,7 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FormAnswerItem</span> {
     <span class="kw">pub</span> <span class="ident">item_id</span>: <span class="ident">FormItemId</span>,
     <span class="kw">pub</span> <span class="ident">body</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">FormAnswerItemBody</span><span class="op">&gt;</span>,

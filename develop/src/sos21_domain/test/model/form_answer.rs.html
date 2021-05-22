@@ -140,6 +140,21 @@
 <span id="137">137</span>
 <span id="138">138</span>
 <span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
@@ -157,9 +172,9 @@
             <span class="ident">FormAnswerItemFileSharings</span>, <span class="ident">FormAnswerItemGridRows</span>, <span class="ident">FormAnswerItemText</span>,
             <span class="ident">FormAnswerItems</span>, <span class="ident">GridRadioRowAnswer</span>,
         },
-        <span class="ident">FormAnswer</span>, <span class="ident">FormAnswerId</span>,
+        <span class="ident">FormAnswer</span>, <span class="ident">FormAnswerContent</span>, <span class="ident">FormAnswerId</span>,
     },
-    <span class="ident">project</span>::<span class="ident">ProjectId</span>,
+    <span class="ident">project</span>::<span class="ident">Project</span>,
     <span class="ident">user</span>::<span class="ident">UserId</span>,
 };
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
@@ -270,15 +285,30 @@
     <span class="ident">FormAnswerItems</span>::<span class="ident">from_items</span>(<span class="ident">items</span>.<span class="ident">items</span>().<span class="ident">map</span>(<span class="ident">mock_form_answer_item</span>)).<span class="ident">unwrap</span>()
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_form_answer</span>(<span class="ident">author_id</span>: <span class="ident">UserId</span>, <span class="ident">project_id</span>: <span class="ident">ProjectId</span>, <span class="ident">form</span>: <span class="kw-2">&amp;</span><span class="ident">Form</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FormAnswer</span> {
-    <span class="ident">FormAnswer</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_form_answer_with_items</span>(
+    <span class="ident">author_id</span>: <span class="ident">UserId</span>,
+    <span class="ident">project</span>: <span class="kw-2">&amp;</span><span class="ident">Project</span>,
+    <span class="ident">form</span>: <span class="kw-2">&amp;</span><span class="ident">Form</span>,
+    <span class="ident">items</span>: <span class="ident">FormAnswerItems</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FormAnswer</span> {
+    <span class="ident">form</span>.<span class="ident">items</span>().<span class="ident">check_answer</span>(<span class="kw-2">&amp;</span><span class="ident">items</span>).<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
+    <span class="ident">FormAnswer</span>::<span class="ident">from_content</span>(<span class="ident">FormAnswerContent</span> {
         <span class="ident">id</span>: <span class="ident">new_form_answer_id</span>(),
-        <span class="ident">project_id</span>,
-        <span class="ident">form_id</span>: <span class="ident">form</span>.<span class="ident">id</span>,
+        <span class="ident">project_id</span>: <span class="ident">project</span>.<span class="ident">id</span>(),
+        <span class="ident">form_id</span>: <span class="ident">form</span>.<span class="ident">id</span>(),
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">now</span>(),
         <span class="ident">author_id</span>,
-        <span class="ident">items</span>: <span class="ident">mock_form_answer_items</span>(<span class="kw-2">&amp;</span><span class="ident">form</span>.<span class="ident">items</span>),
-    }
+        <span class="ident">items</span>,
+    })
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_form_answer</span>(<span class="ident">author_id</span>: <span class="ident">UserId</span>, <span class="ident">project</span>: <span class="kw-2">&amp;</span><span class="ident">Project</span>, <span class="ident">form</span>: <span class="kw-2">&amp;</span><span class="ident">Form</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FormAnswer</span> {
+    <span class="ident">new_form_answer_with_items</span>(
+        <span class="ident">author_id</span>,
+        <span class="ident">project</span>,
+        <span class="ident">form</span>,
+        <span class="ident">mock_form_answer_items</span>(<span class="ident">form</span>.<span class="ident">items</span>()),
+    )
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="sos21_domain" data-search-js="../../../../search-index.js"></div>

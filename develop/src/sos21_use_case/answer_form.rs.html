@@ -326,6 +326,7 @@
 <span id="323">323</span>
 <span id="324">324</span>
 <span id="325">325</span>
+<span id="326">326</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">interface</span>;
@@ -418,7 +419,7 @@
     };
 
     <span class="comment">// NOTE: Check the answer period before the validation for the convenience of clients</span>
-    <span class="kw">if</span> <span class="op">!</span><span class="ident">form</span>.<span class="ident">period</span>.<span class="ident">contains</span>(<span class="ident">DateTime</span>::<span class="ident">now</span>()) {
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">form</span>.<span class="ident">period</span>().<span class="ident">contains</span>(<span class="ident">DateTime</span>::<span class="ident">now</span>()) {
         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">OutOfAnswerPeriod</span>));
     }
 
@@ -471,12 +472,12 @@
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
 
-        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">project_id</span> <span class="op">=</span> <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">answer_form</span>::<span class="ident">Input</span> {
             <span class="ident">form_id</span>,
             <span class="ident">project_id</span>,
-            <span class="ident">items</span>: <span class="ident">test_interface</span>::<span class="ident">mock_input_form_answer_items</span>(<span class="kw-2">&amp;</span><span class="ident">form</span>.<span class="ident">items</span>),
+            <span class="ident">items</span>: <span class="ident">test_interface</span>::<span class="ident">mock_input_form_answer_items</span>(<span class="ident">form</span>.<span class="ident">items</span>()),
         };
 
         <span class="kw">let</span> <span class="ident">got</span> <span class="op">=</span> <span class="ident">answer_form</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>.<span class="ident">unwrap</span>();
@@ -505,12 +506,12 @@
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
 
-        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">project_id</span> <span class="op">=</span> <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">answer_form</span>::<span class="ident">Input</span> {
             <span class="ident">form_id</span>,
             <span class="ident">project_id</span>,
-            <span class="ident">items</span>: <span class="ident">test_interface</span>::<span class="ident">mock_input_form_answer_items</span>(<span class="kw-2">&amp;</span><span class="ident">form</span>.<span class="ident">items</span>),
+            <span class="ident">items</span>: <span class="ident">test_interface</span>::<span class="ident">mock_input_form_answer_items</span>(<span class="ident">form</span>.<span class="ident">items</span>()),
         };
 
         <span class="kw">let</span> <span class="ident">got</span> <span class="op">=</span> <span class="ident">answer_form</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>.<span class="ident">unwrap</span>();
@@ -539,12 +540,12 @@
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
 
-        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">project_id</span> <span class="op">=</span> <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">answer_form</span>::<span class="ident">Input</span> {
             <span class="ident">form_id</span>,
             <span class="ident">project_id</span>,
-            <span class="ident">items</span>: <span class="ident">test_interface</span>::<span class="ident">mock_input_form_answer_items</span>(<span class="kw-2">&amp;</span><span class="ident">form</span>.<span class="ident">items</span>),
+            <span class="ident">items</span>: <span class="ident">test_interface</span>::<span class="ident">mock_input_form_answer_items</span>(<span class="ident">form</span>.<span class="ident">items</span>()),
         };
 
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -568,9 +569,10 @@
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
 
-        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">project_id</span> <span class="op">=</span> <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>());
-        <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">test_interface</span>::<span class="ident">mock_input_form_answer_item</span>(<span class="ident">form</span>.<span class="ident">items</span>.<span class="ident">items</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>());
+        <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span>
+            <span class="ident">test_interface</span>::<span class="ident">mock_input_form_answer_item</span>(<span class="ident">form</span>.<span class="ident">items</span>().<span class="ident">items</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>());
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">answer_form</span>::<span class="ident">Input</span> {
             <span class="ident">form_id</span>,
             <span class="ident">project_id</span>,
@@ -620,7 +622,7 @@
                 <span class="ident">interface</span>::<span class="ident">form_answer</span>::<span class="ident">InputFormAnswerItemFile</span>::<span class="ident">File</span>(<span class="ident">FileId</span>::<span class="ident">from_entity</span>(<span class="ident">file</span>.<span class="ident">id</span>)),
             ])),
         };
-        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">form_id</span> <span class="op">=</span> <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">project_id</span> <span class="op">=</span> <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">answer_form</span>::<span class="ident">Input</span> {
             <span class="ident">form_id</span>,

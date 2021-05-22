@@ -51,7 +51,6 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
-<span id="51">51</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::<span class="ident">FormId</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::<span class="ident">ProjectId</span>;
@@ -89,18 +88,17 @@
 
 <span class="kw">impl</span> <span class="ident">FormAnswer</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_entity</span>(<span class="ident">answer</span>: <span class="ident">entity</span>::<span class="ident">FormAnswer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">items</span> <span class="op">=</span> <span class="ident">answer</span>
-            .<span class="ident">items</span>
-            .<span class="ident">into_items</span>()
-            .<span class="ident">map</span>(<span class="ident">FormAnswerItem</span>::<span class="ident">from_entity</span>)
-            .<span class="ident">collect</span>();
         <span class="ident">FormAnswer</span> {
-            <span class="ident">id</span>: <span class="ident">FormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>),
-            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">project_id</span>),
-            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">form_id</span>),
-            <span class="ident">created_at</span>: <span class="ident">answer</span>.<span class="ident">created_at</span>.<span class="ident">utc</span>(),
-            <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">author_id</span>),
-            <span class="ident">items</span>,
+            <span class="ident">id</span>: <span class="ident">FormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>()),
+            <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">project_id</span>()),
+            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">form_id</span>()),
+            <span class="ident">created_at</span>: <span class="ident">answer</span>.<span class="ident">created_at</span>().<span class="ident">utc</span>(),
+            <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">author_id</span>().<span class="ident">clone</span>()),
+            <span class="ident">items</span>: <span class="ident">answer</span>
+                .<span class="ident">into_items</span>()
+                .<span class="ident">into_items</span>()
+                .<span class="ident">map</span>(<span class="ident">FormAnswerItem</span>::<span class="ident">from_entity</span>)
+                .<span class="ident">collect</span>(),
         }
     }
 }

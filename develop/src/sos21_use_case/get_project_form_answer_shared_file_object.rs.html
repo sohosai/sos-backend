@@ -335,14 +335,6 @@
 <span id="332">332</span>
 <span id="333">333</span>
 <span id="334">334</span>
-<span id="335">335</span>
-<span id="336">336</span>
-<span id="337">337</span>
-<span id="338">338</span>
-<span id="339">339</span>
-<span id="340">340</span>
-<span id="341">341</span>
-<span id="342">342</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file</span>::<span class="ident">FileObject</span>;
@@ -468,15 +460,11 @@
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">other_answer</span> <span class="op">=</span>
-            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">other_project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">other_answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="kw-2">&amp;</span><span class="ident">other_project</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(
-                <span class="ident">other_answer</span>.<span class="ident">project_id</span>,
-                <span class="ident">other_answer</span>.<span class="ident">form_id</span>,
-            ),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">form_answer_scope</span>(<span class="kw-2">&amp;</span><span class="ident">other_answer</span>),
         );
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -494,7 +482,7 @@
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
             <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">other_project</span>.<span class="ident">id</span>()),
-            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>),
+            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -514,11 +502,11 @@
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="kw-2">&amp;</span><span class="ident">project</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(<span class="ident">answer</span>.<span class="ident">project_id</span>, <span class="ident">answer</span>.<span class="ident">form_id</span>),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">form_answer_scope</span>(<span class="kw-2">&amp;</span><span class="ident">answer</span>),
         );
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -536,7 +524,7 @@
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
             <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
-            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>),
+            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -557,17 +545,13 @@
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="kw-2">&amp;</span><span class="ident">project</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
         <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">other_answer</span> <span class="op">=</span>
-            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">other_project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">other_answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="kw-2">&amp;</span><span class="ident">other_project</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(
-                <span class="ident">other_answer</span>.<span class="ident">project_id</span>,
-                <span class="ident">other_answer</span>.<span class="ident">form_id</span>,
-            ),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">form_answer_scope</span>(<span class="kw-2">&amp;</span><span class="ident">other_answer</span>),
         );
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -585,7 +569,7 @@
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
             <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
-            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>),
+            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -607,11 +591,11 @@
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="kw-2">&amp;</span><span class="ident">project</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(<span class="ident">answer</span>.<span class="ident">project_id</span>, <span class="ident">answer</span>.<span class="ident">form_id</span>),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">form_answer_scope</span>(<span class="kw-2">&amp;</span><span class="ident">answer</span>),
         );
 
         <span class="ident">sharing</span>.<span class="ident">revoke</span>().<span class="ident">unwrap</span>();
@@ -631,7 +615,7 @@
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
             <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
-            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>),
+            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -653,11 +637,11 @@
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">project</span>.<span class="ident">id</span>(), <span class="kw-2">&amp;</span><span class="ident">form</span>);
+        <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form_answer</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="kw-2">&amp;</span><span class="ident">project</span>, <span class="kw-2">&amp;</span><span class="ident">form</span>);
 
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_expired_file_sharing</span>(
             <span class="ident">other_file</span>.<span class="ident">id</span>,
-            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(<span class="ident">answer</span>.<span class="ident">project_id</span>, <span class="ident">answer</span>.<span class="ident">form_id</span>),
+            <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">form_answer_scope</span>(<span class="kw-2">&amp;</span><span class="ident">answer</span>),
         );
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -675,7 +659,7 @@
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_project_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
             <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_entity</span>(<span class="ident">project</span>.<span class="ident">id</span>()),
-            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>),
+            <span class="ident">form_id</span>: <span class="ident">FormId</span>::<span class="ident">from_entity</span>(<span class="ident">form</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
