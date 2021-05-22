@@ -119,6 +119,7 @@ pub fn endpoints(
                 / "list" => GET (handler::project::registration_form::list),
                 / "answer" {
                     / "get" => GET (handler::project::registration_form::answer::get),
+                    / "update" => POST (handler::project::registration_form::answer::update),
                     / "file-sharing" {
                         / "get-file" => GET (handler::project::registration_form::answer::file_sharing::get_file),
                         / "get-file-info" => GET (handler::project::registration_form::answer::file_sharing::get_file_info),

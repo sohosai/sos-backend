@@ -3141,6 +3141,201 @@ paths:
           in: query
           name: registration_form_id
           required: true
+  /project/registration-form/answer/update:
+    post:
+      summary: project/registration-form/answer/update
+      operationId: project/registration-form/answer/update
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    $ref: ./model/registration_form_answer/RegistrationFormAnswer.yml
+                required:
+                  - answer
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        required:
+                          - type
+                          - info
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            oneOf:
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - NO_FORM_ITEMS
+                                      - TOO_MANY_FORM_ITEMS
+                                      - MISMATCHED_FORM_ITEMS_LENGTH
+                                required:
+                                  - type
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - INVALID_FORM_ITEM
+                                      - INVALID_FORM_ANSWER
+                                  id:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - id
+                              - properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - MISMATCHED_FORM_ITEM_ID
+                                  got:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                  expected:
+                                    $ref: ./model/form/item/FormItemId.yml
+                                required:
+                                  - type
+                                  - got
+                                  - expected
+                            type: object
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Registration Form, Project, or Registration Form Answer Not Found
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 404
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - REGISTRATION_FORM_NOT_FOUND
+                                  - PROJECT_NOT_FOUND
+                                  - REGISTRATION_FORM_ANSWER_NOT_FOUND
+                    required:
+                      - status
+                      - error
+              examples:
+                Example:
+                  value:
+                    status: 404
+                    error:
+                      type: API
+                      info:
+                        type: REGISTRATION_FORM_NOT_FOUND
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 409
+                      error:
+                        required:
+                          - type
+                          - info
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - OUT_OF_PROJECT_CREATION_PERIOD
+                    required:
+                      - status
+                      - error
+              examples:
+                Out of project creation period:
+                  value:
+                    status: 409
+                    error:
+                      type: API
+                      info:
+                        type: OUT_OF_PROJECT_CREATION_PERIOD
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 登録申請への回答を編集します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  $ref: ./model/project/ProjectId.yml
+                registration_form_id:
+                  $ref: ./model/registration_form/RegistrationFormId.yml
+                items:
+                  type: array
+                  items:
+                    $ref: ./model/form_answer/RequestFormAnswerItem.yml
+              required:
+                - project_id
+                - registration_form_id
+                - items
+      tags:
+        - registration_form
+        - project
+        - registration_form_answer
   /project/registration-form/answer/file-sharing/get-file:
     get:
       summary: project/registration-form/answer/file-sharing/get-file
