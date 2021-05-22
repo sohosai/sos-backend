@@ -855,6 +855,7 @@ paths:
                                   - ALREADY_PROJECT_OWNER
                                   - ALREADY_PROJECT_SUBOWNER
                                   - ALREADY_PENDING_PROJECT_OWNER
+                                  - OUT_OF_PROJECT_CREATION_PERIOD
                             required:
                               - type
                     required:
@@ -992,6 +993,7 @@ paths:
                                   - ALREADY_PROJECT_OWNER
                                   - ALREADY_PROJECT_SUBOWNER
                                   - ALREADY_PENDING_PROJECT_OWNER
+                                  - OUT_OF_PROJECT_CREATION_PERIOD
                     required:
                       - status
                       - error
