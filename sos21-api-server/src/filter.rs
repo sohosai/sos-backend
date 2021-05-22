@@ -136,6 +136,7 @@ pub fn endpoints(
         },
         / "pending-project" {
             / "get" => GET (handler::pending_project::get),
+            / "update" => POST (handler::pending_project::update),
             / "registration-form" {
                 / "get" => GET (handler::pending_project::registration_form::get),
                 / "list" => GET (handler::pending_project::registration_form::list),
