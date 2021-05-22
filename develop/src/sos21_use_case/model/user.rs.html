@@ -118,12 +118,6 @@
 <span id="115">115</span>
 <span id="116">116</span>
 <span id="117">117</span>
-<span id="118">118</span>
-<span id="119">119</span>
-<span id="120">120</span>
-<span id="121">121</span>
-<span id="122">122</span>
-<span id="123">123</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::<span class="ident">user</span> <span class="kw">as</span> <span class="ident">entity</span>;
@@ -195,9 +189,9 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">UserCategory</span> {
-    <span class="ident">UndergraduateStudent</span>,
+    <span class="ident">UndergraduateStudent</span> { <span class="ident">affiliation</span>: <span class="ident">String</span> },
     <span class="ident">GraduateStudent</span>,
     <span class="ident">AcademicStaff</span>,
 }
@@ -205,17 +199,13 @@
 <span class="kw">impl</span> <span class="ident">UserCategory</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_entity</span>(<span class="ident">category</span>: <span class="ident">entity</span>::<span class="ident">UserCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UserCategory</span> {
         <span class="kw">match</span> <span class="ident">category</span> {
-            <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>,
+            <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>(<span class="ident">affiliation</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> {
+                    <span class="ident">affiliation</span>: <span class="ident">affiliation</span>.<span class="ident">into_string</span>(),
+                }
+            }
             <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>,
             <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
-        }
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_entity</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">UserCategory</span> {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>,
-            <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>,
-            <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
         }
     }
 }
@@ -228,7 +218,6 @@
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">UserKanaName</span>,
     <span class="kw">pub</span> <span class="ident">email</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">phone_number</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">affiliation</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">role</span>: <span class="ident">UserRole</span>,
     <span class="kw">pub</span> <span class="ident">category</span>: <span class="ident">UserCategory</span>,
 }
@@ -242,9 +231,8 @@
             <span class="ident">kana_name</span>: <span class="ident">UserKanaName</span>::<span class="ident">from_entity</span>(<span class="ident">user</span>.<span class="ident">kana_name</span>().<span class="ident">clone</span>()),
             <span class="ident">email</span>: <span class="ident">user</span>.<span class="ident">email</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
             <span class="ident">phone_number</span>: <span class="ident">user</span>.<span class="ident">phone_number</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
-            <span class="ident">affiliation</span>: <span class="ident">user</span>.<span class="ident">affiliation</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
             <span class="ident">role</span>: <span class="ident">UserRole</span>::<span class="ident">from_entity</span>(<span class="ident">user</span>.<span class="ident">role</span>()),
-            <span class="ident">category</span>: <span class="ident">UserCategory</span>::<span class="ident">from_entity</span>(<span class="ident">user</span>.<span class="ident">category</span>()),
+            <span class="ident">category</span>: <span class="ident">UserCategory</span>::<span class="ident">from_entity</span>(<span class="ident">user</span>.<span class="ident">category</span>().<span class="ident">clone</span>()),
         }
     }
 }

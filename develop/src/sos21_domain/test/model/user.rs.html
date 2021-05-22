@@ -84,7 +84,6 @@
 <span id="81">81</span>
 <span id="82">82</span>
 <span id="83">83</span>
-<span id="84">84</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
@@ -123,7 +122,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mock_user_category</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UserCategory</span> {
-    <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>
+    <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>(<span class="ident">mock_user_affiliation</span>())
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mock_user</span>(<span class="ident">id</span>: <span class="ident">UserId</span>, <span class="ident">role</span>: <span class="ident">UserRole</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">User</span> {
@@ -134,7 +133,6 @@
         <span class="ident">kana_name</span>: <span class="ident">mock_user_kana_name</span>(),
         <span class="ident">email</span>: <span class="ident">mock_user_email_address</span>(),
         <span class="ident">phone_number</span>: <span class="ident">mock_phone_number</span>(),
-        <span class="ident">affiliation</span>: <span class="ident">mock_user_affiliation</span>(),
         <span class="ident">role</span>,
         <span class="ident">category</span>: <span class="ident">mock_user_category</span>(),
         <span class="ident">assignment</span>: <span class="prelude-val">None</span>,

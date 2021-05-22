@@ -204,6 +204,16 @@
 <span id="201">201</span>
 <span id="202">202</span>
 <span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">lock</span>::<span class="ident">Mutex</span>;
@@ -289,7 +299,6 @@
         <span class="ident">kana_name</span>,
         <span class="ident">email</span>,
         <span class="ident">phone_number</span>,
-        <span class="ident">affiliation</span>,
         <span class="ident">role</span>,
         <span class="ident">category</span>,
         <span class="ident">assignment</span>,
@@ -306,6 +315,15 @@
         <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>),
     };
 
+    <span class="kw">let</span> (<span class="ident">category</span>, <span class="ident">affiliation</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">category</span> {
+        <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>(<span class="ident">affiliation</span>) <span class="op">=</span><span class="op">&gt;</span> (
+            <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>,
+            <span class="prelude-val">Some</span>(<span class="ident">affiliation</span>.<span class="ident">into_string</span>()),
+        ),
+        <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>, <span class="prelude-val">None</span>),
+        <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> (<span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>, <span class="prelude-val">None</span>),
+    };
+
     <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">User</span> {
         <span class="ident">id</span>: <span class="ident">id</span>.<span class="number">0</span>,
         <span class="ident">created_at</span>: <span class="ident">created_at</span>.<span class="ident">utc</span>(),
@@ -315,18 +333,14 @@
         <span class="ident">kana_last_name</span>,
         <span class="ident">email</span>: <span class="ident">email</span>.<span class="ident">into_string</span>(),
         <span class="ident">phone_number</span>: <span class="ident">phone_number</span>.<span class="ident">into_string</span>(),
-        <span class="ident">affiliation</span>: <span class="ident">affiliation</span>.<span class="ident">into_string</span>(),
+        <span class="ident">affiliation</span>,
         <span class="ident">role</span>: <span class="kw">match</span> <span class="ident">role</span> {
             <span class="ident">UserRole</span>::<span class="ident">Administrator</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserRole</span>::<span class="ident">Administrator</span>,
             <span class="ident">UserRole</span>::<span class="ident">CommitteeOperator</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserRole</span>::<span class="ident">CommitteeOperator</span>,
             <span class="ident">UserRole</span>::<span class="ident">Committee</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserRole</span>::<span class="ident">Committee</span>,
             <span class="ident">UserRole</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserRole</span>::<span class="ident">General</span>,
         },
-        <span class="ident">category</span>: <span class="kw">match</span> <span class="ident">category</span> {
-            <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>,
-            <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>,
-            <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
-        },
+        <span class="ident">category</span>,
         <span class="ident">assignment</span>: <span class="ident">assignment</span>.<span class="ident">map</span>(<span class="ident">from_user_assignment</span>),
         <span class="ident">assignment_owner_project_id</span>: <span class="ident">owner_project_id</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="ident">id</span>.<span class="ident">to_uuid</span>()),
         <span class="ident">assignment_subowner_project_id</span>: <span class="ident">subowner_project_id</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="ident">id</span>.<span class="ident">to_uuid</span>()),
@@ -386,6 +400,17 @@
         <span class="prelude-val">None</span>
     };
 
+    <span class="kw">let</span> <span class="ident">category</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">category</span> {
+        <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">let</span> <span class="ident">affiliation</span> <span class="op">=</span> <span class="ident">affiliation</span>
+                .<span class="ident">context</span>(<span class="string">&quot;category = &#39;undergraduate_student&#39; but affiliation is null&quot;</span>)<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="ident">affiliation</span> <span class="op">=</span> <span class="ident">UserAffiliation</span>::<span class="ident">from_string</span>(<span class="ident">affiliation</span>)<span class="question-mark">?</span>;
+            <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>(<span class="ident">affiliation</span>)
+        }
+        <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>,
+        <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
+    };
+
     <span class="prelude-val">Ok</span>(<span class="ident">User</span>::<span class="ident">from_content</span>(<span class="ident">UserContent</span> {
         <span class="ident">id</span>: <span class="ident">UserId</span>(<span class="ident">id</span>),
         <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
@@ -393,18 +418,13 @@
         <span class="ident">kana_name</span>: <span class="ident">UserKanaName</span>::<span class="ident">from_string</span>(<span class="ident">kana_first_name</span>, <span class="ident">kana_last_name</span>)<span class="question-mark">?</span>,
         <span class="ident">email</span>: <span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="ident">email</span>)<span class="question-mark">?</span>,
         <span class="ident">phone_number</span>: <span class="ident">PhoneNumber</span>::<span class="ident">from_string</span>(<span class="ident">phone_number</span>)<span class="question-mark">?</span>,
-        <span class="ident">affiliation</span>: <span class="ident">UserAffiliation</span>::<span class="ident">from_string</span>(<span class="ident">affiliation</span>)<span class="question-mark">?</span>,
         <span class="ident">role</span>: <span class="kw">match</span> <span class="ident">role</span> {
             <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserRole</span>::<span class="ident">Administrator</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserRole</span>::<span class="ident">Administrator</span>,
             <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserRole</span>::<span class="ident">CommitteeOperator</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserRole</span>::<span class="ident">CommitteeOperator</span>,
             <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserRole</span>::<span class="ident">Committee</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserRole</span>::<span class="ident">Committee</span>,
             <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserRole</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserRole</span>::<span class="ident">General</span>,
         },
-        <span class="ident">category</span>: <span class="kw">match</span> <span class="ident">category</span> {
-            <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>,
-            <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>,
-            <span class="ident">data</span>::<span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
-        },
+        <span class="ident">category</span>,
         <span class="ident">assignment</span>,
     }))
 }

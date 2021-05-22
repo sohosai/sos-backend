@@ -381,18 +381,6 @@
 <span id="378">378</span>
 <span id="379">379</span>
 <span id="380">380</span>
-<span id="381">381</span>
-<span id="382">382</span>
-<span id="383">383</span>
-<span id="384">384</span>
-<span id="385">385</span>
-<span id="386">386</span>
-<span id="387">387</span>
-<span id="388">388</span>
-<span id="389">389</span>
-<span id="390">390</span>
-<span id="391">391</span>
-<span id="392">392</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{<span class="ident">ConfigContext</span>, <span class="ident">FileRepository</span>, <span class="ident">UserInvitationRepository</span>, <span class="ident">UserRepository</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
@@ -432,7 +420,6 @@
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">UserName</span>,
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">UserKanaName</span>,
     <span class="kw">pub</span> <span class="ident">phone_number</span>: <span class="ident">PhoneNumber</span>,
-    <span class="kw">pub</span> <span class="ident">affiliation</span>: <span class="ident">UserAffiliation</span>,
     <span class="kw">pub</span> <span class="ident">email</span>: <span class="ident">UserEmailAddress</span>,
     <span class="kw">pub</span> <span class="ident">role</span>: <span class="ident">UserRole</span>,
     <span class="kw">pub</span> <span class="ident">category</span>: <span class="ident">UserCategory</span>,
@@ -457,14 +444,12 @@
 }
 
 <span class="kw">impl</span> <span class="ident">User</span> {
-    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">too_many_arguments</span>)]</span>
     <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(
         <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="ident">C</span>,
         <span class="ident">id</span>: <span class="ident">UserId</span>,
         <span class="ident">name</span>: <span class="ident">UserName</span>,
         <span class="ident">kana_name</span>: <span class="ident">UserKanaName</span>,
         <span class="ident">phone_number</span>: <span class="ident">PhoneNumber</span>,
-        <span class="ident">affiliation</span>: <span class="ident">UserAffiliation</span>,
         <span class="ident">email</span>: <span class="ident">UserEmailAddress</span>,
         <span class="ident">category</span>: <span class="ident">UserCategory</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DomainResult</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">AlreadySignedUpError</span><span class="op">&gt;</span>
@@ -497,7 +482,6 @@
             <span class="ident">kana_name</span>,
             <span class="ident">email</span>,
             <span class="ident">phone_number</span>,
-            <span class="ident">affiliation</span>,
             <span class="ident">role</span>,
             <span class="ident">category</span>,
             <span class="ident">assignment</span>: <span class="prelude-val">None</span>,
@@ -538,8 +522,8 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">content</span>.<span class="ident">phone_number</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">affiliation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">UserAffiliation</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">content</span>.<span class="ident">affiliation</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">affiliation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">UserAffiliation</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">category</span>.<span class="ident">affiliation</span>()
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">email</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">UserEmailAddress</span> {
@@ -550,8 +534,8 @@
         <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">role</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">category</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UserCategory</span> {
-        <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">category</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">category</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">UserCategory</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">content</span>.<span class="ident">category</span>
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assignment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">UserAssignment</span><span class="op">&gt;</span> {
@@ -641,10 +625,6 @@
         <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">phone_number</span> <span class="op">=</span> <span class="ident">phone_number</span>;
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_affiliation</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">affiliation</span>: <span class="ident">UserAffiliation</span>) {
-        <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">affiliation</span> <span class="op">=</span> <span class="ident">affiliation</span>;
-    }
-
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_role</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">role</span>: <span class="ident">UserRole</span>) {
         <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">role</span> <span class="op">=</span> <span class="ident">role</span>;
     }
@@ -702,7 +682,6 @@
                 <span class="ident">test_model</span>::<span class="ident">mock_user_name</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_user_kana_name</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_phone_number</span>(),
-                <span class="ident">test_model</span>::<span class="ident">mock_user_affiliation</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_user_email_address</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_user_category</span>()
             )
@@ -731,7 +710,6 @@
                 <span class="ident">test_model</span>::<span class="ident">mock_user_name</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_user_kana_name</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_phone_number</span>(),
-                <span class="ident">test_model</span>::<span class="ident">mock_user_affiliation</span>(),
                 <span class="ident">email</span>.<span class="ident">clone</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_user_category</span>()
             )
@@ -753,7 +731,6 @@
                 <span class="ident">test_model</span>::<span class="ident">mock_user_name</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_user_kana_name</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_phone_number</span>(),
-                <span class="ident">test_model</span>::<span class="ident">mock_user_affiliation</span>(),
                 <span class="ident">email</span>.<span class="ident">clone</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_user_category</span>()
             )
@@ -775,7 +752,6 @@
                 <span class="ident">test_model</span>::<span class="ident">mock_user_name</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_user_kana_name</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_phone_number</span>(),
-                <span class="ident">test_model</span>::<span class="ident">mock_user_affiliation</span>(),
                 <span class="ident">email</span>.<span class="ident">clone</span>(),
                 <span class="ident">test_model</span>::<span class="ident">mock_user_category</span>()
             )
