@@ -60,6 +60,9 @@ pub fn mock_user(id: UserId, role: UserRole) -> User {
 pub static KNOWN_MOCK_GENERAL_USER_ID: Lazy<UserId> =
     Lazy::new(|| UserId("MOCK_USER_ID".to_string()));
 
+pub static ADMINISTRATOR_EMAIL: Lazy<UserEmailAddress> =
+    Lazy::new(|| UserEmailAddress::from_string("sos-admin@s.tsukuba.ac.jp").unwrap());
+
 pub fn new_user(role: UserRole) -> User {
     mock_user(new_user_id(), role)
 }

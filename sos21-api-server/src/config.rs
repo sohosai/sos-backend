@@ -12,4 +12,5 @@ pub struct Config {
     pub s3_region: String,
     pub s3_endpoint: String,
     pub s3_object_bucket: String,
+    pub administrator_email: String,
 }

@@ -35,6 +35,10 @@ in
         type = types.int;
       };
 
+      administratorEmail = mkOption {
+        type = types.str;
+      };
+
       firebaseProjectId = mkOption {
         type = types.str;
       };
@@ -207,6 +211,7 @@ in
           SOS21_API_SERVER_S3_REGION = cfg.s3Region;
           SOS21_API_SERVER_S3_ENDPOINT = cfg.s3Endpoint;
           SOS21_API_SERVER_S3_OBJECT_BUCKET = cfg.s3ObjectBucket;
+          SOS21_API_SERVER_ADMINISTRATOR_EMAIL = cfg.administratorEmail;
           SOS21_API_SERVER_BIND = "0.0.0.0:${toString cfg.port}";
         };
         script = ''

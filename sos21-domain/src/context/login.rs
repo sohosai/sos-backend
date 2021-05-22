@@ -1,5 +1,5 @@
 use crate::context::{
-    authentication::Authentication, FileDistributionRepository, FileRepository,
+    authentication::Authentication, ConfigContext, FileDistributionRepository, FileRepository,
     FileSharingRepository, FormAnswerRepository, FormRepository, ObjectRepository,
     PendingProjectRepository, ProjectRepository, RegistrationFormAnswerRepository,
     RegistrationFormRepository, UserInvitationRepository, UserRepository,
@@ -118,6 +118,12 @@ crate::delegate_registration_form_answer_repository! {
 
 crate::delegate_user_invitation_repository! {
     impl<C: UserInvitationRepository + Send + Sync> UserInvitationRepository for Login<C> {
+        self { &self.inner }
+    }
+}
+
+crate::delegate_config_context! {
+    impl<C: ConfigContext + Send + Sync> ConfigContext for Login<C> {
         self { &self.inner }
     }
 }
