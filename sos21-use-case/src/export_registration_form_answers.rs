@@ -187,17 +187,17 @@ where
     } = &input.field_names;
 
     if id.is_some() {
-        writer.write_field(answer.id.to_uuid().to_hyphenated().to_string())?;
+        writer.write_field(answer.id().to_uuid().to_hyphenated().to_string())?;
     }
 
     if created_at.is_some() {
-        let created_at = answer.created_at.jst().format("%F %T").to_string();
+        let created_at = answer.created_at().jst().format("%F %T").to_string();
         writer.write_field(created_at)?;
     }
 
     if project_id.is_some() {
         if let registration_form_answer::RegistrationFormAnswerRespondent::Project(project_id) =
-            answer.respondent
+            answer.respondent()
         {
             writer.write_field(project_id.to_uuid().to_hyphenated().to_string())?;
         } else {
@@ -208,7 +208,7 @@ where
     if pending_project_id.is_some() {
         if let registration_form_answer::RegistrationFormAnswerRespondent::PendingProject(
             pending_project_id,
-        ) = answer.respondent
+        ) = answer.respondent()
         {
             writer.write_field(pending_project_id.to_uuid().to_hyphenated().to_string())?;
         } else {
@@ -217,10 +217,10 @@ where
     }
 
     if author_id.is_some() {
-        writer.write_field(answer.author_id.0)?;
+        writer.write_field(&answer.author_id().0)?;
     }
 
-    let answer_id = answer.id.to_uuid().to_hyphenated().to_string();
+    let answer_id = answer.id().to_uuid().to_hyphenated().to_string();
     let render = |sharing_ids| {
         (input.render_file_answer)(RenderFileAnswerInput {
             answer_id: answer_id.clone(),
@@ -230,7 +230,7 @@ where
     for (item, answer_item) in registration_form
         .items
         .items()
-        .zip(answer.items.into_items())
+        .zip(answer.into_items().into_items())
     {
         write_item_fields(writer, render, item, answer_item)?;
     }

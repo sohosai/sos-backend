@@ -104,7 +104,7 @@ mod tests {
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
                     other_project.id(),
                 ),
-                other_answer.registration_form_id,
+                other_answer.registration_form_id(),
             ),
         );
 
@@ -122,7 +122,7 @@ mod tests {
             .await;
 
         let input = get_registration_form_answer_shared_file::Input {
-            answer_id: RegistrationFormAnswerId::from_entity(other_answer.id),
+            answer_id: RegistrationFormAnswerId::from_entity(other_answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -154,7 +154,7 @@ mod tests {
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
                     other_project.id(),
                 ),
-                other_answer.registration_form_id,
+                other_answer.registration_form_id(),
             ),
         );
 
@@ -172,7 +172,7 @@ mod tests {
             .await;
 
         let input = get_registration_form_answer_shared_file::Input {
-            answer_id: RegistrationFormAnswerId::from_entity(other_answer.id),
+            answer_id: RegistrationFormAnswerId::from_entity(other_answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -211,7 +211,7 @@ mod tests {
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
                     other_project.id(),
                 ),
-                other_answer.registration_form_id,
+                other_answer.registration_form_id(),
             ),
         );
 
@@ -229,7 +229,7 @@ mod tests {
             .await;
 
         let input = get_registration_form_answer_shared_file::Input {
-            answer_id: RegistrationFormAnswerId::from_entity(answer.id),
+            answer_id: RegistrationFormAnswerId::from_entity(answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -263,7 +263,7 @@ mod tests {
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
                     other_project.id(),
                 ),
-                other_answer.registration_form_id,
+                other_answer.registration_form_id(),
             ),
         );
         sharing.revoke().unwrap();
@@ -282,7 +282,7 @@ mod tests {
             .await;
 
         let input = get_registration_form_answer_shared_file::Input {
-            answer_id: RegistrationFormAnswerId::from_entity(other_answer.id),
+            answer_id: RegistrationFormAnswerId::from_entity(other_answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(
@@ -316,7 +316,7 @@ mod tests {
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
                     other_project.id(),
                 ),
-                other_answer.registration_form_id,
+                other_answer.registration_form_id(),
             ),
         );
 
@@ -334,7 +334,7 @@ mod tests {
             .await;
 
         let input = get_registration_form_answer_shared_file::Input {
-            answer_id: RegistrationFormAnswerId::from_entity(other_answer.id),
+            answer_id: RegistrationFormAnswerId::from_entity(other_answer.id()),
             sharing_id: FileSharingId::from_entity(sharing.id()),
         };
         assert!(matches!(

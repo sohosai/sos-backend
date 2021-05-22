@@ -67,18 +67,17 @@ pub struct RegistrationFormAnswer {
 
 impl RegistrationFormAnswer {
     pub fn from_entity(answer: entity::RegistrationFormAnswer) -> Self {
-        let items = answer
-            .items
-            .into_items()
-            .map(FormAnswerItem::from_entity)
-            .collect();
         RegistrationFormAnswer {
-            id: RegistrationFormAnswerId::from_entity(answer.id),
-            registration_form_id: RegistrationFormId::from_entity(answer.registration_form_id),
-            respondent: RegistrationFormAnswerRespondent::from_entity(answer.respondent),
-            created_at: answer.created_at.utc(),
-            author_id: UserId::from_entity(answer.author_id),
-            items,
+            id: RegistrationFormAnswerId::from_entity(answer.id()),
+            registration_form_id: RegistrationFormId::from_entity(answer.registration_form_id()),
+            respondent: RegistrationFormAnswerRespondent::from_entity(answer.respondent()),
+            created_at: answer.created_at().utc(),
+            author_id: UserId::from_entity(answer.author_id().clone()),
+            items: answer
+                .into_items()
+                .into_items()
+                .map(FormAnswerItem::from_entity)
+                .collect(),
         }
     }
 }

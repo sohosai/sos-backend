@@ -176,7 +176,7 @@ impl MockAppBuilder {
                 registration_form_answers
                     .into_iter()
                     .map(|registration_form_answer| {
-                        (registration_form_answer.id, registration_form_answer)
+                        (registration_form_answer.id(), registration_form_answer)
                     }),
             );
         self
@@ -769,7 +769,7 @@ impl RegistrationFormAnswerRepository for MockApp {
         self.registration_form_answers
             .lock()
             .await
-            .insert(answer.id, answer);
+            .insert(answer.id(), answer);
         Ok(())
     }
 
@@ -797,8 +797,8 @@ impl RegistrationFormAnswerRepository for MockApp {
             .await
             .values()
             .find(|registration_form_answer| {
-                registration_form_answer.registration_form_id == registration_form_id
-                    && registration_form_answer.respondent.is_project(&project)
+                registration_form_answer.registration_form_id() == registration_form_id
+                    && registration_form_answer.respondent().is_project(&project)
             })
             .cloned())
     }
@@ -819,9 +819,9 @@ impl RegistrationFormAnswerRepository for MockApp {
             .await
             .values()
             .find(|registration_form_answer| {
-                registration_form_answer.registration_form_id == registration_form_id
+                registration_form_answer.registration_form_id() == registration_form_id
                     && registration_form_answer
-                        .respondent
+                        .respondent()
                         .is_pending_project(&pending_project)
             })
             .cloned())
@@ -837,7 +837,7 @@ impl RegistrationFormAnswerRepository for MockApp {
             .await
             .values()
             .filter(|registration_form_answer| {
-                registration_form_answer.registration_form_id == registration_form_id
+                registration_form_answer.registration_form_id() == registration_form_id
             })
             .cloned()
             .collect())
@@ -859,7 +859,7 @@ impl RegistrationFormAnswerRepository for MockApp {
             .values()
             .filter(|registration_form_answer| {
                 registration_form_answer
-                    .respondent
+                    .respondent()
                     .is_pending_project(&pending_project)
             })
             .cloned()
@@ -882,7 +882,7 @@ impl RegistrationFormAnswerRepository for MockApp {
             .values()
             .filter(|registration_form_answer| {
                 registration_form_answer
-                    .respondent
+                    .respondent()
                     .is_pending_project(&pending_project)
             })
             .cloned()

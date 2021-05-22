@@ -9,7 +9,8 @@ use sos21_domain::model::{
     project::ProjectId,
     registration_form::RegistrationFormId,
     registration_form_answer::{
-        RegistrationFormAnswer, RegistrationFormAnswerId, RegistrationFormAnswerRespondent,
+        RegistrationFormAnswer, RegistrationFormAnswerContent, RegistrationFormAnswerId,
+        RegistrationFormAnswerRespondent,
     },
     user::UserId,
 };
@@ -151,27 +152,29 @@ fn to_registration_form_answer(
         (_, _) => anyhow::bail!("invalid registration_form_answers"),
     };
 
-    Ok(RegistrationFormAnswer {
-        id: RegistrationFormAnswerId::from_uuid(id),
-        created_at: DateTime::from_utc(created_at),
-        author_id: UserId(author_id),
-        registration_form_id: RegistrationFormId::from_uuid(registration_form_id),
-        respondent,
-        items: serde_json::from_value(items)?,
-    })
+    Ok(RegistrationFormAnswer::from_content(
+        RegistrationFormAnswerContent {
+            id: RegistrationFormAnswerId::from_uuid(id),
+            created_at: DateTime::from_utc(created_at),
+            author_id: UserId(author_id),
+            registration_form_id: RegistrationFormId::from_uuid(registration_form_id),
+            respondent,
+            items: serde_json::from_value(items)?,
+        },
+    ))
 }
 
 fn from_registration_form_answer(
     answer: RegistrationFormAnswer,
 ) -> Result<data::registration_form_answer::RegistrationFormAnswer> {
-    let RegistrationFormAnswer {
+    let RegistrationFormAnswerContent {
         id,
         created_at,
         author_id,
         registration_form_id,
         respondent,
         items,
-    } = answer;
+    } = answer.into_content();
 
     let (project_id, pending_project_id) = match respondent {
         RegistrationFormAnswerRespondent::Project(project_id) => (Some(project_id), None),

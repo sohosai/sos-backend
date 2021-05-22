@@ -110,8 +110,8 @@ where
 
     let answer = registration_form
         .answer_by(ctx, login_user, &pending_project, items)
-        .await?
-        .map_err(|err| UseCaseError::UseCase(Error::from_answer_error(err)))?;
+        .await
+        .map_err(|err| UseCaseError::from_domain(err, Error::from_answer_error))?;
     ctx.store_registration_form_answer(answer.clone())
         .await
         .context("Failed to store a registration form answer")?;

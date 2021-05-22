@@ -107,10 +107,10 @@ mod tests {
         let registration_form1_id = RegistrationFormId::from_entity(registration_form1.id);
         let mut expected = HashSet::new();
         expected.insert(RegistrationFormAnswerId::from_entity(
-            registration_form1_answer1.id,
+            registration_form1_answer1.id(),
         ));
         expected.insert(RegistrationFormAnswerId::from_entity(
-            registration_form1_answer2.id,
+            registration_form1_answer2.id(),
         ));
 
         let app = test::build_mock_app()

@@ -147,7 +147,7 @@ mod tests {
             )
             .await,
             Ok(got)
-            if got.id == RegistrationFormAnswerId::from_entity(answer_other.id)
+            if got.id == RegistrationFormAnswerId::from_entity(answer_other.id())
         ));
     }
 
@@ -183,7 +183,7 @@ mod tests {
             )
             .await,
             Ok(got)
-            if got.id == RegistrationFormAnswerId::from_entity(answer_other.id)
+            if got.id == RegistrationFormAnswerId::from_entity(answer_other.id())
         ));
     }
 
@@ -217,7 +217,7 @@ mod tests {
             )
             .await,
             Ok(got)
-            if got.id == RegistrationFormAnswerId::from_entity(answer_other.id)
+            if got.id == RegistrationFormAnswerId::from_entity(answer_other.id())
         ));
     }
 
@@ -251,7 +251,7 @@ mod tests {
             )
             .await,
             Ok(got)
-            if got.id == RegistrationFormAnswerId::from_entity(answer_other.id)
+            if got.id == RegistrationFormAnswerId::from_entity(answer_other.id())
         ));
     }
 }

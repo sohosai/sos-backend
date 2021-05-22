@@ -97,7 +97,7 @@ where
             .await
             .context("Failed to list registration form answers")?;
         for mut answer in answers {
-            answer.respondent.replace_to_project(&project);
+            answer.replace_respondent_to_project(&project);
             ctx.store_registration_form_answer(answer)
                 .await
                 .context("Failed to store a registration form answer")?;
@@ -439,7 +439,7 @@ mod tests {
         assert!(matches!(
             get_project_registration_form_answer::run(&subowner_app, project.id, registration_form_id).await,
             Ok(got)
-            if got.id == RegistrationFormAnswerId::from_entity(answer.id)
+            if got.id == RegistrationFormAnswerId::from_entity(answer.id())
         ));
 
         let input = get_project_registration_form_answer_shared_file::Input {
