@@ -83,6 +83,7 @@ pub mod update_any_project;
 pub mod update_any_user;
 pub mod update_form;
 pub mod update_pending_project;
+pub mod update_pending_project_registration_form_answer;
 pub mod update_project;
 pub mod update_project_form_answer;
 pub mod update_project_registration_form_answer;
