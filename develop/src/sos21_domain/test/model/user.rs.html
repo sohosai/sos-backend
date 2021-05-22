@@ -82,6 +82,9 @@
 <span id="79">79</span>
 <span id="80">80</span>
 <span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
@@ -144,6 +147,9 @@
 <span class="doccomment">/// Implementors of the testing context must make sure that this ID is known without persistence.</span>
 <span class="kw">pub</span> <span class="kw">static</span> <span class="ident">KNOWN_MOCK_GENERAL_USER_ID</span>: <span class="ident">Lazy</span><span class="op">&lt;</span><span class="ident">UserId</span><span class="op">&gt;</span> <span class="op">=</span>
     <span class="ident">Lazy</span>::<span class="ident">new</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">UserId</span>(<span class="string">&quot;MOCK_USER_ID&quot;</span>.<span class="ident">to_string</span>()));
+
+<span class="kw">pub</span> <span class="kw">static</span> <span class="ident">ADMINISTRATOR_EMAIL</span>: <span class="ident">Lazy</span><span class="op">&lt;</span><span class="ident">UserEmailAddress</span><span class="op">&gt;</span> <span class="op">=</span>
+    <span class="ident">Lazy</span>::<span class="ident">new</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="string">&quot;sos-admin@s.tsukuba.ac.jp&quot;</span>).<span class="ident">unwrap</span>());
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_user</span>(<span class="ident">role</span>: <span class="ident">UserRole</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">User</span> {
     <span class="ident">mock_user</span>(<span class="ident">new_user_id</span>(), <span class="ident">role</span>)

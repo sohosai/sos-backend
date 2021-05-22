@@ -927,6 +927,12 @@
 <span id="924">924</span>
 <span id="925">925</span>
 <span id="926">926</span>
+<span id="927">927</span>
+<span id="928">928</span>
+<span id="929">929</span>
+<span id="930">930</span>
+<span id="931">931</span>
+<span id="932">932</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
@@ -935,10 +941,10 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::<span class="ident">pending_project_repository</span>::<span class="ident">PendingProjectWithOwner</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::<span class="ident">project_repository</span>::<span class="ident">ProjectWithOwners</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{
-    <span class="ident">Authentication</span>, <span class="ident">FileDistributionRepository</span>, <span class="ident">FileRepository</span>, <span class="ident">FileSharingRepository</span>,
-    <span class="ident">FormAnswerRepository</span>, <span class="ident">FormRepository</span>, <span class="ident">Login</span>, <span class="ident">ObjectRepository</span>, <span class="ident">PendingProjectRepository</span>,
-    <span class="ident">ProjectRepository</span>, <span class="ident">RegistrationFormAnswerRepository</span>, <span class="ident">RegistrationFormRepository</span>,
-    <span class="ident">UserInvitationRepository</span>, <span class="ident">UserRepository</span>,
+    <span class="ident">Authentication</span>, <span class="ident">ConfigContext</span>, <span class="ident">FileDistributionRepository</span>, <span class="ident">FileRepository</span>,
+    <span class="ident">FileSharingRepository</span>, <span class="ident">FormAnswerRepository</span>, <span class="ident">FormRepository</span>, <span class="ident">Login</span>, <span class="ident">ObjectRepository</span>,
+    <span class="ident">PendingProjectRepository</span>, <span class="ident">ProjectRepository</span>, <span class="ident">RegistrationFormAnswerRepository</span>,
+    <span class="ident">RegistrationFormRepository</span>, <span class="ident">UserInvitationRepository</span>, <span class="ident">UserRepository</span>,
 };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">file</span>::{<span class="ident">File</span>, <span class="ident">FileId</span>},
@@ -1852,6 +1858,12 @@
             .<span class="ident">values</span>()
             .<span class="ident">find</span>(<span class="op">|</span><span class="ident">invitation</span><span class="op">|</span> <span class="ident">invitation</span>.<span class="ident">email</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">email</span>)
             .<span class="ident">cloned</span>())
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">ConfigContext</span> <span class="kw">for</span> <span class="ident">MockApp</span> {
+    <span class="kw">fn</span> <span class="ident">administrator_email</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">UserEmailAddress</span> {
+        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">test_model</span>::<span class="ident">ADMINISTRATOR_EMAIL</span>
     }
 }
 </pre></div>

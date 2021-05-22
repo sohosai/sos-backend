@@ -173,6 +173,23 @@
 <span id="170">170</span>
 <span id="171">171</span>
 <span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>};
 
@@ -180,6 +197,7 @@
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">rusoto_s3</span>::<span class="ident">S3Client</span>;
+<span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">UserEmailAddress</span>;
 <span class="kw">use</span> <span class="ident">sos21_gateway_database</span>::<span class="ident">Database</span>;
 <span class="kw">use</span> <span class="ident">sos21_gateway_s3</span>::<span class="ident">S3</span>;
 <span class="kw">use</span> <span class="ident">sqlx</span>::{
@@ -192,6 +210,7 @@
     <span class="ident">pool</span>: <span class="ident">PgPool</span>,
     <span class="ident">s3_client</span>: <span class="ident">S3Client</span>,
     <span class="ident">config</span>: <span class="ident">Config</span>,
+    <span class="ident">administrator_email</span>: <span class="ident">UserEmailAddress</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">App</span> {
@@ -227,10 +246,14 @@
         };
         <span class="kw">let</span> <span class="ident">s3_client</span> <span class="op">=</span> <span class="ident">S3Client</span>::<span class="ident">new_with</span>(<span class="ident">dispatcher</span>, <span class="ident">credentials</span>, <span class="ident">region</span>);
 
+        <span class="kw">let</span> <span class="ident">administrator_email</span> <span class="op">=</span> <span class="ident">UserEmailAddress</span>::<span class="ident">from_string</span>(<span class="ident">config</span>.<span class="ident">administrator_email</span>.<span class="ident">clone</span>())
+            .<span class="ident">context</span>(<span class="string">&quot;invalid administrator email&quot;</span>)<span class="question-mark">?</span>;
+
         <span class="prelude-val">Ok</span>(<span class="ident">App</span> {
             <span class="ident">pool</span>,
             <span class="ident">s3_client</span>,
             <span class="ident">config</span>,
+            <span class="ident">administrator_email</span>,
         })
     }
 
@@ -257,7 +280,11 @@
             .<span class="ident">context</span>(<span class="string">&quot;Failed to acquire a connection from pool&quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">database</span> <span class="op">=</span> <span class="ident">Database</span>::<span class="ident">new</span>(<span class="ident">connection</span>);
         <span class="kw">let</span> <span class="ident">s3</span> <span class="op">=</span> <span class="ident">S3</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">s3_client</span>.<span class="ident">clone</span>(), <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">s3_object_bucket</span>.<span class="ident">clone</span>());
-        <span class="prelude-val">Ok</span>(<span class="ident">Context</span> { <span class="ident">database</span>, <span class="ident">s3</span> })
+        <span class="prelude-val">Ok</span>(<span class="ident">Context</span> {
+            <span class="ident">database</span>,
+            <span class="ident">s3</span>,
+            <span class="ident">administrator_email</span>: <span class="self">self</span>.<span class="ident">administrator_email</span>.<span class="ident">clone</span>(),
+        })
     }
 }
 
@@ -265,6 +292,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Context</span> {
     <span class="ident">database</span>: <span class="ident">Database</span>,
     <span class="ident">s3</span>: <span class="ident">S3</span>,
+    <span class="ident">administrator_email</span>: <span class="ident">UserEmailAddress</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Context</span> {
@@ -344,6 +372,12 @@
 <span class="ident">sos21_domain</span>::<span class="macro">delegate_user_invitation_repository</span><span class="macro">!</span> {
     <span class="kw">impl</span> <span class="ident">UserInvitationRepository</span> <span class="kw">for</span> <span class="ident">Context</span> {
         <span class="self">self</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">database</span> }
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::<span class="ident">ConfigContext</span> <span class="kw">for</span> <span class="ident">Context</span> {
+    <span class="kw">fn</span> <span class="ident">administrator_email</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">UserEmailAddress</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">administrator_email</span>
     }
 }
 </pre></div>

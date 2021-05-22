@@ -368,8 +368,33 @@
 <span id="365">365</span>
 <span id="366">366</span>
 <span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{<span class="ident">FileRepository</span>, <span class="ident">UserInvitationRepository</span>, <span class="ident">UserRepository</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{<span class="ident">ConfigContext</span>, <span class="ident">FileRepository</span>, <span class="ident">UserInvitationRepository</span>, <span class="ident">UserRepository</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProject</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">permissions</span>::<span class="ident">Permissions</span>;
@@ -444,7 +469,7 @@
         <span class="ident">category</span>: <span class="ident">UserCategory</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DomainResult</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">AlreadySignedUpError</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">C</span>: <span class="ident">UserRepository</span> <span class="op">+</span> <span class="ident">UserInvitationRepository</span>,
+        <span class="ident">C</span>: <span class="ident">UserRepository</span> <span class="op">+</span> <span class="ident">UserInvitationRepository</span> <span class="op">+</span> <span class="ident">ConfigContext</span>,
     {
         <span class="kw">if</span> <span class="ident">ctx</span>
             .<span class="ident">get_user</span>(<span class="ident">id</span>.<span class="ident">clone</span>())
@@ -455,12 +480,15 @@
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">DomainError</span>::<span class="ident">Domain</span>(<span class="ident">AlreadySignedUpError</span> { <span class="ident">_priv</span>: () }));
         }
 
-        <span class="kw">let</span> <span class="ident">role</span> <span class="op">=</span> <span class="ident">ctx</span>
-            .<span class="ident">get_user_invitation_by_email</span>(<span class="kw-2">&amp;</span><span class="ident">email</span>)
-            .<span class="kw">await</span>
-            .<span class="ident">context</span>(<span class="string">&quot;Failed to get user invitation&quot;</span>)<span class="question-mark">?</span>
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">invitation</span><span class="op">|</span> <span class="ident">invitation</span>.<span class="ident">role</span>().<span class="ident">to_user_role</span>())
-            .<span class="ident">unwrap_or</span>(<span class="ident">UserRole</span>::<span class="ident">General</span>);
+        <span class="kw">let</span> <span class="ident">role</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">ctx</span>.<span class="ident">administrator_email</span>() <span class="op">=</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">email</span> {
+            <span class="ident">UserRole</span>::<span class="ident">Administrator</span>
+        } <span class="kw">else</span> {
+            <span class="ident">ctx</span>.<span class="ident">get_user_invitation_by_email</span>(<span class="kw-2">&amp;</span><span class="ident">email</span>)
+                .<span class="kw">await</span>
+                .<span class="ident">context</span>(<span class="string">&quot;Failed to get user invitation&quot;</span>)<span class="question-mark">?</span>
+                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">invitation</span><span class="op">|</span> <span class="ident">invitation</span>.<span class="ident">role</span>().<span class="ident">to_user_role</span>())
+                .<span class="ident">unwrap_or</span>(<span class="ident">UserRole</span>::<span class="ident">General</span>)
+        };
 
         <span class="prelude-val">Ok</span>(<span class="ident">User</span>::<span class="ident">from_content</span>(<span class="ident">UserContent</span> {
             <span class="ident">id</span>,
@@ -732,6 +760,28 @@
             .<span class="kw">await</span>,
             <span class="prelude-val">Ok</span>(<span class="ident">user</span>)
             <span class="kw">if</span> <span class="ident">user</span>.<span class="ident">role</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">UserRole</span>::<span class="ident">General</span>
+            <span class="op">&amp;&amp;</span> <span class="ident">user</span>.<span class="ident">email</span>() <span class="op">=</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">email</span>
+        ));
+    }
+
+    <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_new_admin_ok</span>() {
+        <span class="kw">let</span> <span class="ident">email</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">ADMINISTRATOR_EMAIL</span>.<span class="ident">clone</span>();
+        <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">test</span>::<span class="ident">build_mock_app</span>().<span class="ident">build</span>();
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
+            <span class="ident">User</span>::<span class="ident">new</span>(
+                <span class="kw-2">&amp;</span><span class="ident">app</span>,
+                <span class="ident">test_model</span>::<span class="ident">new_user_id</span>(),
+                <span class="ident">test_model</span>::<span class="ident">mock_user_name</span>(),
+                <span class="ident">test_model</span>::<span class="ident">mock_user_kana_name</span>(),
+                <span class="ident">test_model</span>::<span class="ident">mock_phone_number</span>(),
+                <span class="ident">test_model</span>::<span class="ident">mock_user_affiliation</span>(),
+                <span class="ident">email</span>.<span class="ident">clone</span>(),
+                <span class="ident">test_model</span>::<span class="ident">mock_user_category</span>()
+            )
+            .<span class="kw">await</span>,
+            <span class="prelude-val">Ok</span>(<span class="ident">user</span>)
+            <span class="kw">if</span> <span class="ident">user</span>.<span class="ident">role</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">UserRole</span>::<span class="ident">Administrator</span>
             <span class="op">&amp;&amp;</span> <span class="ident">user</span>.<span class="ident">email</span>() <span class="op">=</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">email</span>
         ));
     }

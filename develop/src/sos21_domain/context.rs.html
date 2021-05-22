@@ -30,12 +30,15 @@
 <span id="27">27</span>
 <span id="28">28</span>
 <span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">authentication</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">login</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">authentication</span>::<span class="ident">Authentication</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">login</span>::<span class="ident">Login</span>;
 
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">config</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_distribution_repository</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_repository</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_sharing_repository</span>;
@@ -48,6 +51,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">registration_form_repository</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">user_invitation_repository</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">user_repository</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">config</span>::<span class="ident">ConfigContext</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">file_distribution_repository</span>::<span class="ident">FileDistributionRepository</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">file_repository</span>::<span class="ident">FileRepository</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">file_sharing_repository</span>::<span class="ident">FileSharingRepository</span>;

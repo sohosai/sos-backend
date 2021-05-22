@@ -180,12 +180,34 @@
 <span id="177">177</span>
 <span id="178">178</span>
 <span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserCategory</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>};
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="ident">Context</span>;
-<span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::{<span class="ident">Authentication</span>, <span class="ident">UserInvitationRepository</span>, <span class="ident">UserRepository</span>};
+<span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::{
+    <span class="ident">Authentication</span>, <span class="ident">ConfigContext</span>, <span class="ident">UserInvitationRepository</span>, <span class="ident">UserRepository</span>,
+};
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::{<span class="ident">phone_number</span>, <span class="ident">user</span>};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
@@ -231,7 +253,7 @@
 <span class="attribute">#[<span class="ident">tracing</span>::<span class="ident">instrument</span>(<span class="ident">skip</span>(<span class="ident">ctx</span>))]</span>
 <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">run</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(<span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="ident">Authentication</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>, <span class="ident">input</span>: <span class="ident">Input</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UseCaseResult</span><span class="op">&lt;</span><span class="ident">User</span>, <span class="ident">Error</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">C</span>: <span class="ident">UserRepository</span> <span class="op">+</span> <span class="ident">UserInvitationRepository</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
+    <span class="ident">C</span>: <span class="ident">UserRepository</span> <span class="op">+</span> <span class="ident">UserInvitationRepository</span> <span class="op">+</span> <span class="ident">ConfigContext</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
 {
     <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">authenticated_user</span>();
 
@@ -357,6 +379,24 @@
             <span class="prelude-val">Ok</span>(<span class="ident">got</span>)
             <span class="kw">if</span> <span class="ident">got</span>.<span class="ident">id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">UserId</span>(<span class="ident">user_id</span>)
             <span class="op">&amp;&amp;</span> <span class="ident">got</span>.<span class="ident">role</span> <span class="op">=</span><span class="op">=</span> <span class="ident">UserRole</span>::<span class="ident">CommitteeOperator</span>
+        ));
+    }
+
+    <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_admin_email</span>() {
+        <span class="kw">let</span> <span class="ident">user_id</span> <span class="op">=</span> <span class="string">&quot;test_user_id&quot;</span>.<span class="ident">to_string</span>();
+        <span class="kw">let</span> <span class="ident">email</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">ADMINISTRATOR_EMAIL</span>.<span class="ident">clone</span>().<span class="ident">into_string</span>();
+
+        <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
+            .<span class="ident">build</span>()
+            .<span class="ident">authenticate_as</span>(<span class="ident">user_id</span>.<span class="ident">clone</span>(), <span class="ident">email</span>);
+
+        <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">mock_input</span>();
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
+            <span class="ident">signup</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">input</span>).<span class="kw">await</span>,
+            <span class="prelude-val">Ok</span>(<span class="ident">got</span>)
+            <span class="kw">if</span> <span class="ident">got</span>.<span class="ident">id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">UserId</span>(<span class="ident">user_id</span>)
+            <span class="op">&amp;&amp;</span> <span class="ident">got</span>.<span class="ident">role</span> <span class="op">=</span><span class="op">=</span> <span class="ident">UserRole</span>::<span class="ident">Administrator</span>
         ));
     }
 }

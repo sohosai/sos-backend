@@ -131,12 +131,18 @@
 <span id="128">128</span>
 <span id="129">129</span>
 <span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{
-    <span class="ident">FileDistributionRepository</span>, <span class="ident">FileRepository</span>, <span class="ident">FileSharingRepository</span>, <span class="ident">FormAnswerRepository</span>,
-    <span class="ident">FormRepository</span>, <span class="ident">ObjectRepository</span>, <span class="ident">PendingProjectRepository</span>, <span class="ident">ProjectRepository</span>,
-    <span class="ident">RegistrationFormAnswerRepository</span>, <span class="ident">RegistrationFormRepository</span>, <span class="ident">UserInvitationRepository</span>,
-    <span class="ident">UserRepository</span>,
+    <span class="ident">ConfigContext</span>, <span class="ident">FileDistributionRepository</span>, <span class="ident">FileRepository</span>, <span class="ident">FileSharingRepository</span>,
+    <span class="ident">FormAnswerRepository</span>, <span class="ident">FormRepository</span>, <span class="ident">ObjectRepository</span>, <span class="ident">PendingProjectRepository</span>,
+    <span class="ident">ProjectRepository</span>, <span class="ident">RegistrationFormAnswerRepository</span>, <span class="ident">RegistrationFormRepository</span>,
+    <span class="ident">UserInvitationRepository</span>, <span class="ident">UserRepository</span>,
 };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">email</span>, <span class="ident">UserEmailAddress</span>, <span class="ident">UserId</span>};
 
@@ -259,6 +265,12 @@
 
 <span class="kw">crate</span>::<span class="macro">delegate_user_invitation_repository</span><span class="macro">!</span> {
     <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">C</span>: <span class="ident">UserInvitationRepository</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="ident">UserInvitationRepository</span> <span class="kw">for</span> <span class="ident">Authentication</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span> {
+        <span class="self">self</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span> }
+    }
+}
+
+<span class="kw">crate</span>::<span class="macro">delegate_config_context</span><span class="macro">!</span> {
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">C</span>: <span class="ident">ConfigContext</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span> <span class="ident">ConfigContext</span> <span class="kw">for</span> <span class="ident">Authentication</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span> {
         <span class="self">self</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span> }
     }
 }
