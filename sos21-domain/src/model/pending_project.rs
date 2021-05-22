@@ -1,3 +1,4 @@
+use crate::context::ConfigContext;
 use crate::model::date_time::DateTime;
 use crate::model::project::{
     ProjectAttributes, ProjectCategory, ProjectDescription, ProjectGroupName, ProjectKanaGroupName,
@@ -46,6 +47,7 @@ pub enum NewPendingProjectErrorKind {
     AlreadyProjectOwnerOwner,
     AlreadyProjectSubownerOwner,
     AlreadyPendingProjectOwnerOwner,
+    OutOfCreationPeriod,
 }
 
 #[derive(Debug, Clone, Error)]
@@ -62,7 +64,8 @@ impl NewPendingProjectError {
 
 impl PendingProject {
     #[allow(clippy::too_many_arguments)]
-    pub fn new(
+    pub fn new<C>(
+        ctx: C,
         owner: &User,
         name: ProjectName,
         kana_name: ProjectKanaName,
@@ -71,7 +74,17 @@ impl PendingProject {
         description: ProjectDescription,
         category: ProjectCategory,
         attributes: ProjectAttributes,
-    ) -> Result<Self, NewPendingProjectError> {
+    ) -> Result<Self, NewPendingProjectError>
+    where
+        C: ConfigContext,
+    {
+        let created_at = DateTime::now();
+        if !ctx.project_creation_period().contains(created_at) {
+            return Err(NewPendingProjectError {
+                kind: NewPendingProjectErrorKind::OutOfCreationPeriod,
+            });
+        }
+
         if let Some(assignment) = owner.assignment() {
             let kind = match assignment {
                 UserAssignment::ProjectOwner(_) => {
@@ -90,7 +103,7 @@ impl PendingProject {
         Ok(PendingProject::from_content(
             PendingProjectContent {
                 id: PendingProjectId::from_uuid(Uuid::new_v4()),
-                created_at: DateTime::now(),
+                created_at,
                 name,
                 kana_name,
                 group_name,
@@ -177,6 +190,7 @@ mod tests {
 
         assert_eq!(
             PendingProject::new(
+                crate::test::build_mock_app().build(),
                 &owner,
                 test_model::mock_project_name(),
                 test_model::mock_project_kana_name(),
@@ -202,6 +216,7 @@ mod tests {
 
         assert_eq!(
             PendingProject::new(
+                crate::test::build_mock_app().build(),
                 &owner,
                 test_model::mock_project_name(),
                 test_model::mock_project_kana_name(),
@@ -227,6 +242,7 @@ mod tests {
 
         assert_eq!(
             PendingProject::new(
+                crate::test::build_mock_app().build(),
                 &owner,
                 test_model::mock_project_name(),
                 test_model::mock_project_kana_name(),
@@ -241,4 +257,6 @@ mod tests {
             NewPendingProjectErrorKind::AlreadyPendingProjectOwnerOwner
         );
     }
+
+    // TODO: test new out of period
 }

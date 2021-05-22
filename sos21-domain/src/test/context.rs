@@ -19,6 +19,7 @@ use crate::model::{
     object::{Object, ObjectData, ObjectId},
     pending_project::{PendingProject, PendingProjectId},
     project::{Project, ProjectId, ProjectIndex},
+    project_creation_period::ProjectCreationPeriod,
     registration_form::{RegistrationForm, RegistrationFormId},
     registration_form_answer::{RegistrationFormAnswer, RegistrationFormAnswerId},
     user::{User, UserEmailAddress, UserFileUsage, UserId, UserRole},
@@ -49,6 +50,7 @@ pub struct MockAppBuilder {
     registration_forms: HashMap<RegistrationFormId, RegistrationForm>,
     registration_form_answers: HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>,
     user_invitations: HashMap<UserInvitationId, UserInvitation>,
+    project_creation_period: Option<ProjectCreationPeriod>,
 }
 
 impl MockAppBuilder {
@@ -192,6 +194,15 @@ impl MockAppBuilder {
         self
     }
 
+    pub fn project_creation_period(
+        &mut self,
+        project_creation_period: ProjectCreationPeriod,
+    ) -> &mut Self {
+        self.project_creation_period
+            .replace(project_creation_period);
+        self
+    }
+
     pub fn build(&self) -> MockApp {
         let users = self
             .users
@@ -225,6 +236,9 @@ impl MockAppBuilder {
             registration_forms: Arc::new(Mutex::new(self.registration_forms.clone())),
             registration_form_answers: Arc::new(Mutex::new(self.registration_form_answers.clone())),
             user_invitations: Arc::new(Mutex::new(self.user_invitations.clone())),
+            project_creation_period: self
+                .project_creation_period
+                .unwrap_or_else(ProjectCreationPeriod::always),
         }
     }
 }
@@ -244,6 +258,7 @@ pub struct MockApp {
     registration_form_answers:
         Arc<Mutex<HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>>>,
     user_invitations: Arc<Mutex<HashMap<UserInvitationId, UserInvitation>>>,
+    project_creation_period: ProjectCreationPeriod,
 }
 
 impl MockApp {
@@ -923,5 +938,9 @@ impl UserInvitationRepository for MockApp {
 impl ConfigContext for MockApp {
     fn administrator_email(&self) -> &UserEmailAddress {
         &*test_model::ADMINISTRATOR_EMAIL
+    }
+
+    fn project_creation_period(&self) -> ProjectCreationPeriod {
+        self.project_creation_period
     }
 }

@@ -1,7 +1,9 @@
+use crate::model::project_creation_period::ProjectCreationPeriod;
 use crate::model::user::UserEmailAddress;
 
 pub trait ConfigContext {
     fn administrator_email(&self) -> &UserEmailAddress;
+    fn project_creation_period(&self) -> ProjectCreationPeriod;
 }
 
 #[macro_export]
@@ -13,6 +15,11 @@ macro_rules! delegate_config_context {
             fn administrator_email(&$sel) -> &$crate::model::user::UserEmailAddress {
                 $target.administrator_email()
             }
+            fn project_creation_period(
+                &$sel,
+            ) -> $crate::model::project_creation_period::ProjectCreationPeriod {
+                $target.project_creation_period()
+            }
         }
     }
 }
@@ -20,5 +27,9 @@ macro_rules! delegate_config_context {
 impl<C: ConfigContext> ConfigContext for &C {
     fn administrator_email(&self) -> &UserEmailAddress {
         <C as ConfigContext>::administrator_email(self)
+    }
+
+    fn project_creation_period(&self) -> ProjectCreationPeriod {
+        <C as ConfigContext>::project_creation_period(self)
     }
 }
