@@ -1,4 +1,4 @@
-use crate::context::RegistrationFormAnswerRepository;
+use crate::context::{ConfigContext, RegistrationFormAnswerRepository};
 use crate::model::date_time::DateTime;
 use crate::model::form;
 use crate::model::form_answer::FormAnswerItems;
@@ -6,7 +6,7 @@ use crate::model::pending_project::PendingProject;
 use crate::model::permissions::Permissions;
 use crate::model::project::Project;
 use crate::model::registration_form::{RegistrationForm, RegistrationFormId};
-use crate::model::user::{User, UserId};
+use crate::model::user::{self, User, UserId};
 use crate::{DomainError, DomainResult};
 
 use anyhow::Context;
@@ -204,6 +204,128 @@ impl RegistrationFormAnswer {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SetItemsErrorKind {
+    InsufficientPermissions,
+    MismatchedItemsLength,
+    MismatchedItemId {
+        expected: form::item::FormItemId,
+        got: form::item::FormItemId,
+    },
+    InvalidItem {
+        id: form::item::FormItemId,
+        kind: form::item::CheckAnswerItemErrorKind,
+    },
+}
+
+#[derive(Debug, Clone, Error)]
+#[error("failed to set registration form answer items")]
+pub struct SetItemsError {
+    kind: SetItemsErrorKind,
+}
+
+impl SetItemsError {
+    pub fn kind(&self) -> SetItemsErrorKind {
+        self.kind
+    }
+
+    fn from_check_error(err: form::item::CheckAnswerError) -> Self {
+        let kind = match err.kind() {
+            form::item::CheckAnswerErrorKind::MismatchedItemsLength => {
+                SetItemsErrorKind::MismatchedItemsLength
+            }
+            form::item::CheckAnswerErrorKind::MismatchedItemId { expected, got } => {
+                SetItemsErrorKind::MismatchedItemId { expected, got }
+            }
+            form::item::CheckAnswerErrorKind::Item(id, kind) => {
+                SetItemsErrorKind::InvalidItem { id, kind }
+            }
+        };
+
+        SetItemsError { kind }
+    }
+
+    fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {
+        SetItemsError {
+            kind: SetItemsErrorKind::InsufficientPermissions,
+        }
+    }
+}
+
+impl RegistrationFormAnswer {
+    // TODO: Fetch form and (pending) project in set_items_with_*
+
+    pub fn set_items_with_pending_project<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        registration_form: &RegistrationForm,
+        pending_project: &PendingProject,
+        items: FormAnswerItems,
+    ) -> DomainResult<(), SetItemsError>
+    where
+        C: ConfigContext,
+    {
+        domain_ensure!(registration_form.id() == self.registration_form_id());
+        domain_ensure!(self.respondent().is_pending_project(pending_project));
+
+        let now = DateTime::now();
+        let permission = if ctx.project_creation_period().contains(now)
+            && pending_project.owner_id() == user.id()
+        {
+            Permissions::UPDATE_REGISTRATION_FORM_ANSWERS_IN_PERIOD
+        } else {
+            Permissions::UPDATE_ALL_FORM_ANSWERS
+        };
+
+        user.require_permissions(permission)
+            .map_err(|err| DomainError::Domain(SetItemsError::from_permissions_error(err)))?;
+
+        registration_form
+            .items()
+            .check_answer(&items)
+            .context("Failed to check registration form answers unexpectedly")?
+            .map_err(|err| DomainError::Domain(SetItemsError::from_check_error(err)))?;
+
+        self.content.items = items;
+        Ok(())
+    }
+
+    pub fn set_items_with_project<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        registration_form: &RegistrationForm,
+        project: &Project,
+        items: FormAnswerItems,
+    ) -> DomainResult<(), SetItemsError>
+    where
+        C: ConfigContext,
+    {
+        domain_ensure!(registration_form.id() == self.registration_form_id());
+        domain_ensure!(self.respondent().is_project(project));
+
+        let now = DateTime::now();
+        let permission = if ctx.project_creation_period().contains(now) && project.is_member(user) {
+            Permissions::UPDATE_REGISTRATION_FORM_ANSWERS_IN_PERIOD
+        } else {
+            Permissions::UPDATE_ALL_FORM_ANSWERS
+        };
+
+        user.require_permissions(permission)
+            .map_err(|err| DomainError::Domain(SetItemsError::from_permissions_error(err)))?;
+
+        registration_form
+            .items()
+            .check_answer(&items)
+            .context("Failed to check registration form answers unexpectedly")?
+            .map_err(|err| DomainError::Domain(SetItemsError::from_check_error(err)))?;
+
+        self.content.items = items;
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::test::model as test_model;
@@ -310,4 +432,6 @@ mod tests {
         assert!(!registration_form_answer
             .is_visible_to_with_pending_project(&user, &operator_pending_project));
     }
+
+    // TODO: test set_items_*
 }
