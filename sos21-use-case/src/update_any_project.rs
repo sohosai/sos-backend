@@ -124,7 +124,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate::model::project::ProjectId;
-    use crate::{update_project, UseCaseError};
+    use crate::{update_any_project, UseCaseError};
     use sos21_domain::test;
 
     // Checks that the normal user cannot update projects.
@@ -140,7 +140,7 @@ mod tests {
             .login_as(user)
             .await;
 
-        let input = update_project::Input {
+        let input = update_any_project::Input {
             id: ProjectId::from_entity(project.id()),
             name: Some("新しい名前".to_string()),
             kana_name: None,
@@ -151,9 +151,9 @@ mod tests {
             attributes: None,
         };
         assert!(matches!(
-            update_project::run(&app, input).await,
+            update_any_project::run(&app, input).await,
             Err(UseCaseError::UseCase(
-                update_project::Error::InsufficientPermissions
+                update_any_project::Error::InsufficientPermissions
             ))
         ));
     }
@@ -171,7 +171,7 @@ mod tests {
             .login_as(user)
             .await;
 
-        let input = update_project::Input {
+        let input = update_any_project::Input {
             id: ProjectId::from_entity(project.id()),
             name: Some("新しい名前".to_string()),
             kana_name: None,
@@ -182,9 +182,9 @@ mod tests {
             attributes: None,
         };
         assert!(matches!(
-            update_project::run(&app, input).await,
+            update_any_project::run(&app, input).await,
             Err(UseCaseError::UseCase(
-                update_project::Error::InsufficientPermissions
+                update_any_project::Error::InsufficientPermissions
             ))
         ));
     }
@@ -202,7 +202,7 @@ mod tests {
             .login_as(user)
             .await;
 
-        let input = update_project::Input {
+        let input = update_any_project::Input {
             id: ProjectId::from_entity(project.id()),
             name: Some("新しい名前".to_string()),
             kana_name: None,
@@ -213,9 +213,9 @@ mod tests {
             attributes: None,
         };
         assert!(matches!(
-            update_project::run(&app, input).await,
+            update_any_project::run(&app, input).await,
             Err(UseCaseError::UseCase(
-                update_project::Error::InsufficientPermissions
+                update_any_project::Error::InsufficientPermissions
             ))
         ));
     }
@@ -233,7 +233,7 @@ mod tests {
             .login_as(user)
             .await;
 
-        let input = update_project::Input {
+        let input = update_any_project::Input {
             id: ProjectId::from_entity(project.id()),
             name: Some("新しい名前".to_string()),
             kana_name: None,
@@ -244,7 +244,7 @@ mod tests {
             attributes: None,
         };
         assert!(matches!(
-            update_project::run(&app, input).await,
+            update_any_project::run(&app, input).await,
             Ok(got)
             if got.name == "新しい名前"
         ));
