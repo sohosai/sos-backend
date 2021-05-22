@@ -39,6 +39,16 @@ in
         type = types.str;
       };
 
+      startProjectCreationPeriod = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+      };
+
+      endProjectCreationPeriod = mkOption {
+        type = types.nullOr types.int;
+        default = null;
+      };
+
       firebaseProjectId = mkOption {
         type = types.str;
       };
@@ -204,7 +214,7 @@ in
           AmbientCapabilities = "CAP_NET_BIND_SERVICE";
         };
         postStop = "rm -f '${envFile}'";
-        environment = {
+        environment = filterAttrs (_: v: v != null) {
           SOS21_API_SERVER_JWT_AUDIENCE = cfg.firebaseProjectId;
           SOS21_API_SERVER_JWT_ISSUER = "https://securetoken.google.com/${cfg.firebaseProjectId}";
           SOS21_API_SERVER_JWT_KEYS_URL = "https://www.googleapis.com/robot/v1/metadata/jwk/securetoken@system.gserviceaccount.com";
@@ -212,6 +222,14 @@ in
           SOS21_API_SERVER_S3_ENDPOINT = cfg.s3Endpoint;
           SOS21_API_SERVER_S3_OBJECT_BUCKET = cfg.s3ObjectBucket;
           SOS21_API_SERVER_ADMINISTRATOR_EMAIL = cfg.administratorEmail;
+          SOS21_API_SERVER_START_PROJECT_CREATION_PERIOD =
+            if cfg.startProjectCreationPeriod != null
+            then toString cfg.startProjectCreationPeriod
+            else null;
+          SOS21_API_SERVER_END_PROJECT_CREATION_PERIOD =
+            if cfg.endProjectCreationPeriod != null
+            then toString cfg.endProjectCreationPeriod
+            else null;
           SOS21_API_SERVER_BIND = "0.0.0.0:${toString cfg.port}";
         };
         script = ''

@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use url::Url;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -13,4 +14,6 @@ pub struct Config {
     pub s3_endpoint: String,
     pub s3_object_bucket: String,
     pub administrator_email: String,
+    pub start_project_creation_period: Option<DateTime<Utc>>,
+    pub end_project_creation_period: Option<DateTime<Utc>>,
 }
