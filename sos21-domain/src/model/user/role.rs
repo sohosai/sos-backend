@@ -44,6 +44,7 @@ impl UserRole {
                     | Permissions::ANSWER_REGISTRATION_FORMS
                     | Permissions::UPDATE_FORM_ANSWERS_IN_PERIOD
                     | Permissions::UPDATE_MEMBER_PROJECTS_IN_PERIOD
+                    | Permissions::UPDATE_OWNING_PENDING_PROJECTS_IN_PERIOD
             }
         }
     }

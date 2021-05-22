@@ -1,10 +1,11 @@
 use crate::context::ConfigContext;
 use crate::model::date_time::DateTime;
+use crate::model::permissions::Permissions;
 use crate::model::project::{
     ProjectAttributes, ProjectCategory, ProjectDescription, ProjectGroupName, ProjectKanaGroupName,
     ProjectKanaName, ProjectName,
 };
-use crate::model::user::{User, UserAssignment, UserId};
+use crate::model::user::{self, User, UserAssignment, UserId};
 
 use thiserror::Error;
 use uuid::Uuid;
@@ -175,6 +176,138 @@ impl PendingProject {
     }
 }
 
+#[derive(Debug, Clone, Error)]
+#[error("insufficient permissions to update pending project")]
+pub struct NoUpdatePermissionError {
+    _priv: (),
+}
+
+impl NoUpdatePermissionError {
+    fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {
+        NoUpdatePermissionError { _priv: () }
+    }
+}
+
+impl PendingProject {
+    fn require_update_permission<C>(
+        &self,
+        ctx: C,
+        user: &User,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        let now = DateTime::now();
+        let permission =
+            if &self.owner_id == user.id() && ctx.project_creation_period().contains(now) {
+                Permissions::UPDATE_OWNING_PENDING_PROJECTS_IN_PERIOD
+            } else {
+                Permissions::UPDATE_ALL_PENDING_PROJECTS
+            };
+
+        user.require_permissions(permission)
+            .map_err(NoUpdatePermissionError::from_permissions_error)
+    }
+
+    pub fn set_name<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        name: ProjectName,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
+        self.content.name = name;
+        Ok(())
+    }
+
+    pub fn set_kana_name<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        kana_name: ProjectKanaName,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
+        self.content.kana_name = kana_name;
+        Ok(())
+    }
+
+    pub fn set_group_name<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        group_name: ProjectGroupName,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
+        self.content.group_name = group_name;
+        Ok(())
+    }
+
+    pub fn set_kana_group_name<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        kana_group_name: ProjectKanaGroupName,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
+        self.content.kana_group_name = kana_group_name;
+        Ok(())
+    }
+
+    pub fn set_description<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        description: ProjectDescription,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
+        self.content.description = description;
+        Ok(())
+    }
+
+    pub fn set_category<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        category: ProjectCategory,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
+        self.content.category = category;
+        Ok(())
+    }
+
+    pub fn set_attributes<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        attributes: ProjectAttributes,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
+        self.content.attributes = attributes;
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{NewPendingProjectErrorKind, PendingProject};
@@ -259,4 +392,5 @@ mod tests {
     }
 
     // TODO: test new out of period
+    // TODO: test set_* permissions and period
 }
