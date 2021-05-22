@@ -82,6 +82,7 @@ pub mod signup;
 pub mod update_any_project;
 pub mod update_any_user;
 pub mod update_form;
+pub mod update_pending_project;
 pub mod update_project;
 pub mod update_project_form_answer;
 
