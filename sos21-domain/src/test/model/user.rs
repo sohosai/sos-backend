@@ -35,7 +35,7 @@ pub fn mock_user_affiliation() -> UserAffiliation {
 }
 
 pub fn mock_user_category() -> UserCategory {
-    UserCategory::UndergraduateStudent
+    UserCategory::UndergraduateStudent(mock_user_affiliation())
 }
 
 pub fn mock_user(id: UserId, role: UserRole) -> User {
@@ -46,7 +46,6 @@ pub fn mock_user(id: UserId, role: UserRole) -> User {
         kana_name: mock_user_kana_name(),
         email: mock_user_email_address(),
         phone_number: mock_phone_number(),
-        affiliation: mock_user_affiliation(),
         role,
         category: mock_user_category(),
         assignment: None,

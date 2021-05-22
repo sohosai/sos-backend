@@ -16,6 +16,7 @@ with the HTTP API interface being the "public API".
 ### Changed
 
 - Enable to specify project by code in file-distribution/create ([#96](https://github.com/sohosai/sos21-backend/pull/96))
+- Do not require affiliation of graduate students and academic staffs ([#93](https://github.com/sohosai/sos21-backend/pull/93))
 
 ### Deprecated
 ### Removed

@@ -12,7 +12,6 @@ pub struct Request {
     pub name: UserName,
     pub kana_name: UserKanaName,
     pub phone_number: String,
-    pub affiliation: String,
     pub category: UserCategory,
 }
 
@@ -53,7 +52,7 @@ impl From<signup::Error> for Error {
                 field: "phone_number",
             },
             signup::Error::InvalidAffiliation => Error::InvalidField {
-                field: "affiliation",
+                field: "category.affiliation",
             },
         }
     }
@@ -68,7 +67,6 @@ pub async fn handler(
         name: request.name.into_use_case(),
         kana_name: request.kana_name.into_use_case(),
         phone_number: request.phone_number,
-        affiliation: request.affiliation,
         category: request.category.into_use_case(),
     };
     let user = signup::run(&ctx, input).await?;

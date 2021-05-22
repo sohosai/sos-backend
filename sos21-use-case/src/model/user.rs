@@ -68,9 +68,9 @@ impl UserRole {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum UserCategory {
-    UndergraduateStudent,
+    UndergraduateStudent { affiliation: String },
     GraduateStudent,
     AcademicStaff,
 }
@@ -78,17 +78,13 @@ pub enum UserCategory {
 impl UserCategory {
     pub fn from_entity(category: entity::UserCategory) -> UserCategory {
         match category {
-            entity::UserCategory::UndergraduateStudent => UserCategory::UndergraduateStudent,
+            entity::UserCategory::UndergraduateStudent(affiliation) => {
+                UserCategory::UndergraduateStudent {
+                    affiliation: affiliation.into_string(),
+                }
+            }
             entity::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
             entity::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
-        }
-    }
-
-    pub fn into_entity(self) -> entity::UserCategory {
-        match self {
-            UserCategory::UndergraduateStudent => entity::UserCategory::UndergraduateStudent,
-            UserCategory::GraduateStudent => entity::UserCategory::GraduateStudent,
-            UserCategory::AcademicStaff => entity::UserCategory::AcademicStaff,
         }
     }
 }
@@ -101,7 +97,6 @@ pub struct User {
     pub kana_name: UserKanaName,
     pub email: String,
     pub phone_number: String,
-    pub affiliation: String,
     pub role: UserRole,
     pub category: UserCategory,
 }
@@ -115,9 +110,8 @@ impl User {
             kana_name: UserKanaName::from_entity(user.kana_name().clone()),
             email: user.email().clone().into_string(),
             phone_number: user.phone_number().clone().into_string(),
-            affiliation: user.affiliation().clone().into_string(),
             role: UserRole::from_entity(user.role()),
-            category: UserCategory::from_entity(user.category()),
+            category: UserCategory::from_entity(user.category().clone()),
         }
     }
 }

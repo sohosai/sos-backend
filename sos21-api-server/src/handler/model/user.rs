@@ -91,9 +91,9 @@ impl UserRole {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "snake_case", tag = "type")]
 pub enum UserCategory {
-    UndergraduateStudent,
+    UndergraduateStudent { affiliation: String },
     GraduateStudent,
     AcademicStaff,
 }
@@ -101,7 +101,9 @@ pub enum UserCategory {
 impl UserCategory {
     pub fn from_use_case(category: use_case::UserCategory) -> UserCategory {
         match category {
-            use_case::UserCategory::UndergraduateStudent => UserCategory::UndergraduateStudent,
+            use_case::UserCategory::UndergraduateStudent { affiliation } => {
+                UserCategory::UndergraduateStudent { affiliation }
+            }
             use_case::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
             use_case::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
         }
@@ -109,7 +111,9 @@ impl UserCategory {
 
     pub fn into_use_case(self) -> use_case::UserCategory {
         match self {
-            UserCategory::UndergraduateStudent => use_case::UserCategory::UndergraduateStudent,
+            UserCategory::UndergraduateStudent { affiliation } => {
+                use_case::UserCategory::UndergraduateStudent { affiliation }
+            }
             UserCategory::GraduateStudent => use_case::UserCategory::GraduateStudent,
             UserCategory::AcademicStaff => use_case::UserCategory::AcademicStaff,
         }
@@ -124,7 +128,6 @@ pub struct User {
     pub kana_name: UserKanaName,
     pub email: String,
     pub phone_number: String,
-    pub affiliation: String,
     pub role: UserRole,
     pub category: UserCategory,
 }
@@ -138,7 +141,6 @@ impl User {
             kana_name: UserKanaName::from_use_case(user.kana_name),
             email: user.email,
             phone_number: user.phone_number,
-            affiliation: user.affiliation,
             role: UserRole::from_use_case(user.role),
             category: UserCategory::from_use_case(user.category),
         }

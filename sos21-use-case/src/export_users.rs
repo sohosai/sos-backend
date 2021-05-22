@@ -221,7 +221,11 @@ where
     }
 
     if affiliation.is_some() {
-        writer.write_field(user.affiliation().as_str())?;
+        if let Some(affiliation) = user.affiliation() {
+            writer.write_field(affiliation.as_str())?;
+        } else {
+            writer.write_field("")?;
+        }
     }
 
     if role.is_some() {
@@ -236,7 +240,9 @@ where
 
     if category.is_some() {
         let category_name = match user.category() {
-            user::UserCategory::UndergraduateStudent => &input.category_names.undergraduate_student,
+            user::UserCategory::UndergraduateStudent(_) => {
+                &input.category_names.undergraduate_student
+            }
             user::UserCategory::GraduateStudent => &input.category_names.graduate_student,
             user::UserCategory::AcademicStaff => &input.category_names.academic_staff,
         };

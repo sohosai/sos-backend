@@ -17,8 +17,6 @@ pub struct Request {
     #[serde(default)]
     pub phone_number: Option<String>,
     #[serde(default)]
-    pub affiliation: Option<String>,
-    #[serde(default)]
     pub role: Option<UserRole>,
     #[serde(default)]
     pub category: Option<UserCategory>,
@@ -64,7 +62,7 @@ impl From<update_user::Error> for Error {
                 field: "phone_number",
             },
             update_user::Error::InvalidUserAffiliation => Error::InvalidField {
-                field: "affiliation",
+                field: "category.affiliation",
             },
         }
     }
@@ -77,7 +75,6 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
         name: request.name.map(UserName::into_use_case),
         kana_name: request.kana_name.map(UserKanaName::into_use_case),
         phone_number: request.phone_number,
-        affiliation: request.affiliation,
         role: request.role.map(UserRole::into_use_case),
         category: request.category.map(UserCategory::into_use_case),
     };
