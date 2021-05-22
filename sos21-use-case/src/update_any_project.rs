@@ -5,8 +5,8 @@ use crate::model::project::{
 
 use anyhow::Context;
 use sos21_domain::context::project_repository::{self, ProjectRepository};
-use sos21_domain::context::Login;
-use sos21_domain::model::{permissions::Permissions, project};
+use sos21_domain::context::{ConfigContext, Login};
+use sos21_domain::model::{permissions, project, user};
 
 #[derive(Debug, Clone)]
 pub struct Input {
@@ -32,19 +32,50 @@ pub enum Error {
     InsufficientPermissions,
 }
 
+impl Error {
+    fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {
+        Error::InsufficientPermissions
+    }
+
+    fn from_update_error(_err: project::NoUpdatePermissionError) -> Self {
+        Error::InsufficientPermissions
+    }
+
+    fn from_name_error(_err: project::name::NameError) -> Self {
+        Error::InvalidName
+    }
+
+    fn from_kana_name_error(_err: project::name::KanaNameError) -> Self {
+        Error::InvalidKanaName
+    }
+
+    fn from_group_name_error(_err: project::name::GroupNameError) -> Self {
+        Error::InvalidGroupName
+    }
+
+    fn from_kana_group_name_error(_err: project::name::KanaGroupNameError) -> Self {
+        Error::InvalidKanaGroupName
+    }
+
+    fn from_description_error(_err: project::description::DescriptionError) -> Self {
+        Error::InvalidDescription
+    }
+
+    fn from_attributes_error(_err: project::attribute::DuplicatedAttributesError) -> Self {
+        Error::DuplicatedAttributes
+    }
+}
+
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<Project, Error>
 where
-    C: ProjectRepository + Send + Sync,
+    C: ProjectRepository + ConfigContext + Send + Sync,
 {
     let login_user = ctx.login_user();
 
-    if login_user
-        .require_permissions(Permissions::UPDATE_ALL_PROJECTS)
-        .is_err()
-    {
-        return Err(UseCaseError::UseCase(Error::InsufficientPermissions));
-    }
+    login_user
+        .require_permissions(permissions::Permissions::UPDATE_ALL_PROJECTS)
+        .map_err(|err| UseCaseError::UseCase(Error::from_permissions_error(err)))?;
 
     let result = ctx
         .get_project(input.id.into_entity())
@@ -63,42 +94,52 @@ where
 
     if let Some(name) = input.name {
         let name = project::ProjectName::from_string(name)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidName))?;
-        project.set_name(name);
+            .map_err(|err| UseCaseError::UseCase(Error::from_name_error(err)))?;
+        project
+            .set_name(ctx, login_user, name)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     if let Some(kana_name) = input.kana_name {
         let kana_name = project::ProjectKanaName::from_string(kana_name)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidKanaName))?;
-        project.set_kana_name(kana_name);
+            .map_err(|err| UseCaseError::UseCase(Error::from_kana_name_error(err)))?;
+        project
+            .set_kana_name(ctx, login_user, kana_name)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     if let Some(group_name) = input.group_name {
         let group_name = project::ProjectGroupName::from_string(group_name)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidGroupName))?;
-        project.set_group_name(group_name);
+            .map_err(|err| UseCaseError::UseCase(Error::from_group_name_error(err)))?;
+        project
+            .set_group_name(ctx, login_user, group_name)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     if let Some(kana_group_name) = input.kana_group_name {
         let kana_group_name = project::ProjectKanaGroupName::from_string(kana_group_name)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidKanaGroupName))?;
-        project.set_kana_group_name(kana_group_name);
+            .map_err(|err| UseCaseError::UseCase(Error::from_kana_group_name_error(err)))?;
+        project
+            .set_kana_group_name(ctx, login_user, kana_group_name)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     if let Some(description) = input.description {
         let description = project::ProjectDescription::from_string(description)
-            .map_err(|_| UseCaseError::UseCase(Error::InvalidDescription))?;
-        project.set_description(description);
+            .map_err(|err| UseCaseError::UseCase(Error::from_description_error(err)))?;
+        project
+            .set_description(ctx, login_user, description)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     if let Some(attributes) = input.attributes {
         let attributes = project::ProjectAttributes::from_attributes(
             attributes.into_iter().map(ProjectAttribute::into_entity),
         )
-        .map_err(|_: project::attribute::DuplicatedAttributesError| {
-            UseCaseError::UseCase(Error::DuplicatedAttributes)
-        })?;
-        project.set_attributes(attributes);
+        .map_err(|err| UseCaseError::UseCase(Error::from_attributes_error(err)))?;
+        project
+            .set_attributes(ctx, login_user, attributes)
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
     ctx.store_project(project.clone())

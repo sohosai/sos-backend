@@ -112,17 +112,18 @@ mod tests {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
-        let mut project = test_model::new_general_project(test_model::new_user_id());
-        assert!(conj.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
+        let project1 = test_model::new_general_project(test_model::new_user_id());
+        assert!(conj.check_project(&project1));
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+            ],
         );
-        assert!(conj.check_project(&project));
+        assert!(conj.check_project(&project2));
     }
 
     #[test]
@@ -152,34 +153,34 @@ mod tests {
             attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Artistic])
                 .unwrap(),
         };
-        let mut project = test_model::new_general_project(test_model::new_user_id());
-        project.set_attributes(ProjectAttributes::from_attributes(vec![]).unwrap());
-        assert!(!conj.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
-                ProjectAttribute::Artistic,
-                ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+        let project1 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[],
         );
-        assert!(conj.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
+        assert!(!conj.check_project(&project1));
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[ProjectAttribute::Artistic, ProjectAttribute::Committee],
+        );
+        assert!(conj.check_project(&project2));
+        let project3 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+            ],
         );
-        assert!(conj.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
-                ProjectAttribute::Academic,
-                ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+        assert!(conj.check_project(&project3));
+        let project4 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
-        assert!(!conj.check_project(&project));
+        assert!(!conj.check_project(&project4));
     }
 
     #[test]
@@ -229,34 +230,34 @@ mod tests {
             ])
             .unwrap(),
         };
-        let mut project = test_model::new_general_project(test_model::new_user_id());
-        project.set_attributes(ProjectAttributes::from_attributes(vec![]).unwrap());
-        assert!(!conj.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
-                ProjectAttribute::Artistic,
-                ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+        let project1 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[],
         );
-        assert!(conj.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
-                ProjectAttribute::Artistic,
-                ProjectAttribute::Academic,
-                ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+        assert!(!conj.check_project(&project1));
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[ProjectAttribute::Artistic, ProjectAttribute::Committee],
         );
-        assert!(conj.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
+        assert!(conj.check_project(&project2));
+        let project3 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
-            ])
-            .unwrap(),
+                ProjectAttribute::Committee,
+            ],
         );
-        assert!(!conj.check_project(&project));
+        assert!(conj.check_project(&project3));
+        let project4 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[ProjectAttribute::Artistic, ProjectAttribute::Academic],
+        );
+        assert!(!conj.check_project(&project4));
     }
 
     #[test]
@@ -337,22 +338,30 @@ mod tests {
             ])
             .unwrap(),
         };
-        let mut project = test_model::new_general_project(test_model::new_user_id());
-        assert!(!conj.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
-                ProjectAttribute::Academic,
-                ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+        let project1 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[],
         );
-        assert!(!conj.check_project(&project));
-        project.set_category(ProjectCategory::Stage);
-        assert!(conj.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic]).unwrap(),
+        assert!(!conj.check_project(&project1));
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
-        assert!(!conj.check_project(&project));
+        assert!(!conj.check_project(&project2));
+        let project3 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::Stage,
+            &[ProjectAttribute::Academic, ProjectAttribute::Committee],
+        );
+        assert!(conj.check_project(&project3));
+        let project4 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::Stage,
+            &[ProjectAttribute::Academic],
+        );
+        assert!(!conj.check_project(&project4));
     }
 
     #[test]
@@ -394,17 +403,22 @@ mod tests {
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
         let query = ProjectQuery::from_conjunctions(vec![conj]).unwrap();
-        let mut project = test_model::new_general_project(test_model::new_user_id());
-        assert!(query.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
+        let project1 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[],
+        );
+        assert!(query.check_project(&project1));
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+            ],
         );
-        assert!(query.check_project(&project));
+        assert!(query.check_project(&project2));
     }
 
     #[test]
@@ -431,17 +445,22 @@ mod tests {
     #[test]
     fn test_contradiction() {
         let query = ProjectQuery::from_conjunctions(vec![]).unwrap();
-        let mut project = test_model::new_general_project(test_model::new_user_id());
-        assert!(!query.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
+        let project1 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[],
+        );
+        assert!(!query.check_project(&project1));
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+            ],
         );
-        assert!(!query.check_project(&project));
+        assert!(!query.check_project(&project2));
     }
 
     #[test]
@@ -477,23 +496,30 @@ mod tests {
             .unwrap(),
         };
         let query = ProjectQuery::from_conjunctions(vec![conj1, conj2]).unwrap();
-        let mut project = test_model::new_general_project(test_model::new_user_id());
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic]).unwrap(),
+        let project1 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[ProjectAttribute::Academic],
         );
-        assert!(!query.check_project(&project));
-        project.set_category(ProjectCategory::Stage);
-        assert!(query.check_project(&project));
-        project.set_attributes(
-            ProjectAttributes::from_attributes(vec![
-                ProjectAttribute::Academic,
-                ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+        assert!(!query.check_project(&project1));
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::Stage,
+            &[ProjectAttribute::Academic],
         );
-        assert!(query.check_project(&project));
-        project.set_category(ProjectCategory::General);
-        assert!(query.check_project(&project));
+        assert!(query.check_project(&project2));
+        let project3 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::Stage,
+            &[ProjectAttribute::Academic, ProjectAttribute::Committee],
+        );
+        assert!(query.check_project(&project3));
+        let project4 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[ProjectAttribute::Academic, ProjectAttribute::Committee],
+        );
+        assert!(query.check_project(&project4));
     }
 
     #[test]

@@ -109,7 +109,7 @@ mod tests {
     use super::{FormCondition, FormConditionProjectSet};
     use crate::{
         model::{
-            project::{ProjectAttribute, ProjectAttributes},
+            project::{ProjectAttribute, ProjectAttributes, ProjectCategory},
             project_query::{ProjectQuery, ProjectQueryConjunction},
         },
         test::model as test_model,
@@ -130,14 +130,14 @@ mod tests {
 
         let project1 = test_model::new_general_project(test_model::new_user_id());
         assert!(condition.check(&project1));
-        let mut project2 = test_model::new_general_project(test_model::new_user_id());
-        project2.set_attributes(
-            ProjectAttributes::from_attributes(vec![
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+            ],
         );
         assert!(condition.check(&project2));
     }
@@ -174,14 +174,14 @@ mod tests {
 
         let project1 = test_model::new_general_project(test_model::new_user_id());
         assert!(!condition.check(&project1));
-        let mut project2 = test_model::new_general_project(test_model::new_user_id());
-        project2.set_attributes(
-            ProjectAttributes::from_attributes(vec![
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
-            ])
-            .unwrap(),
+            ],
         );
         assert!(!condition.check(&project2));
     }
@@ -204,11 +204,15 @@ mod tests {
 
     #[test]
     fn test_include_exclude() {
-        let mut project1 = test_model::new_general_project(test_model::new_user_id());
-        project1.set_attributes(ProjectAttributes::from_attributes(vec![]).unwrap());
-        let mut project2 = test_model::new_general_project(test_model::new_user_id());
-        project2.set_attributes(
-            ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic]).unwrap(),
+        let project1 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[],
+        );
+        let project2 = test_model::new_project_with_attributes(
+            test_model::new_user_id(),
+            ProjectCategory::General,
+            &[ProjectAttribute::Academic],
         );
 
         let conj = ProjectQueryConjunction {

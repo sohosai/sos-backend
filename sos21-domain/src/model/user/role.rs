@@ -43,6 +43,7 @@ impl UserRole {
                     | Permissions::SHARE_FILES
                     | Permissions::ANSWER_REGISTRATION_FORMS
                     | Permissions::UPDATE_FORM_ANSWERS_IN_PERIOD
+                    | Permissions::UPDATE_MEMBER_PROJECTS_IN_PERIOD
             }
         }
     }
