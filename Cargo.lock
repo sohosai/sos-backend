@@ -1967,7 +1967,7 @@ dependencies = [
 
 [[package]]
 name = "sos21-api-server"
-version = "0.3.0"
+version = "0.5.0-beta"
 dependencies = [
  "anyhow",
  "apply-macro",
@@ -2007,7 +2007,7 @@ dependencies = [
 
 [[package]]
 name = "sos21-database"
-version = "0.3.0"
+version = "0.5.0-beta"
 dependencies = [
  "anyhow",
  "bitflags",
@@ -2020,7 +2020,7 @@ dependencies = [
 
 [[package]]
 name = "sos21-domain"
-version = "0.3.0"
+version = "0.5.0-beta"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2044,7 +2044,7 @@ dependencies = [
 
 [[package]]
 name = "sos21-gateway-database"
-version = "0.3.0"
+version = "0.5.0-beta"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2059,7 +2059,7 @@ dependencies = [
 
 [[package]]
 name = "sos21-gateway-s3"
-version = "0.3.0"
+version = "0.5.0-beta"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2074,7 +2074,7 @@ dependencies = [
 
 [[package]]
 name = "sos21-run-migrations"
-version = "0.3.0"
+version = "0.5.0-beta"
 dependencies = [
  "anyhow",
  "sos21-database",
@@ -2088,7 +2088,7 @@ dependencies = [
 
 [[package]]
 name = "sos21-use-case"
-version = "0.3.0"
+version = "0.5.0-beta"
 dependencies = [
  "anyhow",
  "bytes",
