@@ -193,6 +193,9 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span>;
 <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">future</span>, <span class="ident">lock</span>::<span class="ident">Mutex</span>, <span class="ident">stream</span>::<span class="ident">TryStreamExt</span>};
@@ -205,7 +208,8 @@
     <span class="ident">project</span>::<span class="ident">ProjectId</span>,
     <span class="ident">registration_form</span>::<span class="ident">RegistrationFormId</span>,
     <span class="ident">registration_form_answer</span>::{
-        <span class="ident">RegistrationFormAnswer</span>, <span class="ident">RegistrationFormAnswerId</span>, <span class="ident">RegistrationFormAnswerRespondent</span>,
+        <span class="ident">RegistrationFormAnswer</span>, <span class="ident">RegistrationFormAnswerContent</span>, <span class="ident">RegistrationFormAnswerId</span>,
+        <span class="ident">RegistrationFormAnswerRespondent</span>,
     },
     <span class="ident">user</span>::<span class="ident">UserId</span>,
 };
@@ -347,27 +351,29 @@
         (<span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">anyhow</span>::<span class="macro">bail</span><span class="macro">!</span>(<span class="string">&quot;invalid registration_form_answers&quot;</span>),
     };
 
-    <span class="prelude-val">Ok</span>(<span class="ident">RegistrationFormAnswer</span> {
-        <span class="ident">id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_uuid</span>(<span class="ident">id</span>),
-        <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
-        <span class="ident">author_id</span>: <span class="ident">UserId</span>(<span class="ident">author_id</span>),
-        <span class="ident">registration_form_id</span>: <span class="ident">RegistrationFormId</span>::<span class="ident">from_uuid</span>(<span class="ident">registration_form_id</span>),
-        <span class="ident">respondent</span>,
-        <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">from_value</span>(<span class="ident">items</span>)<span class="question-mark">?</span>,
-    })
+    <span class="prelude-val">Ok</span>(<span class="ident">RegistrationFormAnswer</span>::<span class="ident">from_content</span>(
+        <span class="ident">RegistrationFormAnswerContent</span> {
+            <span class="ident">id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_uuid</span>(<span class="ident">id</span>),
+            <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
+            <span class="ident">author_id</span>: <span class="ident">UserId</span>(<span class="ident">author_id</span>),
+            <span class="ident">registration_form_id</span>: <span class="ident">RegistrationFormId</span>::<span class="ident">from_uuid</span>(<span class="ident">registration_form_id</span>),
+            <span class="ident">respondent</span>,
+            <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">from_value</span>(<span class="ident">items</span>)<span class="question-mark">?</span>,
+        },
+    ))
 }
 
 <span class="kw">fn</span> <span class="ident">from_registration_form_answer</span>(
     <span class="ident">answer</span>: <span class="ident">RegistrationFormAnswer</span>,
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">data</span>::<span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswer</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">RegistrationFormAnswer</span> {
+    <span class="kw">let</span> <span class="ident">RegistrationFormAnswerContent</span> {
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
         <span class="ident">author_id</span>,
         <span class="ident">registration_form_id</span>,
         <span class="ident">respondent</span>,
         <span class="ident">items</span>,
-    } <span class="op">=</span> <span class="ident">answer</span>;
+    } <span class="op">=</span> <span class="ident">answer</span>.<span class="ident">into_content</span>();
 
     <span class="kw">let</span> (<span class="ident">project_id</span>, <span class="ident">pending_project_id</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">respondent</span> {
         <span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">Project</span>(<span class="ident">project_id</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="prelude-val">Some</span>(<span class="ident">project_id</span>), <span class="prelude-val">None</span>),

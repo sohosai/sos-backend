@@ -84,7 +84,6 @@
 <span id="81">81</span>
 <span id="82">82</span>
 <span id="83">83</span>
-<span id="84">84</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form_answer</span>::<span class="ident">FormAnswerItem</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProjectId</span>;
@@ -155,18 +154,17 @@
 
 <span class="kw">impl</span> <span class="ident">RegistrationFormAnswer</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_entity</span>(<span class="ident">answer</span>: <span class="ident">entity</span>::<span class="ident">RegistrationFormAnswer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">items</span> <span class="op">=</span> <span class="ident">answer</span>
-            .<span class="ident">items</span>
-            .<span class="ident">into_items</span>()
-            .<span class="ident">map</span>(<span class="ident">FormAnswerItem</span>::<span class="ident">from_entity</span>)
-            .<span class="ident">collect</span>();
         <span class="ident">RegistrationFormAnswer</span> {
-            <span class="ident">id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>),
-            <span class="ident">registration_form_id</span>: <span class="ident">RegistrationFormId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">registration_form_id</span>),
-            <span class="ident">respondent</span>: <span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">respondent</span>),
-            <span class="ident">created_at</span>: <span class="ident">answer</span>.<span class="ident">created_at</span>.<span class="ident">utc</span>(),
-            <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">author_id</span>),
-            <span class="ident">items</span>,
+            <span class="ident">id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>()),
+            <span class="ident">registration_form_id</span>: <span class="ident">RegistrationFormId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">registration_form_id</span>()),
+            <span class="ident">respondent</span>: <span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">respondent</span>()),
+            <span class="ident">created_at</span>: <span class="ident">answer</span>.<span class="ident">created_at</span>().<span class="ident">utc</span>(),
+            <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">author_id</span>().<span class="ident">clone</span>()),
+            <span class="ident">items</span>: <span class="ident">answer</span>
+                .<span class="ident">into_items</span>()
+                .<span class="ident">into_items</span>()
+                .<span class="ident">map</span>(<span class="ident">FormAnswerItem</span>::<span class="ident">from_entity</span>)
+                .<span class="ident">collect</span>(),
         }
     }
 }

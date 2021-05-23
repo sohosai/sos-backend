@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["file_sharing",""],["get",""]]});
+initSidebarItems({"mod":[["file_sharing",""],["get",""],["update",""]]});

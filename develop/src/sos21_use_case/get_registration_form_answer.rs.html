@@ -225,7 +225,7 @@
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
             <span class="ident">get_registration_form_answer</span>::<span class="ident">run</span>(
                 <span class="kw-2">&amp;</span><span class="ident">app</span>,
-                <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>)
+                <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>())
             )
             .<span class="kw">await</span>,
             <span class="prelude-val">Err</span>(<span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(
@@ -256,7 +256,7 @@
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
 
-        <span class="kw">let</span> <span class="ident">answer_id</span> <span class="op">=</span> <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">answer_id</span> <span class="op">=</span> <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
             <span class="ident">get_registration_form_answer</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">answer_id</span>).<span class="kw">await</span>,
             <span class="prelude-val">Ok</span>(<span class="ident">got</span>)
@@ -286,7 +286,7 @@
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
 
-        <span class="kw">let</span> <span class="ident">answer_id</span> <span class="op">=</span> <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>);
+        <span class="kw">let</span> <span class="ident">answer_id</span> <span class="op">=</span> <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
             <span class="ident">get_registration_form_answer</span>::<span class="ident">run</span>(<span class="kw-2">&amp;</span><span class="ident">app</span>, <span class="ident">answer_id</span>).<span class="kw">await</span>,
             <span class="prelude-val">Ok</span>(<span class="ident">got</span>)

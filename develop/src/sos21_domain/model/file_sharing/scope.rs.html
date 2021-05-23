@@ -258,8 +258,8 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains_registration_form_answer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">answer</span>: <span class="kw-2">&amp;</span><span class="ident">RegistrationFormAnswer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">FileSharingScope</span>::<span class="ident">RegistrationFormAnswer</span>(<span class="ident">respondent</span>, <span class="ident">registration_form_id</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw-2">*</span><span class="ident">respondent</span> <span class="op">=</span><span class="op">=</span> <span class="ident">answer</span>.<span class="ident">respondent</span>
-                    <span class="op">&amp;&amp;</span> <span class="kw-2">*</span><span class="ident">registration_form_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">answer</span>.<span class="ident">registration_form_id</span>
+                <span class="kw-2">*</span><span class="ident">respondent</span> <span class="op">=</span><span class="op">=</span> <span class="ident">answer</span>.<span class="ident">respondent</span>()
+                    <span class="op">&amp;&amp;</span> <span class="kw-2">*</span><span class="ident">registration_form_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">answer</span>.<span class="ident">registration_form_id</span>()
             }
             <span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="kw">_</span>)
             <span class="op">|</span> <span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(<span class="kw">_</span>, <span class="kw">_</span>)

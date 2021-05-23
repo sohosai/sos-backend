@@ -475,7 +475,7 @@
                 <span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">Project</span>(
                     <span class="ident">other_project</span>.<span class="ident">id</span>(),
                 ),
-                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>,
+                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>(),
             ),
         );
 
@@ -493,7 +493,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_registration_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
-            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">other_answer</span>.<span class="ident">id</span>),
+            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">other_answer</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -525,7 +525,7 @@
                 <span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">Project</span>(
                     <span class="ident">other_project</span>.<span class="ident">id</span>(),
                 ),
-                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>,
+                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>(),
             ),
         );
 
@@ -543,7 +543,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_registration_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
-            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">other_answer</span>.<span class="ident">id</span>),
+            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">other_answer</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -582,7 +582,7 @@
                 <span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">Project</span>(
                     <span class="ident">other_project</span>.<span class="ident">id</span>(),
                 ),
-                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>,
+                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>(),
             ),
         );
 
@@ -600,7 +600,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_registration_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
-            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>),
+            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">answer</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -634,7 +634,7 @@
                 <span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">Project</span>(
                     <span class="ident">other_project</span>.<span class="ident">id</span>(),
                 ),
-                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>,
+                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>(),
             ),
         );
         <span class="ident">sharing</span>.<span class="ident">revoke</span>().<span class="ident">unwrap</span>();
@@ -653,7 +653,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_registration_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
-            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">other_answer</span>.<span class="ident">id</span>),
+            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">other_answer</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -687,7 +687,7 @@
                 <span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">Project</span>(
                     <span class="ident">other_project</span>.<span class="ident">id</span>(),
                 ),
-                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>,
+                <span class="ident">other_answer</span>.<span class="ident">registration_form_id</span>(),
             ),
         );
 
@@ -705,7 +705,7 @@
             .<span class="kw">await</span>;
 
         <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">get_registration_form_answer_shared_file_object</span>::<span class="ident">Input</span> {
-            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">other_answer</span>.<span class="ident">id</span>),
+            <span class="ident">answer_id</span>: <span class="ident">RegistrationFormAnswerId</span>::<span class="ident">from_entity</span>(<span class="ident">other_answer</span>.<span class="ident">id</span>()),
             <span class="ident">sharing_id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_entity</span>(<span class="ident">sharing</span>.<span class="ident">id</span>()),
         };
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(

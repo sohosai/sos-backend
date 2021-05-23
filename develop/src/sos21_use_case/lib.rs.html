@@ -95,6 +95,10 @@
 <span id="92">92</span>
 <span id="93">93</span>
 <span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">use_case_ensure</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">cond</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
@@ -177,10 +181,14 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">revoke_file_sharing</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">share_file</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">signup</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_any_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_any_user</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_form</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_pending_project</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_pending_project_registration_form_answer</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_project</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_project_form_answer</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">update_project_registration_form_answer</span>;
 
 <span class="kw">mod</span> <span class="ident">error</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};

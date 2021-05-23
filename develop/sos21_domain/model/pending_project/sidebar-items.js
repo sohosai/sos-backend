@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["NewPendingProjectErrorKind",""]],"struct":[["NewPendingProjectError",""],["PendingProject",""],["PendingProjectContent",""],["PendingProjectId",""]]});
+initSidebarItems({"enum":[["NewPendingProjectErrorKind",""]],"struct":[["NewPendingProjectError",""],["NoUpdatePermissionError",""],["PendingProject",""],["PendingProjectContent",""],["PendingProjectId",""]]});

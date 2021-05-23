@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["NewProjectErrorKind",""]],"mod":[["attribute",""],["category",""],["code",""],["description",""],["index",""],["name",""]],"struct":[["NewProjectError",""],["Project",""],["ProjectContent",""],["ProjectId",""],["SameOwnerSubownerError",""]]});
+initSidebarItems({"enum":[["NewProjectErrorKind",""]],"mod":[["attribute",""],["category",""],["code",""],["description",""],["index",""],["name",""]],"struct":[["NewProjectError",""],["NoUpdatePermissionError",""],["Project",""],["ProjectContent",""],["ProjectId",""],["SameOwnerSubownerError",""]]});

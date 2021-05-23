@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["get",""],["registration_form",""]]});
+initSidebarItems({"mod":[["get",""],["registration_form",""],["update",""]]});
