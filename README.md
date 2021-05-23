@@ -29,6 +29,7 @@
 
 ```shell
 $ export SOS21_FIREBASE_PROJECT_ID=<project ID>
+$ export SOS21_ADMINISTRATOR_EMAIL=<email address>
 $ docker-compose -f docker-compose.run.yml up
 ```
 
