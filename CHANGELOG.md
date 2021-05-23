@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.5.0-beta] - 2021-05-23
+
+### Added
 
 - Support for non-ASCII filenames ([#98](https://github.com/sohosai/sos21-backend/pull/98))
 - Pre-configured administrator email address ([#99](https://github.com/sohosai/sos21-backend/pull/99))
@@ -18,11 +27,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Relax checkbox form item constraints ([#95](https://github.com/sohosai/sos21-backend/pull/95))
 - Enable to specify project by code when distributing files ([#96](https://github.com/sohosai/sos21-backend/pull/96))
 - Do not require affiliation of graduate students and academic staffs ([#93](https://github.com/sohosai/sos21-backend/pull/93))
-
-### Deprecated
-### Removed
-### Fixed
-### Security
 
 ## [0.4.0-beta] - 2021-05-12
 

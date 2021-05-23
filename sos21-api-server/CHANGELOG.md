@@ -9,6 +9,15 @@ with the HTTP API interface being the "public API".
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.5.0-beta] - 2021-05-23
+
+### Added
 
 - Support for non-ASCII filenames ([#98](https://github.com/sohosai/sos21-backend/pull/98))
 - Editing of forms and form answers ([#90](https://github.com/sohosai/sos21-backend/pull/90))
@@ -18,11 +27,6 @@ with the HTTP API interface being the "public API".
 
 - Enable to specify project by code in file-distribution/create ([#96](https://github.com/sohosai/sos21-backend/pull/96))
 - Do not require affiliation of graduate students and academic staffs ([#93](https://github.com/sohosai/sos21-backend/pull/93))
-
-### Deprecated
-### Removed
-### Fixed
-### Security
 
 ## [0.4.0-beta] - 2021-05-12
 
