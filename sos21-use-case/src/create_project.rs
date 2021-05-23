@@ -4,7 +4,7 @@ use crate::model::project::{Project, ProjectFromEntityInput};
 
 use anyhow::Context;
 use sos21_domain::context::{
-    FileSharingRepository, Login, PendingProjectRepository, ProjectRepository,
+    ConfigContext, FileSharingRepository, Login, PendingProjectRepository, ProjectRepository,
     RegistrationFormAnswerRepository, RegistrationFormRepository, UserRepository,
 };
 use sos21_domain::model::project;
@@ -18,6 +18,7 @@ pub enum Error {
     AlreadyProjectOwner,
     AlreadyProjectSubowner,
     AlreadyPendingProjectOwner,
+    OutOfCreationPeriod,
 }
 
 impl Error {
@@ -35,6 +36,7 @@ impl Error {
             project::NewProjectErrorKind::AlreadyPendingProjectOwnerSubowner => {
                 Error::AlreadyPendingProjectOwner
             }
+            project::NewProjectErrorKind::OutOfCreationPeriod => Error::OutOfCreationPeriod,
         }
     }
 }
@@ -51,6 +53,7 @@ where
         + RegistrationFormRepository
         + RegistrationFormAnswerRepository
         + UserRepository
+        + ConfigContext
         + Send
         + Sync,
 {
@@ -69,8 +72,8 @@ where
 
     let pending_project_id = pending_project.id();
     let project = project::Project::new(ctx, pending_project, &login_user)
-        .await?
-        .map_err(|err| UseCaseError::UseCase(Error::from_new_project_error(err)))?;
+        .await
+        .map_err(|err| UseCaseError::from_domain(err, Error::from_new_project_error))?;
 
     ctx.store_project(project.clone())
         .await
@@ -94,7 +97,7 @@ where
             .await
             .context("Failed to list registration form answers")?;
         for mut answer in answers {
-            answer.respondent.replace_to_project(&project);
+            answer.replace_respondent_to_project(&project);
             ctx.store_registration_form_answer(answer)
                 .await
                 .context("Failed to store a registration form answer")?;
@@ -205,6 +208,79 @@ mod tests {
         assert!(matches!(
             get_pending_project::run(&app, pending_project_id).await,
             Err(UseCaseError::UseCase(get_pending_project::Error::NotFound))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_with_period_other() {
+        let user = test::model::new_general_user();
+        let other = test::model::new_general_user();
+        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let period = test::model::new_project_creation_period_from_now();
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone(), other.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .project_creation_period(period)
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        assert!(matches!(
+            create_project::run(
+                &app,
+                PendingProjectId::from_entity(pending_project.id()),
+            )
+            .await,
+            Ok(got)
+            if got.owner_id == UserId::from_entity(other.id().clone())
+            && got.subowner_id == UserId::from_entity(user.id().clone())
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_after_period_other() {
+        let user = test::model::new_general_user();
+        let other = test::model::new_general_user();
+        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let period = test::model::new_project_creation_period_to_now();
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone(), other.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .project_creation_period(period)
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        assert!(matches!(
+            create_project::run(&app, PendingProjectId::from_entity(pending_project.id())).await,
+            Err(UseCaseError::UseCase(
+                create_project::Error::OutOfCreationPeriod
+            ))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_before_period_other() {
+        let user = test::model::new_general_user();
+        let other = test::model::new_general_user();
+        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let period = test::model::new_project_creation_period_with_hours_from_now(1);
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone(), other.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .project_creation_period(period)
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        assert!(matches!(
+            create_project::run(&app, PendingProjectId::from_entity(pending_project.id())).await,
+            Err(UseCaseError::UseCase(
+                create_project::Error::OutOfCreationPeriod
+            ))
         ));
     }
 
@@ -363,7 +439,7 @@ mod tests {
         assert!(matches!(
             get_project_registration_form_answer::run(&subowner_app, project.id, registration_form_id).await,
             Ok(got)
-            if got.id == RegistrationFormAnswerId::from_entity(answer.id)
+            if got.id == RegistrationFormAnswerId::from_entity(answer.id())
         ));
 
         let input = get_project_registration_form_answer_shared_file::Input {

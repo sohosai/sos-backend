@@ -42,11 +42,15 @@ jobs:
           chmod 600 ./ssh_private_key
           echo "$SSH_PRIVATE_KEY" > ./ssh_private_key
       - name: Create NixOS configuration from secrets
+        env:
+          ADMINISTRATOR_EMAIL: "${{ secrets.ADMINISTRATOR_EMAIL }}"
         run: |
           cat << EOS > ./configuration.nix
           { ... }:
           {
-            sos21-api-server.administratorEmail = "$ADMINISTRATOR_EMAIL";
+            services.sos21-api-server = {
+              administratorEmail = "$ADMINISTRATOR_EMAIL";
+            };
           }
           EOS
       - name: Deploy

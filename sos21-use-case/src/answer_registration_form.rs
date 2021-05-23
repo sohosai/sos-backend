@@ -7,7 +7,7 @@ use crate::model::registration_form_answer::RegistrationFormAnswer;
 
 use anyhow::Context;
 use sos21_domain::context::{
-    FileRepository, FileSharingRepository, Login, PendingProjectRepository,
+    ConfigContext, FileRepository, FileSharingRepository, Login, PendingProjectRepository,
     RegistrationFormAnswerRepository, RegistrationFormRepository,
 };
 use sos21_domain::model::{permissions, registration_form, user};
@@ -24,6 +24,7 @@ pub enum Error {
     PendingProjectNotFound,
     RegistrationFormNotFound,
     AlreadyAnswered,
+    OutOfProjectCreationPeriod,
     InvalidItems(interface::form_answer::FormAnswerItemsError),
     InvalidAnswer(interface::form::CheckAnswerError),
     InsufficientPermissions,
@@ -57,6 +58,9 @@ impl Error {
                     item_error: interface::form::to_check_answer_item_error(kind),
                 })
             }
+            registration_form::AnswerErrorKind::OutOfProjectCreationPeriod => {
+                Error::OutOfProjectCreationPeriod
+            }
         }
     }
 }
@@ -69,6 +73,7 @@ where
         + RegistrationFormAnswerRepository
         + FileRepository
         + FileSharingRepository
+        + ConfigContext
         + Send
         + Sync,
 {
@@ -110,8 +115,8 @@ where
 
     let answer = registration_form
         .answer_by(ctx, login_user, &pending_project, items)
-        .await?
-        .map_err(|err| UseCaseError::UseCase(Error::from_answer_error(err)))?;
+        .await
+        .map_err(|err| UseCaseError::from_domain(err, Error::from_answer_error))?;
     ctx.store_registration_form_answer(answer.clone())
         .await
         .context("Failed to store a registration form answer")?;

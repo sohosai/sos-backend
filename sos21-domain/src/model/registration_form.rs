@@ -1,4 +1,4 @@
-use crate::context::RegistrationFormAnswerRepository;
+use crate::context::{ConfigContext, RegistrationFormAnswerRepository};
 use crate::model::date_time::DateTime;
 use crate::model::form::item::{self, FormItemId, FormItems};
 use crate::model::form_answer::item::FormAnswerItems;
@@ -6,12 +6,10 @@ use crate::model::pending_project::PendingProject;
 use crate::model::permissions::Permissions;
 use crate::model::project::Project;
 use crate::model::project_query::ProjectQuery;
-use crate::model::registration_form_answer::{
-    RegistrationFormAnswer, RegistrationFormAnswerId, RegistrationFormAnswerRespondent,
-};
+use crate::model::registration_form_answer::{self, RegistrationFormAnswer};
 use crate::model::user::{User, UserId};
+use crate::{DomainError, DomainResult};
 
-use anyhow::{ensure, Context};
 use thiserror::Error;
 use uuid::Uuid;
 
@@ -49,6 +47,7 @@ pub struct RegistrationForm {
 pub enum AnswerErrorKind {
     NotTargeted,
     AlreadyAnswered,
+    OutOfProjectCreationPeriod,
     MismatchedItemsLength,
     MismatchedItemId {
         expected: FormItemId,
@@ -71,15 +70,27 @@ impl AnswerError {
         self.kind
     }
 
-    fn from_check_error(err: item::CheckAnswerError) -> Self {
+    fn from_new_registration_form_answer_error(
+        err: registration_form_answer::NewRegistrationFormAnswerError,
+    ) -> Self {
         let kind = match err.kind() {
-            item::CheckAnswerErrorKind::MismatchedItemsLength => {
+            registration_form_answer::NewRegistrationFormAnswerErrorKind::MismatchedItemsLength => {
                 AnswerErrorKind::MismatchedItemsLength
             }
-            item::CheckAnswerErrorKind::MismatchedItemId { expected, got } => {
-                AnswerErrorKind::MismatchedItemId { expected, got }
+            registration_form_answer::NewRegistrationFormAnswerErrorKind::MismatchedItemId {
+                expected,
+                got,
+            } => AnswerErrorKind::MismatchedItemId { expected, got },
+            registration_form_answer::NewRegistrationFormAnswerErrorKind::InvalidItem {
+                id,
+                kind,
+            } => AnswerErrorKind::InvalidItem { id, kind },
+            registration_form_answer::NewRegistrationFormAnswerErrorKind::AlreadyAnswered => {
+                AnswerErrorKind::AlreadyAnswered
             }
-            item::CheckAnswerErrorKind::Item(id, kind) => AnswerErrorKind::InvalidItem { id, kind },
+            registration_form_answer::NewRegistrationFormAnswerErrorKind::OutOfProjectCreationPeriod => {
+                AnswerErrorKind::OutOfProjectCreationPeriod
+            }
         };
 
         AnswerError { kind }
@@ -93,47 +104,29 @@ impl RegistrationForm {
         user: &User,
         pending_project: &PendingProject,
         items: FormAnswerItems,
-    ) -> anyhow::Result<Result<RegistrationFormAnswer, AnswerError>>
+    ) -> DomainResult<RegistrationFormAnswer, AnswerError>
     where
-        C: RegistrationFormAnswerRepository,
+        C: RegistrationFormAnswerRepository + ConfigContext,
     {
-        ensure!(user.id() == pending_project.owner_id());
+        domain_ensure!(user.id() == pending_project.owner_id());
 
         if !self.query.check_pending_project(&pending_project) {
-            return Ok(Err(AnswerError {
+            return Err(DomainError::Domain(AnswerError {
                 kind: AnswerErrorKind::NotTargeted,
             }));
         }
 
-        if ctx
-            .get_registration_form_answer_by_registration_form_and_pending_project(
-                self.id,
-                pending_project.id(),
-            )
-            .await?
-            .is_some()
-        {
-            return Ok(Err(AnswerError {
-                kind: AnswerErrorKind::AlreadyAnswered,
-            }));
-        }
+        RegistrationFormAnswer::new(ctx, user, pending_project, self, items)
+            .await
+            .map_err(|err| err.map_domain(AnswerError::from_new_registration_form_answer_error))
+    }
 
-        if let Err(err) = self
-            .items
-            .check_answer(&items)
-            .context("Failed to check form answers unexpectedly")?
-        {
-            return Ok(Err(AnswerError::from_check_error(err)));
-        }
+    pub fn id(&self) -> RegistrationFormId {
+        self.id
+    }
 
-        Ok(Ok(RegistrationFormAnswer {
-            id: RegistrationFormAnswerId::from_uuid(Uuid::new_v4()),
-            respondent: RegistrationFormAnswerRespondent::PendingProject(pending_project.id()),
-            registration_form_id: self.id,
-            created_at: DateTime::now(),
-            author_id: user.id().clone(),
-            items,
-        }))
+    pub fn items(&self) -> &FormItems {
+        &self.items
     }
 
     pub fn is_visible_to(&self, user: &User) -> bool {

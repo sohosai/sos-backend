@@ -7,13 +7,8 @@ use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::{answer_registration_form, interface};
+use sos21_use_case::{interface, update_pending_project_registration_form_answer};
 use warp::http::StatusCode;
-
-pub mod get;
-pub use get::handler as get;
-pub mod update;
-pub use update::handler as update;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {
@@ -29,7 +24,7 @@ pub struct Response {
 
 impl HandlerResponse for Response {
     fn status_code(&self) -> StatusCode {
-        StatusCode::CREATED
+        StatusCode::OK
     }
 }
 
@@ -38,17 +33,20 @@ impl HandlerResponse for Response {
 pub enum Error {
     RegistrationFormNotFound,
     PendingProjectNotFound,
-    AlreadyAnsweredRegistrationForm,
+    RegistrationFormAnswerNotFound,
     OutOfProjectCreationPeriod,
-    NoFormAnswerItems,
-    TooManyFormAnswerItems,
-    InvalidFormAnswerItem {
+    NoFormItems,
+    TooManyFormItems,
+    InvalidFormItem {
         id: FormItemId,
     },
     MismatchedFormItemsLength,
     MismatchedFormItemId {
         expected: FormItemId,
         got: FormItemId,
+    },
+    InvalidFormAnswer {
+        id: FormItemId,
     },
     InsufficientPermissions,
 }
@@ -58,46 +56,39 @@ impl HandlerResponse for Error {
         match self {
             Error::RegistrationFormNotFound => StatusCode::NOT_FOUND,
             Error::PendingProjectNotFound => StatusCode::NOT_FOUND,
-            Error::AlreadyAnsweredRegistrationForm => StatusCode::CONFLICT,
+            Error::RegistrationFormAnswerNotFound => StatusCode::NOT_FOUND,
             Error::OutOfProjectCreationPeriod => StatusCode::CONFLICT,
-            Error::NoFormAnswerItems => StatusCode::BAD_REQUEST,
-            Error::TooManyFormAnswerItems => StatusCode::BAD_REQUEST,
-            Error::InvalidFormAnswerItem { .. } => StatusCode::BAD_REQUEST,
+            Error::NoFormItems => StatusCode::BAD_REQUEST,
+            Error::TooManyFormItems => StatusCode::BAD_REQUEST,
+            Error::InvalidFormItem { .. } => StatusCode::BAD_REQUEST,
             Error::MismatchedFormItemsLength => StatusCode::BAD_REQUEST,
             Error::MismatchedFormItemId { .. } => StatusCode::BAD_REQUEST,
+            Error::InvalidFormAnswer { .. } => StatusCode::BAD_REQUEST,
             Error::InsufficientPermissions => StatusCode::FORBIDDEN,
         }
     }
 }
 
-impl From<answer_registration_form::Error> for Error {
-    fn from(err: answer_registration_form::Error) -> Error {
+impl From<update_pending_project_registration_form_answer::Error> for Error {
+    fn from(err: update_pending_project_registration_form_answer::Error) -> Error {
         match err {
-            answer_registration_form::Error::RegistrationFormNotFound => {
-                Error::RegistrationFormNotFound
-            }
-            answer_registration_form::Error::PendingProjectNotFound => {
-                Error::PendingProjectNotFound
-            }
-            answer_registration_form::Error::AlreadyAnswered => {
-                Error::AlreadyAnsweredRegistrationForm
-            }
-            answer_registration_form::Error::OutOfProjectCreationPeriod => {
-                Error::OutOfProjectCreationPeriod
-            }
-            answer_registration_form::Error::InvalidItems(err) => match err {
-                interface::form_answer::FormAnswerItemsError::NoItems => Error::NoFormAnswerItems,
+            update_pending_project_registration_form_answer::Error::RegistrationFormNotFound => Error::RegistrationFormNotFound,
+            update_pending_project_registration_form_answer::Error::PendingProjectNotFound => Error::PendingProjectNotFound,
+            update_pending_project_registration_form_answer::Error::RegistrationFormAnswerNotFound => Error::RegistrationFormAnswerNotFound,
+            update_pending_project_registration_form_answer::Error::OutOfProjectCreationPeriod => Error::OutOfProjectCreationPeriod,
+            update_pending_project_registration_form_answer::Error::InvalidItems(err) => match err {
+                interface::form_answer::FormAnswerItemsError::NoItems => Error::NoFormItems,
                 interface::form_answer::FormAnswerItemsError::TooManyItems => {
-                    Error::TooManyFormAnswerItems
+                    Error::TooManyFormItems
                 }
                 // TODO: break down invalid item errors
                 interface::form_answer::FormAnswerItemsError::InvalidItem(id, _) => {
-                    Error::InvalidFormAnswerItem {
+                    Error::InvalidFormItem {
                         id: FormItemId::from_use_case(id),
                     }
                 }
             },
-            answer_registration_form::Error::InvalidAnswer(err) => match err {
+            update_pending_project_registration_form_answer::Error::InvalidAnswer(err) => match err {
                 interface::form::CheckAnswerError::MismatchedItemsLength => {
                     Error::MismatchedFormItemsLength
                 }
@@ -109,12 +100,12 @@ impl From<answer_registration_form::Error> for Error {
                 }
                 // TODO: break down invalid answer errors
                 interface::form::CheckAnswerError::InvalidAnswerItem { item_id, .. } => {
-                    Error::InvalidFormAnswerItem {
+                    Error::InvalidFormAnswer {
                         id: FormItemId::from_use_case(item_id),
                     }
                 }
             },
-            answer_registration_form::Error::InsufficientPermissions => {
+            update_pending_project_registration_form_answer::Error::InsufficientPermissions => {
                 Error::InsufficientPermissions
             }
         }
@@ -123,7 +114,7 @@ impl From<answer_registration_form::Error> for Error {
 
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
-    let input = answer_registration_form::Input {
+    let input = update_pending_project_registration_form_answer::Input {
         pending_project_id: request.pending_project_id.into_use_case(),
         registration_form_id: request.registration_form_id.into_use_case(),
         items: request
@@ -132,7 +123,7 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
             .map(RequestFormAnswerItem::into_use_case)
             .collect(),
     };
-    let answer = answer_registration_form::run(&ctx, input).await?;
+    let answer = update_pending_project_registration_form_answer::run(&ctx, input).await?;
     let answer = RegistrationFormAnswer::from_use_case(answer);
     Ok(Response { answer })
 }

@@ -1,16 +1,14 @@
 use crate::error::{UseCaseError, UseCaseResult};
-use crate::model::project::{
-    Project, ProjectAttribute, ProjectCategory, ProjectFromEntityInput, ProjectId,
-};
+use crate::model::pending_project::{PendingProject, PendingProjectId};
+use crate::model::project::{ProjectAttribute, ProjectCategory};
 
 use anyhow::Context;
-use sos21_domain::context::project_repository::{self, ProjectRepository};
-use sos21_domain::context::{ConfigContext, Login};
-use sos21_domain::model::{date_time, project};
+use sos21_domain::context::{ConfigContext, Login, PendingProjectRepository};
+use sos21_domain::model::{date_time, pending_project, project};
 
 #[derive(Debug, Clone)]
 pub struct Input {
-    pub id: ProjectId,
+    pub id: PendingProjectId,
     pub name: Option<String>,
     pub kana_name: Option<String>,
     pub group_name: Option<String>,
@@ -34,7 +32,7 @@ pub enum Error {
 }
 
 impl Error {
-    fn from_update_error(_err: project::NoUpdatePermissionError) -> Self {
+    fn from_update_error(_err: pending_project::NoUpdatePermissionError) -> Self {
         Error::InsufficientPermissions
     }
 
@@ -64,9 +62,9 @@ impl Error {
 }
 
 #[tracing::instrument(skip(ctx))]
-pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<Project, Error>
+pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<PendingProject, Error>
 where
-    C: ProjectRepository + ConfigContext + Send + Sync,
+    C: PendingProjectRepository + ConfigContext + Send + Sync,
 {
     if !ctx
         .project_creation_period()
@@ -78,24 +76,18 @@ where
     let login_user = ctx.login_user();
 
     let result = ctx
-        .get_project(input.id.into_entity())
+        .get_pending_project(input.id.into_entity())
         .await
-        .context("Failed to get a project")?;
-    let result = match result {
-        Some(result) if result.project.is_visible_to(login_user) => result,
+        .context("Failed to get a pending project")?;
+    let mut pending_project = match result {
+        Some(result) if result.pending_project.is_visible_to(login_user) => result.pending_project,
         _ => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
-
-    let project_repository::ProjectWithOwners {
-        mut project,
-        owner,
-        subowner,
-    } = result;
 
     if let Some(name) = input.name {
         let name = project::ProjectName::from_string(name)
             .map_err(|err| UseCaseError::UseCase(Error::from_name_error(err)))?;
-        project
+        pending_project
             .set_name(ctx, login_user, name)
             .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
@@ -103,7 +95,7 @@ where
     if let Some(kana_name) = input.kana_name {
         let kana_name = project::ProjectKanaName::from_string(kana_name)
             .map_err(|err| UseCaseError::UseCase(Error::from_kana_name_error(err)))?;
-        project
+        pending_project
             .set_kana_name(ctx, login_user, kana_name)
             .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
@@ -111,7 +103,7 @@ where
     if let Some(group_name) = input.group_name {
         let group_name = project::ProjectGroupName::from_string(group_name)
             .map_err(|err| UseCaseError::UseCase(Error::from_group_name_error(err)))?;
-        project
+        pending_project
             .set_group_name(ctx, login_user, group_name)
             .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
@@ -119,7 +111,7 @@ where
     if let Some(kana_group_name) = input.kana_group_name {
         let kana_group_name = project::ProjectKanaGroupName::from_string(kana_group_name)
             .map_err(|err| UseCaseError::UseCase(Error::from_kana_group_name_error(err)))?;
-        project
+        pending_project
             .set_kana_group_name(ctx, login_user, kana_group_name)
             .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
@@ -127,7 +119,7 @@ where
     if let Some(description) = input.description {
         let description = project::ProjectDescription::from_string(description)
             .map_err(|err| UseCaseError::UseCase(Error::from_description_error(err)))?;
-        project
+        pending_project
             .set_description(ctx, login_user, description)
             .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
@@ -137,41 +129,31 @@ where
             attributes.into_iter().map(ProjectAttribute::into_entity),
         )
         .map_err(|err| UseCaseError::UseCase(Error::from_attributes_error(err)))?;
-        project
+        pending_project
             .set_attributes(ctx, login_user, attributes)
             .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
-    ctx.store_project(project.clone())
+    ctx.store_pending_project(pending_project.clone())
         .await
-        .context("Failed to store a updated project")?;
+        .context("Failed to store a updated pending project")?;
 
-    use_case_ensure!(
-        project.is_visible_to(login_user)
-            && owner.name().is_visible_to(login_user)
-            && owner.kana_name().is_visible_to(login_user)
-            && subowner.name().is_visible_to(login_user)
-            && subowner.kana_name().is_visible_to(login_user)
-    );
-    Ok(Project::from_entity(ProjectFromEntityInput {
-        project,
-        owner_name: owner.name().clone(),
-        owner_kana_name: owner.kana_name().clone(),
-        subowner_name: subowner.name().clone(),
-        subowner_kana_name: subowner.kana_name().clone(),
-    }))
+    use_case_ensure!(pending_project.is_visible_to(login_user));
+    Ok(PendingProject::from_entity(pending_project))
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::model::project::ProjectId;
-    use crate::{get_project, update_project, UseCaseError};
-    use sos21_domain::{model::project, test};
+    use crate::model::pending_project::PendingProjectId;
+    use crate::{get_pending_project, update_pending_project, UseCaseError};
+    use sos21_domain::{model::pending_project, test};
 
-    fn mock_input(project: &project::Project) -> (String, update_project::Input) {
+    fn mock_input(
+        pending_project: &pending_project::PendingProject,
+    ) -> (String, update_pending_project::Input) {
         let name = "新しい名前".to_string();
-        let input = update_project::Input {
-            id: ProjectId::from_entity(project.id()),
+        let input = update_pending_project::Input {
+            id: PendingProjectId::from_entity(pending_project.id()),
             name: Some(name.clone()),
             kana_name: None,
             group_name: None,
@@ -187,22 +169,22 @@ mod tests {
     #[tokio::test]
     async fn test_general_out_of_period() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id().clone());
+        let pending_project = test::model::new_general_pending_project(user.id().clone());
         let period = test::model::new_project_creation_period_to_now();
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .projects(vec![project.clone()])
+            .pending_projects(vec![pending_project.clone()])
             .project_creation_period(period)
             .build()
             .login_as(user)
             .await;
 
-        let (_, input) = mock_input(&project);
+        let (_, input) = mock_input(&pending_project);
         assert!(matches!(
-            update_project::run(&app, input).await,
+            update_pending_project::run(&app, input).await,
             Err(UseCaseError::UseCase(
-                update_project::Error::OutOfCreationPeriod
+                update_pending_project::Error::OutOfCreationPeriod
             ))
         ));
     }
@@ -211,26 +193,26 @@ mod tests {
     #[tokio::test]
     async fn test_general_in_period() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id().clone());
+        let pending_project = test::model::new_general_pending_project(user.id().clone());
         let period = test::model::new_project_creation_period_from_now();
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .projects(vec![project.clone()])
+            .pending_projects(vec![pending_project.clone()])
             .project_creation_period(period)
             .build()
             .login_as(user)
             .await;
 
-        let (name, input) = mock_input(&project);
+        let (name, input) = mock_input(&pending_project);
         assert!(matches!(
-            update_project::run(&app, input).await,
+            update_pending_project::run(&app, input).await,
             Ok(got)
             if got.name == name
         ));
 
         assert!(matches!(
-            get_project::run(&app, ProjectId::from_entity(project.id())).await,
+            get_pending_project::run(&app, PendingProjectId::from_entity(pending_project.id())).await,
             Ok(got)
             if got.name == name
         ));

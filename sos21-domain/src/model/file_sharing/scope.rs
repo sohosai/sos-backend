@@ -103,8 +103,8 @@ impl FileSharingScope {
     pub fn contains_registration_form_answer(&self, answer: &RegistrationFormAnswer) -> bool {
         match self {
             FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id) => {
-                *respondent == answer.respondent
-                    && *registration_form_id == answer.registration_form_id
+                *respondent == answer.respondent()
+                    && *registration_form_id == answer.registration_form_id()
             }
             FileSharingScope::Project(_)
             | FileSharingScope::FormAnswer(_, _)

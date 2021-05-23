@@ -3,7 +3,7 @@ use crate::model::pending_project::PendingProject;
 use crate::model::project::{ProjectAttribute, ProjectCategory};
 
 use anyhow::Context;
-use sos21_domain::context::{Login, PendingProjectRepository, UserRepository};
+use sos21_domain::context::{ConfigContext, Login, PendingProjectRepository, UserRepository};
 use sos21_domain::model::{pending_project, project};
 
 #[derive(Debug, Clone)]
@@ -28,6 +28,7 @@ pub enum Error {
     AlreadyProjectOwner,
     AlreadyProjectSubowner,
     AlreadyPendingProjectOwner,
+    OutOfCreationPeriod,
 }
 
 impl Error {
@@ -66,6 +67,9 @@ impl Error {
             pending_project::NewPendingProjectErrorKind::AlreadyPendingProjectOwnerOwner => {
                 Error::AlreadyPendingProjectOwner
             }
+            pending_project::NewPendingProjectErrorKind::OutOfCreationPeriod => {
+                Error::OutOfCreationPeriod
+            }
         }
     }
 }
@@ -73,7 +77,7 @@ impl Error {
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<PendingProject, Error>
 where
-    C: PendingProjectRepository + UserRepository + Send + Sync,
+    C: PendingProjectRepository + UserRepository + ConfigContext + Send + Sync,
 {
     let mut login_user = ctx.login_user().clone();
 
@@ -96,6 +100,7 @@ where
         .map_err(|err| UseCaseError::UseCase(Error::from_attributes_error(err)))?;
 
     let pending_project = pending_project::PendingProject::new(
+        ctx,
         &login_user,
         name,
         kana_name,
@@ -125,15 +130,7 @@ mod tests {
     use crate::{get_pending_project, prepare_project, UseCaseError};
     use sos21_domain::test;
 
-    #[tokio::test]
-    async fn test_create() {
-        let user = test::model::new_general_user();
-        let app = test::build_mock_app()
-            .users(vec![user.clone()])
-            .build()
-            .login_as(user.clone())
-            .await;
-
+    fn mock_input() -> (String, prepare_project::Input) {
         let name = "テストテスト".to_string();
         let input = prepare_project::Input {
             name: name.clone(),
@@ -144,7 +141,19 @@ mod tests {
             category: ProjectCategory::General,
             attributes: Vec::new(),
         };
+        (name, input)
+    }
 
+    #[tokio::test]
+    async fn test_create_without_period() {
+        let user = test::model::new_general_user();
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let (name, input) = mock_input();
         let pending_project = prepare_project::run(&app, input).await.unwrap();
         assert!(pending_project.name == name);
         assert!(pending_project.owner_id == UserId::from_entity(user.id().clone()));
@@ -153,6 +162,69 @@ mod tests {
             get_pending_project::run(&app, pending_project.id).await,
             Ok(got)
             if got.name == name
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_create_with_period() {
+        let user = test::model::new_general_user();
+        let period = test::model::new_project_creation_period_from_now();
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .project_creation_period(period)
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let (name, input) = mock_input();
+        let pending_project = prepare_project::run(&app, input).await.unwrap();
+        assert!(pending_project.name == name);
+        assert!(pending_project.owner_id == UserId::from_entity(user.id().clone()));
+
+        assert!(matches!(
+            get_pending_project::run(&app, pending_project.id).await,
+            Ok(got)
+            if got.name == name
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_create_before_period() {
+        let user = test::model::new_general_user();
+        let period = test::model::new_project_creation_period_with_hours_from_now(1);
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .project_creation_period(period)
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let (_, input) = mock_input();
+        assert!(matches!(
+            prepare_project::run(&app, input).await,
+            Err(UseCaseError::UseCase(
+                prepare_project::Error::OutOfCreationPeriod
+            ))
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_create_after_period() {
+        let user = test::model::new_general_user();
+        let period = test::model::new_project_creation_period_to_now();
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .project_creation_period(period)
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let (_, input) = mock_input();
+        assert!(matches!(
+            prepare_project::run(&app, input).await,
+            Err(UseCaseError::UseCase(
+                prepare_project::Error::OutOfCreationPeriod
+            ))
         ));
     }
 
@@ -169,16 +241,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let input = prepare_project::Input {
-            name: test::model::mock_project_name().into_string(),
-            kana_name: test::model::mock_project_kana_name().into_string(),
-            group_name: test::model::mock_project_group_name().into_string(),
-            kana_group_name: test::model::mock_project_kana_group_name().into_string(),
-            description: test::model::mock_project_description().into_string(),
-            category: ProjectCategory::General,
-            attributes: Vec::new(),
-        };
-
+        let (_, input) = mock_input();
         assert!(matches!(
             prepare_project::run(&app, input).await,
             Err(UseCaseError::UseCase(

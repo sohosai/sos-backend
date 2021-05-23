@@ -129,6 +129,27 @@ where
     to_form_answer_items_with_target(ctx, ShareTarget::FormAnswer { project, form }, items).await
 }
 
+pub async fn to_registration_form_answer_items_with_project<C, I>(
+    ctx: &Login<C>,
+    project: &project::Project,
+    registration_form: &registration_form::RegistrationForm,
+    items: I,
+) -> UseCaseResult<form_answer::FormAnswerItems, FormAnswerItemsError>
+where
+    C: FileRepository + FileSharingRepository + Send + Sync,
+    I: IntoIterator<Item = InputFormAnswerItem>,
+{
+    to_form_answer_items_with_target(
+        ctx,
+        ShareTarget::RegistrationFormAnswerWithProject {
+            project,
+            registration_form,
+        },
+        items,
+    )
+    .await
+}
+
 pub async fn to_registration_form_answer_items<C, I>(
     ctx: &Login<C>,
     pending_project: &pending_project::PendingProject,
@@ -161,6 +182,10 @@ enum ShareTarget<'a> {
         pending_project: &'a pending_project::PendingProject,
         registration_form: &'a registration_form::RegistrationForm,
     },
+    RegistrationFormAnswerWithProject {
+        project: &'a project::Project,
+        registration_form: &'a registration_form::RegistrationForm,
+    },
 }
 
 impl<'a> ShareTarget<'a> {
@@ -178,6 +203,13 @@ impl<'a> ShareTarget<'a> {
                 ),
                 registration_form.id,
             ),
+            ShareTarget::RegistrationFormAnswerWithProject {
+                project,
+                registration_form,
+            } => file_sharing::FileSharingScope::RegistrationFormAnswer(
+                registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id()),
+                registration_form.id,
+            ),
         }
     }
 
@@ -193,6 +225,10 @@ impl<'a> ShareTarget<'a> {
                 pending_project,
                 registration_form,
             ),
+            ShareTarget::RegistrationFormAnswerWithProject {
+                project,
+                registration_form,
+            } => scope.contains_project_registration_form_answer(project, registration_form),
         }
     }
 }

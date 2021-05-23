@@ -19,6 +19,7 @@ use crate::model::{
     object::{Object, ObjectData, ObjectId},
     pending_project::{PendingProject, PendingProjectId},
     project::{Project, ProjectId, ProjectIndex},
+    project_creation_period::ProjectCreationPeriod,
     registration_form::{RegistrationForm, RegistrationFormId},
     registration_form_answer::{RegistrationFormAnswer, RegistrationFormAnswerId},
     user::{User, UserEmailAddress, UserFileUsage, UserId, UserRole},
@@ -49,6 +50,7 @@ pub struct MockAppBuilder {
     registration_forms: HashMap<RegistrationFormId, RegistrationForm>,
     registration_form_answers: HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>,
     user_invitations: HashMap<UserInvitationId, UserInvitation>,
+    project_creation_period: Option<ProjectCreationPeriod>,
 }
 
 impl MockAppBuilder {
@@ -174,7 +176,7 @@ impl MockAppBuilder {
                 registration_form_answers
                     .into_iter()
                     .map(|registration_form_answer| {
-                        (registration_form_answer.id, registration_form_answer)
+                        (registration_form_answer.id(), registration_form_answer)
                     }),
             );
         self
@@ -189,6 +191,15 @@ impl MockAppBuilder {
                 .into_iter()
                 .map(|invitation| (invitation.id(), invitation)),
         );
+        self
+    }
+
+    pub fn project_creation_period(
+        &mut self,
+        project_creation_period: ProjectCreationPeriod,
+    ) -> &mut Self {
+        self.project_creation_period
+            .replace(project_creation_period);
         self
     }
 
@@ -225,6 +236,9 @@ impl MockAppBuilder {
             registration_forms: Arc::new(Mutex::new(self.registration_forms.clone())),
             registration_form_answers: Arc::new(Mutex::new(self.registration_form_answers.clone())),
             user_invitations: Arc::new(Mutex::new(self.user_invitations.clone())),
+            project_creation_period: self
+                .project_creation_period
+                .unwrap_or_else(ProjectCreationPeriod::always),
         }
     }
 }
@@ -244,6 +258,7 @@ pub struct MockApp {
     registration_form_answers:
         Arc<Mutex<HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>>>,
     user_invitations: Arc<Mutex<HashMap<UserInvitationId, UserInvitation>>>,
+    project_creation_period: ProjectCreationPeriod,
 }
 
 impl MockApp {
@@ -754,7 +769,7 @@ impl RegistrationFormAnswerRepository for MockApp {
         self.registration_form_answers
             .lock()
             .await
-            .insert(answer.id, answer);
+            .insert(answer.id(), answer);
         Ok(())
     }
 
@@ -782,8 +797,8 @@ impl RegistrationFormAnswerRepository for MockApp {
             .await
             .values()
             .find(|registration_form_answer| {
-                registration_form_answer.registration_form_id == registration_form_id
-                    && registration_form_answer.respondent.is_project(&project)
+                registration_form_answer.registration_form_id() == registration_form_id
+                    && registration_form_answer.respondent().is_project(&project)
             })
             .cloned())
     }
@@ -804,9 +819,9 @@ impl RegistrationFormAnswerRepository for MockApp {
             .await
             .values()
             .find(|registration_form_answer| {
-                registration_form_answer.registration_form_id == registration_form_id
+                registration_form_answer.registration_form_id() == registration_form_id
                     && registration_form_answer
-                        .respondent
+                        .respondent()
                         .is_pending_project(&pending_project)
             })
             .cloned())
@@ -822,7 +837,7 @@ impl RegistrationFormAnswerRepository for MockApp {
             .await
             .values()
             .filter(|registration_form_answer| {
-                registration_form_answer.registration_form_id == registration_form_id
+                registration_form_answer.registration_form_id() == registration_form_id
             })
             .cloned()
             .collect())
@@ -844,7 +859,7 @@ impl RegistrationFormAnswerRepository for MockApp {
             .values()
             .filter(|registration_form_answer| {
                 registration_form_answer
-                    .respondent
+                    .respondent()
                     .is_pending_project(&pending_project)
             })
             .cloned()
@@ -867,7 +882,7 @@ impl RegistrationFormAnswerRepository for MockApp {
             .values()
             .filter(|registration_form_answer| {
                 registration_form_answer
-                    .respondent
+                    .respondent()
                     .is_pending_project(&pending_project)
             })
             .cloned()
@@ -923,5 +938,9 @@ impl UserInvitationRepository for MockApp {
 impl ConfigContext for MockApp {
     fn administrator_email(&self) -> &UserEmailAddress {
         &*test_model::ADMINISTRATOR_EMAIL
+    }
+
+    fn project_creation_period(&self) -> ProjectCreationPeriod {
+        self.project_creation_period
     }
 }

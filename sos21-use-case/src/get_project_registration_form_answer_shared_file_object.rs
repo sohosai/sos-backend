@@ -138,7 +138,7 @@ mod tests {
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
                     other_project.id(),
                 ),
-                other_answer.registration_form_id,
+                other_answer.registration_form_id(),
             ),
         );
 
@@ -187,7 +187,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id()),
-                answer.registration_form_id,
+                answer.registration_form_id(),
             ),
         );
 
@@ -238,7 +238,7 @@ mod tests {
             owner_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id()),
-                answer.registration_form_id,
+                answer.registration_form_id(),
             ),
         );
 
@@ -296,7 +296,7 @@ mod tests {
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(
                     other_project.id(),
                 ),
-                other_answer.registration_form_id,
+                other_answer.registration_form_id(),
             ),
         );
 
@@ -347,7 +347,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id()),
-                answer.registration_form_id,
+                answer.registration_form_id(),
             ),
         );
 
@@ -400,7 +400,7 @@ mod tests {
             other_file.id,
             file_sharing::FileSharingScope::RegistrationFormAnswer(
                 registration_form_answer::RegistrationFormAnswerRespondent::Project(project.id()),
-                answer.registration_form_id,
+                answer.registration_form_id(),
             ),
         );
 

@@ -1,12 +1,13 @@
 use std::convert::TryInto;
 
 use crate::context::{
-    ProjectRepository, RegistrationFormAnswerRepository, RegistrationFormRepository,
+    ConfigContext, ProjectRepository, RegistrationFormAnswerRepository, RegistrationFormRepository,
 };
 use crate::model::date_time::DateTime;
 use crate::model::pending_project::PendingProject;
 use crate::model::permissions::Permissions;
-use crate::model::user::{User, UserAssignment, UserId};
+use crate::model::user::{self, User, UserAssignment, UserId};
+use crate::{DomainError, DomainResult};
 
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
@@ -76,6 +77,7 @@ pub enum NewProjectErrorKind {
     AlreadyProjectOwnerSubowner,
     AlreadyProjectSubownerSubowner,
     AlreadyPendingProjectOwnerSubowner,
+    OutOfCreationPeriod,
 }
 
 #[derive(Debug, Clone, Error)]
@@ -113,10 +115,20 @@ impl Project {
         ctx: C,
         pending_project: PendingProject,
         subowner: &User,
-    ) -> anyhow::Result<Result<Self, NewProjectError>>
+    ) -> DomainResult<Self, NewProjectError>
     where
-        C: ProjectRepository + RegistrationFormRepository + RegistrationFormAnswerRepository,
+        C: ProjectRepository
+            + RegistrationFormRepository
+            + RegistrationFormAnswerRepository
+            + ConfigContext,
     {
+        let created_at = DateTime::now();
+        if !ctx.project_creation_period().contains(created_at) {
+            return Err(DomainError::Domain(NewProjectError {
+                kind: NewProjectErrorKind::OutOfCreationPeriod,
+            }));
+        }
+
         let forms_count = ctx
             .count_registration_forms_by_pending_project(pending_project.id())
             .await
@@ -126,7 +138,7 @@ impl Project {
             .await
             .context("Failed to count registration form answers")?;
         if forms_count != answers_count {
-            return Ok(Err(NewProjectError {
+            return Err(DomainError::Domain(NewProjectError {
                 kind: NewProjectErrorKind::NotAnsweredRegistrationForm,
             }));
         }
@@ -137,11 +149,15 @@ impl Project {
             .context("Failed to count projects")?;
         let projects_count = match projects_count.try_into() {
             Ok(count) => count,
-            Err(err) => return Ok(Err(NewProjectError::from_count_integer_error(err))),
+            Err(err) => {
+                return Err(DomainError::Domain(
+                    NewProjectError::from_count_integer_error(err),
+                ))
+            }
         };
         let index = match ProjectIndex::from_u16(projects_count) {
             Ok(index) => index,
-            Err(err) => return Ok(Err(NewProjectError::from_index_error(err))),
+            Err(err) => return Err(DomainError::Domain(NewProjectError::from_index_error(err))),
         };
 
         if let Some(assignment) = subowner.assignment() {
@@ -154,13 +170,13 @@ impl Project {
                     NewProjectErrorKind::AlreadyPendingProjectOwnerSubowner
                 }
             };
-            return Ok(Err(NewProjectError { kind }));
+            return Err(DomainError::Domain(NewProjectError { kind }));
         }
 
-        Ok(Project::from_content(
+        Project::from_content(
             ProjectContent {
                 id: ProjectId::from_uuid(Uuid::new_v4()),
-                created_at: DateTime::now(),
+                created_at,
                 index,
                 name: pending_project.name().clone(),
                 kana_name: pending_project.kana_name().clone(),
@@ -173,7 +189,7 @@ impl Project {
             pending_project.owner_id().clone(),
             subowner.id().clone(),
         )
-        .map_err(NewProjectError::from_content_error))
+        .map_err(|err| DomainError::Domain(NewProjectError::from_content_error(err)))
     }
 
     /// Restore `Project` from `ProjectContent`.
@@ -275,40 +291,145 @@ impl Project {
             index: self.content.index,
         }
     }
+}
 
-    pub fn set_name(&mut self, name: ProjectName) {
+#[derive(Debug, Clone, Error)]
+#[error("insufficient permissions to update project")]
+pub struct NoUpdatePermissionError {
+    _priv: (),
+}
+
+impl NoUpdatePermissionError {
+    fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {
+        NoUpdatePermissionError { _priv: () }
+    }
+}
+
+impl Project {
+    fn require_update_permission<C>(
+        &self,
+        ctx: C,
+        user: &User,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        let now = DateTime::now();
+        let permission = if self.is_member(user) && ctx.project_creation_period().contains(now) {
+            Permissions::UPDATE_MEMBER_PROJECTS_IN_PERIOD
+        } else {
+            Permissions::UPDATE_ALL_PROJECTS
+        };
+
+        user.require_permissions(permission)
+            .map_err(NoUpdatePermissionError::from_permissions_error)
+    }
+
+    pub fn set_name<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        name: ProjectName,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
         self.content.name = name;
+        Ok(())
     }
 
-    pub fn set_kana_name(&mut self, kana_name: ProjectKanaName) {
+    pub fn set_kana_name<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        kana_name: ProjectKanaName,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
         self.content.kana_name = kana_name;
+        Ok(())
     }
 
-    pub fn set_group_name(&mut self, group_name: ProjectGroupName) {
+    pub fn set_group_name<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        group_name: ProjectGroupName,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
         self.content.group_name = group_name;
+        Ok(())
     }
 
-    pub fn set_kana_group_name(&mut self, kana_group_name: ProjectKanaGroupName) {
+    pub fn set_kana_group_name<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        kana_group_name: ProjectKanaGroupName,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
         self.content.kana_group_name = kana_group_name;
+        Ok(())
     }
 
-    pub fn set_description(&mut self, description: ProjectDescription) {
+    pub fn set_description<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        description: ProjectDescription,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
         self.content.description = description;
+        Ok(())
     }
 
-    pub fn set_category(&mut self, category: ProjectCategory) {
+    pub fn set_category<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        category: ProjectCategory,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
         self.content.category = category;
+        Ok(())
     }
 
-    pub fn set_attributes(&mut self, attributes: ProjectAttributes) {
+    pub fn set_attributes<C>(
+        &mut self,
+        ctx: C,
+        user: &User,
+        attributes: ProjectAttributes,
+    ) -> Result<(), NoUpdatePermissionError>
+    where
+        C: ConfigContext,
+    {
+        self.require_update_permission(ctx, user)?;
         self.content.attributes = attributes;
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::{NewProjectErrorKind, Project};
+
     use crate::test::model as test_model;
+    use crate::DomainError;
 
     #[test]
     fn test_visibility_general_owner() {
@@ -364,7 +485,6 @@ mod tests {
 
         let project = Project::new(&app, pending_project, &subowner)
             .await
-            .unwrap()
             .unwrap();
         assert_eq!(project.owner_id(), owner.id());
         assert_eq!(project.subowner_id(), subowner.id());
@@ -385,14 +505,11 @@ mod tests {
             .registration_forms(vec![registration_form])
             .build();
 
-        assert_eq!(
-            Project::new(&app, pending_project, &owner)
-                .await
-                .unwrap()
-                .unwrap_err()
-                .kind(),
-            NewProjectErrorKind::NotAnsweredRegistrationForm
-        );
+        assert!(matches!(
+            Project::new(&app, pending_project, &owner).await,
+            Err(DomainError::Domain(err))
+            if err.kind() == NewProjectErrorKind::NotAnsweredRegistrationForm
+        ));
     }
 
     #[tokio::test]
@@ -405,14 +522,11 @@ mod tests {
             .pending_projects(vec![pending_project.clone()])
             .build();
 
-        assert_eq!(
-            Project::new(&app, pending_project, &owner)
-                .await
-                .unwrap()
-                .unwrap_err()
-                .kind(),
-            NewProjectErrorKind::SameOwnerSubowner
-        );
+        assert!(matches!(
+            Project::new(&app, pending_project, &owner).await,
+            Err(DomainError::Domain(err))
+            if err.kind() == NewProjectErrorKind::SameOwnerSubowner
+        ));
     }
 
     #[tokio::test]
@@ -430,14 +544,11 @@ mod tests {
             .pending_projects(vec![pending_project.clone()])
             .build();
 
-        assert_eq!(
-            Project::new(&app, pending_project, &subowner)
-                .await
-                .unwrap()
-                .unwrap_err()
-                .kind(),
-            NewProjectErrorKind::AlreadyProjectOwnerSubowner
-        );
+        assert!(matches!(
+            Project::new(&app, pending_project, &subowner).await,
+            Err(DomainError::Domain(err))
+            if err.kind() == NewProjectErrorKind::AlreadyProjectOwnerSubowner
+        ));
     }
 
     #[tokio::test]
@@ -457,14 +568,11 @@ mod tests {
             .pending_projects(vec![pending_project.clone()])
             .build();
 
-        assert_eq!(
-            Project::new(&app, pending_project, &subowner)
-                .await
-                .unwrap()
-                .unwrap_err()
-                .kind(),
-            NewProjectErrorKind::AlreadyProjectSubownerSubowner
-        );
+        assert!(matches!(
+            Project::new(&app, pending_project, &subowner).await,
+            Err(DomainError::Domain(err))
+            if err.kind() == NewProjectErrorKind::AlreadyProjectSubownerSubowner
+        ));
     }
 
     #[tokio::test]
@@ -483,13 +591,13 @@ mod tests {
             .pending_projects(vec![pending_project1.clone(), pending_project2.clone()])
             .build();
 
-        assert_eq!(
-            Project::new(&app, pending_project2, &subowner)
-                .await
-                .unwrap()
-                .unwrap_err()
-                .kind(),
-            NewProjectErrorKind::AlreadyPendingProjectOwnerSubowner
-        );
+        assert!(matches!(
+            Project::new(&app, pending_project2, &subowner).await,
+            Err(DomainError::Domain(err))
+            if err.kind() == NewProjectErrorKind::AlreadyPendingProjectOwnerSubowner
+        ));
     }
+
+    // TODO: test new out of period
+    // TODO: test set_* permissions and period
 }

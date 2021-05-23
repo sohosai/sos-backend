@@ -75,7 +75,7 @@ mod tests {
         assert!(matches!(
             get_registration_form_answer::run(
                 &app,
-                RegistrationFormAnswerId::from_entity(answer.id)
+                RegistrationFormAnswerId::from_entity(answer.id())
             )
             .await,
             Err(UseCaseError::UseCase(
@@ -106,7 +106,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let answer_id = RegistrationFormAnswerId::from_entity(answer.id);
+        let answer_id = RegistrationFormAnswerId::from_entity(answer.id());
         assert!(matches!(
             get_registration_form_answer::run(&app, answer_id).await,
             Ok(got)
@@ -136,7 +136,7 @@ mod tests {
             .login_as(user.clone())
             .await;
 
-        let answer_id = RegistrationFormAnswerId::from_entity(answer.id);
+        let answer_id = RegistrationFormAnswerId::from_entity(answer.id());
         assert!(matches!(
             get_registration_form_answer::run(&app, answer_id).await,
             Ok(got)

@@ -6,7 +6,7 @@ use crate::model::project::{
 use anyhow::Context;
 use sos21_domain::context::project_repository::{self, ProjectRepository};
 use sos21_domain::context::{ConfigContext, Login};
-use sos21_domain::model::{date_time, project};
+use sos21_domain::model::{permissions, project, user};
 
 #[derive(Debug, Clone)]
 pub struct Input {
@@ -30,10 +30,13 @@ pub enum Error {
     InvalidDescription,
     DuplicatedAttributes,
     InsufficientPermissions,
-    OutOfCreationPeriod,
 }
 
 impl Error {
+    fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {
+        Error::InsufficientPermissions
+    }
+
     fn from_update_error(_err: project::NoUpdatePermissionError) -> Self {
         Error::InsufficientPermissions
     }
@@ -68,14 +71,11 @@ pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<Project, Erro
 where
     C: ProjectRepository + ConfigContext + Send + Sync,
 {
-    if !ctx
-        .project_creation_period()
-        .contains(date_time::DateTime::now())
-    {
-        return Err(UseCaseError::UseCase(Error::OutOfCreationPeriod));
-    }
-
     let login_user = ctx.login_user();
+
+    login_user
+        .require_permissions(permissions::Permissions::UPDATE_ALL_PROJECTS)
+        .map_err(|err| UseCaseError::UseCase(Error::from_permissions_error(err)))?;
 
     let result = ctx
         .get_project(input.id.into_entity())
@@ -165,14 +165,25 @@ where
 #[cfg(test)]
 mod tests {
     use crate::model::project::ProjectId;
-    use crate::{get_project, update_project, UseCaseError};
-    use sos21_domain::{model::project, test};
+    use crate::{update_any_project, UseCaseError};
+    use sos21_domain::test;
 
-    fn mock_input(project: &project::Project) -> (String, update_project::Input) {
-        let name = "新しい名前".to_string();
-        let input = update_project::Input {
+    // Checks that the normal user cannot update projects.
+    #[tokio::test]
+    async fn test_general() {
+        let user = test::model::new_general_user();
+        let project = test::model::new_general_project(user.id().clone());
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .projects(vec![project.clone()])
+            .build()
+            .login_as(user)
+            .await;
+
+        let input = update_any_project::Input {
             id: ProjectId::from_entity(project.id()),
-            name: Some(name.clone()),
+            name: Some("新しい名前".to_string()),
             kana_name: None,
             group_name: None,
             kana_group_name: None,
@@ -180,59 +191,103 @@ mod tests {
             category: None,
             attributes: None,
         };
-        (name, input)
-    }
-
-    // Checks that the normal user cannot update projects out of the creation period.
-    #[tokio::test]
-    async fn test_general_out_of_period() {
-        let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id().clone());
-        let period = test::model::new_project_creation_period_to_now();
-
-        let app = test::build_mock_app()
-            .users(vec![user.clone()])
-            .projects(vec![project.clone()])
-            .project_creation_period(period)
-            .build()
-            .login_as(user)
-            .await;
-
-        let (_, input) = mock_input(&project);
         assert!(matches!(
-            update_project::run(&app, input).await,
+            update_any_project::run(&app, input).await,
             Err(UseCaseError::UseCase(
-                update_project::Error::OutOfCreationPeriod
+                update_any_project::Error::InsufficientPermissions
             ))
         ));
     }
 
-    // Checks that the normal user can update projects within the creation period.
+    // Checks that the (unprivileged) committee user cannot update projects.
     #[tokio::test]
-    async fn test_general_in_period() {
-        let user = test::model::new_general_user();
+    async fn test_committee() {
+        let user = test::model::new_committee_user();
         let project = test::model::new_general_project(user.id().clone());
-        let period = test::model::new_project_creation_period_from_now();
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .projects(vec![project.clone()])
-            .project_creation_period(period)
             .build()
             .login_as(user)
             .await;
 
-        let (name, input) = mock_input(&project);
+        let input = update_any_project::Input {
+            id: ProjectId::from_entity(project.id()),
+            name: Some("新しい名前".to_string()),
+            kana_name: None,
+            group_name: None,
+            kana_group_name: None,
+            description: None,
+            category: None,
+            attributes: None,
+        };
         assert!(matches!(
-            update_project::run(&app, input).await,
-            Ok(got)
-            if got.name == name
+            update_any_project::run(&app, input).await,
+            Err(UseCaseError::UseCase(
+                update_any_project::Error::InsufficientPermissions
+            ))
         ));
+    }
 
+    // Checks that the privileged committee user cannot update projects.
+    #[tokio::test]
+    async fn test_operator() {
+        let user = test::model::new_operator_user();
+        let project = test::model::new_general_project(user.id().clone());
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .projects(vec![project.clone()])
+            .build()
+            .login_as(user)
+            .await;
+
+        let input = update_any_project::Input {
+            id: ProjectId::from_entity(project.id()),
+            name: Some("新しい名前".to_string()),
+            kana_name: None,
+            group_name: None,
+            kana_group_name: None,
+            description: None,
+            category: None,
+            attributes: None,
+        };
         assert!(matches!(
-            get_project::run(&app, ProjectId::from_entity(project.id())).await,
+            update_any_project::run(&app, input).await,
+            Err(UseCaseError::UseCase(
+                update_any_project::Error::InsufficientPermissions
+            ))
+        ));
+    }
+
+    // Checks that the administrator can update projects.
+    #[tokio::test]
+    async fn test_admin() {
+        let user = test::model::new_admin_user();
+        let project = test::model::new_general_project(user.id().clone());
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone()])
+            .projects(vec![project.clone()])
+            .build()
+            .login_as(user)
+            .await;
+
+        let input = update_any_project::Input {
+            id: ProjectId::from_entity(project.id()),
+            name: Some("新しい名前".to_string()),
+            kana_name: None,
+            group_name: None,
+            kana_group_name: None,
+            description: None,
+            category: None,
+            attributes: None,
+        };
+        assert!(matches!(
+            update_any_project::run(&app, input).await,
             Ok(got)
-            if got.name == name
+            if got.name == "新しい名前"
         ));
     }
 }

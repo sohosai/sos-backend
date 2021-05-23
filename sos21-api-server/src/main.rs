@@ -1,6 +1,7 @@
 use std::net::SocketAddr;
 
 use anyhow::{Context, Result};
+use chrono::{TimeZone, Utc};
 use sos21_api_server::Config;
 use structopt::StructOpt;
 use tokio::runtime;
@@ -38,6 +39,10 @@ struct Opt {
     s3_object_bucket: String,
     #[structopt(long, env = "SOS21_API_SERVER_ADMINISTRATOR_EMAIL")]
     administrator_email: String,
+    #[structopt(long, env = "SOS21_API_SERVER_START_PROJECT_CREATION_PERIOD")]
+    start_project_creation_period: Option<i64>,
+    #[structopt(long, env = "SOS21_API_SERVER_END_PROJECT_CREATION_PERIOD")]
+    end_project_creation_period: Option<i64>,
     #[structopt(short, long, env = "SOS21_API_SERVER_BIND")]
     bind: SocketAddr,
 }
@@ -76,6 +81,12 @@ fn run(opt: Opt) -> Result<()> {
             s3_endpoint: opt.s3_endpoint,
             s3_object_bucket: opt.s3_object_bucket,
             administrator_email: opt.administrator_email,
+            start_project_creation_period: opt
+                .start_project_creation_period
+                .map(|millis| Utc.timestamp_millis(millis)),
+            end_project_creation_period: opt
+                .end_project_creation_period
+                .map(|millis| Utc.timestamp_millis(millis)),
         };
         let server = sos21_api_server::Server::new(config).await?;
         server.run(opt.bind).await;

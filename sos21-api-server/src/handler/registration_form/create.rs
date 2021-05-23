@@ -35,6 +35,7 @@ pub enum Error {
     InvalidFormItem { id: FormItemId },
     DuplicatedFormItemId { id: FormItemId },
     InsufficientPermissions,
+    AlreadyStartedProjectCreationPeriod,
 }
 
 impl HandlerResponse for Error {
@@ -44,6 +45,7 @@ impl HandlerResponse for Error {
             Error::InvalidFormItem { .. } => StatusCode::BAD_REQUEST,
             Error::DuplicatedFormItemId { .. } => StatusCode::BAD_REQUEST,
             Error::InsufficientPermissions => StatusCode::FORBIDDEN,
+            Error::AlreadyStartedProjectCreationPeriod => StatusCode::CONFLICT,
         }
     }
 }
@@ -75,6 +77,9 @@ impl From<create_registration_form::Error> for Error {
             }
             create_registration_form::Error::InsufficientPermissions => {
                 Error::InsufficientPermissions
+            }
+            create_registration_form::Error::AlreadyStartedProjectCreationPeriod => {
+                Error::AlreadyStartedProjectCreationPeriod
             }
         }
     }

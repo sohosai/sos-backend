@@ -5,7 +5,7 @@ use crate::model::project_query::ProjectQuery;
 use crate::model::registration_form::RegistrationForm;
 
 use anyhow::Context;
-use sos21_domain::context::{Login, RegistrationFormRepository};
+use sos21_domain::context::{ConfigContext, Login, RegistrationFormRepository};
 use sos21_domain::model::permissions::Permissions;
 use sos21_domain::model::{date_time::DateTime, registration_form, user};
 use uuid::Uuid;
@@ -25,6 +25,7 @@ pub enum Error {
     InvalidItems(interface::form::FormItemsError),
     InvalidQuery(interface::project_query::ProjectQueryError),
     InsufficientPermissions,
+    AlreadyStartedProjectCreationPeriod,
 }
 
 impl Error {
@@ -52,8 +53,15 @@ impl Error {
 #[tracing::instrument(skip(ctx))]
 pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<RegistrationForm, Error>
 where
-    C: RegistrationFormRepository + Send + Sync,
+    C: RegistrationFormRepository + ConfigContext + Send + Sync,
 {
+    // TODO: Move this constraint to domain
+    if ctx.project_creation_period().contains(DateTime::now()) {
+        return Err(UseCaseError::UseCase(
+            Error::AlreadyStartedProjectCreationPeriod,
+        ));
+    }
+
     let login_user = ctx.login_user();
 
     login_user
@@ -96,9 +104,11 @@ mod tests {
     #[tokio::test]
     async fn test_general() {
         let user = test::model::new_general_user();
+        let period = test::model::new_project_creation_period_with_hours_from_now(1);
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
+            .project_creation_period(period)
             .build()
             .login_as(user.clone())
             .await;
@@ -125,9 +135,11 @@ mod tests {
     #[tokio::test]
     async fn test_committee() {
         let user = test::model::new_committee_user();
+        let period = test::model::new_project_creation_period_with_hours_from_now(1);
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
+            .project_creation_period(period)
             .build()
             .login_as(user.clone())
             .await;
@@ -154,9 +166,11 @@ mod tests {
     #[tokio::test]
     async fn test_operator() {
         let user = test::model::new_operator_user();
+        let period = test::model::new_project_creation_period_with_hours_from_now(1);
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
+            .project_creation_period(period)
             .build()
             .login_as(user.clone())
             .await;
@@ -181,4 +195,6 @@ mod tests {
             Ok(_)
         ));
     }
+
+    // TODO: test in period
 }

@@ -1,15 +1,16 @@
 use crate::app::Context;
-use crate::handler::model::project::{Project, ProjectAttribute, ProjectCategory, ProjectId};
+use crate::handler::model::pending_project::{PendingProject, PendingProjectId};
+use crate::handler::model::project::{ProjectAttribute, ProjectCategory};
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
 use sos21_domain::context::Login;
-use sos21_use_case::update_project;
+use sos21_use_case::update_pending_project;
 use warp::http::StatusCode;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {
-    pub id: ProjectId,
+    pub id: PendingProjectId,
     #[serde(default)]
     pub name: Option<String>,
     #[serde(default)]
@@ -28,7 +29,7 @@ pub struct Request {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Response {
-    pub project: Project,
+    pub pending_project: PendingProject,
 }
 
 impl HandlerResponse for Response {
@@ -40,7 +41,7 @@ impl HandlerResponse for Response {
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE", tag = "type")]
 pub enum Error {
-    ProjectNotFound,
+    PendingProjectNotFound,
     InsufficientPermissions,
     DuplicatedProjectAttributes,
     OutOfProjectCreationPeriod,
@@ -50,7 +51,7 @@ pub enum Error {
 impl HandlerResponse for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Error::ProjectNotFound => StatusCode::NOT_FOUND,
+            Error::PendingProjectNotFound => StatusCode::NOT_FOUND,
             Error::InsufficientPermissions => StatusCode::FORBIDDEN,
             Error::DuplicatedProjectAttributes => StatusCode::BAD_REQUEST,
             Error::OutOfProjectCreationPeriod => StatusCode::CONFLICT,
@@ -59,31 +60,37 @@ impl HandlerResponse for Error {
     }
 }
 
-impl From<update_project::Error> for Error {
-    fn from(err: update_project::Error) -> Error {
+impl From<update_pending_project::Error> for Error {
+    fn from(err: update_pending_project::Error) -> Error {
         match err {
-            update_project::Error::NotFound => Error::ProjectNotFound,
-            update_project::Error::InsufficientPermissions => Error::InsufficientPermissions,
-            update_project::Error::OutOfCreationPeriod => Error::OutOfProjectCreationPeriod,
-            update_project::Error::InvalidName => Error::InvalidField { field: "name" },
-            update_project::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
-            update_project::Error::InvalidGroupName => Error::InvalidField {
+            update_pending_project::Error::NotFound => Error::PendingProjectNotFound,
+            update_pending_project::Error::InsufficientPermissions => {
+                Error::InsufficientPermissions
+            }
+            update_pending_project::Error::OutOfCreationPeriod => Error::OutOfProjectCreationPeriod,
+            update_pending_project::Error::InvalidName => Error::InvalidField { field: "name" },
+            update_pending_project::Error::InvalidKanaName => {
+                Error::InvalidField { field: "kana_name" }
+            }
+            update_pending_project::Error::InvalidGroupName => Error::InvalidField {
                 field: "group_name",
             },
-            update_project::Error::InvalidKanaGroupName => Error::InvalidField {
+            update_pending_project::Error::InvalidKanaGroupName => Error::InvalidField {
                 field: "kana_group_name",
             },
-            update_project::Error::InvalidDescription => Error::InvalidField {
+            update_pending_project::Error::InvalidDescription => Error::InvalidField {
                 field: "description",
             },
-            update_project::Error::DuplicatedAttributes => Error::DuplicatedProjectAttributes,
+            update_pending_project::Error::DuplicatedAttributes => {
+                Error::DuplicatedProjectAttributes
+            }
         }
     }
 }
 
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
-    let input = update_project::Input {
+    let input = update_pending_project::Input {
         id: request.id.into_use_case(),
         name: request.name,
         kana_name: request.kana_name,
@@ -98,7 +105,7 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
                 .collect()
         }),
     };
-    let project = update_project::run(&ctx, input).await?;
-    let project = Project::from_use_case(project);
-    Ok(Response { project })
+    let pending_project = update_pending_project::run(&ctx, input).await?;
+    let pending_project = PendingProject::from_use_case(pending_project);
+    Ok(Response { pending_project })
 }

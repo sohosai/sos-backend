@@ -119,6 +119,7 @@ pub fn endpoints(
                 / "list" => GET (handler::project::registration_form::list),
                 / "answer" {
                     / "get" => GET (handler::project::registration_form::answer::get),
+                    / "update" => POST (handler::project::registration_form::answer::update),
                     / "file-sharing" {
                         / "get-file" => GET (handler::project::registration_form::answer::file_sharing::get_file),
                         / "get-file-info" => GET (handler::project::registration_form::answer::file_sharing::get_file_info),
@@ -136,11 +137,13 @@ pub fn endpoints(
         },
         / "pending-project" {
             / "get" => GET (handler::pending_project::get),
+            / "update" => POST (handler::pending_project::update),
             / "registration-form" {
                 / "get" => GET (handler::pending_project::registration_form::get),
                 / "list" => GET (handler::pending_project::registration_form::list),
                 / "answer" {
                     / => POST (handler::pending_project::registration_form::answer),
+                    / "update" => POST (handler::pending_project::registration_form::answer::update),
                     / "get" => GET (handler::pending_project::registration_form::answer::get),
                 }
             }
