@@ -383,15 +383,12 @@ paths:
                   $ref: ./model/user/UserKanaName.yml
                 phone_number:
                   type: string
-                affiliation:
-                  type: string
                 category:
                   $ref: ./model/user/UserCategory.yml
               required:
                 - name
                 - kana_name
                 - phone_number
-                - affiliation
                 - category
       description: ユーザー情報を登録します。
   /user/list:
@@ -1961,8 +1958,6 @@ paths:
                 kana_name:
                   $ref: ./model/user/UserKanaName.yml
                 phone_number:
-                  type: string
-                affiliation:
                   type: string
                 role:
                   $ref: ./model/user/UserRole.yml
