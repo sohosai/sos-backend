@@ -12,6 +12,7 @@ with the HTTP API interface being the "public API".
 
 - Support for non-ASCII filenames ([#98](https://github.com/sohosai/sos21-backend/pull/98))
 - Editing of forms and form answers ([#90](https://github.com/sohosai/sos21-backend/pull/90))
+- Editing of registration form answer and projects ([#100](https://github.com/sohosai/sos21-backend/pull/100))
 
 ### Changed
 
