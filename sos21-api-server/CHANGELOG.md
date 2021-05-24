@@ -11,6 +11,7 @@ with the HTTP API interface being the "public API".
 ### Added
 
 - `project_query` file sharing ([#104](https://github.com/sohosai/sos21-backend/pull/104))
+- `has_answer` flag for project list endpoints ([#106](https://github.com/sohosai/sos21-backend/pull/106))
 
 ### Changed
 ### Deprecated
