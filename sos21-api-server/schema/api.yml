@@ -1108,7 +1108,14 @@ paths:
                   registration_forms:
                     type: array
                     items:
-                      $ref: ./model/registration_form/RegistrationForm.yml
+                      allOf:
+                        - $ref: ./model/registration_form/RegistrationForm.yml
+                        - type: object
+                          properties:
+                            has_answer:
+                              type: boolean
+                          required:
+                            - has_answer
                 required:
                   - registration_forms
         "401":

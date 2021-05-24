@@ -31,7 +31,7 @@ mod list_projects;
 mod list_registration_form_answers_by_pending_project;
 mod list_registration_form_answers_by_registration_form;
 mod list_registration_forms;
-mod list_registration_forms_by_pending_project;
+pub mod list_registration_forms_by_pending_project;
 mod list_registration_forms_by_project;
 mod list_user_invitations;
 mod list_users;
