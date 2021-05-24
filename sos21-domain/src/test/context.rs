@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::convert::TryInto;
 use std::sync::Arc;
 
+use crate::context::form_repository::ProjectForm;
 use crate::context::pending_project_repository::PendingProjectWithOwner;
 use crate::context::project_repository::ProjectWithOwners;
 use crate::context::{
@@ -398,16 +399,25 @@ impl FormRepository for MockApp {
         Ok(self.forms.lock().await.values().cloned().collect())
     }
 
-    async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<Form>> {
+    async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<ProjectForm>> {
         let project = self.get_project(id).await?.unwrap().project;
-        Ok(self
-            .forms
-            .lock()
-            .await
-            .values()
-            .filter(|form| form.condition().check(&project))
-            .cloned()
-            .collect())
+        futures::stream::iter(
+            self.forms
+                .lock()
+                .await
+                .values()
+                .filter(|form| form.condition().check(&project))
+                .cloned(),
+        )
+        .then(|form| async {
+            let has_answer = self
+                .get_form_answer_by_form_and_project(form.id(), project.id())
+                .await?
+                .is_some();
+            Ok(ProjectForm { has_answer, form })
+        })
+        .try_collect()
+        .await
     }
 }
 

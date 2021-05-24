@@ -26,7 +26,7 @@ mod list_file_sharings_by_user;
 mod list_files_by_user;
 mod list_form_answers_by_form;
 mod list_forms;
-mod list_forms_by_project;
+pub mod list_forms_by_project;
 mod list_projects;
 mod list_registration_form_answers_by_pending_project;
 mod list_registration_form_answers_by_registration_form;

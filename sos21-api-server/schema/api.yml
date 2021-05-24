@@ -2246,7 +2246,14 @@ paths:
                   forms:
                     type: array
                     items:
-                      $ref: ./model/form/Form.yml
+                      allOf:
+                        - $ref: ./model/form/Form.yml
+                        - type: object
+                          properties:
+                            has_answer:
+                              type: boolean
+                          required:
+                            - has_answer
                 required:
                   - forms
         "401":

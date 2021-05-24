@@ -14,7 +14,14 @@ pub struct Request {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Response {
-    pub forms: Vec<Form>,
+    pub forms: Vec<ResponseForm>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ResponseForm {
+    pub has_answer: bool,
+    #[serde(flatten)]
+    pub form: Form,
 }
 
 impl HandlerResponse for Response {
@@ -48,6 +55,12 @@ impl From<list_project_forms::Error> for Error {
 #[apply_macro::apply(handler)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let forms = list_project_forms::run(&ctx, request.project_id.into_use_case()).await?;
-    let forms = forms.into_iter().map(Form::from_use_case).collect();
+    let forms = forms
+        .into_iter()
+        .map(|data| ResponseForm {
+            has_answer: data.has_answer,
+            form: Form::from_use_case(data.form),
+        })
+        .collect();
     Ok(Response { forms })
 }
