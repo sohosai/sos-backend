@@ -5,12 +5,18 @@ use anyhow::Context;
 use sos21_domain::context::{FormRepository, Login, ProjectRepository};
 
 #[derive(Debug, Clone)]
+pub struct ProjectForm {
+    pub has_answer: bool,
+    pub form: Form,
+}
+
+#[derive(Debug, Clone)]
 pub enum Error {
     NotFound,
 }
 
 #[tracing::instrument(skip(ctx))]
-pub async fn run<C>(ctx: &Login<C>, project_id: ProjectId) -> UseCaseResult<Vec<Form>, Error>
+pub async fn run<C>(ctx: &Login<C>, project_id: ProjectId) -> UseCaseResult<Vec<ProjectForm>, Error>
 where
     C: ProjectRepository + FormRepository + Send + Sync,
 {
@@ -25,17 +31,18 @@ where
         _ => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
 
-    let forms = ctx
-        .list_forms_by_project(project.id())
+    ctx.list_forms_by_project(project.id())
         .await
-        .context("Failed to list forms")?;
-
-    use_case_ensure!(forms
-        .iter()
-        .all(|form| form.is_visible_to_with_project(login_user, &project)));
-
-    let forms = forms.into_iter().map(Form::from_entity).collect();
-    Ok(forms)
+        .context("Failed to list forms")?
+        .into_iter()
+        .map(|data| {
+            use_case_ensure!(data.form.is_visible_to_with_project(login_user, &project));
+            Ok(ProjectForm {
+                has_answer: data.has_answer,
+                form: Form::from_entity(data.form),
+            })
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -67,7 +74,11 @@ mod tests {
         let result = list_project_forms::run(&app, ProjectId::from_entity(project.id())).await;
         assert!(result.is_ok());
 
-        let got: HashSet<_> = result.unwrap().into_iter().map(|form| form.id).collect();
+        let got: HashSet<_> = result
+            .unwrap()
+            .into_iter()
+            .map(|form| form.form.id)
+            .collect();
         let expected: HashSet<_> = vec![form1, form2, form3]
             .into_iter()
             .map(|form| FormId::from_entity(form.id()))
@@ -123,7 +134,11 @@ mod tests {
         let result = list_project_forms::run(&app, ProjectId::from_entity(project.id())).await;
         assert!(result.is_ok());
 
-        let got: HashSet<_> = result.unwrap().into_iter().map(|form| form.id).collect();
+        let got: HashSet<_> = result
+            .unwrap()
+            .into_iter()
+            .map(|form| form.form.id)
+            .collect();
         let expected: HashSet<_> = vec![form1, form3]
             .into_iter()
             .map(|form| FormId::from_entity(form.id()))

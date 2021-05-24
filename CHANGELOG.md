@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Pre-configured administrator email address ([#99](https://github.com/sohosai/sos21-backend/pull/99))
 - Editing of forms and form answers ([#90](https://github.com/sohosai/sos21-backend/pull/90))
 - Editing of registration form answer and projects ([#100](https://github.com/sohosai/sos21-backend/pull/100))
+- `has_answer` flag for project list endpoints ([#103](https://github.com/sohosai/sos21-backend/pull/103))
 
 ### Changed
 

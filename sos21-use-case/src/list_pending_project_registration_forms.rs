@@ -5,6 +5,12 @@ use anyhow::Context;
 use sos21_domain::context::{Login, PendingProjectRepository, RegistrationFormRepository};
 
 #[derive(Debug, Clone)]
+pub struct PendingProjectRegistrationForm {
+    pub has_answer: bool,
+    pub registration_form: RegistrationForm,
+}
+
+#[derive(Debug, Clone)]
 pub enum Error {
     NotFound,
 }
@@ -13,7 +19,7 @@ pub enum Error {
 pub async fn run<C>(
     ctx: &Login<C>,
     pending_project_id: PendingProjectId,
-) -> UseCaseResult<Vec<RegistrationForm>, Error>
+) -> UseCaseResult<Vec<PendingProjectRegistrationForm>, Error>
 where
     C: PendingProjectRepository + RegistrationFormRepository + Send + Sync,
 {
@@ -32,11 +38,14 @@ where
         .await
         .context("Failed to list registration forms")?
         .into_iter()
-        .map(|registration_form| {
-            use_case_ensure!(
-                registration_form.is_visible_to_with_pending_project(login_user, &pending_project)
-            );
-            Ok(RegistrationForm::from_entity(registration_form))
+        .map(|data| {
+            use_case_ensure!(data
+                .registration_form
+                .is_visible_to_with_pending_project(login_user, &pending_project));
+            Ok(PendingProjectRegistrationForm {
+                has_answer: data.has_answer,
+                registration_form: RegistrationForm::from_entity(data.registration_form),
+            })
         })
         .collect()
 }
@@ -79,7 +88,7 @@ mod tests {
         .unwrap();
         let got: HashSet<_> = result
             .into_iter()
-            .map(|registration_form| registration_form.id)
+            .map(|registration_form| registration_form.registration_form.id)
             .collect();
         let expected: HashSet<_> = vec![registration_form1, registration_form2, registration_form3]
             .into_iter()
@@ -147,7 +156,7 @@ mod tests {
         .unwrap();
         let got: HashSet<_> = result
             .into_iter()
-            .map(|registration_form| registration_form.id)
+            .map(|registration_form| registration_form.registration_form.id)
             .collect();
         let expected: HashSet<_> = vec![registration_form1, registration_form3]
             .into_iter()

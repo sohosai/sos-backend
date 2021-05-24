@@ -5,12 +5,19 @@ use crate::model::{
 
 use anyhow::Result;
 
+#[derive(Debug, Clone)]
+pub struct ProjectForm {
+    pub has_answer: bool,
+    pub form: Form,
+}
+
 #[async_trait::async_trait]
 pub trait FormRepository {
     async fn store_form(&self, form: Form) -> Result<()>;
     async fn get_form(&self, id: FormId) -> Result<Option<Form>>;
+    // TODO: Move this to query service
     async fn list_forms(&self) -> Result<Vec<Form>>;
-    async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<Form>>;
+    async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<ProjectForm>>;
 }
 
 #[macro_export]
@@ -40,7 +47,7 @@ macro_rules! delegate_form_repository {
             async fn list_forms_by_project(
                 &$sel,
                 id: $crate::model::project::ProjectId
-            ) -> ::anyhow::Result<Vec<$crate::model::form::Form>> {
+            ) -> ::anyhow::Result<Vec<$crate::context::form_repository::ProjectForm>> {
                 $target.list_forms_by_project(id).await
             }
         }
@@ -61,7 +68,7 @@ impl<C: FormRepository + Sync> FormRepository for &C {
         <C as FormRepository>::list_forms(self).await
     }
 
-    async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<Form>> {
+    async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<ProjectForm>> {
         <C as FormRepository>::list_forms_by_project(self, id).await
     }
 }

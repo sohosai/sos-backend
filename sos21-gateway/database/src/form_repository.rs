@@ -10,7 +10,7 @@ use futures::{
 };
 use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
-use sos21_domain::context::FormRepository;
+use sos21_domain::context::form_repository::{FormRepository, ProjectForm};
 use sos21_domain::model::{
     date_time::DateTime,
     form::{
@@ -135,10 +135,13 @@ impl FormRepository for FormDatabase {
             .await
     }
 
-    async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<Form>> {
+    async fn list_forms_by_project(&self, id: ProjectId) -> Result<Vec<ProjectForm>> {
         let mut lock = self.0.lock().await;
         query::list_forms_by_project(&mut *lock, id.to_uuid())
-            .and_then(|data| future::ready(to_form(data)))
+            .and_then(|data| {
+                let has_answer = data.has_answer;
+                future::ready(to_form(data.form).map(|form| ProjectForm { has_answer, form }))
+            })
             .try_collect()
             .await
     }

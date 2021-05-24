@@ -6,6 +6,12 @@ use crate::model::{
 
 use anyhow::Result;
 
+#[derive(Debug, Clone)]
+pub struct PendingProjectRegistrationForm {
+    pub has_answer: bool,
+    pub registration_form: RegistrationForm,
+}
+
 #[async_trait::async_trait]
 pub trait RegistrationFormRepository {
     async fn store_registration_form(&self, registration_form: RegistrationForm) -> Result<()>;
@@ -18,7 +24,7 @@ pub trait RegistrationFormRepository {
     async fn list_registration_forms_by_pending_project(
         &self,
         pending_project_id: PendingProjectId,
-    ) -> Result<Vec<RegistrationForm>>;
+    ) -> Result<Vec<PendingProjectRegistrationForm>>;
     async fn count_registration_forms_by_pending_project(
         &self,
         pending_project_id: PendingProjectId,
@@ -56,7 +62,7 @@ macro_rules! delegate_registration_form_repository {
             async fn list_registration_forms_by_pending_project(
                 &$sel,
                 pending_project_id: $crate::model::pending_project::PendingProjectId
-            ) -> ::anyhow::Result<Vec<$crate::model::registration_form::RegistrationForm>> {
+            ) -> ::anyhow::Result<Vec<$crate::context::registration_form_repository::PendingProjectRegistrationForm>> {
                 $target.list_registration_forms_by_pending_project(pending_project_id).await
             }
             async fn count_registration_forms_by_pending_project(
@@ -95,7 +101,7 @@ impl<C: RegistrationFormRepository + Sync> RegistrationFormRepository for &C {
     async fn list_registration_forms_by_pending_project(
         &self,
         pending_project_id: PendingProjectId,
-    ) -> Result<Vec<RegistrationForm>> {
+    ) -> Result<Vec<PendingProjectRegistrationForm>> {
         <C as RegistrationFormRepository>::list_registration_forms_by_pending_project(
             self,
             pending_project_id,
