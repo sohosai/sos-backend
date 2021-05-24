@@ -5,6 +5,7 @@ use std::sync::Arc;
 use crate::context::form_repository::ProjectForm;
 use crate::context::pending_project_repository::PendingProjectWithOwner;
 use crate::context::project_repository::ProjectWithOwners;
+use crate::context::registration_form_repository::PendingProjectRegistrationForm;
 use crate::context::{
     Authentication, ConfigContext, FileDistributionRepository, FileRepository,
     FileSharingRepository, FormAnswerRepository, FormRepository, Login, ObjectRepository,
@@ -712,24 +713,39 @@ impl RegistrationFormRepository for MockApp {
     async fn list_registration_forms_by_pending_project(
         &self,
         pending_project_id: PendingProjectId,
-    ) -> Result<Vec<RegistrationForm>> {
+    ) -> Result<Vec<PendingProjectRegistrationForm>> {
         let pending_project = self
             .get_pending_project(pending_project_id)
             .await?
             .unwrap()
             .pending_project;
-        Ok(self
-            .registration_forms
-            .lock()
-            .await
-            .values()
-            .filter(|registration_form| {
-                registration_form
-                    .query
-                    .check_pending_project(&pending_project)
+        futures::stream::iter(
+            self.registration_forms
+                .lock()
+                .await
+                .values()
+                .filter(|registration_form| {
+                    registration_form
+                        .query
+                        .check_pending_project(&pending_project)
+                })
+                .cloned(),
+        )
+        .then(|registration_form| async {
+            let has_answer = self
+                .get_registration_form_answer_by_registration_form_and_pending_project(
+                    registration_form.id(),
+                    pending_project.id(),
+                )
+                .await?
+                .is_some();
+            Ok(PendingProjectRegistrationForm {
+                has_answer,
+                registration_form,
             })
-            .cloned()
-            .collect())
+        })
+        .try_collect()
+        .await
     }
 
     async fn count_registration_forms_by_pending_project(

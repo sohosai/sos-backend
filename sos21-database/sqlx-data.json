@@ -123,62 +123,6 @@
       ]
     }
   },
-  "0ce844ef44b37369c3bb786382a038cc06b0cf8442c1a42aba769fbdedf98c1b": {
-    "query": "\nWITH pending_project_registration_forms AS (\n    SELECT registration_forms.id\n    FROM registration_forms\n    WHERE (\n        SELECT\n            bool_or((\n                registration_form_project_query_conjunctions.category = pending_projects.category IS NOT FALSE\n                AND registration_form_project_query_conjunctions.attributes | pending_projects.attributes = pending_projects.attributes\n            ))\n        FROM registration_form_project_query_conjunctions, pending_projects\n        WHERE registration_form_project_query_conjunctions.registration_form_id = registration_forms.id AND pending_projects.id = $1\n    )\n)\nSELECT\n    registration_forms.*,\n    array_agg(DISTINCT (\n            registration_form_project_query_conjunctions.category,\n            registration_form_project_query_conjunctions.attributes\n        ))\n        /* works because attributes column in registration_form_project_query_conjunctions table is NOT NULL */\n        FILTER (WHERE registration_form_project_query_conjunctions.attributes IS NOT NULL)\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\"\nFROM pending_project_registration_forms\nINNER JOIN registration_forms\n    ON registration_forms.id = pending_project_registration_forms.id\nLEFT OUTER JOIN registration_form_project_query_conjunctions\n    ON registration_forms.id = registration_form_project_query_conjunctions.registration_form_id\nGROUP BY registration_forms.id\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 2,
-          "name": "author_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 3,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 4,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "items",
-          "type_info": "Jsonb"
-        },
-        {
-          "ordinal": 6,
-          "name": "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
-          "type_info": "RecordArray"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        null
-      ]
-    }
-  },
   "0d85f3a31685fca0e14fe678a1472d9c2042089c99d0b8e0eceae0cf70c2f7fb": {
     "query": "\nINSERT INTO registration_form_project_query_conjunctions (\n    registration_form_id,\n    category,\n    attributes\n)\nSELECT\n    $1 AS registration_form_id,\n    query.category,\n    query.attributes\nFROM unnest(\n    $2::project_category[],\n    $3::integer[]\n) AS query(\n    category,\n    attributes\n)\n",
     "describe": {
@@ -3959,6 +3903,68 @@
         ]
       },
       "nullable": []
+    }
+  },
+  "e3da1112faf35154366e1879202aa1e7b17827e31cbd803001573f0035989c63": {
+    "query": "\nWITH pending_project_registration_forms AS (\n    SELECT registration_forms.id\n    FROM registration_forms\n    WHERE (\n        SELECT\n            bool_or((\n                registration_form_project_query_conjunctions.category = pending_projects.category IS NOT FALSE\n                AND registration_form_project_query_conjunctions.attributes | pending_projects.attributes = pending_projects.attributes\n            ))\n        FROM registration_form_project_query_conjunctions, pending_projects\n        WHERE registration_form_project_query_conjunctions.registration_form_id = registration_forms.id AND pending_projects.id = $1\n    )\n)\nSELECT\n    registration_forms.*,\n    array_agg(DISTINCT (\n            registration_form_project_query_conjunctions.category,\n            registration_form_project_query_conjunctions.attributes\n        ))\n        /* works because attributes column in registration_form_project_query_conjunctions table is NOT NULL */\n        FILTER (WHERE registration_form_project_query_conjunctions.attributes IS NOT NULL)\n        AS \"query: Vec<(Option<ProjectCategory>, ProjectAttributes)>\",\n    bool_or(registration_form_answers.id IS NOT NULL) AS has_answer\nFROM pending_project_registration_forms\nINNER JOIN registration_forms\n    ON registration_forms.id = pending_project_registration_forms.id\nLEFT OUTER JOIN registration_form_project_query_conjunctions\n    ON registration_forms.id = registration_form_project_query_conjunctions.registration_form_id\nLEFT OUTER JOIN registration_form_answers\n    ON registration_forms.id = registration_form_answers.registration_form_id AND registration_form_answers.pending_project_id = $1\nGROUP BY registration_forms.id\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "author_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "items",
+          "type_info": "Jsonb"
+        },
+        {
+          "ordinal": 6,
+          "name": "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
+          "type_info": "RecordArray"
+        },
+        {
+          "ordinal": 7,
+          "name": "has_answer",
+          "type_info": "Bool"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null
+      ]
     }
   },
   "e7888a368a3d948c9c37355ada97f50f0f0e2f37d213f9f800aa0d100c007fdc": {

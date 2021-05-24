@@ -16,7 +16,14 @@ pub struct Request {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Response {
-    pub registration_forms: Vec<RegistrationForm>,
+    pub registration_forms: Vec<ResponseRegistrationForm>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ResponseRegistrationForm {
+    pub has_answer: bool,
+    #[serde(flatten)]
+    pub registration_form: RegistrationForm,
 }
 
 impl HandlerResponse for Response {
@@ -58,7 +65,10 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
     .await?;
     let registration_forms = registration_forms
         .into_iter()
-        .map(RegistrationForm::from_use_case)
+        .map(|data| ResponseRegistrationForm {
+            has_answer: data.has_answer,
+            registration_form: RegistrationForm::from_use_case(data.registration_form),
+        })
         .collect();
     Ok(Response { registration_forms })
 }
