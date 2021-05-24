@@ -5,7 +5,16 @@ use anyhow::{Context, Result};
 use futures::stream::{BoxStream, StreamExt};
 use uuid::Uuid;
 
-pub fn list_forms_by_project<'a, E>(conn: E, project_id: Uuid) -> BoxStream<'a, Result<FormData>>
+#[derive(Debug, Clone)]
+pub struct ProjectFormData {
+    pub form: FormData,
+    pub has_answer: bool,
+}
+
+pub fn list_forms_by_project<'a, E>(
+    conn: E,
+    project_id: Uuid,
+) -> BoxStream<'a, Result<ProjectFormData>>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres> + 'a,
 {
@@ -51,7 +60,8 @@ SELECT
         ))
         /* works because attributes column in form_project_query_conjunctions table is NOT NULL */
         FILTER (WHERE form_project_query_conjunctions.attributes IS NOT NULL)
-        AS "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>"
+        AS "query: Vec<(Option<ProjectCategory>, ProjectAttributes)>",
+    bool_or(form_answers.id IS NOT NULL) AS has_answer
 FROM project_forms
 INNER JOIN forms
     ON forms.id = project_forms.id
@@ -61,6 +71,8 @@ LEFT OUTER JOIN form_condition_excludes
     ON forms.id = form_condition_excludes.form_id
 LEFT OUTER JOIN form_project_query_conjunctions
     ON forms.id = form_project_query_conjunctions.form_id
+LEFT OUTER JOIN form_answers
+    ON forms.id = form_answers.form_id AND form_answers.project_id = $1
 GROUP BY forms.id
 "#,
         project_id
@@ -91,11 +103,14 @@ GROUP BY forms.id
             })
             .collect();
 
-        Ok(FormData {
-            form,
-            include_ids,
-            exclude_ids,
-            query,
+        Ok(ProjectFormData {
+            form: FormData {
+                form,
+                include_ids,
+                exclude_ids,
+                query
+            },
+            has_answer: row.has_answer.unwrap_or(false)
         })
     })
     .boxed()
