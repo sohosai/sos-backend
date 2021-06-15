@@ -213,7 +213,7 @@ impl<'a> ShareTarget<'a> {
         }
     }
 
-    fn is_contained_by(&self, scope: file_sharing::FileSharingScope) -> bool {
+    fn is_contained_by(&self, scope: &file_sharing::FileSharingScope) -> bool {
         match self {
             ShareTarget::FormAnswer { project, form } => {
                 scope.contains_project_form_answer(project, form)

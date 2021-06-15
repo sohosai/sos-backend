@@ -27,7 +27,7 @@ impl FileSharingRepository for FileSharingDatabase {
     async fn store_file_sharing(&self, sharing: FileSharing) -> Result<()> {
         let mut lock = self.0.lock().await;
 
-        let sharing = from_file_sharing(sharing);
+        let sharing = from_file_sharing(sharing)?;
         if query::find_file_sharing(&mut *lock, sharing.id)
             .await?
             .is_some()
@@ -39,6 +39,7 @@ impl FileSharingRepository for FileSharingDatabase {
                 expires_at: sharing.expires_at,
                 scope: sharing.scope,
                 project_id: sharing.project_id,
+                project_query: sharing.project_query,
                 form_answer_project_id: sharing.form_answer_project_id,
                 form_answer_form_id: sharing.form_answer_form_id,
                 registration_form_answer_project_id: sharing.registration_form_answer_project_id,
@@ -87,7 +88,7 @@ impl FileSharingRepository for FileSharingDatabase {
     }
 }
 
-fn from_file_sharing(sharing: FileSharing) -> data::file_sharing::FileSharing {
+fn from_file_sharing(sharing: FileSharing) -> Result<data::file_sharing::FileSharing> {
     let sharing = sharing.into_content();
     let (form_answer_project_id, form_answer_form_id) =
         if let Some((project_id, form_id)) = sharing.scope.form_answer() {
@@ -114,28 +115,34 @@ fn from_file_sharing(sharing: FileSharing) -> data::file_sharing::FileSharing {
     } else {
         (None, None, None)
     };
-    data::file_sharing::FileSharing {
+    Ok(data::file_sharing::FileSharing {
         id: sharing.id.to_uuid(),
         created_at: sharing.created_at.utc(),
         file_id: sharing.file_id.to_uuid(),
         is_revoked: sharing.is_revoked,
         expires_at: sharing.expires_at.map(|expires_at| expires_at.utc()),
-        scope: from_file_sharing_scope(sharing.scope),
+        scope: from_file_sharing_scope(&sharing.scope),
         project_id: sharing
             .scope
             .project()
             .map(|project_id| project_id.to_uuid()),
+        project_query: sharing
+            .scope
+            .project_query()
+            .map(serde_json::to_value)
+            .transpose()?,
         form_answer_project_id,
         form_answer_form_id,
         registration_form_answer_project_id,
         registration_form_answer_pending_project_id,
         registration_form_answer_registration_form_id,
-    }
+    })
 }
 
-fn from_file_sharing_scope(scope: FileSharingScope) -> data::file_sharing::FileSharingScope {
+fn from_file_sharing_scope(scope: &FileSharingScope) -> data::file_sharing::FileSharingScope {
     match scope {
         FileSharingScope::Project(_) => data::file_sharing::FileSharingScope::Project,
+        FileSharingScope::ProjectQuery(_) => data::file_sharing::FileSharingScope::ProjectQuery,
         FileSharingScope::FormAnswer(_, _) => data::file_sharing::FileSharingScope::FormAnswer,
         FileSharingScope::RegistrationFormAnswer(_, _) => {
             data::file_sharing::FileSharingScope::RegistrationFormAnswer
@@ -164,17 +171,25 @@ fn to_file_sharing(sharing: data::file_sharing::FileSharing) -> Result<FileShari
         file_id: FileId::from_uuid(sharing.file_id),
         is_revoked: sharing.is_revoked,
         expires_at: sharing.expires_at.map(DateTime::from_utc),
-        scope: to_file_sharing_scope(&sharing)?,
+        scope: to_file_sharing_scope(sharing)?,
     }))
 }
 
-fn to_file_sharing_scope(sharing: &data::file_sharing::FileSharing) -> Result<FileSharingScope> {
+fn to_file_sharing_scope(sharing: data::file_sharing::FileSharing) -> Result<FileSharingScope> {
     match sharing.scope {
         data::file_sharing::FileSharingScope::Project => {
             let project_id = sharing
                 .project_id
                 .context("scope = 'project' but project_id is null")?;
             Ok(FileSharingScope::Project(ProjectId::from_uuid(project_id)))
+        }
+        data::file_sharing::FileSharingScope::ProjectQuery => {
+            let query = sharing
+                .project_query
+                .context("scope = 'project_query' but project_query is null")?;
+            Ok(FileSharingScope::ProjectQuery(serde_json::from_value(
+                query,
+            )?))
         }
         data::file_sharing::FileSharingScope::FormAnswer => {
             let project_id = sharing

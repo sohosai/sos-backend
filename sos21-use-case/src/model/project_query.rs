@@ -2,7 +2,7 @@ use crate::model::project::{ProjectAttribute, ProjectCategory};
 
 use sos21_domain::model::project_query as entity;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProjectQueryConjunction {
     pub category: Option<ProjectCategory>,
     pub attributes: Vec<ProjectAttribute>,
@@ -20,7 +20,7 @@ impl ProjectQueryConjunction {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProjectQuery(pub Vec<ProjectQueryConjunction>);
 
 impl ProjectQuery {

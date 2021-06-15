@@ -2,15 +2,17 @@ use crate::model::form::{Form, FormId};
 use crate::model::form_answer::FormAnswer;
 use crate::model::pending_project::PendingProject;
 use crate::model::project::{Project, ProjectId};
+use crate::model::project_query::ProjectQuery;
 use crate::model::registration_form::{RegistrationForm, RegistrationFormId};
 use crate::model::registration_form_answer::{
     RegistrationFormAnswer, RegistrationFormAnswerRespondent,
 };
 use crate::model::user::User;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub enum FileSharingScope {
     Project(ProjectId),
+    ProjectQuery(ProjectQuery),
     FormAnswer(ProjectId, FormId),
     RegistrationFormAnswer(RegistrationFormAnswerRespondent, RegistrationFormId),
     Committee,
@@ -30,6 +32,13 @@ impl FileSharingScope {
     pub fn project(&self) -> Option<ProjectId> {
         match self {
             FileSharingScope::Project(project_id) => Some(*project_id),
+            _ => None,
+        }
+    }
+
+    pub fn project_query(&self) -> Option<&ProjectQuery> {
+        match self {
+            FileSharingScope::ProjectQuery(query) => Some(query),
             _ => None,
         }
     }
@@ -54,11 +63,12 @@ impl FileSharingScope {
 
     pub fn contains_user(&self, user: &User) -> bool {
         match self {
-            FileSharingScope::Project(_) => false,
-            FileSharingScope::FormAnswer(_, _) => false,
-            FileSharingScope::RegistrationFormAnswer(_, _) => false,
             FileSharingScope::CommitteeOperator => user.is_committee_operator(),
             FileSharingScope::Committee => user.is_committee(),
+            FileSharingScope::Project(_)
+            | FileSharingScope::ProjectQuery(_)
+            | FileSharingScope::FormAnswer(_, _)
+            | FileSharingScope::RegistrationFormAnswer(_, _) => false,
             FileSharingScope::Public => true,
         }
     }
@@ -66,6 +76,7 @@ impl FileSharingScope {
     pub fn contains_project(&self, project: &Project) -> bool {
         match self {
             FileSharingScope::Project(project_id) => *project_id == project.id(),
+            FileSharingScope::ProjectQuery(query) => query.check_project(project),
             FileSharingScope::FormAnswer(_, _)
             | FileSharingScope::RegistrationFormAnswer(_, _)
             | FileSharingScope::Committee
@@ -80,6 +91,7 @@ impl FileSharingScope {
                 *project_id == answer.project_id() && *form_id == answer.form_id()
             }
             FileSharingScope::Project(_)
+            | FileSharingScope::ProjectQuery(_)
             | FileSharingScope::RegistrationFormAnswer(_, _)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,
@@ -93,6 +105,7 @@ impl FileSharingScope {
                 *project_id == project.id() && *form_id == form.id()
             }
             FileSharingScope::Project(_)
+            | FileSharingScope::ProjectQuery(_)
             | FileSharingScope::RegistrationFormAnswer(_, _)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,
@@ -107,6 +120,7 @@ impl FileSharingScope {
                     && *registration_form_id == answer.registration_form_id()
             }
             FileSharingScope::Project(_)
+            | FileSharingScope::ProjectQuery(_)
             | FileSharingScope::FormAnswer(_, _)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,
@@ -125,6 +139,7 @@ impl FileSharingScope {
                     && *registration_form_id == registration_form.id
             }
             FileSharingScope::Project(_)
+            | FileSharingScope::ProjectQuery(_)
             | FileSharingScope::FormAnswer(_, _)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,
@@ -142,6 +157,7 @@ impl FileSharingScope {
                 respondent.is_project(project) && *registration_form_id == registration_form.id
             }
             FileSharingScope::Project(_)
+            | FileSharingScope::ProjectQuery(_)
             | FileSharingScope::FormAnswer(_, _)
             | FileSharingScope::Committee
             | FileSharingScope::CommitteeOperator => false,

@@ -153,8 +153,8 @@ impl FileSharing {
         Ok(())
     }
 
-    pub fn scope(&self) -> FileSharingScope {
-        self.0.scope
+    pub fn scope(&self) -> &FileSharingScope {
+        &self.0.scope
     }
 
     /// Equivalent to `sharing.state_at(DateTime::now())`

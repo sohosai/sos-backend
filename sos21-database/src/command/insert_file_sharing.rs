@@ -14,6 +14,7 @@ where
         expires_at,
         scope,
         project_id,
+        project_query,
         form_answer_project_id,
         form_answer_form_id,
         registration_form_answer_project_id,
@@ -31,12 +32,13 @@ INSERT INTO file_sharings (
     expires_at,
     scope,
     project_id,
+    project_query,
     form_answer_project_id,
     form_answer_form_id,
     registration_form_answer_project_id,
     registration_form_answer_pending_project_id,
     registration_form_answer_registration_form_id
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 )
 "#,
         id,
         created_at,
@@ -45,6 +47,7 @@ INSERT INTO file_sharings (
         expires_at,
         scope as _,
         project_id,
+        project_query,
         form_answer_project_id,
         form_answer_form_id,
         registration_form_answer_project_id,
