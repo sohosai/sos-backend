@@ -1,6 +1,8 @@
 use crate::error::{UseCaseError, UseCaseResult};
+use crate::interface;
 use crate::model::file::FileId;
 use crate::model::file_sharing::FileSharing;
+use crate::model::project_query::ProjectQuery;
 
 use anyhow::Context;
 use sos21_domain::context::{FileRepository, FileSharingRepository, Login};
@@ -15,6 +17,7 @@ pub struct Input {
 
 #[derive(Debug, Clone)]
 pub enum InputFileSharingScope {
+    ProjectQuery(ProjectQuery),
     Committee,
     CommitteeOperator,
     Public,
@@ -26,6 +29,7 @@ pub enum Error {
     FileNotFound,
     NonSharableFile,
     InvalidExpirationDate,
+    InvalidQuery(interface::project_query::ProjectQueryError),
 }
 
 impl Error {
@@ -36,6 +40,10 @@ impl Error {
             }
             file::ShareWithExpirationErrorKind::NonSharableFile => Error::NonSharableFile,
         }
+    }
+
+    fn from_project_query_error(err: interface::project_query::ProjectQueryError) -> Self {
+        Error::InvalidQuery(err)
     }
 
     fn from_share_error(_err: file::NonSharableFileError) -> Self {
@@ -58,7 +66,7 @@ where
     }
 
     let expires_at = input.expires_at.map(DateTime::from_utc);
-    let scope = to_file_sharing_scope(input.scope);
+    let scope = to_file_sharing_scope(input.scope)?;
 
     let result = ctx
         .get_file(input.file_id.into_entity())
@@ -85,14 +93,23 @@ where
     Ok(FileSharing::from_entity(sharing, file))
 }
 
-fn to_file_sharing_scope(scope: InputFileSharingScope) -> file_sharing::FileSharingScope {
-    match scope {
+fn to_file_sharing_scope(
+    scope: InputFileSharingScope,
+) -> UseCaseResult<file_sharing::FileSharingScope, Error> {
+    let scope = match scope {
+        InputFileSharingScope::ProjectQuery(query) => {
+            let query = interface::project_query::to_project_query(query)
+                .map_err(|err| UseCaseError::UseCase(Error::from_project_query_error(err)))?;
+            file_sharing::FileSharingScope::ProjectQuery(query)
+        }
         InputFileSharingScope::Committee => file_sharing::FileSharingScope::Committee,
         InputFileSharingScope::CommitteeOperator => {
             file_sharing::FileSharingScope::CommitteeOperator
         }
         InputFileSharingScope::Public => file_sharing::FileSharingScope::Public,
-    }
+    };
+
+    Ok(scope)
 }
 
 #[cfg(test)]

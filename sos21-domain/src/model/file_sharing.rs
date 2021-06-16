@@ -409,6 +409,41 @@ mod tests {
     }
 
     #[test]
+    fn test_witness_with_project_query_ok() {
+        use crate::model::project::{ProjectAttributes, ProjectCategory};
+        use crate::model::project_query::{ProjectQuery, ProjectQueryConjunction};
+
+        let query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
+            category: Some(ProjectCategory::General),
+            attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
+        }])
+        .unwrap();
+        let scope = FileSharingScope::ProjectQuery(query);
+        let sharing = FileSharing::new(test_model::new_file_id(), scope);
+        let project = test_model::new_general_project(test_model::new_user_id());
+        assert!(sharing.to_witness_with_project(&project).is_ok());
+    }
+
+    #[test]
+    fn test_witness_with_project_query_out_of_scope() {
+        use crate::model::project_query::ProjectQuery;
+
+        use super::ToWitnessErrorKind;
+
+        let query = ProjectQuery::from_conjunctions(vec![]).unwrap();
+        let scope = FileSharingScope::ProjectQuery(query);
+        let sharing = FileSharing::new(test_model::new_file_id(), scope);
+        let project = test_model::new_general_project(test_model::new_user_id());
+        assert!(matches!(
+            sharing
+                .to_witness_with_project(&project)
+                .unwrap_err()
+                .kind(),
+            ToWitnessErrorKind::OutOfScope
+        ));
+    }
+
+    #[test]
     fn test_witness_with_project_out_of_scope() {
         use super::ToWitnessErrorKind;
 
