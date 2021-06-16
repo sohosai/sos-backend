@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 ### Removed
 ### Fixed
+
+- Expose `Content-Disposition` header in the CORS ([#105](https://github.com/sohosai/sos21-backend/pull/105))
+
 ### Security
 
 ## [0.5.0-beta] - 2021-05-23

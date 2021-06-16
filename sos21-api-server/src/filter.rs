@@ -220,6 +220,7 @@ pub fn endpoints(
         .allow_method(Method::POST)
         .allow_header(header::AUTHORIZATION)
         .allow_header(header::CONTENT_TYPE)
+        .expose_header(header::CONTENT_DISPOSITION)
         .max_age(std::time::Duration::from_secs(30 * 60));
 
     routes

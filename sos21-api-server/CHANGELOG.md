@@ -13,6 +13,9 @@ with the HTTP API interface being the "public API".
 ### Deprecated
 ### Removed
 ### Fixed
+
+- Expose `Content-Disposition` header in the CORS ([#105](https://github.com/sohosai/sos21-backend/pull/105))
+
 ### Security
 
 ## [0.5.0-beta] - 2021-05-23
