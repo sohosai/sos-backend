@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - `project_query` file sharing ([#104](https://github.com/sohosai/sos21-backend/pull/104))
 - `has_answer` flag for project list endpoints ([#106](https://github.com/sohosai/sos21-backend/pull/106))
+- `/assign-user-role-to-email` endpoint to ensure the email is assigned the specific role ([#109](https://github.com/sohosai/sos21-backend/pull/109))
 
 ### Changed
 ### Deprecated
