@@ -13,6 +13,13 @@ PROJECT=$(git rev-parse --show-toplevel)
 readonly PROJECT=${PROJECT%/}
 readonly SCRIPT=$0
 
+function update_version_file() {
+  set -feu -o pipefail
+
+  local -r version=$1
+  echo "$version" > "$PROJECT/VERSION"
+}
+
 function update_cargo_version() {
   set -feu -o pipefail
 
@@ -69,6 +76,7 @@ function main() {
   local -r version=$1
   1>&2 echo "version: $version"
 
+  update_version_file "$version"
   update_cargo_version "$version"
   update_schema_version "$version"
   update_docker_image_version "$version"
