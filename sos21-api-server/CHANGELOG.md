@@ -9,6 +9,9 @@ with the HTTP API interface being the "public API".
 ## [Unreleased]
 
 ### Added
+
+- `project_query` file sharing ([#104](https://github.com/sohosai/sos21-backend/pull/104))
+
 ### Changed
 ### Deprecated
 ### Removed
