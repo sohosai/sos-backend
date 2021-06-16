@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["NewUserInvitationErrorKind",""],["UserInvitationRole",""]],"mod":[["role",""]],"struct":[["NewUserInvitationError",""],["UserInvitation",""],["UserInvitationContent",""],["UserInvitationId",""]]});
