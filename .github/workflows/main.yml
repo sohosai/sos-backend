@@ -1,0 +1,66 @@
+on:
+  push:
+    branches:
+      - 'main'
+
+name: Main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          name: sos21-backend
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+      - name: Create ssh private key file
+        env:
+          SSH_PRIVATE_KEY: "${{ secrets.SSH_PRIVATE_KEY }}"
+        run: |
+          touch ./ssh_private_key
+          chmod 600 ./ssh_private_key
+          echo "$SSH_PRIVATE_KEY" > ./ssh_private_key
+      - name: Create NixOS configuration from secrets
+        env:
+          ADMINISTRATOR_EMAIL: "${{ secrets.ADMINISTRATOR_EMAIL }}"
+          START_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_START_PROJECT_CREATION_PERIOD }}"
+          END_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_END_PROJECT_CREATION_PERIOD }}"
+        run: |
+          cat << EOS > ./configuration.nix
+          { ... }:
+          {
+            services.sos21-api-server = {
+              administratorEmail = "$ADMINISTRATOR_EMAIL";
+              startProjectCreationPeriod = $START_PROJECT_CREATION_PERIOD;
+              endProjectCreationPeriod = $END_PROJECT_CREATION_PERIOD;
+            };
+          }
+          EOS
+      - name: Deploy
+        uses: sohosai/sos21-backend-infrastructure/actions/deploy-production@main
+        with:
+          target: api.online.sohosai.com
+          ssh_private_key: ./ssh_private_key
+          configurations: |
+            ./nix/deployment/main.nix
+            ./configuration.nix
+      - name: Delete ssh private key file
+        if: always()
+        run: rm -f ./ssh_private_key
+  tag:
+    name: Tag
+    runs-on: ubuntu-18.04
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          # GITHUB_TOKEN user cannot trigger another workflow
+          token: "${{ secrets.TAGGER_PAT }}"
+      - name: git tag
+        run: |
+          tag_name=v$(< ./VERSION)
+          git tag "$tag_name"
+          git push --tags
