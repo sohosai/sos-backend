@@ -453,6 +453,41 @@
 <span id="450">450</span>
 <span id="451">451</span>
 <span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file</span>::{<span class="ident">File</span>, <span class="ident">FileId</span>};
@@ -609,8 +644,8 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">scope</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FileSharingScope</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">scope</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">scope</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">FileSharingScope</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>.<span class="ident">scope</span>
     }
 
     <span class="doccomment">/// Equivalent to `sharing.state_at(DateTime::now())`</span>
@@ -862,6 +897,41 @@
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">test_model</span>::<span class="ident">new_file_id</span>(), <span class="ident">FileSharingScope</span>::<span class="ident">Committee</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">sharing</span>.<span class="ident">to_witness_with_user</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>).<span class="ident">is_ok</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_witness_with_project_query_ok</span>() {
+        <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
+        <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project_query</span>::{<span class="ident">ProjectQuery</span>, <span class="ident">ProjectQueryConjunction</span>};
+
+        <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
+            <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">General</span>),
+            <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),
+        }])
+        .<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">FileSharingScope</span>::<span class="ident">ProjectQuery</span>(<span class="ident">query</span>);
+        <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">test_model</span>::<span class="ident">new_file_id</span>(), <span class="ident">scope</span>);
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">test_model</span>::<span class="ident">new_user_id</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">sharing</span>.<span class="ident">to_witness_with_project</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>).<span class="ident">is_ok</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_witness_with_project_query_out_of_scope</span>() {
+        <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project_query</span>::<span class="ident">ProjectQuery</span>;
+
+        <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">ToWitnessErrorKind</span>;
+
+        <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">FileSharingScope</span>::<span class="ident">ProjectQuery</span>(<span class="ident">query</span>);
+        <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">test_model</span>::<span class="ident">new_file_id</span>(), <span class="ident">scope</span>);
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">test_model</span>::<span class="ident">new_user_id</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
+            <span class="ident">sharing</span>
+                .<span class="ident">to_witness_with_project</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>)
+                .<span class="ident">unwrap_err</span>()
+                .<span class="ident">kind</span>(),
+            <span class="ident">ToWitnessErrorKind</span>::<span class="ident">OutOfScope</span>
+        ));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

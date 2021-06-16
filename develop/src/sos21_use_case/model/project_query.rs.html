@@ -41,7 +41,7 @@
 
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::<span class="ident">project_query</span> <span class="kw">as</span> <span class="ident">entity</span>;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectQueryConjunction</span> {
     <span class="kw">pub</span> <span class="ident">category</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProjectCategory</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">attributes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectAttribute</span><span class="op">&gt;</span>,
@@ -59,7 +59,7 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectQuery</span>(<span class="kw">pub</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectQueryConjunction</span><span class="op">&gt;</span>);
 
 <span class="kw">impl</span> <span class="ident">ProjectQuery</span> {

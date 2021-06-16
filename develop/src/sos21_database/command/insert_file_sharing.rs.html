@@ -60,6 +60,9 @@
 <span id="57">57</span>
 <span id="58">58</span>
 <span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>;
 
@@ -77,6 +80,7 @@
         <span class="ident">expires_at</span>,
         <span class="ident">scope</span>,
         <span class="ident">project_id</span>,
+        <span class="ident">project_query</span>,
         <span class="ident">form_answer_project_id</span>,
         <span class="ident">form_answer_form_id</span>,
         <span class="ident">registration_form_answer_project_id</span>,
@@ -94,12 +98,13 @@ INSERT INTO file_sharings (
     expires_at,
     scope,
     project_id,
+    project_query,
     form_answer_project_id,
     form_answer_form_id,
     registration_form_answer_project_id,
     registration_form_answer_pending_project_id,
     registration_form_answer_registration_form_id
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13 )
 &quot;#</span>,
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
@@ -108,6 +113,7 @@ INSERT INTO file_sharings (
         <span class="ident">expires_at</span>,
         <span class="ident">scope</span> <span class="kw">as</span> <span class="kw">_</span>,
         <span class="ident">project_id</span>,
+        <span class="ident">project_query</span>,
         <span class="ident">form_answer_project_id</span>,
         <span class="ident">form_answer_form_id</span>,
         <span class="ident">registration_form_answer_project_id</span>,

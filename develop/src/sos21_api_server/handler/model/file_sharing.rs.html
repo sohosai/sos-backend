@@ -102,11 +102,19 @@
 <span id="99"> 99</span>
 <span id="100">100</span>
 <span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">file</span>::<span class="ident">FileId</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">form</span>::<span class="ident">FormId</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">project</span>::<span class="ident">ProjectId</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">project_query</span>::<span class="ident">ProjectQuery</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">registration_form</span>::<span class="ident">RegistrationFormId</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswerRespondent</span>;
 
@@ -135,6 +143,9 @@
     <span class="ident">Project</span> {
         <span class="ident">id</span>: <span class="ident">ProjectId</span>,
     },
+    <span class="ident">ProjectQuery</span> {
+        <span class="ident">query</span>: <span class="ident">ProjectQuery</span>,
+    },
     <span class="ident">FormAnswer</span> {
         <span class="ident">project_id</span>: <span class="ident">ProjectId</span>,
         <span class="ident">form_id</span>: <span class="ident">FormId</span>,
@@ -154,6 +165,9 @@
         <span class="kw">match</span> <span class="ident">scope</span> {
             <span class="ident">use_case</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project_id</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">FileSharingScope</span>::<span class="ident">Project</span> {
                 <span class="ident">id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_use_case</span>(<span class="ident">project_id</span>),
+            },
+            <span class="ident">use_case</span>::<span class="ident">FileSharingScope</span>::<span class="ident">ProjectQuery</span>(<span class="ident">query</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">FileSharingScope</span>::<span class="ident">ProjectQuery</span> {
+                <span class="ident">query</span>: <span class="ident">ProjectQuery</span>::<span class="ident">from_use_case</span>(<span class="ident">query</span>),
             },
             <span class="ident">use_case</span>::<span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(<span class="ident">project_id</span>, <span class="ident">form_id</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span> {

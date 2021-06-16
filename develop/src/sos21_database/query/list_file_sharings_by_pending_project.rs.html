@@ -57,6 +57,8 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file_sharing</span>::{<span class="ident">FileSharing</span>, <span class="ident">FileSharingScope</span>};
 
@@ -81,6 +83,7 @@ SELECT
     file_sharings.expires_at,
     file_sharings.scope AS &quot;scope: FileSharingScope&quot;,
     file_sharings.project_id,
+    file_sharings.project_query,
     file_sharings.form_answer_project_id,
     file_sharings.form_answer_form_id,
     file_sharings.registration_form_answer_project_id,
@@ -103,6 +106,7 @@ WHERE file_sharings.registration_form_answer_pending_project_id = $1
             <span class="ident">expires_at</span>: <span class="ident">row</span>.<span class="ident">expires_at</span>,
             <span class="ident">scope</span>: <span class="ident">row</span>.<span class="ident">scope</span>,
             <span class="ident">project_id</span>: <span class="ident">row</span>.<span class="ident">project_id</span>,
+            <span class="ident">project_query</span>: <span class="ident">row</span>.<span class="ident">project_query</span>,
             <span class="ident">form_answer_project_id</span>: <span class="ident">row</span>.<span class="ident">form_answer_project_id</span>,
             <span class="ident">form_answer_form_id</span>: <span class="ident">row</span>.<span class="ident">form_answer_form_id</span>,
             <span class="ident">registration_form_answer_project_id</span>: <span class="ident">row</span>.<span class="ident">registration_form_answer_project_id</span>,

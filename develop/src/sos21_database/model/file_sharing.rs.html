@@ -31,6 +31,8 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
@@ -40,6 +42,7 @@
 <span class="attribute">#[<span class="ident">sqlx</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;snake_case&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">FileSharingScope</span> {
     <span class="ident">Project</span>,
+    <span class="ident">ProjectQuery</span>,
     <span class="ident">FormAnswer</span>,
     <span class="ident">RegistrationFormAnswer</span>,
     <span class="ident">Committee</span>,
@@ -56,6 +59,7 @@
     <span class="kw">pub</span> <span class="ident">expires_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">scope</span>: <span class="ident">FileSharingScope</span>,
     <span class="kw">pub</span> <span class="ident">project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">project_query</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">serde_json</span>::<span class="ident">Value</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">form_answer_project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">form_answer_form_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">registration_form_answer_project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
