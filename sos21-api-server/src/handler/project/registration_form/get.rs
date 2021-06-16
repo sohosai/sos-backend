@@ -54,7 +54,7 @@ impl From<get_project_registration_form::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let registration_form = get_project_registration_form::run(
         &ctx,

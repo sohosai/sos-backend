@@ -121,7 +121,7 @@ impl From<answer_registration_form::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let input = answer_registration_form::Input {
         pending_project_id: request.pending_project_id.into_use_case(),

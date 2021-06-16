@@ -48,7 +48,7 @@ impl From<get_publicly_shared_file::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Context, request: Request) -> HandlerResult<Response, Error> {
     let file = get_publicly_shared_file::run(&ctx, request.sharing_id.into_use_case()).await?;
     let file = File::from_use_case(file);

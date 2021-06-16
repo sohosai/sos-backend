@@ -45,7 +45,7 @@ impl From<list_project_registration_forms::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let project_id = request.project_id.into_use_case();
     let registration_forms = list_project_registration_forms::run(&ctx, project_id).await?;

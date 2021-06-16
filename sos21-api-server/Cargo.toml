@@ -32,7 +32,7 @@ reqwest = { version = "0.11", default-features = false, features = ["json", "rus
 url = "2"
 structopt = "0.3"
 hex = { version = "0.4", features = ["serde"] }
-apply-macro = "1"
+macro_rules_attribute = "0.0.2"
 uritemplate-next = "0.2"
 percent-encoding = "2.1"
 sos21-domain = { path = "../sos21-domain" }

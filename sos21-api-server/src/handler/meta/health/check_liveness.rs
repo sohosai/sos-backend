@@ -25,7 +25,7 @@ impl HandlerResponse for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(_request: Request) -> HandlerResult<Response, Error> {
     Ok(Response)
 }

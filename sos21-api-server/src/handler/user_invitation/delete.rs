@@ -48,7 +48,7 @@ impl From<delete_user_invitation::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     delete_user_invitation::run(&ctx, request.invitation_id.into_use_case()).await?;
     Ok(Response {})

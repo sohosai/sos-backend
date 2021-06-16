@@ -48,7 +48,7 @@ impl From<get_user_invitation::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let invitation = get_user_invitation::run(&ctx, request.invitation_id.into_use_case()).await?;
     let invitation = UserInvitation::from_use_case(invitation);

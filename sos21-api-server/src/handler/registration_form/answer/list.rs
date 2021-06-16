@@ -54,7 +54,7 @@ impl From<list_registration_form_answers::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let registration_form_id = request.registration_form_id.into_use_case();
     let answers = list_registration_form_answers::run(&ctx, registration_form_id).await?;

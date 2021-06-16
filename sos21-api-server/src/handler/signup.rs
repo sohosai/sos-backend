@@ -58,7 +58,7 @@ impl From<signup::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(
     ctx: Authentication<Context>,
     request: Request,

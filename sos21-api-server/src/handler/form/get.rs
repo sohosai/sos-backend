@@ -48,7 +48,7 @@ impl From<get_form::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let form = get_form::run(&ctx, request.form_id.into_use_case()).await?;
     let form = Form::from_use_case(form);
