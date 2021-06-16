@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["GroupNameError",""],["KanaGroupNameError",""],["KanaNameError",""],["NameError",""],["ProjectGroupName",""],["ProjectKanaGroupName",""],["ProjectKanaName",""],["ProjectName",""]]});
+initSidebarItems({"enum":[["NameLengthError",""]],"struct":[["GroupNameError",""],["KanaGroupNameError",""],["KanaNameError",""],["NameError",""],["ProjectGroupName",""],["ProjectKanaGroupName",""],["ProjectKanaName",""],["ProjectName",""],["ProjectNameString","A project-name string."]]});

@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["FormRepository",""]]});
+initSidebarItems({"struct":[["ProjectForm",""]],"trait":[["FormRepository",""]]});

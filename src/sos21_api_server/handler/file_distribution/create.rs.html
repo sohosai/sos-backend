@@ -1,7 +1,7 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `sos21-api-server/src/handler/file_distribution/create.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>create.rs - source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `sos21-api-server/src/handler/file_distribution/create.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>create.rs - source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../../storage.js"></script><script src="../../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../../sos21_api_server/index.html'><div class='logo-container rust-logo'><img src='../../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../../settings.html"><img src="../../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../../sos21_api_server/index.html'><div class='logo-container rust-logo'><img src='../../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../../../../settings.html"><img src="../../../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -124,6 +124,30 @@
 <span id="121">121</span>
 <span id="122">122</span>
 <span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">file</span>::<span class="ident">FileId</span>;
@@ -146,9 +170,17 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RequestFileMapping</span> {
-    <span class="kw">pub</span> <span class="ident">project_id</span>: <span class="ident">ProjectId</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">project</span>: <span class="ident">RequestProject</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">flatten</span>)]</span>
     <span class="kw">pub</span> <span class="ident">file</span>: <span class="ident">RequestFile</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;snake_case&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">RequestProject</span> {
+    <span class="ident">ProjectId</span>(<span class="ident">ProjectId</span>),
+    <span class="ident">ProjectCode</span>(<span class="ident">String</span>),
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Deserialize</span>)]</span>
@@ -173,6 +205,8 @@
 <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;SCREAMING_SNAKE_CASE&quot;</span>, <span class="ident">tag</span> <span class="op">=</span> <span class="string">&quot;type&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
     <span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> },
+    <span class="ident">InvalidProjectCode</span>,
+    <span class="ident">DuplicatedProject</span> { <span class="ident">project_id</span>: <span class="ident">ProjectId</span> },
     <span class="ident">ProjectNotFound</span>,
     <span class="ident">FileNotFound</span>,
     <span class="ident">FileSharingNotFound</span>,
@@ -185,6 +219,8 @@
     <span class="kw">fn</span> <span class="ident">status_code</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StatusCode</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Error</span>::<span class="ident">InvalidField</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">BAD_REQUEST</span>,
+            <span class="ident">Error</span>::<span class="ident">InvalidProjectCode</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">BAD_REQUEST</span>,
+            <span class="ident">Error</span>::<span class="ident">DuplicatedProject</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">CONFLICT</span>,
             <span class="ident">Error</span>::<span class="ident">ProjectNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">NOT_FOUND</span>,
             <span class="ident">Error</span>::<span class="ident">FileNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">NOT_FOUND</span>,
             <span class="ident">Error</span>::<span class="ident">FileSharingNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">NOT_FOUND</span>,
@@ -204,9 +240,10 @@
             },
             <span class="ident">distribute_files</span>::<span class="ident">Error</span>::<span class="ident">NoFiles</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="string">&quot;files&quot;</span> },
             <span class="ident">distribute_files</span>::<span class="ident">Error</span>::<span class="ident">TooManyFiles</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="string">&quot;files&quot;</span> },
-            <span class="ident">distribute_files</span>::<span class="ident">Error</span>::<span class="ident">DuplicatedProjectId</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">Error</span>::<span class="ident">InvalidField</span> { <span class="ident">field</span>: <span class="string">&quot;files&quot;</span> }
-            }
+            <span class="ident">distribute_files</span>::<span class="ident">Error</span>::<span class="ident">DuplicatedProject</span>(<span class="ident">project_id</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">DuplicatedProject</span> {
+                <span class="ident">project_id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_use_case</span>(<span class="ident">project_id</span>),
+            },
+            <span class="ident">distribute_files</span>::<span class="ident">Error</span>::<span class="ident">InvalidProjectCode</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">InvalidProjectCode</span>,
             <span class="ident">distribute_files</span>::<span class="ident">Error</span>::<span class="ident">ProjectNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">ProjectNotFound</span>,
             <span class="ident">distribute_files</span>::<span class="ident">Error</span>::<span class="ident">FileNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">FileNotFound</span>,
             <span class="ident">distribute_files</span>::<span class="ident">Error</span>::<span class="ident">FileSharingNotFound</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">FileSharingNotFound</span>,
@@ -217,7 +254,7 @@
     }
 }
 
-<span class="attribute">#[<span class="ident">apply_macro</span>::<span class="ident">apply</span>(<span class="ident">handler</span>)]</span>
+<span class="attribute">#[<span class="ident">macro_rules_attribute</span>::<span class="ident">macro_rules_attribute</span>(<span class="macro">handler</span><span class="macro">!</span>)]</span>
 <span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">handler</span>(<span class="ident">ctx</span>: <span class="ident">Login</span><span class="op">&lt;</span><span class="ident">Context</span><span class="op">&gt;</span>, <span class="ident">request</span>: <span class="ident">Request</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">HandlerResult</span><span class="op">&lt;</span><span class="ident">Response</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">distribute_files</span>::<span class="ident">Input</span> {
         <span class="ident">name</span>: <span class="ident">request</span>.<span class="ident">name</span>,
@@ -235,8 +272,19 @@
 
 <span class="kw">fn</span> <span class="ident">to_input_file_mapping</span>(<span class="ident">mapping</span>: <span class="ident">RequestFileMapping</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">distribute_files</span>::<span class="ident">InputFileMapping</span> {
     <span class="ident">distribute_files</span>::<span class="ident">InputFileMapping</span> {
-        <span class="ident">project_id</span>: <span class="ident">mapping</span>.<span class="ident">project_id</span>.<span class="ident">into_use_case</span>(),
+        <span class="ident">project</span>: <span class="ident">to_input_project</span>(<span class="ident">mapping</span>.<span class="ident">project</span>),
         <span class="ident">file</span>: <span class="ident">to_input_file</span>(<span class="ident">mapping</span>.<span class="ident">file</span>),
+    }
+}
+
+<span class="kw">fn</span> <span class="ident">to_input_project</span>(<span class="ident">project</span>: <span class="ident">RequestProject</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">distribute_files</span>::<span class="ident">InputProject</span> {
+    <span class="kw">match</span> <span class="ident">project</span> {
+        <span class="ident">RequestProject</span>::<span class="ident">ProjectId</span>(<span class="ident">project_id</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">distribute_files</span>::<span class="ident">InputProject</span>::<span class="ident">Id</span>(<span class="ident">project_id</span>.<span class="ident">into_use_case</span>())
+        }
+        <span class="ident">RequestProject</span>::<span class="ident">ProjectCode</span>(<span class="ident">project_code</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">distribute_files</span>::<span class="ident">InputProject</span>::<span class="ident">Code</span>(<span class="ident">project_code</span>)
+        }
     }
 }
 
@@ -249,5 +297,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="sos21_api_server"></div>
-    <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="sos21_api_server" data-search-js="../../../../search-index.js"></div>
+    <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script></body></html>

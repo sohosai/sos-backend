@@ -1,7 +1,7 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `sos21-domain/src/model/file_sharing.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>file_sharing.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `sos21-domain/src/model/file_sharing.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>file_sharing.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../sos21_domain/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../sos21_domain/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -426,13 +426,77 @@
 <span id="423">423</span>
 <span id="424">424</span>
 <span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file</span>::{<span class="ident">File</span>, <span class="ident">FileId</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form_answer</span>::<span class="ident">FormAnswer</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::<span class="ident">Project</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswer</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">User</span>;
 
+<span class="kw">use</span> <span class="ident">anyhow</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">thiserror</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
@@ -569,8 +633,19 @@
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">file_id</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">scope</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FileSharingScope</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">scope</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_scope_to_project_answer</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">project</span>: <span class="kw-2">&amp;</span><span class="ident">Project</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">respondent</span>, <span class="ident">registration_form_id</span>) <span class="op">=</span> <span class="self">self</span>
+            .<span class="number">0</span>
+            .<span class="ident">scope</span>
+            .<span class="ident">registration_form_answer</span>()
+            .<span class="ident">context</span>(<span class="string">&quot;set_scope_to_project_answer on non registration_form_answer sharing&quot;</span>)<span class="question-mark">?</span>;
+        <span class="ident">respondent</span>.<span class="ident">replace_to_project</span>(<span class="ident">project</span>);
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">scope</span> <span class="op">=</span> <span class="ident">FileSharingScope</span>::<span class="ident">RegistrationFormAnswer</span>(<span class="ident">respondent</span>, <span class="ident">registration_form_id</span>);
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">scope</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">FileSharingScope</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>.<span class="ident">scope</span>
     }
 
     <span class="doccomment">/// Equivalent to `sharing.state_at(DateTime::now())`</span>
@@ -681,6 +756,19 @@
 
         <span class="self">self</span>.<span class="ident">state_to_witness</span>()
     }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_witness_with_registration_form_answer</span>(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="ident">answer</span>: <span class="kw-2">&amp;</span><span class="ident">RegistrationFormAnswer</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">FileSharingWitness</span>, <span class="ident">ToWitnessError</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="number">0</span>.<span class="ident">scope</span>.<span class="ident">contains_registration_form_answer</span>(<span class="ident">answer</span>) {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ToWitnessError</span> {
+                <span class="ident">kind</span>: <span class="ident">ToWitnessErrorKind</span>::<span class="ident">OutOfScope</span>,
+            });
+        }
+
+        <span class="self">self</span>.<span class="ident">state_to_witness</span>()
+    }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
@@ -737,7 +825,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_with_owner_file</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> (<span class="ident">file</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">file</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">FileSharingScope</span>::<span class="ident">Public</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">sharing</span>.<span class="ident">is_visible_to_with_file</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>, <span class="kw-2">&amp;</span><span class="ident">file</span>));
     }
@@ -746,8 +834,8 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_with_other_file</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> (<span class="ident">file</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
-        <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>.<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">file</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_file</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">FileSharingScope</span>::<span class="ident">Public</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">sharing</span>.<span class="ident">is_visible_to_with_file</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>, <span class="kw-2">&amp;</span><span class="ident">other_file</span>));
     }
@@ -812,6 +900,41 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_witness_with_project_query_ok</span>() {
+        <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
+        <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project_query</span>::{<span class="ident">ProjectQuery</span>, <span class="ident">ProjectQueryConjunction</span>};
+
+        <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
+            <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">General</span>),
+            <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),
+        }])
+        .<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">FileSharingScope</span>::<span class="ident">ProjectQuery</span>(<span class="ident">query</span>);
+        <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">test_model</span>::<span class="ident">new_file_id</span>(), <span class="ident">scope</span>);
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">test_model</span>::<span class="ident">new_user_id</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">sharing</span>.<span class="ident">to_witness_with_project</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>).<span class="ident">is_ok</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_witness_with_project_query_out_of_scope</span>() {
+        <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project_query</span>::<span class="ident">ProjectQuery</span>;
+
+        <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">ToWitnessErrorKind</span>;
+
+        <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">FileSharingScope</span>::<span class="ident">ProjectQuery</span>(<span class="ident">query</span>);
+        <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">test_model</span>::<span class="ident">new_file_id</span>(), <span class="ident">scope</span>);
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">test_model</span>::<span class="ident">new_user_id</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
+            <span class="ident">sharing</span>
+                .<span class="ident">to_witness_with_project</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>)
+                .<span class="ident">unwrap_err</span>()
+                .<span class="ident">kind</span>(),
+            <span class="ident">ToWitnessErrorKind</span>::<span class="ident">OutOfScope</span>
+        ));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_witness_with_project_out_of_scope</span>() {
         <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">ToWitnessErrorKind</span>;
 
@@ -838,9 +961,10 @@
             <span class="ident">FileSharingScope</span>::<span class="ident">FormAnswer</span>(<span class="ident">test_model</span>::<span class="ident">new_project_id</span>(), <span class="ident">test_model</span>::<span class="ident">new_form_id</span>()),
         );
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form</span>(<span class="ident">test_model</span>::<span class="ident">new_user_id</span>());
+        <span class="kw">let</span> <span class="ident">owner_id</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_user_id</span>();
         <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_form_answer</span>(
-            <span class="ident">test_model</span>::<span class="ident">new_user_id</span>(),
-            <span class="ident">test_model</span>::<span class="ident">new_project_id</span>(),
+            <span class="ident">owner_id</span>.<span class="ident">clone</span>(),
+            <span class="kw-2">&amp;</span><span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">owner_id</span>.<span class="ident">clone</span>()),
             <span class="kw-2">&amp;</span><span class="ident">form</span>,
         );
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">matches</span><span class="macro">!</span>(
@@ -853,5 +977,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="sos21_domain"></div>
-    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="sos21_domain" data-search-js="../../../search-index.js"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script></body></html>
