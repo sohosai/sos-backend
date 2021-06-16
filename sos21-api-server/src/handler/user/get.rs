@@ -45,7 +45,7 @@ impl From<get_user::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let user = get_user::run(&ctx, request.user_id.into_use_case()).await?;
     Ok(Response {

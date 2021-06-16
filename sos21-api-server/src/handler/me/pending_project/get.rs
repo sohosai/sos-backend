@@ -43,7 +43,7 @@ impl From<get_user_pending_project::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
     let pending_project = get_user_pending_project::run(&ctx).await?;
     let pending_project = PendingProject::from_use_case(pending_project);

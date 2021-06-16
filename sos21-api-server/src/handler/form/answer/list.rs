@@ -48,7 +48,7 @@ impl From<list_form_answers::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let answers = list_form_answers::run(&ctx, request.form_id.into_use_case()).await?;
     let answers = answers.into_iter().map(FormAnswer::from_use_case).collect();

@@ -48,7 +48,7 @@ impl From<get_file_distribution::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let distribution_id = request.distribution_id.into_use_case();
     let distribution = get_file_distribution::run(&ctx, distribution_id).await?;

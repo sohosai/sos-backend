@@ -65,7 +65,7 @@ impl From<export_users::Error> for Error {
     }
 }
 
-#[apply_macro::apply(raw_response_handler)]
+#[macro_rules_attribute::macro_rules_attribute(raw_response_handler!)]
 pub async fn handler(
     ctx: Login<Context>,
     request: Request,

@@ -37,7 +37,7 @@ impl From<get_publicly_shared_file_object::Error> for Error {
     }
 }
 
-#[apply_macro::apply(raw_response_handler)]
+#[macro_rules_attribute::macro_rules_attribute(raw_response_handler!)]
 pub async fn handler(ctx: Context, request: Request) -> HandlerResult<impl warp::Reply, Error> {
     let sharing_id = request.sharing_id.into_use_case();
     let file_object = get_publicly_shared_file_object::run(&ctx, sharing_id).await?;

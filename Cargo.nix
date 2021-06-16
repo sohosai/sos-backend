@@ -244,17 +244,6 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
-      "apply-macro" = rec {
-        crateName = "apply-macro";
-        version = "1.0.10";
-        edition = "2018";
-        sha256 = "0nsvljl6r9sfrhlp5yjy098kd83gv8qrmpnsd2pz0s6zixkpmybn";
-        procMacro = true;
-        authors = [
-          "hyd-dev <yd-huang@outlook.com>"
-        ];
-        
-      };
       "arrayref" = rec {
         crateName = "arrayref";
         version = "0.3.6";
@@ -2803,6 +2792,38 @@ rec {
           "kv_unstable_sval" = [ "kv_unstable" "sval/fmt" ];
         };
         resolvedDefaultFeatures = [ "std" ];
+      };
+      "macro_rules_attribute" = rec {
+        crateName = "macro_rules_attribute";
+        version = "0.0.2";
+        edition = "2018";
+        sha256 = "01ah36ja8wcr9400iqk3rrqhq1dihbinwbrgkk7q22yqdjpn8734";
+        authors = [
+          "Daniel Henry-Mantilla <daniel.henry.mantilla@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "macro_rules_attribute-proc_macro";
+            packageId = "macro_rules_attribute-proc_macro";
+            rename = "proc_macro";
+          }
+        ];
+        features = {
+          "verbose-expansions" = [ "proc_macro/verbose-expansions" ];
+        };
+      };
+      "macro_rules_attribute-proc_macro" = rec {
+        crateName = "macro_rules_attribute-proc_macro";
+        version = "0.0.2";
+        edition = "2018";
+        sha256 = "1635f3wk1fvzs741p3smvyf9757jhh7rm7qcx6vbhiwcbbd6l97b";
+        procMacro = true;
+        libPath = "mod.rs";
+        authors = [
+          "Daniel Henry-Mantilla <daniel.henry.mantilla@gmail.com>"
+        ];
+        features = {
+        };
       };
       "maplit" = rec {
         crateName = "maplit";
@@ -5502,10 +5523,6 @@ rec {
             packageId = "anyhow";
           }
           {
-            name = "apply-macro";
-            packageId = "apply-macro";
-          }
-          {
             name = "async-trait";
             packageId = "async-trait";
           }
@@ -5529,6 +5546,10 @@ rec {
           {
             name = "jsonwebtoken";
             packageId = "jsonwebtoken";
+          }
+          {
+            name = "macro_rules_attribute";
+            packageId = "macro_rules_attribute";
           }
           {
             name = "mime";

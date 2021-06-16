@@ -39,7 +39,7 @@ impl From<Infallible> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
     let files = list_user_files::run(&ctx).await?;
     let files = files.into_iter().map(File::from_use_case).collect();

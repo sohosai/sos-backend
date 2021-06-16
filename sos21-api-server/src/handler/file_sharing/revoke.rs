@@ -51,7 +51,7 @@ impl From<revoke_file_sharing::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let sharing = revoke_file_sharing::run(&ctx, request.sharing_id.into_use_case()).await?;
     let sharing = FileSharing::from_use_case(sharing);

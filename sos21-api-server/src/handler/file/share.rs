@@ -86,7 +86,7 @@ impl From<share_file::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let input = share_file::Input {
         file_id: request.file_id.into_use_case(),

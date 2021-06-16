@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Security
 
+- Replace `apply-macro` with `macro_rules_attribute` since `apply-macro` is yanked (#[107](https://github.com/sohosai/sos21-backend/pull/107))
+
 ## [0.5.0-beta] - 2021-05-23
 
 ### Added

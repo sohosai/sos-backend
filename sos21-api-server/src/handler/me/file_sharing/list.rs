@@ -39,7 +39,7 @@ impl From<Infallible> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
     let sharings = list_user_file_sharings::run(&ctx).await?;
     let sharings = sharings

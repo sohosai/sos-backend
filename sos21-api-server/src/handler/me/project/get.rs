@@ -43,7 +43,7 @@ impl From<get_user_project::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
     let project = get_user_project::run(&ctx).await?;
     let project = Project::from_use_case(project);

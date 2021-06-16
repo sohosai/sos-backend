@@ -43,7 +43,7 @@ impl From<list_all_forms::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
     let forms = list_all_forms::run(&ctx).await?;
     let forms = forms.into_iter().map(Form::from_use_case).collect();

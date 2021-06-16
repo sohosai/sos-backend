@@ -52,7 +52,7 @@ impl From<get_registration_form_answer::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let answer = get_registration_form_answer::run(&ctx, request.answer_id.into_use_case()).await?;
     let answer = RegistrationFormAnswer::from_use_case(answer);

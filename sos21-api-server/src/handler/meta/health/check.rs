@@ -63,7 +63,7 @@ async fn check_database(app: &App) -> HandlerResult<(), Error> {
     Ok(())
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(app: App, _request: Request) -> HandlerResult<Response, Error> {
     check_s3(&app).await?;
     check_database(&app).await?;

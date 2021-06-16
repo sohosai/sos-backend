@@ -43,7 +43,7 @@ impl From<list_all_projects::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
     let projects = list_all_projects::run(&ctx).await?;
     let projects = projects.into_iter().map(Project::from_use_case).collect();

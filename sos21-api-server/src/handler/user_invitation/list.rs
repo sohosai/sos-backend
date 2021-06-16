@@ -45,7 +45,7 @@ impl From<list_all_user_invitations::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, _request: Request) -> HandlerResult<Response, Error> {
     let invitations = list_all_user_invitations::run(&ctx).await?;
     let invitations = invitations

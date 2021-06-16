@@ -37,7 +37,7 @@ impl HandlerResponse for Response {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(_request: Request) -> HandlerResult<Response, Error> {
     // See https://docs.rs/vergen/ and sos21-api-server/build.rs
 

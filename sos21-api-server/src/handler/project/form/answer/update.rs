@@ -113,7 +113,7 @@ impl From<update_project_form_answer::Error> for Error {
     }
 }
 
-#[apply_macro::apply(handler)]
+#[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Response, Error> {
     let input = update_project_form_answer::Input {
         project_id: request.project_id.into_use_case(),
