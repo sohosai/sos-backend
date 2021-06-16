@@ -12,6 +12,7 @@ pub struct Input {
     pub expires_at: Option<DateTime<Utc>>,
     pub scope: FileSharingScope,
     pub project_id: Option<Uuid>,
+    pub project_query: Option<serde_json::Value>,
     pub form_answer_project_id: Option<Uuid>,
     pub form_answer_form_id: Option<Uuid>,
     pub registration_form_answer_project_id: Option<Uuid>,
@@ -32,11 +33,12 @@ UPDATE file_sharings
     expires_at = $4,
     scope = $5,
     project_id = $6,
-    form_answer_project_id = $7,
-    form_answer_form_id = $8,
-    registration_form_answer_project_id = $9,
-    registration_form_answer_pending_project_id = $10,
-    registration_form_answer_registration_form_id = $11
+    project_query = $7,
+    form_answer_project_id = $8,
+    form_answer_form_id = $9,
+    registration_form_answer_project_id = $10,
+    registration_form_answer_pending_project_id = $11,
+    registration_form_answer_registration_form_id = $12
   WHERE id = $1
 "#,
         input.id,
@@ -45,6 +47,7 @@ UPDATE file_sharings
         input.expires_at,
         input.scope as _,
         input.project_id,
+        input.project_query,
         input.form_answer_project_id,
         input.form_answer_form_id,
         input.registration_form_answer_project_id,

@@ -16,6 +16,17 @@ oneOf:
       type:
         type: string
         enum:
+          - project_query
+      query:
+        $ref: ../ProjectQuery.yml
+    required:
+      - type
+      - query
+  - type: object
+    properties:
+      type:
+        type: string
+        enum:
           - form_answer
       project_id:
         $ref: ../project/ProjectId.yml

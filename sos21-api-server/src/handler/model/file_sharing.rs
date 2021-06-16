@@ -2,6 +2,7 @@ use crate::handler::model::date_time::DateTime;
 use crate::handler::model::file::FileId;
 use crate::handler::model::form::FormId;
 use crate::handler::model::project::ProjectId;
+use crate::handler::model::project_query::ProjectQuery;
 use crate::handler::model::registration_form::RegistrationFormId;
 use crate::handler::model::registration_form_answer::RegistrationFormAnswerRespondent;
 
@@ -30,6 +31,9 @@ pub enum FileSharingScope {
     Project {
         id: ProjectId,
     },
+    ProjectQuery {
+        query: ProjectQuery,
+    },
     FormAnswer {
         project_id: ProjectId,
         form_id: FormId,
@@ -49,6 +53,9 @@ impl FileSharingScope {
         match scope {
             use_case::FileSharingScope::Project(project_id) => FileSharingScope::Project {
                 id: ProjectId::from_use_case(project_id),
+            },
+            use_case::FileSharingScope::ProjectQuery(query) => FileSharingScope::ProjectQuery {
+                query: ProjectQuery::from_use_case(query),
             },
             use_case::FileSharingScope::FormAnswer(project_id, form_id) => {
                 FileSharingScope::FormAnswer {

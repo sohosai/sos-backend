@@ -1,6 +1,7 @@
 use crate::model::file::FileId;
 use crate::model::form::FormId;
 use crate::model::project::ProjectId;
+use crate::model::project_query::ProjectQuery;
 use crate::model::registration_form::RegistrationFormId;
 use crate::model::registration_form_answer::RegistrationFormAnswerRespondent;
 
@@ -25,6 +26,7 @@ impl FileSharingId {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum FileSharingScope {
     Project(ProjectId),
+    ProjectQuery(ProjectQuery),
     FormAnswer(ProjectId, FormId),
     RegistrationFormAnswer(RegistrationFormAnswerRespondent, RegistrationFormId),
     Committee,
@@ -37,6 +39,9 @@ impl FileSharingScope {
         match scope {
             entity::FileSharingScope::Project(project_id) => {
                 FileSharingScope::Project(ProjectId::from_entity(project_id))
+            }
+            entity::FileSharingScope::ProjectQuery(query) => {
+                FileSharingScope::ProjectQuery(ProjectQuery::from_entity(query))
             }
             entity::FileSharingScope::FormAnswer(project_id, form_id) => {
                 FileSharingScope::FormAnswer(
@@ -53,29 +58,6 @@ impl FileSharingScope {
             entity::FileSharingScope::Committee => FileSharingScope::Committee,
             entity::FileSharingScope::CommitteeOperator => FileSharingScope::CommitteeOperator,
             entity::FileSharingScope::Public => FileSharingScope::Public,
-        }
-    }
-
-    pub fn into_entity(self) -> entity::FileSharingScope {
-        match self {
-            FileSharingScope::Project(project_id) => {
-                entity::FileSharingScope::Project(project_id.into_entity())
-            }
-            FileSharingScope::FormAnswer(project_id, form_id) => {
-                entity::FileSharingScope::FormAnswer(
-                    project_id.into_entity(),
-                    form_id.into_entity(),
-                )
-            }
-            FileSharingScope::RegistrationFormAnswer(respondent, registration_form_id) => {
-                entity::FileSharingScope::RegistrationFormAnswer(
-                    respondent.into_entity(),
-                    registration_form_id.into_entity(),
-                )
-            }
-            FileSharingScope::Committee => entity::FileSharingScope::Committee,
-            FileSharingScope::CommitteeOperator => entity::FileSharingScope::CommitteeOperator,
-            FileSharingScope::Public => entity::FileSharingScope::Public,
         }
     }
 }
