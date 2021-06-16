@@ -231,6 +231,7 @@
 <span id="228">228</span>
 <span id="229">229</span>
 <span id="230">230</span>
+<span id="231">231</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -454,6 +455,7 @@
         .<span class="ident">allow_method</span>(<span class="ident">Method</span>::<span class="ident">POST</span>)
         .<span class="ident">allow_header</span>(<span class="ident">header</span>::<span class="ident">AUTHORIZATION</span>)
         .<span class="ident">allow_header</span>(<span class="ident">header</span>::<span class="ident">CONTENT_TYPE</span>)
+        .<span class="ident">expose_header</span>(<span class="ident">header</span>::<span class="ident">CONTENT_DISPOSITION</span>)
         .<span class="ident">max_age</span>(<span class="ident">std</span>::<span class="ident">time</span>::<span class="ident">Duration</span>::<span class="ident">from_secs</span>(<span class="number">30</span> <span class="op">*</span> <span class="number">60</span>));
 
     <span class="ident">routes</span>
