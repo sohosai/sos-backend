@@ -211,7 +211,8 @@ pub fn endpoints(
             / "get" => GET (handler::user_invitation::get),
             / "list" => GET (handler::user_invitation::list),
             / "delete" => POST (handler::user_invitation::delete),
-        }
+        },
+        / "assign-user-role-to-email" => POST (handler::assign_user_role_to_email),
     };
 
     let cors = warp::cors()

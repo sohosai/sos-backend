@@ -138,6 +138,90 @@ paths:
                 - email
                 - role
       description: ユーザーを招待します。
+  /assign-user-role-to-email:
+    post:
+      summary: assign-user-role-to-email
+      tags:
+        - user_invitation
+        - user
+        - admin
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      invitation:
+                        $ref: ./model/user_invitation/UserInvitation.yml
+                    required:
+                      - invitation
+                  - type: object
+                    properties:
+                      user:
+                        $ref: ./model/user/User.yml
+                    required:
+                      - user
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ./model/error/Error.yml
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        enum:
+                          - 400
+                      error:
+                        type: object
+                        required:
+                          - type
+                          - info
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - API
+                          info:
+                            type: object
+                            required:
+                              - type
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - INVALID_EMAIL_ADDRESS
+                                  - NOT_UNIVERSITY_EMAIL_ADDRESS
+                    required:
+                      - status
+                      - error
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      operationId: assign-user-role-to-email
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                role:
+                  $ref: ./model/user_invitation/UserInvitationRole.yml
+              required:
+                - email
+                - role
+      description: 指定されたメールアドレスにロールを割り当てます。
   /user-invitation/get:
     get:
       summary: user-invitation/get

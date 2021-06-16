@@ -28,6 +28,15 @@ impl<T> UseCaseError<T> {
     }
 }
 
+impl<T> UseCaseError<UseCaseError<T>> {
+    pub fn flatten(self) -> UseCaseError<T> {
+        match self {
+            UseCaseError::UseCase(err) => err,
+            UseCaseError::Internal(err) => UseCaseError::Internal(err),
+        }
+    }
+}
+
 impl<E> From<anyhow::Error> for UseCaseError<E> {
     fn from(e: anyhow::Error) -> Self {
         UseCaseError::Internal(e)

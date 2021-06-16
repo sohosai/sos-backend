@@ -10,8 +10,21 @@ macro_rules! use_case_ensure {
     };
 }
 
+macro_rules! use_case_internal {
+    ($msg:literal $(,)?) => {
+        $crate::UseCaseError::Internal(::anyhow::anyhow!($msg))
+    };
+    ($err:expr $(,)?) => {
+        $crate::UseCaseError::Internal(::anyhow::anyhow!($err))
+    };
+    ($fmt:expr, $($arg:tt)*) => {
+        $crate::UseCaseError::Internal(::anyhow::anyhow!($fmt, $($arg)*))
+    };
+}
+
 pub mod answer_form;
 pub mod answer_registration_form;
+pub mod assign_user_role_to_email;
 pub mod create_file;
 pub mod create_form;
 pub mod create_project;
