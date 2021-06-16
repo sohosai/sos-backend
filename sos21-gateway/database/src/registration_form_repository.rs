@@ -10,7 +10,9 @@ use futures::{
 };
 use ref_cast::RefCast;
 use sos21_database::{command, model as data, query};
-use sos21_domain::context::RegistrationFormRepository;
+use sos21_domain::context::registration_form_repository::{
+    PendingProjectRegistrationForm, RegistrationFormRepository,
+};
 use sos21_domain::model::{
     date_time::DateTime,
     pending_project::PendingProjectId,
@@ -97,11 +99,19 @@ impl RegistrationFormRepository for RegistrationFormDatabase {
     async fn list_registration_forms_by_pending_project(
         &self,
         pending_project_id: PendingProjectId,
-    ) -> Result<Vec<RegistrationForm>> {
+    ) -> Result<Vec<PendingProjectRegistrationForm>> {
         let mut lock = self.0.lock().await;
 
         query::list_registration_forms_by_pending_project(&mut *lock, pending_project_id.to_uuid())
-            .and_then(|data| future::ready(to_registration_form(data)))
+            .and_then(|data| {
+                let has_answer = data.has_answer;
+                future::ready(to_registration_form(data.registration_form).map(
+                    |registration_form| PendingProjectRegistrationForm {
+                        has_answer,
+                        registration_form,
+                    },
+                ))
+            })
             .try_collect()
             .await
     }
