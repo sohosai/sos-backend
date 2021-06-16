@@ -317,6 +317,9 @@
 <span id="314">314</span>
 <span id="315">315</span>
 <span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">Serialize</span>;
 <span class="kw">use</span> <span class="ident">sos21_use_case</span>::<span class="ident">UseCaseError</span>;
@@ -576,6 +579,9 @@
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">invite_user</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">invite_user</span>::<span class="ident">handler</span> <span class="kw">as</span> <span class="ident">invite_user</span>;
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">assign_user_role_to_email</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">assign_user_role_to_email</span>::<span class="ident">handler</span> <span class="kw">as</span> <span class="ident">assign_user_role_to_email</span>;
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">HandlerResponse</span>: <span class="ident">Serialize</span> {
     <span class="doccomment">/// Server errors are returned as `anyhow::Error`, not as `HandlerResponse`.</span>

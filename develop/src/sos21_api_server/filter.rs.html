@@ -232,6 +232,7 @@
 <span id="229">229</span>
 <span id="230">230</span>
 <span id="231">231</span>
+<span id="232">232</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -446,7 +447,8 @@
             <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">user_invitation</span>::<span class="ident">get</span>),
             <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">user_invitation</span>::<span class="ident">list</span>),
             <span class="op">/</span> <span class="string">&quot;delete&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">user_invitation</span>::<span class="ident">delete</span>),
-        }
+        },
+        <span class="op">/</span> <span class="string">&quot;assign-user-role-to-email&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">assign_user_role_to_email</span>),
     };
 
     <span class="kw">let</span> <span class="ident">cors</span> <span class="op">=</span> <span class="ident">warp</span>::<span class="ident">cors</span>()
