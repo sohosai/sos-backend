@@ -234,6 +234,9 @@
 <span id="231">231</span>
 <span id="232">232</span>
 <span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">project_repository</span>::{
     <span class="ident">from_project_attributes</span>, <span class="ident">from_project_category</span>, <span class="ident">to_project_attributes</span>, <span class="ident">to_project_category</span>,
@@ -247,7 +250,7 @@
 };
 <span class="kw">use</span> <span class="ident">ref_cast</span>::<span class="ident">RefCast</span>;
 <span class="kw">use</span> <span class="ident">sos21_database</span>::{<span class="ident">command</span>, <span class="ident">model</span> <span class="kw">as</span> <span class="ident">data</span>, <span class="ident">query</span>};
-<span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::<span class="ident">FormRepository</span>;
+<span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::<span class="ident">form_repository</span>::{<span class="ident">FormRepository</span>, <span class="ident">ProjectForm</span>};
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::{
     <span class="ident">date_time</span>::<span class="ident">DateTime</span>,
     <span class="ident">form</span>::{
@@ -372,10 +375,13 @@
             .<span class="kw">await</span>
     }
 
-    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_forms_by_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ProjectId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Form</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_forms_by_project</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ProjectId</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectForm</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">lock</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">lock</span>().<span class="kw">await</span>;
         <span class="ident">query</span>::<span class="ident">list_forms_by_project</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">id</span>.<span class="ident">to_uuid</span>())
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">data</span><span class="op">|</span> <span class="ident">future</span>::<span class="ident">ready</span>(<span class="ident">to_form</span>(<span class="ident">data</span>)))
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">data</span><span class="op">|</span> {
+                <span class="kw">let</span> <span class="ident">has_answer</span> <span class="op">=</span> <span class="ident">data</span>.<span class="ident">has_answer</span>;
+                <span class="ident">future</span>::<span class="ident">ready</span>(<span class="ident">to_form</span>(<span class="ident">data</span>.<span class="ident">form</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">form</span><span class="op">|</span> <span class="ident">ProjectForm</span> { <span class="ident">has_answer</span>, <span class="ident">form</span> }))
+            })
             .<span class="ident">try_collect</span>()
             .<span class="kw">await</span>
     }

@@ -125,6 +125,12 @@
 <span id="122">122</span>
 <span id="123">123</span>
 <span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">pending_project</span>::<span class="ident">PendingProjectId</span>,
@@ -133,6 +139,12 @@
 };
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="prelude-ty">Result</span>;
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PendingProjectRegistrationForm</span> {
+    <span class="kw">pub</span> <span class="ident">has_answer</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">registration_form</span>: <span class="ident">RegistrationForm</span>,
+}
 
 <span class="attribute">#[<span class="ident">async_trait</span>::<span class="ident">async_trait</span>]</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">RegistrationFormRepository</span> {
@@ -146,7 +158,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_registration_forms_by_pending_project</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">pending_project_id</span>: <span class="ident">PendingProjectId</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RegistrationForm</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PendingProjectRegistrationForm</span><span class="op">&gt;</span><span class="op">&gt;</span>;
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">count_registration_forms_by_pending_project</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">pending_project_id</span>: <span class="ident">PendingProjectId</span>,
@@ -184,7 +196,7 @@
             <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_registration_forms_by_pending_project</span>(
                 <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">sel</span>,
                 <span class="ident">pending_project_id</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProjectId</span>
-            ) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">registration_form</span>::<span class="ident">RegistrationForm</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+            ) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">anyhow</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">context</span>::<span class="ident">registration_form_repository</span>::<span class="ident">PendingProjectRegistrationForm</span><span class="op">&gt;</span><span class="op">&gt;</span> {
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">list_registration_forms_by_pending_project</span>(<span class="ident">pending_project_id</span>).<span class="kw">await</span>
             }
             <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">count_registration_forms_by_pending_project</span>(
@@ -223,7 +235,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">list_registration_forms_by_pending_project</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">pending_project_id</span>: <span class="ident">PendingProjectId</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RegistrationForm</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PendingProjectRegistrationForm</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">RegistrationFormRepository</span><span class="op">&gt;</span>::<span class="ident">list_registration_forms_by_pending_project</span>(
             <span class="self">self</span>,
             <span class="ident">pending_project_id</span>,

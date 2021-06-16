@@ -103,6 +103,21 @@
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::{<span class="ident">Form</span>, <span class="ident">FormData</span>, <span class="ident">FormProjectQueryConjunction</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
@@ -111,7 +126,16 @@
 <span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">stream</span>::{<span class="ident">BoxStream</span>, <span class="ident">StreamExt</span>};
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">list_forms_by_project</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">E</span><span class="op">&gt;</span>(<span class="ident">conn</span>: <span class="ident">E</span>, <span class="ident">project_id</span>: <span class="ident">Uuid</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">BoxStream</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">FormData</span><span class="op">&gt;</span><span class="op">&gt;</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProjectFormData</span> {
+    <span class="kw">pub</span> <span class="ident">form</span>: <span class="ident">FormData</span>,
+    <span class="kw">pub</span> <span class="ident">has_answer</span>: <span class="ident">bool</span>,
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">list_forms_by_project</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">E</span><span class="op">&gt;</span>(
+    <span class="ident">conn</span>: <span class="ident">E</span>,
+    <span class="ident">project_id</span>: <span class="ident">Uuid</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">BoxStream</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ProjectFormData</span><span class="op">&gt;</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">E</span>: <span class="ident">sqlx</span>::<span class="ident">Executor</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Database</span> <span class="op">=</span> <span class="ident">sqlx</span>::<span class="ident">Postgres</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;a</span>,
 {
@@ -157,7 +181,8 @@ SELECT
         ))
         /* works because attributes column in form_project_query_conjunctions table is NOT NULL */
         FILTER (WHERE form_project_query_conjunctions.attributes IS NOT NULL)
-        AS &quot;query: Vec&lt;(Option&lt;ProjectCategory&gt;, ProjectAttributes)&gt;&quot;
+        AS &quot;query: Vec&lt;(Option&lt;ProjectCategory&gt;, ProjectAttributes)&gt;&quot;,
+    bool_or(form_answers.id IS NOT NULL) AS has_answer
 FROM project_forms
 INNER JOIN forms
     ON forms.id = project_forms.id
@@ -167,6 +192,8 @@ LEFT OUTER JOIN form_condition_excludes
     ON forms.id = form_condition_excludes.form_id
 LEFT OUTER JOIN form_project_query_conjunctions
     ON forms.id = form_project_query_conjunctions.form_id
+LEFT OUTER JOIN form_answers
+    ON forms.id = form_answers.form_id AND form_answers.project_id = $1
 GROUP BY forms.id
 &quot;#</span>,
         <span class="ident">project_id</span>
@@ -197,11 +224,14 @@ GROUP BY forms.id
             })
             .<span class="ident">collect</span>();
 
-        <span class="prelude-val">Ok</span>(<span class="ident">FormData</span> {
-            <span class="ident">form</span>,
-            <span class="ident">include_ids</span>,
-            <span class="ident">exclude_ids</span>,
-            <span class="ident">query</span>,
+        <span class="prelude-val">Ok</span>(<span class="ident">ProjectFormData</span> {
+            <span class="ident">form</span>: <span class="ident">FormData</span> {
+                <span class="ident">form</span>,
+                <span class="ident">include_ids</span>,
+                <span class="ident">exclude_ids</span>,
+                <span class="ident">query</span>
+            },
+            <span class="ident">has_answer</span>: <span class="ident">row</span>.<span class="ident">has_answer</span>.<span class="ident">unwrap_or</span>(<span class="bool-val">false</span>)
         })
     })
     .<span class="ident">boxed</span>()
