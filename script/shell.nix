@@ -16,5 +16,5 @@ pkgs.mkShell {
   ];
 
   # Do not search $HOME/.cargo/bin for subcommands (rust-lang/cargo#6507)
-  CARGO_HOME = toString ./.cargo;
+  CARGO_HOME = toString ../.cargo;
 }
