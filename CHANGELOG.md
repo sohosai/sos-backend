@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 ### Security
 
+- Update `tokio` to 1.8.1 ([#114](https://github.com/sohosai/sos21-backend/pull/114))
+
 ## [0.5.1] - 2021-06-16
 
 ### Added
