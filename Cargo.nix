@@ -7142,9 +7142,9 @@ rec {
       };
       "tokio" = rec {
         crateName = "tokio";
-        version = "1.0.2";
+        version = "1.8.1";
         edition = "2018";
-        sha256 = "1v7nrwwnmlv3f6xlhd4xwzjq7h8aysc5gdjph1ilqizjdzn4r80c";
+        sha256 = "11g9x25mrs5589jqdcxq4igryy2k0c893lrxss1ylxacq5fv1j4q";
         authors = [
           "Tokio Contributors <team@tokio.rs>"
         ];
@@ -7225,7 +7225,7 @@ rec {
           "full" = [ "fs" "io-util" "io-std" "macros" "net" "parking_lot" "process" "rt" "rt-multi-thread" "signal" "sync" "time" ];
           "io-util" = [ "memchr" "bytes" ];
           "macros" = [ "tokio-macros" ];
-          "net" = [ "libc" "mio/os-poll" "mio/os-util" "mio/tcp" "mio/udp" "mio/uds" ];
+          "net" = [ "libc" "mio/os-poll" "mio/os-util" "mio/tcp" "mio/udp" "mio/uds" "winapi/namedpipeapi" ];
           "process" = [ "bytes" "once_cell" "libc" "mio/os-poll" "mio/os-util" "mio/uds" "signal-hook-registry" "winapi/threadpoollegacyapiset" ];
           "rt-multi-thread" = [ "num_cpus" "rt" ];
           "signal" = [ "once_cell" "libc" "mio/os-poll" "mio/uds" "mio/os-util" "signal-hook-registry" "winapi/consoleapi" ];
@@ -7234,9 +7234,9 @@ rec {
       };
       "tokio-macros" = rec {
         crateName = "tokio-macros";
-        version = "1.0.0";
+        version = "1.3.0";
         edition = "2018";
-        sha256 = "150l6wfcqw2rcjaf22qk3z6ca794x0s2c68n5ar18cfafllpsla2";
+        sha256 = "045igm2h1mfjakbi68hrl07dflgs2rfvvjff17ylxgjf3zk3nisl";
         procMacro = true;
         authors = [
           "Tokio Contributors <team@tokio.rs>"
