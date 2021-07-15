@@ -2147,6 +2147,61 @@ paths:
               required:
                 - id
     parameters: []
+  /project/update-any:
+    post:
+      summary: project/update-any
+      operationId: project/update-any
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: ./model/project/Project.yml
+                required:
+                  - project
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 任意の指定された企画の情報を更新します。
+      tags:
+        - project
+        - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  $ref: ./model/project/ProjectId.yml
+                name:
+                  type: string
+                kana_name:
+                  type: string
+                group_name:
+                  type: string
+                kana_group_name:
+                  type: string
+                description:
+                  type: string
+                category:
+                  $ref: ./model/project/ProjectCategory.yml
+                attributes:
+                  type: array
+                  items:
+                    $ref: ./model/project/ProjectAttribute.yml
+              required:
+                - id
+    parameters: []
   /pending-project/update:
     post:
       summary: pending-project/update
@@ -2209,6 +2264,61 @@ paths:
       description: 指定された承認待ち企画の情報を更新します。
       tags:
         - pending_project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  $ref: ./model/pending_project/PendingProjectId.yml
+                name:
+                  type: string
+                kana_name:
+                  type: string
+                group_name:
+                  type: string
+                kana_group_name:
+                  type: string
+                description:
+                  type: string
+                category:
+                  $ref: ./model/project/ProjectCategory.yml
+                attributes:
+                  type: array
+                  items:
+                    $ref: ./model/project/ProjectAttribute.yml
+              required:
+                - id
+    parameters: []
+  /pending-project/update-any:
+    post:
+      summary: pending-project/update-any
+      operationId: pending-project/update-any
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pending_project:
+                    $ref: ./model/pending_project/PendingProject.yml
+                required:
+                  - pending_project
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/PendingProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 任意の指定された承認待ち企画の情報を更新します。
+      tags:
+        - pending_project
+        - admin
       requestBody:
         content:
           application/json:

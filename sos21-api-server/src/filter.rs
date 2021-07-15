@@ -99,6 +99,7 @@ pub fn endpoints(
             / "create" => POST (handler::project::create),
             / "get" => GET (handler::project::get),
             / "update" => POST (handler::project::update),
+            / "update-any" => POST (handler::project::update_any),
             / "list" => GET (handler::project::list),
             / "export" => GET (handler::project::export),
             / "form" {
@@ -138,6 +139,7 @@ pub fn endpoints(
         / "pending-project" {
             / "get" => GET (handler::pending_project::get),
             / "update" => POST (handler::pending_project::update),
+            / "update-any" => POST (handler::pending_project::update_any),
             / "registration-form" {
                 / "get" => GET (handler::pending_project::registration_form::get),
                 / "list" => GET (handler::pending_project::registration_form::list),
