@@ -128,7 +128,7 @@ where
 mod tests {
     use crate::model::{project::ProjectCategory, user::UserId};
     use crate::{get_pending_project, prepare_project, UseCaseError};
-    use sos21_domain::test;
+    use sos21_domain::{model::project, test};
 
     fn mock_input() -> (String, prepare_project::Input) {
         let name = "テストテスト".to_string();
@@ -171,7 +171,7 @@ mod tests {
         let period = test::model::new_project_creation_period_from_now();
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -194,7 +194,7 @@ mod tests {
         let period = test::model::new_project_creation_period_with_hours_from_now(1);
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -214,7 +214,7 @@ mod tests {
         let period = test::model::new_project_creation_period_to_now();
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .await;

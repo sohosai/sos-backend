@@ -20,7 +20,7 @@ use crate::model::{
     form_answer::{FormAnswer, FormAnswerId},
     object::{Object, ObjectData, ObjectId},
     pending_project::{PendingProject, PendingProjectId},
-    project::{Project, ProjectId, ProjectIndex},
+    project::{Project, ProjectCategory, ProjectId, ProjectIndex},
     project_creation_period::ProjectCreationPeriod,
     registration_form::{RegistrationForm, RegistrationFormId},
     registration_form_answer::{RegistrationFormAnswer, RegistrationFormAnswerId},
@@ -52,7 +52,7 @@ pub struct MockAppBuilder {
     registration_forms: HashMap<RegistrationFormId, RegistrationForm>,
     registration_form_answers: HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>,
     user_invitations: HashMap<UserInvitationId, UserInvitation>,
-    project_creation_period: Option<ProjectCreationPeriod>,
+    project_creation_periods: HashMap<ProjectCategory, ProjectCreationPeriod>,
 }
 
 impl MockAppBuilder {
@@ -196,12 +196,13 @@ impl MockAppBuilder {
         self
     }
 
-    pub fn project_creation_period(
+    pub fn project_creation_period_for(
         &mut self,
+        category: ProjectCategory,
         project_creation_period: ProjectCreationPeriod,
     ) -> &mut Self {
-        self.project_creation_period
-            .replace(project_creation_period);
+        self.project_creation_periods
+            .insert(category, project_creation_period);
         self
     }
 
@@ -238,9 +239,7 @@ impl MockAppBuilder {
             registration_forms: Arc::new(Mutex::new(self.registration_forms.clone())),
             registration_form_answers: Arc::new(Mutex::new(self.registration_form_answers.clone())),
             user_invitations: Arc::new(Mutex::new(self.user_invitations.clone())),
-            project_creation_period: self
-                .project_creation_period
-                .unwrap_or_else(ProjectCreationPeriod::always),
+            project_creation_periods: self.project_creation_periods.clone(),
         }
     }
 }
@@ -260,7 +259,7 @@ pub struct MockApp {
     registration_form_answers:
         Arc<Mutex<HashMap<RegistrationFormAnswerId, RegistrationFormAnswer>>>,
     user_invitations: Arc<Mutex<HashMap<UserInvitationId, UserInvitation>>>,
-    project_creation_period: ProjectCreationPeriod,
+    project_creation_periods: HashMap<ProjectCategory, ProjectCreationPeriod>,
 }
 
 impl MockApp {
@@ -966,7 +965,10 @@ impl ConfigContext for MockApp {
         &*test_model::ADMINISTRATOR_EMAIL
     }
 
-    fn project_creation_period(&self) -> ProjectCreationPeriod {
-        self.project_creation_period
+    fn project_creation_period_for(&self, category: ProjectCategory) -> ProjectCreationPeriod {
+        self.project_creation_periods
+            .get(&category)
+            .copied()
+            .unwrap_or_else(ProjectCreationPeriod::always)
     }
 }

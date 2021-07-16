@@ -123,7 +123,10 @@ impl Project {
             + ConfigContext,
     {
         let created_at = DateTime::now();
-        if !ctx.project_creation_period().contains(created_at) {
+        if !ctx
+            .project_creation_period_for(pending_project.category())
+            .contains(created_at)
+        {
             return Err(DomainError::Domain(NewProjectError {
                 kind: NewProjectErrorKind::OutOfCreationPeriod,
             }));
@@ -315,7 +318,11 @@ impl Project {
         C: ConfigContext,
     {
         let now = DateTime::now();
-        let permission = if self.is_member(user) && ctx.project_creation_period().contains(now) {
+        let permission = if self.is_member(user)
+            && ctx
+                .project_creation_period_for(self.category())
+                .contains(now)
+        {
             Permissions::UPDATE_MEMBER_PROJECTS_IN_PERIOD
         } else {
             Permissions::UPDATE_ALL_PROJECTS

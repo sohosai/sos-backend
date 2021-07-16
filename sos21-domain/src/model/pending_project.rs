@@ -80,7 +80,10 @@ impl PendingProject {
         C: ConfigContext,
     {
         let created_at = DateTime::now();
-        if !ctx.project_creation_period().contains(created_at) {
+        if !ctx
+            .project_creation_period_for(category)
+            .contains(created_at)
+        {
             return Err(NewPendingProjectError {
                 kind: NewPendingProjectErrorKind::OutOfCreationPeriod,
             });
@@ -198,12 +201,15 @@ impl PendingProject {
         C: ConfigContext,
     {
         let now = DateTime::now();
-        let permission =
-            if &self.owner_id == user.id() && ctx.project_creation_period().contains(now) {
-                Permissions::UPDATE_OWNING_PENDING_PROJECTS_IN_PERIOD
-            } else {
-                Permissions::UPDATE_ALL_PENDING_PROJECTS
-            };
+        let permission = if &self.owner_id == user.id()
+            && ctx
+                .project_creation_period_for(self.category())
+                .contains(now)
+        {
+            Permissions::UPDATE_OWNING_PENDING_PROJECTS_IN_PERIOD
+        } else {
+            Permissions::UPDATE_ALL_PENDING_PROJECTS
+        };
 
         user.require_permissions(permission)
             .map_err(NoUpdatePermissionError::from_permissions_error)

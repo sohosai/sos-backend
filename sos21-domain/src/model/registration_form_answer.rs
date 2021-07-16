@@ -112,7 +112,10 @@ impl RegistrationFormAnswer {
         }
 
         let created_at = DateTime::now();
-        if !ctx.project_creation_period().contains(created_at) {
+        if !ctx
+            .project_creation_period_for(pending_project.category())
+            .contains(created_at)
+        {
             return Err(DomainError::Domain(NewRegistrationFormAnswerError {
                 kind: NewRegistrationFormAnswerErrorKind::OutOfProjectCreationPeriod,
             }));
@@ -278,7 +281,9 @@ impl RegistrationFormAnswer {
         domain_ensure!(self.respondent().is_pending_project(pending_project));
 
         let now = DateTime::now();
-        let permission = if ctx.project_creation_period().contains(now)
+        let permission = if ctx
+            .project_creation_period_for(pending_project.category())
+            .contains(now)
             && pending_project.owner_id() == user.id()
         {
             Permissions::UPDATE_REGISTRATION_FORM_ANSWERS_IN_PERIOD
@@ -314,7 +319,11 @@ impl RegistrationFormAnswer {
         domain_ensure!(self.respondent().is_project(project));
 
         let now = DateTime::now();
-        let permission = if ctx.project_creation_period().contains(now) && project.is_member(user) {
+        let permission = if ctx
+            .project_creation_period_for(project.category())
+            .contains(now)
+            && project.is_member(user)
+        {
             Permissions::UPDATE_REGISTRATION_FORM_ANSWERS_IN_PERIOD
         } else {
             Permissions::UPDATE_ALL_FORM_ANSWERS

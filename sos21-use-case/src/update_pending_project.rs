@@ -66,13 +66,6 @@ pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<PendingProjec
 where
     C: PendingProjectRepository + ConfigContext + Send + Sync,
 {
-    if !ctx
-        .project_creation_period()
-        .contains(date_time::DateTime::now())
-    {
-        return Err(UseCaseError::UseCase(Error::OutOfCreationPeriod));
-    }
-
     let login_user = ctx.login_user();
 
     let result = ctx
@@ -83,6 +76,13 @@ where
         Some(result) if result.pending_project.is_visible_to(login_user) => result.pending_project,
         _ => return Err(UseCaseError::UseCase(Error::NotFound)),
     };
+
+    if !ctx
+        .project_creation_period_for(pending_project.category())
+        .contains(date_time::DateTime::now())
+    {
+        return Err(UseCaseError::UseCase(Error::OutOfCreationPeriod));
+    }
 
     if let Some(name) = input.name {
         let name = project::ProjectName::from_string(name)
@@ -146,7 +146,10 @@ where
 mod tests {
     use crate::model::pending_project::PendingProjectId;
     use crate::{get_pending_project, update_pending_project, UseCaseError};
-    use sos21_domain::{model::pending_project, test};
+    use sos21_domain::{
+        model::{pending_project, project},
+        test,
+    };
 
     fn mock_input(
         pending_project: &pending_project::PendingProject,
@@ -175,7 +178,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .pending_projects(vec![pending_project.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .await;
@@ -199,7 +202,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .pending_projects(vec![pending_project.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .await;

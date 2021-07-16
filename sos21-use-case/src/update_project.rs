@@ -68,13 +68,6 @@ pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<Project, Erro
 where
     C: ProjectRepository + ConfigContext + Send + Sync,
 {
-    if !ctx
-        .project_creation_period()
-        .contains(date_time::DateTime::now())
-    {
-        return Err(UseCaseError::UseCase(Error::OutOfCreationPeriod));
-    }
-
     let login_user = ctx.login_user();
 
     let result = ctx
@@ -91,6 +84,13 @@ where
         owner,
         subowner,
     } = result;
+
+    if !ctx
+        .project_creation_period_for(project.category())
+        .contains(date_time::DateTime::now())
+    {
+        return Err(UseCaseError::UseCase(Error::OutOfCreationPeriod));
+    }
 
     if let Some(name) = input.name {
         let name = project::ProjectName::from_string(name)
@@ -193,7 +193,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .projects(vec![project.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .await;
@@ -217,7 +217,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .projects(vec![project.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .await;
