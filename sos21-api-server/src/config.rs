@@ -1,7 +1,8 @@
-use chrono::{DateTime, Utc};
+use std::collections::HashMap;
+
 use url::Url;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
     pub jwt_audience: String,
     pub jwt_issuer: String,
@@ -14,6 +15,5 @@ pub struct Config {
     pub s3_endpoint: String,
     pub s3_object_bucket: String,
     pub administrator_email: String,
-    pub start_project_creation_period: Option<DateTime<Utc>>,
-    pub end_project_creation_period: Option<DateTime<Utc>>,
+    pub project_creation_periods: HashMap<String, String>,
 }

@@ -1,11 +1,14 @@
+use std::collections::HashMap;
 use std::fmt::{self, Debug};
 
 use crate::config::Config;
 
-use anyhow::{bail, Context as _, Result};
+use anyhow::{Context as _, Result};
+use chrono::{TimeZone, Utc};
 use rusoto_s3::S3Client;
 use sos21_domain::model::{
-    date_time::DateTime, project_creation_period::ProjectCreationPeriod, user::UserEmailAddress,
+    date_time::DateTime, project::ProjectCategory, project_creation_period::ProjectCreationPeriod,
+    user::UserEmailAddress,
 };
 use sos21_gateway_database::Database;
 use sos21_gateway_s3::S3;
@@ -20,7 +23,7 @@ pub struct App {
     s3_client: S3Client,
     config: Config,
     administrator_email: UserEmailAddress,
-    project_creation_period: ProjectCreationPeriod,
+    project_creation_periods: HashMap<ProjectCategory, ProjectCreationPeriod>,
 }
 
 impl Debug for App {
@@ -59,27 +62,25 @@ impl App {
         let administrator_email = UserEmailAddress::from_string(config.administrator_email.clone())
             .context("invalid administrator email")?;
 
-        let project_creation_period = match (
-            config.start_project_creation_period,
-            config.end_project_creation_period,
-        ) {
-            (Some(starts_at), Some(ends_at)) => {
-                let starts_at = DateTime::from_utc(starts_at);
-                let ends_at = DateTime::from_utc(ends_at);
-                ProjectCreationPeriod::from_datetime(starts_at, ends_at)
-                    .context("invalid project creation period")?
-            }
-            (Some(_), None) => bail!("end_project_creation_period not set in the config"),
-            (None, Some(_)) => bail!("start_project_creation_period not set in the config"),
-            (None, None) => ProjectCreationPeriod::always(),
-        };
+        let mut project_creation_periods = HashMap::new();
+        for (category, period) in &config.project_creation_periods {
+            let category = category.parse()?;
+            let (starts_at, ends_at) = period
+                .split_once("-")
+                .context("period must be delimited with '-'")?;
+            let starts_at = DateTime::from_utc(Utc.timestamp_millis(starts_at.parse()?));
+            let ends_at = DateTime::from_utc(Utc.timestamp_millis(ends_at.parse()?));
+            let period = ProjectCreationPeriod::from_datetime(starts_at, ends_at)
+                .context("invalid project creation period")?;
+            project_creation_periods.insert(category, period);
+        }
 
         Ok(App {
             pool,
             s3_client,
             config,
             administrator_email,
-            project_creation_period,
+            project_creation_periods,
         })
     }
 
@@ -110,7 +111,7 @@ impl App {
             database,
             s3,
             administrator_email: self.administrator_email.clone(),
-            project_creation_period: self.project_creation_period,
+            project_creation_periods: self.project_creation_periods.clone(),
         })
     }
 }
@@ -120,7 +121,7 @@ pub struct Context {
     database: Database,
     s3: S3,
     administrator_email: UserEmailAddress,
-    project_creation_period: ProjectCreationPeriod,
+    project_creation_periods: HashMap<ProjectCategory, ProjectCreationPeriod>,
 }
 
 impl Context {
@@ -208,7 +209,10 @@ impl sos21_domain::context::ConfigContext for Context {
         &self.administrator_email
     }
 
-    fn project_creation_period(&self) -> ProjectCreationPeriod {
-        self.project_creation_period
+    fn project_creation_period_for(&self, category: ProjectCategory) -> ProjectCreationPeriod {
+        self.project_creation_periods
+            .get(&category)
+            .copied()
+            .unwrap_or_else(ProjectCreationPeriod::never)
     }
 }
