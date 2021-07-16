@@ -418,19 +418,15 @@ impl Project {
         Ok(())
     }
 
-    pub fn set_category<C>(
+    pub fn set_category(
         &mut self,
-        ctx: C,
         user: &User,
         category: ProjectCategory,
-    ) -> Result<(), NoUpdatePermissionError>
-    where
-        C: ConfigContext,
-    {
-        let now = DateTime::now();
-        self.require_update_permission(ctx, now, user)?;
+    ) -> Result<(), NoUpdatePermissionError> {
+        user.require_permissions(Permissions::UPDATE_PROJECT_CATEGORY)
+            .map_err(NoUpdatePermissionError::from_permissions_error)?;
         self.content.category = category;
-        self.content.updated_at = now;
+        self.content.updated_at = DateTime::now();
         Ok(())
     }
 

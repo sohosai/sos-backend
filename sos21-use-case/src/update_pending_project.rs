@@ -1,6 +1,6 @@
 use crate::error::{UseCaseError, UseCaseResult};
 use crate::model::pending_project::{PendingProject, PendingProjectId};
-use crate::model::project::{ProjectAttribute, ProjectCategory};
+use crate::model::project::ProjectAttribute;
 
 use anyhow::Context;
 use sos21_domain::context::{ConfigContext, Login, PendingProjectRepository};
@@ -14,7 +14,6 @@ pub struct Input {
     pub group_name: Option<String>,
     pub kana_group_name: Option<String>,
     pub description: Option<String>,
-    pub category: Option<ProjectCategory>,
     pub attributes: Option<Vec<ProjectAttribute>>,
 }
 
@@ -162,7 +161,6 @@ mod tests {
             group_name: None,
             kana_group_name: None,
             description: None,
-            category: None,
             attributes: None,
         };
         (name, input)

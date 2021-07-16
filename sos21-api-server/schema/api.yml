@@ -2138,8 +2138,6 @@ paths:
                   type: string
                 description:
                   type: string
-                category:
-                  $ref: ./model/project/ProjectCategory.yml
                 attributes:
                   type: array
                   items:
@@ -2282,8 +2280,6 @@ paths:
                   type: string
                 description:
                   type: string
-                category:
-                  $ref: ./model/project/ProjectCategory.yml
                 attributes:
                   type: array
                   items:

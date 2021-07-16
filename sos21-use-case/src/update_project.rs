@@ -1,7 +1,5 @@
 use crate::error::{UseCaseError, UseCaseResult};
-use crate::model::project::{
-    Project, ProjectAttribute, ProjectCategory, ProjectFromEntityInput, ProjectId,
-};
+use crate::model::project::{Project, ProjectAttribute, ProjectFromEntityInput, ProjectId};
 
 use anyhow::Context;
 use sos21_domain::context::project_repository::{self, ProjectRepository};
@@ -16,7 +14,6 @@ pub struct Input {
     pub group_name: Option<String>,
     pub kana_group_name: Option<String>,
     pub description: Option<String>,
-    pub category: Option<ProjectCategory>,
     pub attributes: Option<Vec<ProjectAttribute>>,
 }
 
@@ -177,7 +174,6 @@ mod tests {
             group_name: None,
             kana_group_name: None,
             description: None,
-            category: None,
             attributes: None,
         };
         (name, input)
