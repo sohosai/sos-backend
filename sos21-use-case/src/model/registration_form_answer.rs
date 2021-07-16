@@ -61,6 +61,7 @@ pub struct RegistrationFormAnswer {
     pub registration_form_id: RegistrationFormId,
     pub respondent: RegistrationFormAnswerRespondent,
     pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub author_id: UserId,
     pub items: Vec<FormAnswerItem>,
 }
@@ -72,6 +73,7 @@ impl RegistrationFormAnswer {
             registration_form_id: RegistrationFormId::from_entity(answer.registration_form_id()),
             respondent: RegistrationFormAnswerRespondent::from_entity(answer.respondent()),
             created_at: answer.created_at().utc(),
+            updated_at: answer.updated_at().utc(),
             author_id: UserId::from_entity(answer.author_id().clone()),
             items: answer
                 .into_items()
