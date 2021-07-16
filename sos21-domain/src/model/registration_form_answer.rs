@@ -35,6 +35,7 @@ pub struct RegistrationFormAnswerContent {
     pub respondent: RegistrationFormAnswerRespondent,
     pub registration_form_id: RegistrationFormId,
     pub created_at: DateTime,
+    pub updated_at: DateTime,
     pub author_id: UserId,
     pub items: FormAnswerItems,
 }
@@ -135,6 +136,7 @@ impl RegistrationFormAnswer {
                 respondent: RegistrationFormAnswerRespondent::PendingProject(pending_project.id()),
                 registration_form_id: registration_form.id(),
                 created_at,
+                updated_at: created_at,
                 author_id: author.id().clone(),
                 items,
             },
@@ -161,6 +163,10 @@ impl RegistrationFormAnswer {
 
     pub fn created_at(&self) -> DateTime {
         self.content.created_at
+    }
+
+    pub fn updated_at(&self) -> DateTime {
+        self.content.updated_at
     }
 
     pub fn author_id(&self) -> &UserId {
@@ -301,6 +307,7 @@ impl RegistrationFormAnswer {
             .map_err(|err| DomainError::Domain(SetItemsError::from_check_error(err)))?;
 
         self.content.items = items;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -339,6 +346,7 @@ impl RegistrationFormAnswer {
             .map_err(|err| DomainError::Domain(SetItemsError::from_check_error(err)))?;
 
         self.content.items = items;
+        self.content.updated_at = now;
         Ok(())
     }
 }

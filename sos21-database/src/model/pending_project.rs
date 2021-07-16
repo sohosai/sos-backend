@@ -8,6 +8,7 @@ use uuid::Uuid;
 pub struct PendingProject {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,

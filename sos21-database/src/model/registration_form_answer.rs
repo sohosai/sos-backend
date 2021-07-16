@@ -5,6 +5,7 @@ use uuid::Uuid;
 pub struct RegistrationFormAnswer {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub author_id: String,
     pub registration_form_id: Uuid,
     pub project_id: Option<Uuid>,

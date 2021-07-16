@@ -29,6 +29,7 @@ pub fn new_registration_form_answer_with_items(
         respondent,
         registration_form_id: registration_form.id,
         created_at: DateTime::now(),
+        updated_at: DateTime::now(),
         author_id,
         items,
     })

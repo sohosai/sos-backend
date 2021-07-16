@@ -24,6 +24,7 @@ pub fn new_pending_project_with_attributes(
         PendingProjectContent {
             id: new_pending_project_id(),
             created_at: DateTime::now(),
+            updated_at: DateTime::now(),
             name: test_model::mock_project_name(),
             kana_name: test_model::mock_project_kana_name(),
             group_name: test_model::mock_project_group_name(),

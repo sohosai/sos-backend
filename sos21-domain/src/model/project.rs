@@ -46,6 +46,7 @@ pub struct ProjectContent {
     pub id: ProjectId,
     pub index: ProjectIndex,
     pub created_at: DateTime,
+    pub updated_at: DateTime,
     pub name: ProjectName,
     pub kana_name: ProjectKanaName,
     pub group_name: ProjectGroupName,
@@ -180,6 +181,7 @@ impl Project {
             ProjectContent {
                 id: ProjectId::from_uuid(Uuid::new_v4()),
                 created_at,
+                updated_at: created_at,
                 index,
                 name: pending_project.name().clone(),
                 kana_name: pending_project.kana_name().clone(),
@@ -231,6 +233,10 @@ impl Project {
 
     pub fn created_at(&self) -> DateTime {
         self.content.created_at
+    }
+
+    pub fn updated_at(&self) -> DateTime {
+        self.content.updated_at
     }
 
     pub fn name(&self) -> &ProjectName {
@@ -312,12 +318,12 @@ impl Project {
     fn require_update_permission<C>(
         &self,
         ctx: C,
+        now: DateTime,
         user: &User,
     ) -> Result<(), NoUpdatePermissionError>
     where
         C: ConfigContext,
     {
-        let now = DateTime::now();
         let permission = if self.is_member(user)
             && ctx
                 .project_creation_period_for(self.category())
@@ -341,8 +347,10 @@ impl Project {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.name = name;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -355,8 +363,10 @@ impl Project {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.kana_name = kana_name;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -369,8 +379,10 @@ impl Project {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.group_name = group_name;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -383,8 +395,10 @@ impl Project {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.kana_group_name = kana_group_name;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -397,8 +411,10 @@ impl Project {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.description = description;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -411,8 +427,10 @@ impl Project {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.category = category;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -425,8 +443,10 @@ impl Project {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.attributes = attributes;
+        self.content.updated_at = now;
         Ok(())
     }
 }

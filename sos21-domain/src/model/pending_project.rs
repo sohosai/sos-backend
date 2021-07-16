@@ -27,6 +27,7 @@ impl PendingProjectId {
 pub struct PendingProjectContent {
     pub id: PendingProjectId,
     pub created_at: DateTime,
+    pub updated_at: DateTime,
     pub name: ProjectName,
     pub kana_name: ProjectKanaName,
     pub group_name: ProjectGroupName,
@@ -108,6 +109,7 @@ impl PendingProject {
             PendingProjectContent {
                 id: PendingProjectId::from_uuid(Uuid::new_v4()),
                 created_at,
+                updated_at: created_at,
                 name,
                 kana_name,
                 group_name,
@@ -126,6 +128,10 @@ impl PendingProject {
 
     pub fn created_at(&self) -> DateTime {
         self.content.created_at
+    }
+
+    pub fn updated_at(&self) -> DateTime {
+        self.content.updated_at
     }
 
     pub fn name(&self) -> &ProjectName {
@@ -195,12 +201,12 @@ impl PendingProject {
     fn require_update_permission<C>(
         &self,
         ctx: C,
+        now: DateTime,
         user: &User,
     ) -> Result<(), NoUpdatePermissionError>
     where
         C: ConfigContext,
     {
-        let now = DateTime::now();
         let permission = if &self.owner_id == user.id()
             && ctx
                 .project_creation_period_for(self.category())
@@ -224,8 +230,10 @@ impl PendingProject {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.name = name;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -238,8 +246,10 @@ impl PendingProject {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.kana_name = kana_name;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -252,8 +262,10 @@ impl PendingProject {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.group_name = group_name;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -266,8 +278,10 @@ impl PendingProject {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.kana_group_name = kana_group_name;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -280,8 +294,10 @@ impl PendingProject {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.description = description;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -294,8 +310,10 @@ impl PendingProject {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.category = category;
+        self.content.updated_at = now;
         Ok(())
     }
 
@@ -308,8 +326,10 @@ impl PendingProject {
     where
         C: ConfigContext,
     {
-        self.require_update_permission(ctx, user)?;
+        let now = DateTime::now();
+        self.require_update_permission(ctx, now, user)?;
         self.content.attributes = attributes;
+        self.content.updated_at = now;
         Ok(())
     }
 }
