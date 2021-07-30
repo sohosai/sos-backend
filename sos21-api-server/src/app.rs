@@ -65,13 +65,19 @@ impl App {
         let mut project_creation_periods = HashMap::new();
         for (category, period) in &config.project_creation_periods {
             let category = category.parse()?;
-            let (starts_at, ends_at) = period
-                .split_once("-")
-                .context("period must be delimited with '-'")?;
-            let starts_at = DateTime::from_utc(Utc.timestamp_millis(starts_at.parse()?));
-            let ends_at = DateTime::from_utc(Utc.timestamp_millis(ends_at.parse()?));
-            let period = ProjectCreationPeriod::from_datetime(starts_at, ends_at)
-                .context("invalid project creation period")?;
+            let period = match period.as_ref() {
+                "always" => ProjectCreationPeriod::always(),
+                "never" => ProjectCreationPeriod::never(),
+                _ => {
+                    let (starts_at, ends_at) = period
+                        .split_once("-")
+                        .context("period must be delimited with '-'")?;
+                    let starts_at = DateTime::from_utc(Utc.timestamp_millis(starts_at.parse()?));
+                    let ends_at = DateTime::from_utc(Utc.timestamp_millis(ends_at.parse()?));
+                    ProjectCreationPeriod::from_datetime(starts_at, ends_at)
+                        .context("invalid project creation period")?
+                }
+            };
             project_creation_periods.insert(category, period);
         }
 
