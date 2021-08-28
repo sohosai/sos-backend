@@ -48,6 +48,9 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">registration_form_answer</span>::<span class="ident">RegistrationFormAnswer</span>;
 
@@ -63,6 +66,7 @@
     <span class="kw">let</span> <span class="ident">RegistrationFormAnswer</span> {
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
+        <span class="ident">updated_at</span>,
         <span class="ident">author_id</span>,
         <span class="ident">registration_form_id</span>,
         <span class="ident">project_id</span>,
@@ -75,15 +79,17 @@
 INSERT INTO registration_form_answers (
     id,
     created_at,
+    updated_at,
     author_id,
     registration_form_id,
     project_id,
     pending_project_id,
     items
-) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
 &quot;#</span>,
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
+        <span class="ident">updated_at</span>,
         <span class="ident">author_id</span>,
         <span class="ident">registration_form_id</span>,
         <span class="ident">project_id</span>,

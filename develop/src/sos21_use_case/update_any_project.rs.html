@@ -294,6 +294,12 @@
 <span id="291">291</span>
 <span id="292">292</span>
 <span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{
@@ -426,6 +432,12 @@
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">from_description_error</span>(<span class="ident">err</span>)))<span class="question-mark">?</span>;
         <span class="ident">project</span>
             .<span class="ident">set_description</span>(<span class="ident">ctx</span>, <span class="ident">login_user</span>, <span class="ident">description</span>)
+            .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">from_update_error</span>(<span class="ident">err</span>)))<span class="question-mark">?</span>;
+    }
+
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">category</span>) <span class="op">=</span> <span class="ident">input</span>.<span class="ident">category</span> {
+        <span class="ident">project</span>
+            .<span class="ident">set_category</span>(<span class="ident">login_user</span>, <span class="ident">category</span>.<span class="ident">into_entity</span>())
             .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">from_update_error</span>(<span class="ident">err</span>)))<span class="question-mark">?</span>;
     }
 

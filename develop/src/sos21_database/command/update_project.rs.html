@@ -49,15 +49,21 @@
 <span id="46">46</span>
 <span id="47">47</span>
 <span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Input</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">Uuid</span>,
+    <span class="kw">pub</span> <span class="ident">updated_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">group_name</span>: <span class="ident">String</span>,
@@ -81,7 +87,8 @@ UPDATE projects
     kana_group_name = $5,
     description = $6,
     category = $7,
-    attributes = $8
+    attributes = $8,
+    updated_at = $9
   WHERE id = $1
 &quot;#</span>,
         <span class="ident">input</span>.<span class="ident">id</span>,
@@ -91,7 +98,8 @@ UPDATE projects
         <span class="ident">input</span>.<span class="ident">kana_group_name</span>,
         <span class="ident">input</span>.<span class="ident">description</span>,
         <span class="ident">input</span>.<span class="ident">category</span> <span class="kw">as</span> <span class="kw">_</span>,
-        <span class="ident">input</span>.<span class="ident">attributes</span> <span class="kw">as</span> <span class="kw">_</span>
+        <span class="ident">input</span>.<span class="ident">attributes</span> <span class="kw">as</span> <span class="kw">_</span>,
+        <span class="ident">input</span>.<span class="ident">updated_at</span>
     )
     .<span class="ident">execute</span>(<span class="ident">conn</span>)
     .<span class="kw">await</span>

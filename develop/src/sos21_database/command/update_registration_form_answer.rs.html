@@ -36,13 +36,19 @@
 <span id="33">33</span>
 <span id="34">34</span>
 <span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Context</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Input</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">Uuid</span>,
+    <span class="kw">pub</span> <span class="ident">updated_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">pending_project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Uuid</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">Value</span>,
@@ -56,12 +62,14 @@
         <span class="string">r#&quot;
 UPDATE registration_form_answers
   SET
-    project_id = $2,
-    pending_project_id = $3,
-    items = $4
+    updated_at = $2,
+    project_id = $3,
+    pending_project_id = $4,
+    items = $5
   WHERE id = $1
 &quot;#</span>,
         <span class="ident">input</span>.<span class="ident">id</span>,
+        <span class="ident">input</span>.<span class="ident">updated_at</span>,
         <span class="ident">input</span>.<span class="ident">project_id</span>,
         <span class="ident">input</span>.<span class="ident">pending_project_id</span>,
         <span class="ident">input</span>.<span class="ident">items</span>

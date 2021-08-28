@@ -101,6 +101,10 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">registration_form</span>::<span class="ident">RegistrationFormId</span>;
@@ -119,6 +123,8 @@
     <span class="kw">pub</span> <span class="ident">field_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">field_created_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">field_updated_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">field_project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
@@ -167,6 +173,7 @@
             <span class="ident">registration_form_id</span>,
             <span class="ident">field_id</span>,
             <span class="ident">field_created_at</span>,
+            <span class="ident">field_updated_at</span>,
             <span class="ident">field_project_id</span>,
             <span class="ident">field_pending_project_id</span>,
             <span class="ident">field_author_id</span>,
@@ -185,6 +192,7 @@
         <span class="kw">let</span> <span class="ident">field_names</span> <span class="op">=</span> <span class="ident">export_registration_form_answers</span>::<span class="ident">InputFieldNames</span> {
             <span class="ident">id</span>: <span class="ident">field_id</span>,
             <span class="ident">created_at</span>: <span class="ident">field_created_at</span>,
+            <span class="ident">updated_at</span>: <span class="ident">field_updated_at</span>,
             <span class="ident">project_id</span>: <span class="ident">field_project_id</span>,
             <span class="ident">pending_project_id</span>: <span class="ident">field_pending_project_id</span>,
             <span class="ident">author_id</span>: <span class="ident">field_author_id</span>,

@@ -36,13 +36,16 @@
 <span id="33">33</span>
 <span id="34">34</span>
 <span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project_creation_period</span>::<span class="ident">ProjectCreationPeriod</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">UserEmailAddress</span>;
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ConfigContext</span> {
     <span class="kw">fn</span> <span class="ident">administrator_email</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">UserEmailAddress</span>;
-    <span class="kw">fn</span> <span class="ident">project_creation_period</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectCreationPeriod</span>;
+    <span class="kw">fn</span> <span class="ident">project_creation_period_for</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">category</span>: <span class="ident">ProjectCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectCreationPeriod</span>;
 }
 
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
@@ -54,10 +57,11 @@
             <span class="kw">fn</span> <span class="ident">administrator_email</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">sel</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">user</span>::<span class="ident">UserEmailAddress</span> {
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">administrator_email</span>()
             }
-            <span class="kw">fn</span> <span class="ident">project_creation_period</span>(
+            <span class="kw">fn</span> <span class="ident">project_creation_period_for</span>(
                 <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">sel</span>,
+                <span class="ident">category</span>: <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>,
             ) <span class="op">-</span><span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">model</span>::<span class="ident">project_creation_period</span>::<span class="ident">ProjectCreationPeriod</span> {
-                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">project_creation_period</span>()
+                <span class="macro-nonterminal">$</span><span class="macro-nonterminal">target</span>.<span class="ident">project_creation_period_for</span>(<span class="ident">category</span>)
             }
         }
     }
@@ -68,8 +72,8 @@
         <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ConfigContext</span><span class="op">&gt;</span>::<span class="ident">administrator_email</span>(<span class="self">self</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">project_creation_period</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectCreationPeriod</span> {
-        <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ConfigContext</span><span class="op">&gt;</span>::<span class="ident">project_creation_period</span>(<span class="self">self</span>)
+    <span class="kw">fn</span> <span class="ident">project_creation_period_for</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">category</span>: <span class="ident">ProjectCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectCreationPeriod</span> {
+        <span class="op">&lt;</span><span class="ident">C</span> <span class="kw">as</span> <span class="ident">ConfigContext</span><span class="op">&gt;</span>::<span class="ident">project_creation_period_for</span>(<span class="self">self</span>, <span class="ident">category</span>)
     }
 }
 </pre></div>

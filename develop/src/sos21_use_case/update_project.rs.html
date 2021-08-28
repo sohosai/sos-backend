@@ -235,15 +235,9 @@
 <span id="232">232</span>
 <span id="233">233</span>
 <span id="234">234</span>
-<span id="235">235</span>
-<span id="236">236</span>
-<span id="237">237</span>
-<span id="238">238</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{
-    <span class="ident">Project</span>, <span class="ident">ProjectAttribute</span>, <span class="ident">ProjectCategory</span>, <span class="ident">ProjectFromEntityInput</span>, <span class="ident">ProjectId</span>,
-};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">Project</span>, <span class="ident">ProjectAttribute</span>, <span class="ident">ProjectFromEntityInput</span>, <span class="ident">ProjectId</span>};
 
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">context</span>::<span class="ident">project_repository</span>::{<span class="self">self</span>, <span class="ident">ProjectRepository</span>};
@@ -258,7 +252,6 @@
     <span class="kw">pub</span> <span class="ident">group_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">kana_group_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">description</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">category</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProjectCategory</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">attributes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectAttribute</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
@@ -310,13 +303,6 @@
 <span class="kw">where</span>
     <span class="ident">C</span>: <span class="ident">ProjectRepository</span> <span class="op">+</span> <span class="ident">ConfigContext</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span>,
 {
-    <span class="kw">if</span> <span class="op">!</span><span class="ident">ctx</span>
-        .<span class="ident">project_creation_period</span>()
-        .<span class="ident">contains</span>(<span class="ident">date_time</span>::<span class="ident">DateTime</span>::<span class="ident">now</span>())
-    {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">OutOfCreationPeriod</span>));
-    }
-
     <span class="kw">let</span> <span class="ident">login_user</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">login_user</span>();
 
     <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">ctx</span>
@@ -333,6 +319,13 @@
         <span class="ident">owner</span>,
         <span class="ident">subowner</span>,
     } <span class="op">=</span> <span class="ident">result</span>;
+
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">ctx</span>
+        .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>.<span class="ident">category</span>())
+        .<span class="ident">contains</span>(<span class="ident">date_time</span>::<span class="ident">DateTime</span>::<span class="ident">now</span>())
+    {
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">OutOfCreationPeriod</span>));
+    }
 
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">name</span>) <span class="op">=</span> <span class="ident">input</span>.<span class="ident">name</span> {
         <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">project</span>::<span class="ident">ProjectName</span>::<span class="ident">from_string</span>(<span class="ident">name</span>)
@@ -419,7 +412,6 @@
             <span class="ident">group_name</span>: <span class="prelude-val">None</span>,
             <span class="ident">kana_group_name</span>: <span class="prelude-val">None</span>,
             <span class="ident">description</span>: <span class="prelude-val">None</span>,
-            <span class="ident">category</span>: <span class="prelude-val">None</span>,
             <span class="ident">attributes</span>: <span class="prelude-val">None</span>,
         };
         (<span class="ident">name</span>, <span class="ident">input</span>)
@@ -435,7 +427,7 @@
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
             .<span class="ident">projects</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">project</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period</span>(<span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>)
             .<span class="kw">await</span>;
@@ -459,7 +451,7 @@
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
             .<span class="ident">projects</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">project</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period</span>(<span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>)
             .<span class="kw">await</span>;
