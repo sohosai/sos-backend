@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.5.2-beta] - 2021-08-28
+
+### Added
 
 - `updated_at` field ([#118](https://github.com/sohosai/sos21-backend/pull/118))
 
@@ -14,8 +23,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Enable to set project creation period by categories ([#118](https://github.com/sohosai/sos21-backend/pull/118))
 
-### Deprecated
-### Removed
 ### Fixed
 
 - Accept empty answer in !accept_multiple_files file form item ([#120](https://github.com/sohosai/sos21-backend/pull/120))
