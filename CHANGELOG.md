@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Security
 
 - Update `tokio` to 1.8.1 ([#114](https://github.com/sohosai/sos21-backend/pull/114))
+- Update `hyper` to 0.14.12 ([#121](https://github.com/sohosai/sos21-backend/pull/121))
 
 ## [0.5.1] - 2021-06-16
 
