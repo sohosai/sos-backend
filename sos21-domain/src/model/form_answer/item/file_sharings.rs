@@ -82,7 +82,7 @@ impl FormAnswerItemFileSharings {
     }
 
     pub fn is_multiple(&self) -> bool {
-        self.len() != 1
+        self.len() > 1
     }
 }
 
