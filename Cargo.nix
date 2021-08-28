@@ -1518,6 +1518,51 @@ rec {
         ];
         
       };
+      "enumflags2" = rec {
+        crateName = "enumflags2";
+        version = "0.7.1";
+        edition = "2018";
+        sha256 = "0c8ibfjpvrfjrzkj5h7kr19i5b164cy7573fbwixvzs2srbj4rx8";
+        authors = [
+          "maik klein <maikklein@googlemail.com>"
+          "Jakub \"NieDżejkob\" Kądziołka <kuba@kadziolka.net>"
+        ];
+        dependencies = [
+          {
+            name = "enumflags2_derive";
+            packageId = "enumflags2_derive";
+          }
+        ];
+        features = {
+        };
+      };
+      "enumflags2_derive" = rec {
+        crateName = "enumflags2_derive";
+        version = "0.7.0";
+        edition = "2018";
+        sha256 = "1kypbpy5fff2sqz964pzw0vh48j0n9ydnbvrqbkqr0i719vnylik";
+        procMacro = true;
+        authors = [
+          "maik klein <maikklein@googlemail.com>"
+          "Jakub \"NieDżejkob\" Kądziołka <kuba@kadziolka.net>"
+        ];
+        dependencies = [
+          {
+            name = "proc-macro2";
+            packageId = "proc-macro2";
+          }
+          {
+            name = "quote";
+            packageId = "quote";
+          }
+          {
+            name = "syn";
+            packageId = "syn";
+            features = [ "full" ];
+          }
+        ];
+        
+      };
       "fake-simd" = rec {
         crateName = "fake-simd";
         version = "0.1.2";
@@ -3617,6 +3662,17 @@ rec {
         features = {
           "deadlock_detection" = [ "petgraph" "thread-id" "backtrace" ];
         };
+      };
+      "paste" = rec {
+        crateName = "paste";
+        version = "1.0.5";
+        edition = "2018";
+        sha256 = "0n7y1pabn6vspdxgzx62rs9wdlbnay9r1g84j8jk2pn6s1x59gxc";
+        procMacro = true;
+        authors = [
+          "David Tolnay <dtolnay@gmail.com>"
+        ];
+        
       };
       "pem" = rec {
         crateName = "pem";
@@ -5874,10 +5930,6 @@ rec {
             packageId = "auto_enums";
           }
           {
-            name = "bitflags";
-            packageId = "bitflags";
-          }
-          {
             name = "blake3";
             packageId = "blake3";
           }
@@ -5889,6 +5941,10 @@ rec {
             name = "chrono";
             packageId = "chrono";
             features = [ "serde" ];
+          }
+          {
+            name = "enumflags2";
+            packageId = "enumflags2";
           }
           {
             name = "futures";
@@ -5911,6 +5967,10 @@ rec {
             name = "once_cell";
             packageId = "once_cell";
             optional = true;
+          }
+          {
+            name = "paste";
+            packageId = "paste";
           }
           {
             name = "rand";
