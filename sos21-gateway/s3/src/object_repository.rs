@@ -164,7 +164,7 @@ struct UploadInput<'a, S> {
 
 async fn upload<S>(input: UploadInput<'_, S>) -> anyhow::Result<StoreObjectResult>
 where
-    S: Stream<Item = anyhow::Result<Bytes>> + Send + Sync + Unpin + 'static,
+    S: Stream<Item = anyhow::Result<Bytes>> + Send + Unpin + 'static,
 {
     let UploadInput {
         client,
