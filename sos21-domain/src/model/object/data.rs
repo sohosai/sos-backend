@@ -23,13 +23,13 @@ struct ObjectDataStream {
     summary_sender: Option<oneshot::Sender<ObjectDataSummary>>,
     acc_size: u64,
     acc_hasher: blake3::Hasher,
-    stream: Pin<Box<dyn Stream<Item = Result<Bytes>> + Send + Sync + 'static>>,
+    stream: Pin<Box<dyn Stream<Item = Result<Bytes>> + Send + 'static>>,
 }
 
 impl ObjectDataStream {
     fn new<S>(stream: S, summary_sender: Option<oneshot::Sender<ObjectDataSummary>>) -> Self
     where
-        S: Stream<Item = Result<Bytes>> + Send + Sync + 'static,
+        S: Stream<Item = Result<Bytes>> + Send + 'static,
     {
         ObjectDataStream {
             summary_sender,
@@ -104,7 +104,7 @@ impl ObjectData {
     /// Creates `ObjectData` by wrapping a stream.
     pub fn from_stream<S>(stream: S) -> Self
     where
-        S: Stream<Item = Result<Bytes>> + Send + Sync + 'static,
+        S: Stream<Item = Result<Bytes>> + Send + 'static,
     {
         ObjectData(ObjectDataStream::new(stream, None))
     }
@@ -117,7 +117,7 @@ impl ObjectData {
     /// reading is complete.
     pub fn from_stream_with_summary<S>(stream: S) -> (Self, ObjectDataSummaryReceiver)
     where
-        S: Stream<Item = Result<Bytes>> + Send + Sync + 'static,
+        S: Stream<Item = Result<Bytes>> + Send + 'static,
     {
         let (tx, rx) = oneshot::channel();
         let receiver = ObjectDataSummaryReceiver(rx);
@@ -127,7 +127,7 @@ impl ObjectData {
         )
     }
 
-    pub fn into_stream(self) -> impl Stream<Item = Result<Bytes>> + Send + Sync + 'static {
+    pub fn into_stream(self) -> impl Stream<Item = Result<Bytes>> + Send + 'static {
         self.0
     }
 }

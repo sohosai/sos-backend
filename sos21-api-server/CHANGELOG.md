@@ -15,6 +15,16 @@ with the HTTP API interface being the "public API".
 ### Fixed
 ### Security
 
+## [0.5.2] - 2021-08-28
+
+### Added
+
+- `updated_at` field ([#118](https://github.com/sohosai/sos21-backend/pull/118))
+
+### Fixed
+
+- Accept empty answer in !accept_multiple_files file form item ([#120](https://github.com/sohosai/sos21-backend/pull/120))
+
 ## [0.5.1] - 2021-06-16
 
 ### Added

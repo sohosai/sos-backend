@@ -1,6 +1,6 @@
 [package]
 name = "sos21-api-server"
-version = "0.5.1"
+version = "0.5.2"
 authors = ["coord_e <me@coord-e.com>", "azarashi2931 <az@rashi.email>"]
 edition = "2018"
 readme = "README.md"
@@ -25,9 +25,9 @@ jsonwebtoken = "7"
 mime = "0.3"
 bytes = "1"
 mpart-async = "0.5"
-rusoto_s3 = { version = "0.46", default-features = false, features = ["rustls"] }
-rusoto_core = { version = "0.46", default-features = false, features = ["rustls"] }
-rusoto_credential = "0.46"
+rusoto_s3 = { version = "0.47", default-features = false, features = ["rustls"] }
+rusoto_core = { version = "0.47", default-features = false, features = ["rustls"] }
+rusoto_credential = "0.47"
 reqwest = { version = "0.11", default-features = false, features = ["json", "rustls-tls"] }
 url = "2"
 structopt = "0.3"

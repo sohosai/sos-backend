@@ -23,6 +23,7 @@ pub struct InputFieldNames {
     pub id: Option<String>,
     pub code: Option<String>,
     pub created_at: Option<String>,
+    pub updated_at: Option<String>,
     pub owner_id: Option<String>,
     pub owner_first_name: Option<String>,
     pub owner_last_name: Option<String>,
@@ -124,6 +125,7 @@ where
         id,
         code,
         created_at,
+        updated_at,
         owner_id,
         owner_first_name,
         owner_last_name,
@@ -161,6 +163,7 @@ where
     write_field!(writer, id);
     write_field!(writer, code);
     write_field!(writer, created_at);
+    write_field!(writer, updated_at);
     write_field!(writer, owner_id);
     write_field!(writer, owner_first_name);
     write_field!(writer, owner_last_name);
@@ -212,6 +215,7 @@ where
         id,
         code,
         created_at,
+        updated_at,
         owner_id,
         owner_first_name,
         owner_last_name,
@@ -249,6 +253,11 @@ where
     if created_at.is_some() {
         let created_at = data.project.created_at().jst().format("%F %T").to_string();
         writer.write_field(created_at)?;
+    }
+
+    if updated_at.is_some() {
+        let updated_at = data.project.updated_at().jst().format("%F %T").to_string();
+        writer.write_field(updated_at)?;
     }
 
     if owner_id.is_some() {
@@ -454,6 +463,7 @@ mod tests {
             id: Some("内部ID".to_string()),
             code: Some("企画番号".to_string()),
             created_at: Some("作成日時".to_string()),
+            updated_at: Some("更新日時".to_string()),
             owner_id: Some("責任者".to_string()),
             owner_first_name: None,
             owner_last_name: None,

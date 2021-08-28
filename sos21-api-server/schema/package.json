@@ -1,6 +1,6 @@
 {
   "name": "sos21-api-server-schema",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "OpenAPI schema for sos21-api-server",
   "scripts": {
     "lint:spectral": "spectral lint ./api.yml -F hint",

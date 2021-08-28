@@ -24,6 +24,7 @@ impl PendingProjectId {
 pub struct PendingProject {
     pub id: PendingProjectId,
     pub created_at: DateTime,
+    pub updated_at: DateTime,
     pub owner_id: UserId,
     pub name: String,
     pub kana_name: String,
@@ -39,6 +40,7 @@ impl PendingProject {
         PendingProject {
             id: PendingProjectId::from_use_case(pending_project.id),
             created_at: DateTime::from_use_case(pending_project.created_at),
+            updated_at: DateTime::from_use_case(pending_project.updated_at),
             owner_id: UserId::from_use_case(pending_project.owner_id),
             name: pending_project.name,
             kana_name: pending_project.kana_name,

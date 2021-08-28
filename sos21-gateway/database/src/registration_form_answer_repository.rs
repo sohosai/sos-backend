@@ -32,6 +32,7 @@ impl RegistrationFormAnswerRepository for RegistrationFormAnswerDatabase {
         {
             let input = command::update_registration_form_answer::Input {
                 id: answer.id,
+                updated_at: answer.updated_at,
                 project_id: answer.project_id,
                 pending_project_id: answer.pending_project_id,
                 items: serde_json::to_value(&answer.items)?,
@@ -135,6 +136,7 @@ fn to_registration_form_answer(
     let data::registration_form_answer::RegistrationFormAnswer {
         id,
         created_at,
+        updated_at,
         author_id,
         registration_form_id,
         project_id,
@@ -156,6 +158,7 @@ fn to_registration_form_answer(
         RegistrationFormAnswerContent {
             id: RegistrationFormAnswerId::from_uuid(id),
             created_at: DateTime::from_utc(created_at),
+            updated_at: DateTime::from_utc(updated_at),
             author_id: UserId(author_id),
             registration_form_id: RegistrationFormId::from_uuid(registration_form_id),
             respondent,
@@ -170,6 +173,7 @@ fn from_registration_form_answer(
     let RegistrationFormAnswerContent {
         id,
         created_at,
+        updated_at,
         author_id,
         registration_form_id,
         respondent,
@@ -186,6 +190,7 @@ fn from_registration_form_answer(
     Ok(data::registration_form_answer::RegistrationFormAnswer {
         id: id.to_uuid(),
         created_at: created_at.utc(),
+        updated_at: updated_at.utc(),
         author_id: author_id.0,
         registration_form_id: registration_form_id.to_uuid(),
         project_id: project_id.map(|id| id.to_uuid()),

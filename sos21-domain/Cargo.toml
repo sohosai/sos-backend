@@ -1,6 +1,6 @@
 [package]
 name = "sos21-domain"
-version = "0.5.1"
+version = "0.5.2"
 authors = ["coord_e <me@coord-e.com>", "azarashi2931 <az@rashi.email>"]
 edition = "2018"
 readme = "README.md"
@@ -14,7 +14,8 @@ test = ["tokio", "maplit", "once_cell", "rand"]
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 thiserror = "1"
-bitflags = "1"
+enumflags2 = "0.7"
+paste = "1"
 uuid = { version = "0.8", features = ["serde", "v4"] }
 typenum = "1"
 async-trait = "0.1.42"
@@ -26,6 +27,7 @@ futures = "0.3"
 blake3 = "0.3"
 unicode-segmentation = "1.7"
 num-rational = "0.4"
+auto_enums = "0.7"
 
 # these optional dependencies are used by `test` feature (which is enabled for the use from other crates)
 tokio = { version = "1", optional = true, features = ["macros", "rt-multi-thread"] }

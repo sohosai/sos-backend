@@ -5,7 +5,7 @@ use std::task::{Context, Poll};
 use bytes::Bytes;
 use futures::stream::{Stream, StreamExt, TryStreamExt};
 
-pub struct ByteStream(Pin<Box<dyn Stream<Item = anyhow::Result<Bytes>> + Send + Sync + 'static>>);
+pub struct ByteStream(Pin<Box<dyn Stream<Item = anyhow::Result<Bytes>> + Send + 'static>>);
 
 impl Debug for ByteStream {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -24,8 +24,8 @@ impl Stream for ByteStream {
 impl ByteStream {
     pub fn new<S, E>(stream: S) -> Self
     where
-        S: Stream<Item = Result<Bytes, E>> + Send + Sync + 'static,
-        E: Into<anyhow::Error> + Send + Sync + 'static,
+        S: Stream<Item = Result<Bytes, E>> + Send + 'static,
+        E: Into<anyhow::Error> + Send + 'static,
     {
         ByteStream(Box::pin(stream.map_err(Into::into)))
     }

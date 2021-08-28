@@ -13,6 +13,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 ### Security
 
+## [0.5.2] - 2021-08-28
+
+### Added
+
+- `updated_at` field ([#118](https://github.com/sohosai/sos21-backend/pull/118))
+
+### Changed
+
+- Enable to set project creation period by categories ([#118](https://github.com/sohosai/sos21-backend/pull/118))
+
+### Fixed
+
+- Accept empty answer in !accept_multiple_files file form item ([#120](https://github.com/sohosai/sos21-backend/pull/120))
+
+### Security
+
+- Update `tokio` to 1.8.1 ([#114](https://github.com/sohosai/sos21-backend/pull/114))
+- Update `hyper` to 0.14.12 ([#121](https://github.com/sohosai/sos21-backend/pull/121))
+- Update `rusoto_*` to 0.47.0 ([#122](https://github.com/sohosai/sos21-backend/pull/122))
+
 ## [0.5.1] - 2021-06-16
 
 ### Added

@@ -111,7 +111,7 @@ where
     };
 
     if !ctx
-        .project_creation_period()
+        .project_creation_period_for(pending_project.category())
         .contains(date_time::DateTime::now())
     {
         return Err(UseCaseError::UseCase(Error::OutOfProjectCreationPeriod));
@@ -305,7 +305,7 @@ mod tests {
             .pending_projects(vec![pending_project.clone()])
             .registration_forms(vec![registration_form.clone()])
             .registration_form_answers(vec![answer.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(pending_project.category(), period)
             .build()
             .login_as(owner)
             .await;

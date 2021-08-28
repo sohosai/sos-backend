@@ -92,6 +92,7 @@ pub mod prepare_project;
 pub mod revoke_file_sharing;
 pub mod share_file;
 pub mod signup;
+pub mod update_any_pending_project;
 pub mod update_any_project;
 pub mod update_any_user;
 pub mod update_form;

@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: sos21-api-server
-  version: 0.5.1
+  version: 0.5.2
   contact:
     name: coord_e
     email: me@coord-e.com
@@ -1837,6 +1837,12 @@ paths:
           description: 与えられた場合、その名前の列で企画の作成日時を出力します。
         - schema:
             type: string
+            example: 更新日時
+          in: query
+          name: field_updated_at
+          description: 与えられた場合、その名前の列で企画の更新日時を出力します。
+        - schema:
+            type: string
             example: 企画責任者 内部ID
           in: query
           name: field_owner_id
@@ -2138,6 +2144,59 @@ paths:
                   type: string
                 description:
                   type: string
+                attributes:
+                  type: array
+                  items:
+                    $ref: ./model/project/ProjectAttribute.yml
+              required:
+                - id
+    parameters: []
+  /project/update-any:
+    post:
+      summary: project/update-any
+      operationId: project/update-any
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: ./model/project/Project.yml
+                required:
+                  - project
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 任意の指定された企画の情報を更新します。
+      tags:
+        - project
+        - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  $ref: ./model/project/ProjectId.yml
+                name:
+                  type: string
+                kana_name:
+                  type: string
+                group_name:
+                  type: string
+                kana_group_name:
+                  type: string
+                description:
+                  type: string
                 category:
                   $ref: ./model/project/ProjectCategory.yml
                 attributes:
@@ -2209,6 +2268,59 @@ paths:
       description: 指定された承認待ち企画の情報を更新します。
       tags:
         - pending_project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  $ref: ./model/pending_project/PendingProjectId.yml
+                name:
+                  type: string
+                kana_name:
+                  type: string
+                group_name:
+                  type: string
+                kana_group_name:
+                  type: string
+                description:
+                  type: string
+                attributes:
+                  type: array
+                  items:
+                    $ref: ./model/project/ProjectAttribute.yml
+              required:
+                - id
+    parameters: []
+  /pending-project/update-any:
+    post:
+      summary: pending-project/update-any
+      operationId: pending-project/update-any
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pending_project:
+                    $ref: ./model/pending_project/PendingProject.yml
+                required:
+                  - pending_project
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/PendingProjectNotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      description: 任意の指定された承認待ち企画の情報を更新します。
+      tags:
+        - pending_project
+        - admin
       requestBody:
         content:
           application/json:
@@ -4623,6 +4735,11 @@ paths:
           in: query
           name: field_created_at
           description: 与えられた場合、その名前の列で回答日時を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_updated_at
+          description: 与えられた場合、その名前の列で回答の更新日時を出力します。
         - schema:
             type: string
           in: query

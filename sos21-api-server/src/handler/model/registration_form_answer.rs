@@ -63,6 +63,7 @@ pub struct RegistrationFormAnswer {
     pub respondent: RegistrationFormAnswerRespondent,
     pub registration_form_id: RegistrationFormId,
     pub created_at: DateTime,
+    pub updated_at: DateTime,
     pub author_id: UserId,
     pub items: Vec<FormAnswerItem>,
 }
@@ -74,6 +75,7 @@ impl RegistrationFormAnswer {
             respondent: RegistrationFormAnswerRespondent::from_use_case(answer.respondent),
             registration_form_id: RegistrationFormId::from_use_case(answer.registration_form_id),
             created_at: DateTime::from_use_case(answer.created_at),
+            updated_at: DateTime::from_use_case(answer.updated_at),
             author_id: UserId::from_use_case(answer.author_id),
             items: answer
                 .items

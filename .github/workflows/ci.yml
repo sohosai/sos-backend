@@ -63,6 +63,9 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - run: nix-env -f ./nix/pkgs.nix -iA rustPlatform.rust.cargo
       - uses: actions-rs/clippy-check@v1
+        env:
+          # Prevent searching $HOME/.cargo/bin for subcommands (rust-lang/cargo#6507)
+          CARGO_HOME: ./.cargo
         with:
           token: '${{ secrets.GITHUB_TOKEN }}'
           args: -- -D warnings

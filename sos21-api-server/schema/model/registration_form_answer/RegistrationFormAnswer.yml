@@ -7,6 +7,8 @@ properties:
     $ref: ../registration_form/RegistrationFormId.yml
   created_at:
     $ref: ../DateTime.yml
+  updated_at:
+    $ref: ../DateTime.yml
   author_id:
     $ref: ../user/UserId.yml
   project_id:
@@ -21,5 +23,6 @@ required:
   - id
   - form_id
   - created_at
+  - updated_at
   - author_id
   - items
