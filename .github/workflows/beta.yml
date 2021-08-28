@@ -26,16 +26,18 @@ jobs:
       - name: Create NixOS configuration from secrets
         env:
           ADMINISTRATOR_EMAIL: "${{ secrets.ADMINISTRATOR_EMAIL }}"
-          START_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_START_PROJECT_CREATION_PERIOD }}"
-          END_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_END_PROJECT_CREATION_PERIOD }}"
+          STAGE_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_STAGE_PROJECT_CREATION_PERIOD }}"
+          GENERAL_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_GENERAL_PROJECT_CREATION_PERIOD }}"
         run: |
           cat << EOS > ./configuration.nix
           { ... }:
           {
             services.sos21-api-server = {
               administratorEmail = "$ADMINISTRATOR_EMAIL";
-              startProjectCreationPeriod = $START_PROJECT_CREATION_PERIOD;
-              endProjectCreationPeriod = $END_PROJECT_CREATION_PERIOD;
+              projectCreationPeriods = {
+                stage = "$STAGE_PROJECT_CREATION_PERIOD";
+                general = "$GENERAL_PROJECT_CREATION_PERIOD";
+              };
             };
           }
           EOS

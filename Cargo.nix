@@ -384,6 +384,117 @@ rec {
         ];
         
       };
+      "auto_enums" = rec {
+        crateName = "auto_enums";
+        version = "0.7.12";
+        edition = "2018";
+        sha256 = "1hxmqj4finfdk7wmxg14m9qgb09fl1zg96ap34g7an2isx2zw3gy";
+        authors = [
+          "Taiki Endo <te316e89@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "auto_enums_core";
+            packageId = "auto_enums_core";
+            usesDefaultFeatures = false;
+          }
+          {
+            name = "auto_enums_derive";
+            packageId = "auto_enums_derive";
+            usesDefaultFeatures = false;
+          }
+        ];
+        features = {
+          "convert" = [ "auto_enums_derive/convert" ];
+          "default" = [ "std" ];
+          "fmt" = [ "auto_enums_derive/fmt" ];
+          "fn_traits" = [ "auto_enums_derive/fn_traits" ];
+          "futures" = [ "auto_enums_derive/futures" ];
+          "futures01" = [ "auto_enums_derive/futures01" ];
+          "futures03" = [ "auto_enums_derive/futures03" ];
+          "generator_trait" = [ "auto_enums_derive/generator_trait" ];
+          "ops" = [ "auto_enums_derive/ops" ];
+          "rayon" = [ "auto_enums_derive/rayon" ];
+          "serde" = [ "auto_enums_derive/serde" ];
+          "std" = [ "auto_enums_derive/std" ];
+          "tokio01" = [ "auto_enums_derive/tokio01" ];
+          "tokio02" = [ "auto_enums_derive/tokio02" ];
+          "tokio03" = [ "auto_enums_derive/tokio03" ];
+          "tokio1" = [ "auto_enums_derive/tokio1" ];
+          "transpose_methods" = [ "auto_enums_derive/transpose_methods" ];
+          "trusted_len" = [ "auto_enums_derive/trusted_len" ];
+          "type_analysis" = [ "auto_enums_core/type_analysis" ];
+          "unstable" = [ "auto_enums_derive/unstable" ];
+        };
+        resolvedDefaultFeatures = [ "default" "std" ];
+      };
+      "auto_enums_core" = rec {
+        crateName = "auto_enums_core";
+        version = "0.7.12";
+        edition = "2018";
+        sha256 = "1d3728xp3y98jcky4xmbl84g9kr2prc1jwsdfi5jqfi905hc8iys";
+        procMacro = true;
+        authors = [
+          "Taiki Endo <te316e89@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "proc-macro2";
+            packageId = "proc-macro2";
+          }
+          {
+            name = "quote";
+            packageId = "quote";
+          }
+          {
+            name = "syn";
+            packageId = "syn";
+            features = [ "full" "visit-mut" ];
+          }
+        ];
+        features = {
+        };
+      };
+      "auto_enums_derive" = rec {
+        crateName = "auto_enums_derive";
+        version = "0.7.12";
+        edition = "2018";
+        sha256 = "1zbwq27bixcw3nk41bwwnir4v8s53gd99jxp0fapkp7chgdd3bj1";
+        procMacro = true;
+        authors = [
+          "Taiki Endo <te316e89@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "derive_utils";
+            packageId = "derive_utils";
+          }
+          {
+            name = "proc-macro2";
+            packageId = "proc-macro2";
+          }
+          {
+            name = "quote";
+            packageId = "quote";
+          }
+          {
+            name = "syn";
+            packageId = "syn";
+            features = [ "full" ];
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg";
+          }
+        ];
+        features = {
+          "default" = [ "std" ];
+          "futures" = [ "futures03" ];
+        };
+        resolvedDefaultFeatures = [ "std" ];
+      };
       "autocfg" = rec {
         crateName = "autocfg";
         version = "1.0.1";
@@ -1180,6 +1291,31 @@ rec {
           {
             name = "sct";
             packageId = "sct";
+          }
+        ];
+        
+      };
+      "derive_utils" = rec {
+        crateName = "derive_utils";
+        version = "0.11.2";
+        edition = "2018";
+        sha256 = "1gx7giwn8x427d5f8c92n9h0hhcqdsasvz7i8iq2rqffvhalqask";
+        authors = [
+          "Taiki Endo <te316e89@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "proc-macro2";
+            packageId = "proc-macro2";
+          }
+          {
+            name = "quote";
+            packageId = "quote";
+          }
+          {
+            name = "syn";
+            packageId = "syn";
+            features = [ "full" ];
           }
         ];
         
@@ -5732,6 +5868,10 @@ rec {
           {
             name = "async-trait";
             packageId = "async-trait";
+          }
+          {
+            name = "auto_enums";
+            packageId = "auto_enums";
           }
           {
             name = "bitflags";

@@ -5,6 +5,8 @@ properties:
     $ref: ./PendingProjectId.yml
   created_at:
     $ref: ../DateTime.yml
+  updated_at:
+    $ref: ../DateTime.yml
   owner_id:
     $ref: ../user/UserId.yml
   name:
@@ -26,6 +28,7 @@ properties:
 required:
   - id
   - created_at
+  - updated_at
   - owner_id
   - name
   - kana_name

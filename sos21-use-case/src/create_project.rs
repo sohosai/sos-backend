@@ -136,7 +136,7 @@ mod tests {
     use crate::model::pending_project::PendingProjectId;
     use crate::model::user::UserId;
     use crate::{create_project, get_pending_project, UseCaseError};
-    use sos21_domain::test;
+    use sos21_domain::{model::project, test};
 
     #[tokio::test]
     async fn test_owner() {
@@ -212,6 +212,36 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_after_other_category_period_other() {
+        let user = test::model::new_general_user();
+        let other = test::model::new_general_user();
+        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let period = test::model::new_project_creation_period_to_now();
+
+        let app = test::build_mock_app()
+            .users(vec![user.clone(), other.clone()])
+            .pending_projects(vec![pending_project.clone()])
+            .project_creation_period_for(project::ProjectCategory::Stage, period)
+            .build()
+            .login_as(user.clone())
+            .await;
+
+        let pending_project_id = PendingProjectId::from_entity(pending_project.id());
+
+        assert!(matches!(
+            create_project::run(&app, pending_project_id).await,
+            Ok(got)
+            if got.owner_id == UserId::from_entity(other.id().clone())
+            && got.subowner_id == UserId::from_entity(user.id().clone())
+        ));
+
+        assert!(matches!(
+            get_pending_project::run(&app, pending_project_id).await,
+            Err(UseCaseError::UseCase(get_pending_project::Error::NotFound))
+        ));
+    }
+
+    #[tokio::test]
     async fn test_with_period_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
@@ -221,7 +251,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
             .pending_projects(vec![pending_project.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -248,7 +278,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
             .pending_projects(vec![pending_project.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -271,7 +301,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
             .pending_projects(vec![pending_project.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .await;

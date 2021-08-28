@@ -16,6 +16,8 @@ pub struct Request {
     #[serde(default)]
     pub field_created_at: Option<String>,
     #[serde(default)]
+    pub field_updated_at: Option<String>,
+    #[serde(default)]
     pub field_project_id: Option<String>,
     #[serde(default)]
     pub field_pending_project_id: Option<String>,
@@ -63,6 +65,7 @@ pub async fn handler(
             registration_form_id,
             field_id,
             field_created_at,
+            field_updated_at,
             field_project_id,
             field_pending_project_id,
             field_author_id,
@@ -81,6 +84,7 @@ pub async fn handler(
         let field_names = export_registration_form_answers::InputFieldNames {
             id: field_id,
             created_at: field_created_at,
+            updated_at: field_updated_at,
             project_id: field_project_id,
             pending_project_id: field_pending_project_id,
             author_id: field_author_id,

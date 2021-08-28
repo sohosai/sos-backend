@@ -1837,6 +1837,12 @@ paths:
           description: 与えられた場合、その名前の列で企画の作成日時を出力します。
         - schema:
             type: string
+            example: 更新日時
+          in: query
+          name: field_updated_at
+          description: 与えられた場合、その名前の列で企画の更新日時を出力します。
+        - schema:
+            type: string
             example: 企画責任者 内部ID
           in: query
           name: field_owner_id
@@ -2138,8 +2144,6 @@ paths:
                   type: string
                 description:
                   type: string
-                category:
-                  $ref: ./model/project/ProjectCategory.yml
                 attributes:
                   type: array
                   items:
@@ -2282,8 +2286,6 @@ paths:
                   type: string
                 description:
                   type: string
-                category:
-                  $ref: ./model/project/ProjectCategory.yml
                 attributes:
                   type: array
                   items:
@@ -4733,6 +4735,11 @@ paths:
           in: query
           name: field_created_at
           description: 与えられた場合、その名前の列で回答日時を出力します。
+        - schema:
+            type: string
+          in: query
+          name: field_updated_at
+          description: 与えられた場合、その名前の列で回答の更新日時を出力します。
         - schema:
             type: string
           in: query

@@ -37,6 +37,7 @@ impl PendingProjectRepository for PendingProjectDatabase {
             let input = command::update_pending_project::Input {
                 id: pending_project.id,
                 created_at: pending_project.created_at,
+                updated_at: pending_project.updated_at,
                 name: pending_project.name,
                 kana_name: pending_project.kana_name,
                 group_name: pending_project.group_name,
@@ -71,6 +72,7 @@ fn from_pending_project(pending_project: PendingProject) -> data::pending_projec
     let PendingProjectContent {
         id,
         created_at,
+        updated_at,
         name,
         kana_name,
         group_name,
@@ -83,6 +85,7 @@ fn from_pending_project(pending_project: PendingProject) -> data::pending_projec
     data::pending_project::PendingProject {
         id: id.to_uuid(),
         created_at: created_at.utc(),
+        updated_at: updated_at.utc(),
         name: name.into_string(),
         kana_name: kana_name.into_string(),
         group_name: group_name.into_string(),
@@ -104,6 +107,7 @@ fn to_pending_project_with_owner(
     let data::pending_project::PendingProject {
         id,
         created_at,
+        updated_at,
         name,
         kana_name,
         group_name,
@@ -117,6 +121,7 @@ fn to_pending_project_with_owner(
         PendingProjectContent {
             id: PendingProjectId::from_uuid(id),
             created_at: DateTime::from_utc(created_at),
+            updated_at: DateTime::from_utc(updated_at),
             name: ProjectName::from_string(name)?,
             kana_name: ProjectKanaName::from_string(kana_name)?,
             group_name: ProjectGroupName::from_string(group_name)?,

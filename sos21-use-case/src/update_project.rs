@@ -1,7 +1,5 @@
 use crate::error::{UseCaseError, UseCaseResult};
-use crate::model::project::{
-    Project, ProjectAttribute, ProjectCategory, ProjectFromEntityInput, ProjectId,
-};
+use crate::model::project::{Project, ProjectAttribute, ProjectFromEntityInput, ProjectId};
 
 use anyhow::Context;
 use sos21_domain::context::project_repository::{self, ProjectRepository};
@@ -16,7 +14,6 @@ pub struct Input {
     pub group_name: Option<String>,
     pub kana_group_name: Option<String>,
     pub description: Option<String>,
-    pub category: Option<ProjectCategory>,
     pub attributes: Option<Vec<ProjectAttribute>>,
 }
 
@@ -68,13 +65,6 @@ pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<Project, Erro
 where
     C: ProjectRepository + ConfigContext + Send + Sync,
 {
-    if !ctx
-        .project_creation_period()
-        .contains(date_time::DateTime::now())
-    {
-        return Err(UseCaseError::UseCase(Error::OutOfCreationPeriod));
-    }
-
     let login_user = ctx.login_user();
 
     let result = ctx
@@ -91,6 +81,13 @@ where
         owner,
         subowner,
     } = result;
+
+    if !ctx
+        .project_creation_period_for(project.category())
+        .contains(date_time::DateTime::now())
+    {
+        return Err(UseCaseError::UseCase(Error::OutOfCreationPeriod));
+    }
 
     if let Some(name) = input.name {
         let name = project::ProjectName::from_string(name)
@@ -177,7 +174,6 @@ mod tests {
             group_name: None,
             kana_group_name: None,
             description: None,
-            category: None,
             attributes: None,
         };
         (name, input)
@@ -193,7 +189,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .projects(vec![project.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .await;
@@ -217,7 +213,7 @@ mod tests {
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .projects(vec![project.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .await;

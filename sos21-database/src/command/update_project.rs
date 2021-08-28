@@ -1,11 +1,13 @@
 use crate::model::project::{ProjectAttributes, ProjectCategory};
 
 use anyhow::{Context, Result};
+use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub struct Input {
     pub id: Uuid,
+    pub updated_at: DateTime<Utc>,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -29,7 +31,8 @@ UPDATE projects
     kana_group_name = $5,
     description = $6,
     category = $7,
-    attributes = $8
+    attributes = $8,
+    updated_at = $9
   WHERE id = $1
 "#,
         input.id,
@@ -39,7 +42,8 @@ UPDATE projects
         input.kana_group_name,
         input.description,
         input.category as _,
-        input.attributes as _
+        input.attributes as _,
+        input.updated_at
     )
     .execute(conn)
     .await

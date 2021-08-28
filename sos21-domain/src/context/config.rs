@@ -1,9 +1,10 @@
+use crate::model::project::ProjectCategory;
 use crate::model::project_creation_period::ProjectCreationPeriod;
 use crate::model::user::UserEmailAddress;
 
 pub trait ConfigContext {
     fn administrator_email(&self) -> &UserEmailAddress;
-    fn project_creation_period(&self) -> ProjectCreationPeriod;
+    fn project_creation_period_for(&self, category: ProjectCategory) -> ProjectCreationPeriod;
 }
 
 #[macro_export]
@@ -15,10 +16,11 @@ macro_rules! delegate_config_context {
             fn administrator_email(&$sel) -> &$crate::model::user::UserEmailAddress {
                 $target.administrator_email()
             }
-            fn project_creation_period(
+            fn project_creation_period_for(
                 &$sel,
+                category: $crate::model::project::ProjectCategory,
             ) -> $crate::model::project_creation_period::ProjectCreationPeriod {
-                $target.project_creation_period()
+                $target.project_creation_period_for(category)
             }
         }
     }
@@ -29,7 +31,7 @@ impl<C: ConfigContext> ConfigContext for &C {
         <C as ConfigContext>::administrator_email(self)
     }
 
-    fn project_creation_period(&self) -> ProjectCreationPeriod {
-        <C as ConfigContext>::project_creation_period(self)
+    fn project_creation_period_for(&self, category: ProjectCategory) -> ProjectCreationPeriod {
+        <C as ConfigContext>::project_creation_period_for(self, category)
     }
 }

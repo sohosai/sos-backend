@@ -1,5 +1,5 @@
 use crate::app::Context;
-use crate::handler::model::project::{Project, ProjectAttribute, ProjectCategory, ProjectId};
+use crate::handler::model::project::{Project, ProjectAttribute, ProjectId};
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
@@ -20,8 +20,6 @@ pub struct Request {
     pub kana_group_name: Option<String>,
     #[serde(default)]
     pub description: Option<String>,
-    #[serde(default)]
-    pub category: Option<ProjectCategory>,
     #[serde(default)]
     pub attributes: Option<Vec<ProjectAttribute>>,
 }
@@ -90,7 +88,6 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
         group_name: request.group_name,
         kana_group_name: request.kana_group_name,
         description: request.description,
-        category: request.category.map(ProjectCategory::into_use_case),
         attributes: request.attributes.map(|attributes| {
             attributes
                 .into_iter()

@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::model::bound::{Bounded, Unbounded};
 use crate::model::collection::LengthLimitedVec;
 use crate::model::pending_project::PendingProject;
@@ -33,6 +35,15 @@ impl ProjectQueryConjunction {
         }
 
         self.attributes.is_subset(attributes)
+    }
+
+    #[auto_enums::auto_enum(Iterator)]
+    pub fn possible_categories(&self) -> impl Iterator<Item = ProjectCategory> {
+        if let Some(expected) = self.category {
+            std::iter::once(expected)
+        } else {
+            ProjectCategory::enumerate()
+        }
     }
 
     pub fn check_project(&self, project: &Project) -> bool {
@@ -86,6 +97,15 @@ impl ProjectQuery {
 
     pub fn into_conjunctions(self) -> impl Iterator<Item = ProjectQueryConjunction> {
         self.0.into_inner().into_iter()
+    }
+
+    pub fn possible_categories(&self) -> impl Iterator<Item = ProjectCategory> {
+        let categories: HashSet<_> = self
+            .conjunctions()
+            .map(|conj| conj.possible_categories())
+            .flatten()
+            .collect();
+        categories.into_iter()
     }
 
     pub fn check_project(&self, project: &Project) -> bool {
@@ -562,5 +582,75 @@ mod tests {
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(query.check_pending_project(&pending_project));
+    }
+
+    #[test]
+    fn test_conj_possible_categories() {
+        use std::collections::HashSet;
+
+        let conj1 = ProjectQueryConjunction {
+            category: Some(ProjectCategory::Stage),
+            attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic])
+                .unwrap(),
+        };
+        assert_eq!(
+            conj1.possible_categories().collect::<Vec<_>>(),
+            vec![ProjectCategory::Stage]
+        );
+        let conj2 = ProjectQueryConjunction {
+            category: None,
+            attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic])
+                .unwrap(),
+        };
+        assert_eq!(
+            conj2.possible_categories().collect::<HashSet<_>>(),
+            ProjectCategory::enumerate().collect::<HashSet<_>>()
+        );
+    }
+
+    #[test]
+    fn test_possible_categories() {
+        use std::collections::HashSet;
+
+        let conj1 = ProjectQueryConjunction {
+            category: Some(ProjectCategory::Stage),
+            attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic])
+                .unwrap(),
+        };
+        let conj2 = ProjectQueryConjunction {
+            category: Some(ProjectCategory::Food),
+            attributes: ProjectAttributes::from_attributes(vec![
+                ProjectAttribute::Academic,
+                ProjectAttribute::Committee,
+            ])
+            .unwrap(),
+        };
+        let query1 = ProjectQuery::from_conjunctions(vec![conj1, conj2]).unwrap();
+        assert_eq!(
+            query1.possible_categories().collect::<HashSet<_>>(),
+            [ProjectCategory::Stage, ProjectCategory::Food]
+                .iter()
+                .copied()
+                .collect::<HashSet<_>>()
+        );
+
+        let conj1 = ProjectQueryConjunction {
+            category: Some(ProjectCategory::Stage),
+            attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic])
+                .unwrap(),
+        };
+        let conj2 = ProjectQueryConjunction {
+            category: None,
+            attributes: ProjectAttributes::from_attributes(vec![
+                ProjectAttribute::Academic,
+                ProjectAttribute::Committee,
+            ])
+            .unwrap(),
+        };
+        let query2 = ProjectQuery::from_conjunctions(vec![conj1, conj2]).unwrap();
+        assert_eq!(
+            query2.possible_categories().collect::<HashSet<_>>(),
+            ProjectCategory::enumerate().collect::<HashSet<_>>()
+        );
     }
 }

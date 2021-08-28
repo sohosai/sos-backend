@@ -17,6 +17,7 @@ where
 SELECT
         pending_projects.id,
         pending_projects.created_at,
+        pending_projects.updated_at,
         pending_projects.name,
         pending_projects.kana_name,
         pending_projects.group_name,
@@ -59,6 +60,7 @@ WHERE pending_projects.id = $1
     let pending_project = PendingProject {
         id: row.id,
         created_at: row.created_at,
+        updated_at: row.updated_at,
         name: row.name,
         kana_name: row.kana_name,
         group_name: row.group_name,

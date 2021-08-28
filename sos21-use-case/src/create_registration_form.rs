@@ -55,18 +55,26 @@ pub async fn run<C>(ctx: &Login<C>, input: Input) -> UseCaseResult<RegistrationF
 where
     C: RegistrationFormRepository + ConfigContext + Send + Sync,
 {
-    // TODO: Move this constraint to domain
-    if ctx.project_creation_period().contains(DateTime::now()) {
-        return Err(UseCaseError::UseCase(
-            Error::AlreadyStartedProjectCreationPeriod,
-        ));
-    }
-
     let login_user = ctx.login_user();
 
     login_user
         .require_permissions(Permissions::CREATE_REGISTRATION_FORMS)
         .map_err(|err| UseCaseError::UseCase(Error::from_permissions_error(err)))?;
+
+    let query = interface::project_query::to_project_query(input.query)
+        .map_err(|err| UseCaseError::UseCase(Error::from_query_error(err)))?;
+
+    // TODO: Move this constraint to domain
+    for category in query.possible_categories() {
+        if ctx
+            .project_creation_period_for(category)
+            .contains(DateTime::now())
+        {
+            return Err(UseCaseError::UseCase(
+                Error::AlreadyStartedProjectCreationPeriod,
+            ));
+        }
+    }
 
     let name = registration_form::RegistrationFormName::from_string(input.name)
         .map_err(|err| UseCaseError::UseCase(Error::from_name_error(err)))?;
@@ -75,8 +83,6 @@ where
             .map_err(|err| UseCaseError::UseCase(Error::from_description_error(err)))?;
     let items = interface::form::to_form_items(input.items)
         .map_err(|err| UseCaseError::UseCase(Error::from_items_error(err)))?;
-    let query = interface::project_query::to_project_query(input.query)
-        .map_err(|err| UseCaseError::UseCase(Error::from_query_error(err)))?;
 
     let registration_form = registration_form::RegistrationForm {
         id: registration_form::RegistrationFormId::from_uuid(Uuid::new_v4()),
@@ -96,9 +102,14 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::model::{form::FormItem, project_query::ProjectQuery, user::UserId};
+    use crate::model::{
+        form::FormItem,
+        project::ProjectCategory,
+        project_query::{ProjectQuery, ProjectQueryConjunction},
+        user::UserId,
+    };
     use crate::{create_registration_form, get_registration_form, UseCaseError};
-    use sos21_domain::test;
+    use sos21_domain::{model::project, test};
 
     // Checks that the normal user cannot create registration forms.
     #[tokio::test]
@@ -108,7 +119,7 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -139,7 +150,7 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -170,7 +181,7 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period(period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -183,7 +194,10 @@ mod tests {
                 .into_items()
                 .map(FormItem::from_entity)
                 .collect(),
-            query: ProjectQuery::from_entity(test::model::mock_project_query()),
+            query: ProjectQuery(vec![ProjectQueryConjunction {
+                category: Some(ProjectCategory::General),
+                attributes: vec![],
+            }]),
         };
 
         let got = create_registration_form::run(&app, input).await.unwrap();

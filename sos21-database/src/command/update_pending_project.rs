@@ -8,6 +8,7 @@ use uuid::Uuid;
 pub struct Input {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,
@@ -24,6 +25,7 @@ where
     let Input {
         id,
         created_at,
+        updated_at,
         name,
         kana_name,
         group_name,
@@ -44,7 +46,8 @@ UPDATE pending_projects
     kana_group_name = $6,
     description = $7,
     category = $8,
-    attributes = $9
+    attributes = $9,
+    updated_at = $10
   WHERE id = $1
 "#,
         id,
@@ -56,6 +59,7 @@ UPDATE pending_projects
         description,
         category as _,
         attributes as _,
+        updated_at,
     )
     .execute(conn)
     .await

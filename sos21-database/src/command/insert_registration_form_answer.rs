@@ -12,6 +12,7 @@ where
     let RegistrationFormAnswer {
         id,
         created_at,
+        updated_at,
         author_id,
         registration_form_id,
         project_id,
@@ -24,15 +25,17 @@ where
 INSERT INTO registration_form_answers (
     id,
     created_at,
+    updated_at,
     author_id,
     registration_form_id,
     project_id,
     pending_project_id,
     items
-) VALUES ( $1, $2, $3, $4, $5, $6, $7 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
 "#,
         id,
         created_at,
+        updated_at,
         author_id,
         registration_form_id,
         project_id,

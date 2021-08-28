@@ -46,6 +46,7 @@ impl<F> Debug for Input<F> {
 pub struct InputFieldNames {
     pub id: Option<String>,
     pub created_at: Option<String>,
+    pub updated_at: Option<String>,
     pub project_id: Option<String>,
     pub pending_project_id: Option<String>,
     pub author_id: Option<String>,
@@ -105,6 +106,7 @@ where
     let InputFieldNames {
         id,
         created_at,
+        updated_at,
         project_id,
         pending_project_id,
         author_id,
@@ -120,6 +122,7 @@ where
 
     write_field!(writer, id);
     write_field!(writer, created_at);
+    write_field!(writer, updated_at);
     write_field!(writer, project_id);
     write_field!(writer, pending_project_id);
     write_field!(writer, author_id);
@@ -181,6 +184,7 @@ where
     let InputFieldNames {
         id,
         created_at,
+        updated_at,
         project_id,
         pending_project_id,
         author_id,
@@ -193,6 +197,11 @@ where
     if created_at.is_some() {
         let created_at = answer.created_at().jst().format("%F %T").to_string();
         writer.write_field(created_at)?;
+    }
+
+    if updated_at.is_some() {
+        let updated_at = answer.updated_at().jst().format("%F %T").to_string();
+        writer.write_field(updated_at)?;
     }
 
     if project_id.is_some() {
@@ -380,6 +389,7 @@ mod tests {
         let field_names = export_registration_form_answers::InputFieldNames {
             id: None,
             created_at: Some("作成日時".to_string()),
+            updated_at: Some("更新日時".to_string()),
             project_id: Some("企画番号".to_string()),
             pending_project_id: Some("承認待ち企画番号".to_string()),
             author_id: Some("回答者".to_string()),

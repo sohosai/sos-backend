@@ -26,6 +26,7 @@ futures = "0.3"
 blake3 = "0.3"
 unicode-segmentation = "1.7"
 num-rational = "0.4"
+auto_enums = "0.7"
 
 # these optional dependencies are used by `test` feature (which is enabled for the use from other crates)
 tokio = { version = "1", optional = true, features = ["macros", "rt-multi-thread"] }

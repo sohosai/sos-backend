@@ -62,6 +62,7 @@ pub struct Project {
     pub id: Uuid,
     pub index: i16,
     pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub name: String,
     pub kana_name: String,
     pub group_name: String,

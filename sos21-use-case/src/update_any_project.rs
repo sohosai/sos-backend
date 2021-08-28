@@ -132,6 +132,12 @@ where
             .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
+    if let Some(category) = input.category {
+        project
+            .set_category(login_user, category.into_entity())
+            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
+    }
+
     if let Some(attributes) = input.attributes {
         let attributes = project::ProjectAttributes::from_attributes(
             attributes.into_iter().map(ProjectAttribute::into_entity),

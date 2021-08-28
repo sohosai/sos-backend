@@ -5,6 +5,7 @@ use thiserror::Error;
 #[derive(Debug, Clone, Copy)]
 enum ProjectCreationPeriodInner {
     Always,
+    Never,
     Range {
         starts_at: DateTime,
         ends_at: DateTime,
@@ -39,9 +40,16 @@ impl ProjectCreationPeriod {
         }
     }
 
+    pub fn never() -> Self {
+        ProjectCreationPeriod {
+            inner: ProjectCreationPeriodInner::Never,
+        }
+    }
+
     pub fn is_after(&self, time: DateTime) -> bool {
         match self.inner {
             ProjectCreationPeriodInner::Always => false,
+            ProjectCreationPeriodInner::Never => true,
             ProjectCreationPeriodInner::Range { starts_at, .. } => starts_at > time,
         }
     }
@@ -49,6 +57,7 @@ impl ProjectCreationPeriod {
     pub fn contains(&self, time: DateTime) -> bool {
         match self.inner {
             ProjectCreationPeriodInner::Always => true,
+            ProjectCreationPeriodInner::Never => false,
             ProjectCreationPeriodInner::Range { starts_at, ends_at } => {
                 starts_at <= time && ends_at > time
             }

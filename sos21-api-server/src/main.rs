@@ -1,7 +1,6 @@
 use std::net::SocketAddr;
 
 use anyhow::{Context, Result};
-use chrono::{TimeZone, Utc};
 use sos21_api_server::Config;
 use structopt::StructOpt;
 use tokio::runtime;
@@ -68,6 +67,13 @@ fn run(opt: Opt) -> Result<()> {
         .build()
         .context("Failed to build the Tokio Runtime")?;
 
+    let project_creation_periods = std::env::vars()
+        .filter_map(|(key, value)| {
+            key.strip_prefix("SOS21_API_SERVER_PROJECT_CREATION_PERIOD_")
+                .map(|key| (key.to_owned(), value))
+        })
+        .collect();
+
     runtime.block_on(async move {
         let config = Config {
             jwt_audience: opt.jwt_audience,
@@ -81,12 +87,7 @@ fn run(opt: Opt) -> Result<()> {
             s3_endpoint: opt.s3_endpoint,
             s3_object_bucket: opt.s3_object_bucket,
             administrator_email: opt.administrator_email,
-            start_project_creation_period: opt
-                .start_project_creation_period
-                .map(|millis| Utc.timestamp_millis(millis)),
-            end_project_creation_period: opt
-                .end_project_creation_period
-                .map(|millis| Utc.timestamp_millis(millis)),
+            project_creation_periods,
         };
         let server = sos21_api_server::Server::new(config).await?;
         server.run(opt.bind).await;

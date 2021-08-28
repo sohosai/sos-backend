@@ -9,6 +9,8 @@ properties:
     type: string
   created_at:
     $ref: ../DateTime.yml
+  updated_at:
+    $ref: ../DateTime.yml
   owner_id:
     $ref: ../user/UserId.yml
   owner_name:
@@ -41,6 +43,7 @@ required:
   - id
   - code
   - created_at
+  - updated_at
   - owner_id
   - owner_name
   - owner_kana_name
