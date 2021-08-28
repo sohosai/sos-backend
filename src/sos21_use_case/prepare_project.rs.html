@@ -384,7 +384,7 @@
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{<span class="ident">project</span>::<span class="ident">ProjectCategory</span>, <span class="ident">user</span>::<span class="ident">UserId</span>};
     <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">get_pending_project</span>, <span class="ident">prepare_project</span>, <span class="ident">UseCaseError</span>};
-    <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">test</span>;
+    <span class="kw">use</span> <span class="ident">sos21_domain</span>::{<span class="ident">model</span>::<span class="ident">project</span>, <span class="ident">test</span>};
 
     <span class="kw">fn</span> <span class="ident">mock_input</span>() <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">String</span>, <span class="ident">prepare_project</span>::<span class="ident">Input</span>) {
         <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;テストテスト&quot;</span>.<span class="ident">to_string</span>();
@@ -427,7 +427,7 @@
         <span class="kw">let</span> <span class="ident">period</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_project_creation_period_from_now</span>();
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period</span>(<span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
@@ -450,7 +450,7 @@
         <span class="kw">let</span> <span class="ident">period</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_project_creation_period_with_hours_from_now</span>(<span class="number">1</span>);
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period</span>(<span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
@@ -470,7 +470,7 @@
         <span class="kw">let</span> <span class="ident">period</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_project_creation_period_to_now</span>();
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period</span>(<span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;

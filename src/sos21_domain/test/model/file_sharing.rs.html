@@ -23,6 +23,10 @@
 <span id="20">20</span>
 <span id="21">21</span>
 <span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file</span>::<span class="ident">FileId</span>;
@@ -32,12 +36,16 @@
 
 <span class="kw">use</span> <span class="ident">uuid</span>::<span class="ident">Uuid</span>;
 
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_file_sharing_id</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FileSharingId</span> {
+    <span class="ident">FileSharingId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>())
+}
+
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_expired_file_sharing</span>(<span class="ident">file_id</span>: <span class="ident">FileId</span>, <span class="ident">scope</span>: <span class="ident">FileSharingScope</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FileSharing</span> {
     <span class="kw">let</span> <span class="ident">expires_at</span> <span class="op">=</span> <span class="ident">DateTime</span>::<span class="ident">now</span>();
     <span class="kw">let</span> <span class="ident">created_at</span> <span class="op">=</span> <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">expires_at</span>.<span class="ident">utc</span>() <span class="op">-</span> <span class="ident">chrono</span>::<span class="ident">Duration</span>::<span class="ident">seconds</span>(<span class="number">1</span>));
 
     <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">FileSharingContent</span> {
-        <span class="ident">id</span>: <span class="ident">FileSharingId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>()),
+        <span class="ident">id</span>: <span class="ident">new_file_sharing_id</span>(),
         <span class="ident">created_at</span>,
         <span class="ident">file_id</span>,
         <span class="ident">is_revoked</span>: <span class="bool-val">false</span>,

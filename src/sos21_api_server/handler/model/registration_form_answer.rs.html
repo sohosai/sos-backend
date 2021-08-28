@@ -86,6 +86,8 @@
 <span id="83">83</span>
 <span id="84">84</span>
 <span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">form_answer</span>::<span class="ident">FormAnswerItem</span>;
@@ -152,6 +154,7 @@
     <span class="kw">pub</span> <span class="ident">respondent</span>: <span class="ident">RegistrationFormAnswerRespondent</span>,
     <span class="kw">pub</span> <span class="ident">registration_form_id</span>: <span class="ident">RegistrationFormId</span>,
     <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span>,
+    <span class="kw">pub</span> <span class="ident">updated_at</span>: <span class="ident">DateTime</span>,
     <span class="kw">pub</span> <span class="ident">author_id</span>: <span class="ident">UserId</span>,
     <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FormAnswerItem</span><span class="op">&gt;</span>,
 }
@@ -163,6 +166,7 @@
             <span class="ident">respondent</span>: <span class="ident">RegistrationFormAnswerRespondent</span>::<span class="ident">from_use_case</span>(<span class="ident">answer</span>.<span class="ident">respondent</span>),
             <span class="ident">registration_form_id</span>: <span class="ident">RegistrationFormId</span>::<span class="ident">from_use_case</span>(<span class="ident">answer</span>.<span class="ident">registration_form_id</span>),
             <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_use_case</span>(<span class="ident">answer</span>.<span class="ident">created_at</span>),
+            <span class="ident">updated_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_use_case</span>(<span class="ident">answer</span>.<span class="ident">updated_at</span>),
             <span class="ident">author_id</span>: <span class="ident">UserId</span>::<span class="ident">from_use_case</span>(<span class="ident">answer</span>.<span class="ident">author_id</span>),
             <span class="ident">items</span>: <span class="ident">answer</span>
                 .<span class="ident">items</span>

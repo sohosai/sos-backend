@@ -233,6 +233,8 @@
 <span id="230">230</span>
 <span id="231">231</span>
 <span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -335,6 +337,7 @@
             <span class="op">/</span> <span class="string">&quot;create&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">create</span>),
             <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">get</span>),
             <span class="op">/</span> <span class="string">&quot;update&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">update</span>),
+            <span class="op">/</span> <span class="string">&quot;update-any&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">update_any</span>),
             <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">list</span>),
             <span class="op">/</span> <span class="string">&quot;export&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">export</span>),
             <span class="op">/</span> <span class="string">&quot;form&quot;</span> {
@@ -374,6 +377,7 @@
         <span class="op">/</span> <span class="string">&quot;pending-project&quot;</span> {
             <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">pending_project</span>::<span class="ident">get</span>),
             <span class="op">/</span> <span class="string">&quot;update&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">pending_project</span>::<span class="ident">update</span>),
+            <span class="op">/</span> <span class="string">&quot;update-any&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">pending_project</span>::<span class="ident">update_any</span>),
             <span class="op">/</span> <span class="string">&quot;registration-form&quot;</span> {
                 <span class="op">/</span> <span class="string">&quot;get&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">pending_project</span>::<span class="ident">registration_form</span>::<span class="ident">get</span>),
                 <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">pending_project</span>::<span class="ident">registration_form</span>::<span class="ident">list</span>),

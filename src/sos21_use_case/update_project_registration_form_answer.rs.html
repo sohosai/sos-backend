@@ -516,7 +516,7 @@
     };
 
     <span class="kw">if</span> <span class="op">!</span><span class="ident">ctx</span>
-        .<span class="ident">project_creation_period</span>()
+        .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>.<span class="ident">category</span>())
         .<span class="ident">contains</span>(<span class="ident">date_time</span>::<span class="ident">DateTime</span>::<span class="ident">now</span>())
     {
         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">OutOfProjectCreationPeriod</span>));
@@ -753,7 +753,7 @@
             .<span class="ident">projects</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">project</span>.<span class="ident">clone</span>()])
             .<span class="ident">registration_forms</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">registration_form</span>.<span class="ident">clone</span>()])
             .<span class="ident">registration_form_answers</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">answer</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period</span>(<span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>.<span class="ident">category</span>(), <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">owner</span>)
             .<span class="kw">await</span>;

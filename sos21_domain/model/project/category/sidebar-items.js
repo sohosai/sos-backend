@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ProjectCategory",""]]});
+initSidebarItems({"enum":[["ProjectCategory",""]],"struct":[["ParseCategoryError",""]]});

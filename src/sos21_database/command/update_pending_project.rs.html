@@ -66,6 +66,10 @@
 <span id="63">63</span>
 <span id="64">64</span>
 <span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
 
@@ -77,6 +81,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Input</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">Uuid</span>,
     <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">updated_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">group_name</span>: <span class="ident">String</span>,
@@ -93,6 +98,7 @@
     <span class="kw">let</span> <span class="ident">Input</span> {
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
+        <span class="ident">updated_at</span>,
         <span class="ident">name</span>,
         <span class="ident">kana_name</span>,
         <span class="ident">group_name</span>,
@@ -113,7 +119,8 @@ UPDATE pending_projects
     kana_group_name = $6,
     description = $7,
     category = $8,
-    attributes = $9
+    attributes = $9,
+    updated_at = $10
   WHERE id = $1
 &quot;#</span>,
         <span class="ident">id</span>,
@@ -125,6 +132,7 @@ UPDATE pending_projects
         <span class="ident">description</span>,
         <span class="ident">category</span> <span class="kw">as</span> <span class="kw">_</span>,
         <span class="ident">attributes</span> <span class="kw">as</span> <span class="kw">_</span>,
+        <span class="ident">updated_at</span>,
     )
     .<span class="ident">execute</span>(<span class="ident">conn</span>)
     .<span class="kw">await</span>

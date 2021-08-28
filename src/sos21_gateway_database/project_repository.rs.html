@@ -210,6 +210,11 @@
 <span id="207">207</span>
 <span id="208">208</span>
 <span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
@@ -246,6 +251,7 @@
         <span class="kw">if</span> <span class="ident">query</span>::<span class="ident">find_project</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">lock</span>, <span class="ident">project</span>.<span class="ident">id</span>).<span class="kw">await</span><span class="question-mark">?</span>.<span class="ident">is_some</span>() {
             <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">command</span>::<span class="ident">update_project</span>::<span class="ident">Input</span> {
                 <span class="ident">id</span>: <span class="ident">project</span>.<span class="ident">id</span>,
+                <span class="ident">updated_at</span>: <span class="ident">project</span>.<span class="ident">updated_at</span>,
                 <span class="ident">name</span>: <span class="ident">project</span>.<span class="ident">name</span>,
                 <span class="ident">kana_name</span>: <span class="ident">project</span>.<span class="ident">kana_name</span>,
                 <span class="ident">group_name</span>: <span class="ident">project</span>.<span class="ident">group_name</span>,
@@ -303,6 +309,7 @@
         <span class="ident">id</span>,
         <span class="ident">index</span>,
         <span class="ident">created_at</span>,
+        <span class="ident">updated_at</span>,
         <span class="ident">name</span>,
         <span class="ident">kana_name</span>,
         <span class="ident">group_name</span>,
@@ -317,6 +324,7 @@
             <span class="ident">id</span>: <span class="ident">ProjectId</span>::<span class="ident">from_uuid</span>(<span class="ident">id</span>),
             <span class="ident">index</span>: <span class="ident">ProjectIndex</span>::<span class="ident">from_u16</span>(<span class="ident">index</span>.<span class="ident">try_into</span>()<span class="question-mark">?</span>)<span class="question-mark">?</span>,
             <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">created_at</span>),
+            <span class="ident">updated_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">updated_at</span>),
             <span class="ident">name</span>: <span class="ident">ProjectName</span>::<span class="ident">from_string</span>(<span class="ident">name</span>)<span class="question-mark">?</span>,
             <span class="ident">kana_name</span>: <span class="ident">ProjectKanaName</span>::<span class="ident">from_string</span>(<span class="ident">kana_name</span>)<span class="question-mark">?</span>,
             <span class="ident">group_name</span>: <span class="ident">ProjectGroupName</span>::<span class="ident">from_string</span>(<span class="ident">group_name</span>)<span class="question-mark">?</span>,
@@ -341,6 +349,7 @@
         <span class="ident">id</span>,
         <span class="ident">index</span>,
         <span class="ident">created_at</span>,
+        <span class="ident">updated_at</span>,
         <span class="ident">name</span>,
         <span class="ident">kana_name</span>,
         <span class="ident">group_name</span>,
@@ -354,6 +363,7 @@
         <span class="ident">id</span>: <span class="ident">id</span>.<span class="ident">to_uuid</span>(),
         <span class="ident">index</span>: <span class="ident">index</span>.<span class="ident">to_i16</span>(),
         <span class="ident">created_at</span>: <span class="ident">created_at</span>.<span class="ident">utc</span>(),
+        <span class="ident">updated_at</span>: <span class="ident">updated_at</span>.<span class="ident">utc</span>(),
         <span class="ident">name</span>: <span class="ident">name</span>.<span class="ident">into_string</span>(),
         <span class="ident">kana_name</span>: <span class="ident">kana_name</span>.<span class="ident">into_string</span>(),
         <span class="ident">group_name</span>: <span class="ident">group_name</span>.<span class="ident">into_string</span>(),

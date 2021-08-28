@@ -57,6 +57,8 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttribute</span>, <span class="ident">ProjectCategory</span>};
@@ -84,6 +86,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PendingProject</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">PendingProjectId</span>,
     <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="ident">DateTime</span>,
+    <span class="kw">pub</span> <span class="ident">updated_at</span>: <span class="ident">DateTime</span>,
     <span class="kw">pub</span> <span class="ident">owner_id</span>: <span class="ident">UserId</span>,
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">kana_name</span>: <span class="ident">String</span>,
@@ -99,6 +102,7 @@
         <span class="ident">PendingProject</span> {
             <span class="ident">id</span>: <span class="ident">PendingProjectId</span>::<span class="ident">from_use_case</span>(<span class="ident">pending_project</span>.<span class="ident">id</span>),
             <span class="ident">created_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_use_case</span>(<span class="ident">pending_project</span>.<span class="ident">created_at</span>),
+            <span class="ident">updated_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_use_case</span>(<span class="ident">pending_project</span>.<span class="ident">updated_at</span>),
             <span class="ident">owner_id</span>: <span class="ident">UserId</span>::<span class="ident">from_use_case</span>(<span class="ident">pending_project</span>.<span class="ident">owner_id</span>),
             <span class="ident">name</span>: <span class="ident">pending_project</span>.<span class="ident">name</span>,
             <span class="ident">kana_name</span>: <span class="ident">pending_project</span>.<span class="ident">kana_name</span>,

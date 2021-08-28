@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Permissions",""]]});
+initSidebarItems({"enum":[["PermissionsFlags",""]],"struct":[["Permissions",""]]});

@@ -441,6 +441,16 @@
 <span id="438">438</span>
 <span id="439">439</span>
 <span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>};
 
@@ -490,6 +500,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InputFieldNames</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">created_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">updated_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">pending_project_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">author_id</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
@@ -549,6 +560,7 @@
     <span class="kw">let</span> <span class="ident">InputFieldNames</span> {
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
+        <span class="ident">updated_at</span>,
         <span class="ident">project_id</span>,
         <span class="ident">pending_project_id</span>,
         <span class="ident">author_id</span>,
@@ -564,6 +576,7 @@
 
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">id</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">created_at</span>);
+    <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">updated_at</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">project_id</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">pending_project_id</span>);
     <span class="macro">write_field</span><span class="macro">!</span>(<span class="ident">writer</span>, <span class="ident">author_id</span>);
@@ -625,6 +638,7 @@
     <span class="kw">let</span> <span class="ident">InputFieldNames</span> {
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
+        <span class="ident">updated_at</span>,
         <span class="ident">project_id</span>,
         <span class="ident">pending_project_id</span>,
         <span class="ident">author_id</span>,
@@ -637,6 +651,11 @@
     <span class="kw">if</span> <span class="ident">created_at</span>.<span class="ident">is_some</span>() {
         <span class="kw">let</span> <span class="ident">created_at</span> <span class="op">=</span> <span class="ident">answer</span>.<span class="ident">created_at</span>().<span class="ident">jst</span>().<span class="ident">format</span>(<span class="string">&quot;%F %T&quot;</span>).<span class="ident">to_string</span>();
         <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="ident">created_at</span>)<span class="question-mark">?</span>;
+    }
+
+    <span class="kw">if</span> <span class="ident">updated_at</span>.<span class="ident">is_some</span>() {
+        <span class="kw">let</span> <span class="ident">updated_at</span> <span class="op">=</span> <span class="ident">answer</span>.<span class="ident">updated_at</span>().<span class="ident">jst</span>().<span class="ident">format</span>(<span class="string">&quot;%F %T&quot;</span>).<span class="ident">to_string</span>();
+        <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="ident">updated_at</span>)<span class="question-mark">?</span>;
     }
 
     <span class="kw">if</span> <span class="ident">project_id</span>.<span class="ident">is_some</span>() {
@@ -824,6 +843,7 @@
         <span class="kw">let</span> <span class="ident">field_names</span> <span class="op">=</span> <span class="ident">export_registration_form_answers</span>::<span class="ident">InputFieldNames</span> {
             <span class="ident">id</span>: <span class="prelude-val">None</span>,
             <span class="ident">created_at</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;作成日時&quot;</span>.<span class="ident">to_string</span>()),
+            <span class="ident">updated_at</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;更新日時&quot;</span>.<span class="ident">to_string</span>()),
             <span class="ident">project_id</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;企画番号&quot;</span>.<span class="ident">to_string</span>()),
             <span class="ident">pending_project_id</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;承認待ち企画番号&quot;</span>.<span class="ident">to_string</span>()),
             <span class="ident">author_id</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;回答者&quot;</span>.<span class="ident">to_string</span>()),
