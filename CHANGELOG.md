@@ -7,7 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
+- `updated_at` field ([#118](https://github.com/sohosai/sos21-backend/pull/118))
+
 ### Changed
+
+- Enable to set project creation period by categories ([#118](https://github.com/sohosai/sos21-backend/pull/118))
+
 ### Deprecated
 ### Removed
 ### Fixed
