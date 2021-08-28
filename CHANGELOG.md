@@ -17,6 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 ### Removed
 ### Fixed
+
+- Accept empty answer in !accept_multiple_files file form item ([#120](https://github.com/sohosai/sos21-backend/pull/120))
+
 ### Security
 
 - Update `tokio` to 1.8.1 ([#114](https://github.com/sohosai/sos21-backend/pull/114))
