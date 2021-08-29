@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["BoundError",""],["LimitedInteger","A range-limited integer."]],"type":[["BoundedInteger",""]]});
