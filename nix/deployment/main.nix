@@ -22,6 +22,7 @@ in
       locations."/file/create" = {
         proxyPass = "${apiServer}/file/create";
         extraConfig = ''
+          proxy_request_buffering off;
           client_max_body_size 0;
         '';
       };
