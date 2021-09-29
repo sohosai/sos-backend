@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["RegistrationFormAnswerRespondent",""]],"struct":[["RegistrationFormAnswer",""],["RegistrationFormAnswerId",""]]});
