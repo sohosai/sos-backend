@@ -1,6 +1,6 @@
 [package]
 name = "sos21-api-server"
-version = "0.5.2"
+version = "0.5.3-beta"
 authors = ["coord_e <me@coord-e.com>", "azarashi2931 <az@rashi.email>"]
 edition = "2018"
 readme = "README.md"
