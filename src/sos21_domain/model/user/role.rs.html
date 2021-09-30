@@ -153,7 +153,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">file_usage_quota</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UserFileUsageQuota</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">UserRole</span>::<span class="ident">General</span> <span class="op">|</span> <span class="ident">UserRole</span>::<span class="ident">Committee</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">UserFileUsageQuota</span>::<span class="ident">limited_number_of_bytes</span>(<span class="number">512</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>)
+                <span class="ident">UserFileUsageQuota</span>::<span class="ident">limited_number_of_bytes</span>(<span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>)
             }
             <span class="ident">UserRole</span>::<span class="ident">CommitteeOperator</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">UserFileUsageQuota</span>::<span class="ident">limited_number_of_bytes</span>(<span class="number">15</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>)
