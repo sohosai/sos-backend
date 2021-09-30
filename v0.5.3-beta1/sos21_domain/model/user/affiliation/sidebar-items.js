@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["AffiliationError",""],["UserAffiliation","A text of users’ affiliation, whose length is 1 ..= 128 chars."]]});
