@@ -1,4 +1,7 @@
 { config, pkgs, ... }:
+let
+  apiServer = "http://localhost:${toString config.services.sos21-api-server.port}";
+in
 {
   imports = [
     ./sos21-api-server.nix
@@ -12,7 +15,14 @@
       enableACME = true;
       forceSSL = true;
       locations."/" = {
-        proxyPass = "http://localhost:${toString config.services.sos21-api-server.port}/";
+        proxyPass = apiServer;
+      };
+      locations."/file/create" = {
+        proxyPass = "${apiServer}/file/create";
+        extraConfig = ''
+          proxy_request_buffering off;
+          client_max_body_size 0;
+        '';
       };
     };
   };

@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 ### Security
 
+## [0.5.3] - 2021-09-29
+
+### Fixed
+
+- Enable to upload files larger than 10MB ([#125](https://github.com/sohosai/sos21-backend/pull/125))
+
 ## [0.5.2] - 2021-08-28
 
 ### Added
