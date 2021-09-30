@@ -1,6 +1,6 @@
 [package]
 name = "sos21-gateway-database"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["coord_e <me@coord-e.com>", "azarashi2931 <az@rashi.email>"]
 edition = "2018"
 readme = "README.md"
