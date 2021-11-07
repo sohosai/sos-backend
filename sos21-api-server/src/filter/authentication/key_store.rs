@@ -16,7 +16,7 @@ use url::Url;
 pub struct KeyStore {
     url: Url,
     client: Client,
-    keys: Arc<RwLock<HashMap<String, DecodingKey<'static>>>>,
+    keys: Arc<RwLock<HashMap<String, DecodingKey>>>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -80,18 +80,17 @@ impl KeyStore {
             .keys
             .into_iter()
             .map(|key| {
-                (
-                    key.kid,
-                    DecodingKey::from_rsa_components(&key.n, &key.e).into_static(),
-                )
+                DecodingKey::from_rsa_components(&key.n, &key.e)
+                    .map(|dk| (key.kid, dk))
+                    .context("Failed to decode keys")
             })
-            .collect();
+            .collect::<Result<_>>()?;
         *self.keys.write().await = keys;
 
         Ok(max_age)
     }
 
-    pub async fn get<T>(&self, kid: &T) -> Option<DecodingKey<'static>>
+    pub async fn get<T>(&self, kid: &T) -> Option<DecodingKey>
     where
         T: Hash + Eq,
         String: Borrow<T>,

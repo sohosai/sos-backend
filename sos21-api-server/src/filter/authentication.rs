@@ -27,15 +27,9 @@ async fn validate_token(
     let header = jwt::decode_header(&bearer.token)?;
     let kid = header.kid.context("No key ID found in JWT header")?;
     let key = key_store.get(&kid).await.context("Unknown key ID")?;
-    let validation = jwt::Validation {
-        leeway: 0,
-        validate_exp: true,
-        validate_nbf: false,
-        aud: Some(std::iter::once(config.jwt_audience.clone()).collect()),
-        iss: Some(config.jwt_issuer.clone()),
-        sub: None,
-        algorithms: vec![jwt::Algorithm::RS256],
-    };
+    let mut validation = jwt::Validation::new(jwt::Algorithm::RS256);
+    validation.set_audience(&[config.jwt_audience.clone()]);
+    validation.set_iss(&[config.jwt_issuer.clone()]);
     let data = jwt::decode(&bearer.token, &key, &validation).context("Failed to validate JWT")?;
     Ok(data.claims)
 }
