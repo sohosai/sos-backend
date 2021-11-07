@@ -175,8 +175,12 @@ macro_rules! handler {
         $vis async fn $name(
             $($param: $ty),*
         ) -> Result<impl ::warp::reply::Reply, ::warp::reject::Rejection> {
-            let result: HandlerResult<$resp, $err> = $body;
-            crate::handler::handle_handler_result(result)
+            async fn run(
+                $($param: $ty),*
+            ) -> HandlerResult<$resp, $err> {
+                $body
+            }
+            crate::handler::handle_handler_result(run($($param),*).await)
         }
     };
     (@impl_authentication $vis:vis $name:ident (

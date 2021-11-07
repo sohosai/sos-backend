@@ -1,5 +1,7 @@
-use crate::handler::{HandlerResponse, HandlerResult};
+use crate::build_info;
+use crate::handler::{HandlerError, HandlerResponse, HandlerResult};
 
+use anyhow::anyhow;
 use serde::{Deserialize, Serialize};
 use warp::http::StatusCode;
 
@@ -37,23 +39,30 @@ impl HandlerResponse for Response {
     }
 }
 
+fn git_info() -> Option<ResponseGit> {
+    let commit = build_info::GIT_COMMIT_HASH?;
+    let version = build_info::GIT_VERSION?;
+    let branch = build_info::GIT_HEAD_REF?;
+    Some(ResponseGit {
+        commit,
+        version,
+        branch,
+    })
+}
+
 #[macro_rules_attribute::macro_rules_attribute(handler!)]
 pub async fn handler(_request: Request) -> HandlerResult<Response, Error> {
-    // See https://docs.rs/vergen/ and sos21-api-server/build.rs
-
-    let git = {
-        let commit = env!("VERGEN_GIT_SHA");
-        let version = env!("VERGEN_GIT_SEMVER");
-        let branch = env!("VERGEN_GIT_BRANCH");
-        ResponseGit {
-            commit,
-            version,
-            branch,
+    let git = match git_info() {
+        Some(git) => git,
+        None => {
+            return Err(HandlerError::ServiceUnavailable(anyhow!(
+                "no git info available"
+            )))
         }
     };
 
-    let version = env!("VERGEN_BUILD_SEMVER");
-    let profile = env!("VERGEN_CARGO_PROFILE");
+    let version = build_info::PKG_VERSION;
+    let profile = build_info::PROFILE;
     let out = option_env!("out");
 
     Ok(Response {
