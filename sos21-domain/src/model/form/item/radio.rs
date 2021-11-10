@@ -16,6 +16,13 @@ pub use radio::{Radio, RadioId, RadioLabel};
 #[serde(transparent)]
 pub struct RadioFormItemButtons(LengthBoundedVec<typenum::U1, typenum::U32, Radio>);
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Appearance {
+    DropDown,
+    RadioButton,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FromButtonsErrorKind {
     Empty,
@@ -93,6 +100,7 @@ impl<'de> Deserialize<'de> for RadioFormItemButtons {
 pub struct RadioFormItem {
     pub buttons: RadioFormItemButtons,
     pub is_required: bool,
+    pub appearance: Appearance,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -146,7 +154,7 @@ impl RadioFormItem {
 
 #[cfg(test)]
 mod tests {
-    use super::{CheckAnswerErrorKind, RadioFormItem, RadioFormItemButtons};
+    use super::{Appearance, CheckAnswerErrorKind, RadioFormItem, RadioFormItemButtons};
     use crate::test::model as test_model;
 
     #[test]
@@ -158,6 +166,7 @@ mod tests {
             buttons: RadioFormItemButtons::from_buttons(vec![button1.clone(), button2.clone()])
                 .unwrap(),
             is_required: true,
+            appearance: Appearance::RadioButton,
         }
         .check_answer(Some(button1.id))
         .unwrap();
@@ -166,6 +175,7 @@ mod tests {
             buttons: RadioFormItemButtons::from_buttons(vec![button1.clone(), button2.clone()])
                 .unwrap(),
             is_required: false,
+            appearance: Appearance::RadioButton,
         }
         .check_answer(None)
         .unwrap();
@@ -181,6 +191,7 @@ mod tests {
                 buttons: RadioFormItemButtons::from_buttons(vec![button1.clone(), button2.clone()])
                     .unwrap(),
                 is_required: true,
+                appearance: Appearance::RadioButton
             }
             .check_answer(None)
             .unwrap_err()
@@ -200,6 +211,7 @@ mod tests {
                 buttons: RadioFormItemButtons::from_buttons(vec![button1.clone(), button2.clone()])
                     .unwrap(),
                 is_required: true,
+                appearance: Appearance::RadioButton
             }
             .check_answer(Some(button3.id))
             .unwrap_err()

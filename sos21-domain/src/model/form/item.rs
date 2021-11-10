@@ -617,7 +617,7 @@ impl CheckFormItems {
 #[cfg(test)]
 mod tests {
     use super::{
-        radio::{RadioFormItem, RadioFormItemButtons, RadioId},
+        radio::{Appearance, RadioFormItem, RadioFormItemButtons, RadioId},
         CheckAnswerErrorKind, CheckAnswerItemErrorKind, CheckFormItems, FormItemBody,
         FormItemCondition, FormItemId, FormItems, FromItemsErrorKind,
     };
@@ -828,6 +828,7 @@ mod tests {
             buttons: RadioFormItemButtons::from_buttons(vec![radio1.clone(), radio2.clone()])
                 .unwrap(),
             is_required: true,
+            appearance: Appearance::RadioButton,
         }));
         let condition = FormItemCondition::RadioSelected {
             item_id: item1.id,
