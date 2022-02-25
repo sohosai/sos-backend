@@ -58,6 +58,7 @@ pub struct Form {
     pub ends_at: DateTime<Utc>,
     pub items: Vec<FormItem>,
     pub condition: FormCondition,
+    pub answer_notification_webhook: Option<String>,
 }
 
 impl Form {
@@ -72,6 +73,7 @@ impl Form {
             description: form.description().clone().into_string(),
             starts_at: period.starts_at().utc(),
             ends_at: period.ends_at().utc(),
+            answer_notification_webhook: form.answer_notification_webhook().clone(),
             items: form
                 .into_items()
                 .into_items()
