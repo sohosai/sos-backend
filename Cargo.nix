@@ -23,7 +23,7 @@ rec {
   # "public" attributes that we attempt to keep stable with new versions of crate2nix.
   #
 
-  
+
   # Refer your crate build derivation by name here.
   # You can override the features with
   # workspaceMembers."${crateName}".build.override { features = [ "default" "feature1" ... ]; }.
@@ -246,7 +246,7 @@ rec {
             features = [ "errhandlingapi" "consoleapi" "processenv" ];
           }
         ];
-        
+
       };
       "ansi_term 0.12.1" = rec {
         crateName = "ansi_term";
@@ -291,7 +291,7 @@ rec {
         authors = [
           "David Roundy <roundyd@physics.oregonstate.edu>"
         ];
-        
+
       };
       "arrayvec" = rec {
         crateName = "arrayvec";
@@ -330,7 +330,7 @@ rec {
             features = [ "full" "visit-mut" ];
           }
         ];
-        
+
       };
       "atoi" = rec {
         crateName = "atoi";
@@ -346,7 +346,7 @@ rec {
             packageId = "num-traits";
           }
         ];
-        
+
       };
       "atty" = rec {
         crateName = "atty";
@@ -375,7 +375,7 @@ rec {
             features = [ "consoleapi" "processenv" "minwinbase" "minwindef" "winbase" ];
           }
         ];
-        
+
       };
       "auto_enums" = rec {
         crateName = "auto_enums";
@@ -496,7 +496,7 @@ rec {
         authors = [
           "Josh Stone <cuviper@gmail.com>"
         ];
-        
+
       };
       "autocfg 1.0.1" = rec {
         crateName = "autocfg";
@@ -506,7 +506,7 @@ rec {
         authors = [
           "Josh Stone <cuviper@gmail.com>"
         ];
-        
+
       };
       "backtrace" = rec {
         crateName = "backtrace";
@@ -575,7 +575,7 @@ rec {
             packageId = "byteorder";
           }
         ];
-        
+
       };
       "base64 0.12.3" = rec {
         crateName = "base64";
@@ -742,7 +742,7 @@ rec {
             packageId = "generic-array 0.12.4";
           }
         ];
-        
+
       };
       "block-buffer 0.9.0" = rec {
         crateName = "block-buffer";
@@ -758,7 +758,7 @@ rec {
             packageId = "generic-array 0.14.4";
           }
         ];
-        
+
       };
       "block-padding" = rec {
         crateName = "block-padding";
@@ -774,7 +774,7 @@ rec {
             packageId = "byte-tools";
           }
         ];
-        
+
       };
       "bstr" = rec {
         crateName = "bstr";
@@ -850,7 +850,7 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
-        
+
       };
       "byteorder" = rec {
         crateName = "byteorder";
@@ -1089,7 +1089,7 @@ rec {
         authors = [
           "Cesar Eduardo Barros <cesarb@cesarb.eti.br>"
         ];
-        
+
       };
       "cookie" = rec {
         crateName = "cookie";
@@ -1170,7 +1170,7 @@ rec {
             packageId = "url 1.7.2";
           }
         ];
-        
+
       };
       "core-foundation" = rec {
         crateName = "core-foundation";
@@ -1228,7 +1228,7 @@ rec {
             target = { target, features }: ((target."arch" == "aarch64") && (target."os" == "linux"));
           }
         ];
-        
+
       };
       "crc" = rec {
         crateName = "crc";
@@ -1317,7 +1317,7 @@ rec {
             packageId = "maybe-uninit";
           }
         ];
-        
+
       };
       "crossbeam-epoch" = rec {
         crateName = "crossbeam-epoch";
@@ -1595,7 +1595,7 @@ rec {
             features = [ "derive" ];
           }
         ];
-        
+
       };
       "csv-core" = rec {
         crateName = "csv-core";
@@ -1631,7 +1631,7 @@ rec {
             packageId = "sct";
           }
         ];
-        
+
       };
       "derive_utils" = rec {
         crateName = "derive_utils";
@@ -1656,7 +1656,7 @@ rec {
             features = [ "full" ];
           }
         ];
-        
+
       };
       "digest 0.8.1" = rec {
         crateName = "digest";
@@ -1715,7 +1715,7 @@ rec {
             packageId = "dirs-sys-next";
           }
         ];
-        
+
       };
       "dirs-sys-next" = rec {
         crateName = "dirs-sys-next";
@@ -1744,7 +1744,7 @@ rec {
             features = [ "knownfolders" "objbase" "shlobj" "winbase" "winerror" ];
           }
         ];
-        
+
       };
       "dotenv" = rec {
         crateName = "dotenv";
@@ -1773,7 +1773,7 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
-        
+
       };
       "either" = rec {
         crateName = "either";
@@ -1829,7 +1829,7 @@ rec {
             packageId = "enum-iterator-derive";
           }
         ];
-        
+
       };
       "enum-iterator-derive" = rec {
         crateName = "enum-iterator-derive";
@@ -1854,7 +1854,7 @@ rec {
             packageId = "syn";
           }
         ];
-        
+
       };
       "enumflags2" = rec {
         crateName = "enumflags2";
@@ -1899,7 +1899,7 @@ rec {
             features = [ "full" ];
           }
         ];
-        
+
       };
       "error-chain 0.11.0" = rec {
         crateName = "error-chain";
@@ -2012,7 +2012,7 @@ rec {
         authors = [
           "The Rust-Crypto Project Developers"
         ];
-        
+
       };
       "flate2" = rec {
         crateName = "flate2";
@@ -2087,7 +2087,7 @@ rec {
             packageId = "foreign-types-shared";
           }
         ];
-        
+
       };
       "foreign-types-shared" = rec {
         crateName = "foreign-types-shared";
@@ -2097,7 +2097,7 @@ rec {
         authors = [
           "Steven Fackler <sfackler@gmail.com>"
         ];
-        
+
       };
       "form_urlencoded" = rec {
         crateName = "form_urlencoded";
@@ -2117,7 +2117,7 @@ rec {
             packageId = "percent-encoding 2.1.0";
           }
         ];
-        
+
       };
       "fuchsia-cprng" = rec {
         crateName = "fuchsia-cprng";
@@ -2127,7 +2127,7 @@ rec {
         authors = [
           "Erick Tryzelaar <etryzelaar@google.com>"
         ];
-        
+
       };
       "fuchsia-zircon" = rec {
         crateName = "fuchsia-zircon";
@@ -2147,7 +2147,7 @@ rec {
             packageId = "fuchsia-zircon-sys";
           }
         ];
-        
+
       };
       "fuchsia-zircon-sys" = rec {
         crateName = "fuchsia-zircon-sys";
@@ -2157,7 +2157,7 @@ rec {
         authors = [
           "Raph Levien <raph@google.com>"
         ];
-        
+
       };
       "funty" = rec {
         crateName = "funty";
@@ -2398,7 +2398,7 @@ rec {
             packageId = "autocfg 1.0.1";
           }
         ];
-        
+
       };
       "futures-sink" = rec {
         crateName = "futures-sink";
@@ -2540,7 +2540,7 @@ rec {
             packageId = "typenum";
           }
         ];
-        
+
       };
       "generic-array 0.14.4" = rec {
         crateName = "generic-array";
@@ -2658,7 +2658,7 @@ rec {
             packageId = "syn";
           }
         ];
-        
+
       };
       "gimli" = rec {
         crateName = "gimli";
@@ -2959,7 +2959,7 @@ rec {
             packageId = "http 0.2.4";
           }
         ];
-        
+
       };
       "heck" = rec {
         crateName = "heck";
@@ -2975,7 +2975,7 @@ rec {
             packageId = "unicode-segmentation";
           }
         ];
-        
+
       };
       "hermit-abi" = rec {
         crateName = "hermit-abi";
@@ -3117,7 +3117,7 @@ rec {
             packageId = "itoa";
           }
         ];
-        
+
       };
       "http 0.2.4" = rec {
         crateName = "http";
@@ -3143,7 +3143,7 @@ rec {
             packageId = "itoa";
           }
         ];
-        
+
       };
       "http-body 0.1.0" = rec {
         crateName = "http-body";
@@ -3172,7 +3172,7 @@ rec {
             usesDefaultFeatures = false;
           }
         ];
-        
+
       };
       "http-body 0.4.3" = rec {
         crateName = "http-body";
@@ -3198,7 +3198,7 @@ rec {
             packageId = "pin-project-lite";
           }
         ];
-        
+
       };
       "httparse" = rec {
         crateName = "httparse";
@@ -3221,7 +3221,7 @@ rec {
         authors = [
           "Pyfisch <pyfisch@posteo.org>"
         ];
-        
+
       };
       "hyper 0.12.36" = rec {
         crateName = "hyper";
@@ -3568,7 +3568,7 @@ rec {
             packageId = "unicode-normalization";
           }
         ];
-        
+
       };
       "idna 0.2.0" = rec {
         crateName = "idna";
@@ -3592,7 +3592,7 @@ rec {
             packageId = "unicode-normalization";
           }
         ];
-        
+
       };
       "indexmap" = rec {
         crateName = "indexmap";
@@ -3656,7 +3656,7 @@ rec {
             target = { target, features }: target."unix";
           }
         ];
-        
+
       };
       "ipnet" = rec {
         crateName = "ipnet";
@@ -3666,7 +3666,7 @@ rec {
         authors = [
           "Kris Price <kris@krisprice.nz>"
         ];
-        
+
       };
       "itoa" = rec {
         crateName = "itoa";
@@ -3696,7 +3696,7 @@ rec {
             target = { target, features }: target."unix";
           }
         ];
-        
+
       };
       "js-sys" = rec {
         crateName = "js-sys";
@@ -3712,7 +3712,7 @@ rec {
             packageId = "wasm-bindgen";
           }
         ];
-        
+
       };
       "jsonwebtoken" = rec {
         crateName = "jsonwebtoken";
@@ -3750,7 +3750,7 @@ rec {
             packageId = "simple_asn1";
           }
         ];
-        
+
       };
       "kernel32-sys" = rec {
         crateName = "kernel32-sys";
@@ -3773,7 +3773,7 @@ rec {
             packageId = "winapi-build";
           }
         ];
-        
+
       };
       "lazy_static" = rec {
         crateName = "lazy_static";
@@ -4019,7 +4019,7 @@ rec {
         authors = [
           "bluss"
         ];
-        
+
       };
       "matchers" = rec {
         crateName = "matchers";
@@ -4035,7 +4035,7 @@ rec {
             packageId = "regex-automata";
           }
         ];
-        
+
       };
       "matches" = rec {
         crateName = "matches";
@@ -4046,7 +4046,7 @@ rec {
         authors = [
           "Simon Sapin <simon.sapin@exyr.org>"
         ];
-        
+
       };
       "maybe-uninit" = rec {
         crateName = "maybe-uninit";
@@ -4057,7 +4057,7 @@ rec {
           "est31 <MTest31@outlook.com>"
           "The Rust Project Developers"
         ];
-        
+
       };
       "md-5" = rec {
         crateName = "md-5";
@@ -4138,7 +4138,7 @@ rec {
         authors = [
           "Sean McArthur <sean@seanmonstar.com>"
         ];
-        
+
       };
       "mime_guess" = rec {
         crateName = "mime_guess";
@@ -4334,7 +4334,7 @@ rec {
             packageId = "ws2_32-sys";
           }
         ];
-        
+
       };
       "miow 0.3.7" = rec {
         crateName = "miow";
@@ -4351,7 +4351,7 @@ rec {
             features = [ "std" "fileapi" "handleapi" "ioapiset" "minwindef" "namedpipeapi" "ntdef" "synchapi" "winerror" "winsock2" "ws2def" "ws2ipdef" ];
           }
         ];
-        
+
       };
       "mpart-async" = rec {
         crateName = "mpart-async";
@@ -4775,7 +4775,7 @@ rec {
             packageId = "libc";
           }
         ];
-        
+
       };
       "object" = rec {
         crateName = "object";
@@ -4822,7 +4822,7 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
-        
+
       };
       "opaque-debug 0.3.0" = rec {
         crateName = "opaque-debug";
@@ -4832,7 +4832,7 @@ rec {
         authors = [
           "RustCrypto Developers"
         ];
-        
+
       };
       "openssl" = rec {
         crateName = "openssl";
@@ -4881,7 +4881,7 @@ rec {
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
-        
+
       };
       "openssl-sys" = rec {
         crateName = "openssl-sys";
@@ -5086,7 +5086,7 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
-        
+
       };
       "pem" = rec {
         crateName = "pem";
@@ -5112,7 +5112,7 @@ rec {
             features = [ "std" ];
           }
         ];
-        
+
       };
       "percent-encoding 1.0.1" = rec {
         crateName = "percent-encoding";
@@ -5123,7 +5123,7 @@ rec {
         authors = [
           "The rust-url developers"
         ];
-        
+
       };
       "percent-encoding 2.1.0" = rec {
         crateName = "percent-encoding";
@@ -5134,7 +5134,7 @@ rec {
         authors = [
           "The rust-url developers"
         ];
-        
+
       };
       "pin-project" = rec {
         crateName = "pin-project";
@@ -5151,7 +5151,7 @@ rec {
             usesDefaultFeatures = false;
           }
         ];
-        
+
       };
       "pin-project-internal" = rec {
         crateName = "pin-project-internal";
@@ -5177,7 +5177,7 @@ rec {
             features = [ "full" "visit-mut" ];
           }
         ];
-        
+
       };
       "pin-project-lite" = rec {
         crateName = "pin-project-lite";
@@ -5187,7 +5187,7 @@ rec {
         authors = [
           "Taiki Endo <te316e89@gmail.com>"
         ];
-        
+
       };
       "pin-utils" = rec {
         crateName = "pin-utils";
@@ -5197,7 +5197,7 @@ rec {
         authors = [
           "Josef Brandl <mail@josefbrandl.de>"
         ];
-        
+
       };
       "pkg-config" = rec {
         crateName = "pkg-config";
@@ -5207,7 +5207,7 @@ rec {
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
-        
+
       };
       "ppv-lite86" = rec {
         crateName = "ppv-lite86";
@@ -5287,7 +5287,7 @@ rec {
             packageId = "version_check";
           }
         ];
-        
+
       };
       "proc-macro-hack" = rec {
         crateName = "proc-macro-hack";
@@ -5298,7 +5298,7 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
-        
+
       };
       "proc-macro-nested" = rec {
         crateName = "proc-macro-nested";
@@ -5308,7 +5308,7 @@ rec {
         authors = [
           "David Tolnay <dtolnay@gmail.com>"
         ];
-        
+
       };
       "proc-macro2" = rec {
         crateName = "proc-macro2";
@@ -5398,7 +5398,7 @@ rec {
           "Nika Layzell <nika@thelayzells.com>"
           "myrrlyn <self@myrrlyn.dev>"
         ];
-        
+
       };
       "rand 0.6.5" = rec {
         crateName = "rand";
@@ -5606,7 +5606,7 @@ rec {
             packageId = "autocfg 0.1.7";
           }
         ];
-        
+
       };
       "rand_chacha 0.2.2" = rec {
         crateName = "rand_chacha";
@@ -5760,7 +5760,7 @@ rec {
             usesDefaultFeatures = false;
           }
         ];
-        
+
       };
       "rand_hc 0.2.0" = rec {
         crateName = "rand_hc";
@@ -5776,7 +5776,7 @@ rec {
             packageId = "rand_core 0.5.1";
           }
         ];
-        
+
       };
       "rand_hc 0.3.0" = rec {
         crateName = "rand_hc";
@@ -5792,7 +5792,7 @@ rec {
             packageId = "rand_core 0.6.2";
           }
         ];
-        
+
       };
       "rand_isaac" = rec {
         crateName = "rand_isaac";
@@ -5886,7 +5886,161 @@ rec {
             features = [ "minwindef" "ntsecapi" "winnt" ];
           }
         ];
-        
+
+      };
+      "rand_pcg" = rec {
+        crateName = "rand_pcg";
+        version = "0.1.2";
+        edition = "2015";
+        sha256 = "0i0bdla18a8x4jn1w0fxsbs3jg7ajllz6azmch1zw33r06dv1ydb";
+        authors = [
+          "The Rand Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "rand_core";
+            packageId = "rand_core 0.4.2";
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "autocfg";
+            packageId = "autocfg 0.1.7";
+          }
+        ];
+        features = {
+          "serde1" = [ "serde" "serde_derive" ];
+        };
+      };
+      "rand_xorshift" = rec {
+        crateName = "rand_xorshift";
+        version = "0.1.1";
+        edition = "2015";
+        sha256 = "0p2x8nr00hricpi2m6ca5vysiha7ybnghz79yqhhx6sl4gkfkxyb";
+        authors = [
+          "The Rand Project Developers"
+          "The Rust Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "rand_core";
+            packageId = "rand_core 0.3.1";
+            usesDefaultFeatures = false;
+          }
+        ];
+        features = {
+          "serde1" = [ "serde" "serde_derive" ];
+        };
+      };
+      "rand_hc 0.3.0" = rec {
+        crateName = "rand_hc";
+        version = "0.3.0";
+        edition = "2018";
+        sha256 = "0wra6ar22zdjkry9dsq1mg620m4h3qb9s8rfykkz4im4crqfz41i";
+        authors = [
+          "The Rand Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "rand_core";
+            packageId = "rand_core 0.6.2";
+          }
+        ];
+
+      };
+      "rand_isaac" = rec {
+        crateName = "rand_isaac";
+        version = "0.1.1";
+        edition = "2015";
+        sha256 = "027flpjr4znx2csxk7gxb7vrf9c7y5mydmvg5az2afgisp4rgnfy";
+        authors = [
+          "The Rand Project Developers"
+          "The Rust Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "rand_core";
+            packageId = "rand_core 0.3.1";
+            usesDefaultFeatures = false;
+          }
+        ];
+        features = {
+          "serde1" = [ "serde" "serde_derive" "rand_core/serde1" ];
+        };
+      };
+      "rand_jitter" = rec {
+        crateName = "rand_jitter";
+        version = "0.1.4";
+        edition = "2015";
+        sha256 = "16z387y46bfz3csc42zxbjq89vcr1axqacncvv8qhyy93p4xarhi";
+        authors = [
+          "The Rand Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "libc";
+            packageId = "libc";
+            usesDefaultFeatures = false;
+            target = { target, features }: ((target."os" == "macos") || (target."os" == "ios"));
+          }
+          {
+            name = "rand_core";
+            packageId = "rand_core 0.4.2";
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.3.9";
+            target = { target, features }: (target."os" == "windows");
+            features = [ "profileapi" ];
+          }
+        ];
+        features = {
+          "std" = [ "rand_core/std" ];
+        };
+        resolvedDefaultFeatures = [ "std" ];
+      };
+      "rand_os" = rec {
+        crateName = "rand_os";
+        version = "0.1.3";
+        edition = "2015";
+        sha256 = "0wahppm0s64gkr2vmhcgwc0lij37in1lgfxg5rbgqlz0l5vgcxbv";
+        authors = [
+          "The Rand Project Developers"
+        ];
+        dependencies = [
+          {
+            name = "cloudabi";
+            packageId = "cloudabi";
+            target = { target, features }: (target."os" == "cloudabi");
+          }
+          {
+            name = "fuchsia-cprng";
+            packageId = "fuchsia-cprng";
+            target = { target, features }: (target."os" == "fuchsia");
+          }
+          {
+            name = "libc";
+            packageId = "libc";
+            target = { target, features }: target."unix";
+          }
+          {
+            name = "rand_core";
+            packageId = "rand_core 0.4.2";
+            features = [ "std" ];
+          }
+          {
+            name = "rdrand";
+            packageId = "rdrand";
+            target = { target, features }: (target."env" == "sgx");
+          }
+          {
+            name = "winapi";
+            packageId = "winapi 0.3.9";
+            target = { target, features }: target."windows";
+            features = [ "minwindef" "ntsecapi" "winnt" ];
+          }
+        ];
+
       };
       "rand_pcg" = rec {
         crateName = "rand_pcg";
@@ -5961,7 +6115,7 @@ rec {
         authors = [
           "Jeremy Soller <jackpot51@gmail.com>"
         ];
-        
+
       };
       "redox_syscall 0.2.5" = rec {
         crateName = "redox_syscall";
@@ -5978,7 +6132,7 @@ rec {
             packageId = "bitflags";
           }
         ];
-        
+
       };
       "redox_users" = rec {
         crateName = "redox_users";
@@ -6019,7 +6173,7 @@ rec {
             packageId = "ref-cast-impl";
           }
         ];
-        
+
       };
       "ref-cast-impl" = rec {
         crateName = "ref-cast-impl";
@@ -6044,7 +6198,7 @@ rec {
             packageId = "syn";
           }
         ];
-        
+
       };
       "regex" = rec {
         crateName = "regex";
@@ -6151,7 +6305,7 @@ rec {
             features = [ "std" "errhandlingapi" "winerror" "fileapi" "winbase" ];
           }
         ];
-        
+
       };
       "reqwest 0.11.0" = rec {
         crateName = "reqwest";
@@ -6898,7 +7052,7 @@ rec {
             features = [ "io-util" ];
           }
         ];
-        
+
       };
       "rustc-demangle" = rec {
         crateName = "rustc-demangle";
@@ -6926,7 +7080,7 @@ rec {
             packageId = "semver 0.9.0";
           }
         ];
-        
+
       };
       "rustc_version 0.4.0" = rec {
         crateName = "rustc_version";
@@ -6943,7 +7097,7 @@ rec {
             packageId = "semver 1.0.4";
           }
         ];
-        
+
       };
       "rustls" = rec {
         crateName = "rustls";
@@ -7054,7 +7208,7 @@ rec {
             features = [ "lmcons" "minschannel" "securitybaseapi" "schannel" "sspi" "sysinfoapi" "timezoneapi" "winbase" "wincrypt" "winerror" ];
           }
         ];
-        
+
       };
       "scoped-tls" = rec {
         crateName = "scoped-tls";
@@ -7064,7 +7218,7 @@ rec {
         authors = [
           "Alex Crichton <alex@alexcrichton.com>"
         ];
-        
+
       };
       "scopeguard" = rec {
         crateName = "scopeguard";
@@ -7096,7 +7250,7 @@ rec {
             packageId = "untrusted";
           }
         ];
-        
+
       };
       "security-framework" = rec {
         crateName = "security-framework";
@@ -7210,7 +7364,7 @@ rec {
         authors = [
           "Steve Klabnik <steve@steveklabnik.com>"
         ];
-        
+
       };
       "serde" = rec {
         crateName = "serde";
@@ -7333,7 +7487,7 @@ rec {
             packageId = "url 1.7.2";
           }
         ];
-        
+
       };
       "serde_urlencoded 0.7.0" = rec {
         crateName = "serde_urlencoded";
@@ -7361,7 +7515,7 @@ rec {
             packageId = "serde";
           }
         ];
-        
+
       };
       "sha-1 0.8.2" = rec {
         crateName = "sha-1";
@@ -7531,7 +7685,7 @@ rec {
             packageId = "lazy_static";
           }
         ];
-        
+
       };
       "shlex" = rec {
         crateName = "shlex";
@@ -7562,7 +7716,7 @@ rec {
             packageId = "libc";
           }
         ];
-        
+
       };
       "simple_asn1" = rec {
         crateName = "simple_asn1";
@@ -7586,7 +7740,7 @@ rec {
             packageId = "num-traits";
           }
         ];
-        
+
       };
       "slab" = rec {
         crateName = "slab";
@@ -7643,7 +7797,7 @@ rec {
             packageId = "url_serde";
           }
         ];
-        
+
       };
       "smallvec 0.6.14" = rec {
         crateName = "smallvec";
@@ -7867,7 +8021,7 @@ rec {
             features = [ "build" "cargo" "git" ];
           }
         ];
-        
+
       };
       "sos21-database" = rec {
         crateName = "sos21-database";
@@ -7909,7 +8063,7 @@ rec {
             packageId = "uuid 0.8.2";
           }
         ];
-        
+
       };
       "sos21-domain" = rec {
         crateName = "sos21-domain";
@@ -8082,7 +8236,7 @@ rec {
             packageId = "uuid 0.8.2";
           }
         ];
-        
+
       };
       "sos21-gateway-s3" = rec {
         crateName = "sos21-gateway-s3";
@@ -8136,7 +8290,7 @@ rec {
             features = [ "rt" ];
           }
         ];
-        
+
       };
       "sos21-run-migrations" = rec {
         crateName = "sos21-run-migrations";
@@ -8185,7 +8339,7 @@ rec {
             packageId = "tracing-subscriber";
           }
         ];
-        
+
       };
       "sos21-use-case" = rec {
         crateName = "sos21-use-case";
@@ -8255,7 +8409,7 @@ rec {
             features = [ "macros" "rt-multi-thread" ];
           }
         ];
-        
+
       };
       "spin" = rec {
         crateName = "spin";
@@ -8266,7 +8420,7 @@ rec {
           "Mathijs van de Nes <git@mathijs.vd-nes.nl>"
           "John Ericson <git@JohnEricson.me>"
         ];
-        
+
       };
       "sqlformat" = rec {
         crateName = "sqlformat";
@@ -8298,7 +8452,7 @@ rec {
             packageId = "unicode_categories";
           }
         ];
-        
+
       };
       "sqlx" = rec {
         crateName = "sqlx";
@@ -8820,7 +8974,7 @@ rec {
             packageId = "unicode-normalization";
           }
         ];
-        
+
       };
       "strsim" = rec {
         crateName = "strsim";
@@ -8830,7 +8984,7 @@ rec {
         authors = [
           "Danny Guo <dannyguo91@gmail.com>"
         ];
-        
+
       };
       "structopt" = rec {
         crateName = "structopt";
@@ -8996,7 +9150,7 @@ rec {
           "Elliott Linder <elliott.darfink@gmail.com>"
           "myrrlyn <self@myrrlyn.dev>"
         ];
-        
+
       };
       "tempfile" = rec {
         crateName = "tempfile";
@@ -9039,7 +9193,7 @@ rec {
             features = [ "fileapi" "handleapi" "winbase" ];
           }
         ];
-        
+
       };
       "textwrap" = rec {
         crateName = "textwrap";
@@ -9055,7 +9209,7 @@ rec {
             packageId = "unicode-width";
           }
         ];
-        
+
       };
       "thiserror" = rec {
         crateName = "thiserror";
@@ -9071,7 +9225,7 @@ rec {
             packageId = "thiserror-impl";
           }
         ];
-        
+
       };
       "thiserror-impl" = rec {
         crateName = "thiserror-impl";
@@ -9096,7 +9250,7 @@ rec {
             packageId = "syn";
           }
         ];
-        
+
       };
       "thread_local" = rec {
         crateName = "thread_local";
@@ -9112,7 +9266,7 @@ rec {
             packageId = "once_cell";
           }
         ];
-        
+
       };
       "time" = rec {
         crateName = "time";
@@ -9141,7 +9295,7 @@ rec {
             features = [ "std" "processthreadsapi" "winbase" ];
           }
         ];
-        
+
       };
       "tinyvec" = rec {
         crateName = "tinyvec";
@@ -9171,7 +9325,7 @@ rec {
         authors = [
           "Soveu <marx.tomasz@gmail.com>"
         ];
-        
+
       };
       "tokio 0.1.22" = rec {
         crateName = "tokio";
@@ -9399,7 +9553,7 @@ rec {
             packageId = "tokio-executor";
           }
         ];
-        
+
       };
       "tokio-executor" = rec {
         crateName = "tokio-executor";
@@ -9419,7 +9573,7 @@ rec {
             packageId = "futures 0.1.31";
           }
         ];
-        
+
       };
       "tokio-io" = rec {
         crateName = "tokio-io";
@@ -9443,7 +9597,7 @@ rec {
             packageId = "log";
           }
         ];
-        
+
       };
       "tokio-macros" = rec {
         crateName = "tokio-macros";
@@ -9469,7 +9623,7 @@ rec {
             features = [ "full" ];
           }
         ];
-        
+
       };
       "tokio-reactor" = rec {
         crateName = "tokio-reactor";
@@ -9531,7 +9685,7 @@ rec {
             packageId = "num_cpus";
           }
         ];
-        
+
       };
       "tokio-rustls" = rec {
         crateName = "tokio-rustls";
@@ -9625,7 +9779,7 @@ rec {
             packageId = "futures 0.1.31";
           }
         ];
-        
+
       };
       "tokio-tcp" = rec {
         crateName = "tokio-tcp";
@@ -9661,7 +9815,7 @@ rec {
             packageId = "tokio-reactor";
           }
         ];
-        
+
       };
       "tokio-threadpool" = rec {
         crateName = "tokio-threadpool";
@@ -9709,7 +9863,7 @@ rec {
             packageId = "tokio-executor";
           }
         ];
-        
+
       };
       "tokio-timer" = rec {
         crateName = "tokio-timer";
@@ -9737,7 +9891,7 @@ rec {
             packageId = "tokio-executor";
           }
         ];
-        
+
       };
       "tokio-util" = rec {
         crateName = "tokio-util";
@@ -9799,7 +9953,7 @@ rec {
         authors = [
           "Tower Maintainers <team@tower-rs.com>"
         ];
-        
+
       };
       "tracing" = rec {
         crateName = "tracing";
@@ -9976,7 +10130,7 @@ rec {
             packageId = "tracing-core";
           }
         ];
-        
+
       };
       "tracing-subscriber" = rec {
         crateName = "tracing-subscriber";
@@ -10097,7 +10251,7 @@ rec {
         authors = [
           "Sean McArthur <sean@seanmonstar.com>"
         ];
-        
+
       };
       "try_from" = rec {
         crateName = "try_from";
@@ -10164,7 +10318,7 @@ rec {
         authors = [
           "bluss"
         ];
-        
+
       };
       "unicase" = rec {
         crateName = "unicase";
@@ -10273,7 +10427,7 @@ rec {
         authors = [
           "Sean Gillespie <sean@swgillespie.me>"
         ];
-        
+
       };
       "untrusted" = rec {
         crateName = "untrusted";
@@ -10284,7 +10438,7 @@ rec {
         authors = [
           "Brian Smith <brian@briansmith.org>"
         ];
-        
+
       };
       "uritemplate-next" = rec {
         crateName = "uritemplate-next";
@@ -10302,7 +10456,7 @@ rec {
             packageId = "regex";
           }
         ];
-        
+
       };
       "url 1.7.2" = rec {
         crateName = "url";
@@ -10357,7 +10511,7 @@ rec {
             packageId = "percent-encoding 2.1.0";
           }
         ];
-        
+
       };
       "url_serde" = rec {
         crateName = "url_serde";
@@ -10377,7 +10531,7 @@ rec {
             packageId = "url 1.7.2";
           }
         ];
-        
+
       };
       "uuid 0.7.4" = rec {
         crateName = "uuid";
@@ -10453,7 +10607,7 @@ rec {
         authors = [
           "Jim McGrath <jimmc2@gmail.com>"
         ];
-        
+
       };
       "vec_map" = rec {
         crateName = "vec_map";
@@ -10551,7 +10705,7 @@ rec {
         authors = [
           "Sergio Benitez <sb@sergio.bz>"
         ];
-        
+
       };
       "want 0.2.0" = rec {
         crateName = "want";
@@ -10575,7 +10729,7 @@ rec {
             packageId = "try-lock";
           }
         ];
-        
+
       };
       "want 0.3.0" = rec {
         crateName = "want";
@@ -10595,7 +10749,7 @@ rec {
             packageId = "try-lock";
           }
         ];
-        
+
       };
       "warp" = rec {
         crateName = "warp";
@@ -10847,7 +11001,7 @@ rec {
             features = [ "MessageEvent" "Worker" ];
           }
         ];
-        
+
       };
       "wasm-bindgen-macro" = rec {
         crateName = "wasm-bindgen-macro";
@@ -10919,7 +11073,7 @@ rec {
         authors = [
           "The wasm-bindgen Developers"
         ];
-        
+
       };
       "web-sys" = rec {
         crateName = "web-sys";
@@ -11403,7 +11557,7 @@ rec {
             packageId = "webpki";
           }
         ];
-        
+
       };
       "whoami" = rec {
         crateName = "whoami";
@@ -11438,7 +11592,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
       "winapi 0.3.9" = rec {
         crateName = "winapi";
@@ -11474,7 +11628,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
       "winapi-i686-pc-windows-gnu" = rec {
         crateName = "winapi-i686-pc-windows-gnu";
@@ -11484,7 +11638,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
       "winapi-x86_64-pc-windows-gnu" = rec {
         crateName = "winapi-x86_64-pc-windows-gnu";
@@ -11494,7 +11648,7 @@ rec {
         authors = [
           "Peter Atashian <retep998@gmail.com>"
         ];
-        
+
       };
       "winreg 0.6.2" = rec {
         crateName = "winreg";
@@ -11557,7 +11711,7 @@ rec {
             packageId = "winapi-build";
           }
         ];
-        
+
       };
       "wyz" = rec {
         crateName = "wyz";
@@ -11583,7 +11737,7 @@ rec {
         authors = [
           "Vladimir Matveev <vmatveev@citrine.cc>"
         ];
-        
+
       };
       "zeroize" = rec {
         crateName = "zeroize";
@@ -11651,7 +11805,7 @@ rec {
           )
         )
 
-        # Filter out nix-build result symlinks        
+        # Filter out nix-build result symlinks
         || (
           type == "symlink" && lib.hasPrefix "result" baseName
         )
@@ -11759,8 +11913,8 @@ rec {
         )
         { inherit features crateOverrides runTests testCrateFlags testInputs; };
 
-  /* Returns an attr set with packageId mapped to the result of buildRustCrateFunc 
-     for the corresponding crate. 
+  /* Returns an attr set with packageId mapped to the result of buildRustCrateFunc
+     for the corresponding crate.
   */
   builtRustCratesWithFeatures =
     { packageId
@@ -11866,7 +12020,7 @@ rec {
         map depDerivation enabledDependencies;
 
   /* Returns a sanitized version of val with all values substituted that cannot
-     be serialized as JSON. 
+     be serialized as JSON.
   */
   sanitizeForJson = val:
     if builtins.isAttrs val
@@ -11911,7 +12065,7 @@ rec {
 
   /* Returns differences between cargo default features and crate2nix default
      features.
-   
+
      This is useful for verifying the feature resolution in crate2nix.
   */
   diffDefaultPackageFeatures =
@@ -12084,7 +12238,7 @@ rec {
 
   /*
      Returns the actual features for the given dependency.
-    
+
      features: The features of the crate that refers this dependency.
   */
   dependencyFeatures = features: dependency:
