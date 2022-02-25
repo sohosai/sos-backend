@@ -1,0 +1,15 @@
+[package]
+name = "sos21-gateway-slack"
+version = "0.1.0"
+authors = ["yuseiito <me@yuseiito.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1"
+url = "2.2.2"
+slack-hook2 = "0.10.0"
+reqwest = {version = "0.10.1",default-features = false,features = ["json"]}
+tokio-compat-02 = "0.2.0"
+sos21-domain = { path = "../../sos21-domain" }
