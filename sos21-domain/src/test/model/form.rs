@@ -58,6 +58,10 @@ pub fn mock_form_condition() -> FormCondition {
     }
 }
 
+pub fn mock_form_answer_notification_webhook() -> Option<String> {
+    None
+}
+
 pub fn new_form_with_period(author_id: UserId, period: FormPeriod) -> Form {
     Form::from_content(FormContent {
         id: new_form_id(),
@@ -68,6 +72,7 @@ pub fn new_form_with_period(author_id: UserId, period: FormPeriod) -> Form {
         period,
         items: new_form_items(),
         condition: mock_form_condition(),
+        answer_notification_webhook: mock_form_answer_notification_webhook(),
     })
 }
 
@@ -81,6 +86,7 @@ pub fn new_form_with_items(author_id: UserId, items: FormItems) -> Form {
         period: new_form_period_from_now(),
         items,
         condition: mock_form_condition(),
+        answer_notification_webhook: mock_form_answer_notification_webhook(),
     })
 }
 
@@ -94,6 +100,7 @@ pub fn new_form_with_condition(author_id: UserId, condition: FormCondition) -> F
         period: new_form_period_from_now(),
         items: new_form_items(),
         condition,
+        answer_notification_webhook: mock_form_answer_notification_webhook(),
     })
 }
 

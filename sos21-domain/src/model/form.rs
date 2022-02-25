@@ -50,6 +50,7 @@ pub struct FormContent {
     pub period: FormPeriod,
     pub items: FormItems,
     pub condition: FormCondition,
+    pub answer_notification_webhook: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -131,6 +132,7 @@ impl Form {
         period: FormPeriod,
         items: FormItems,
         condition: FormCondition,
+        answer_notification_webhook: Option<String>,
     ) -> Result<Self, NewFormError> {
         author
             .require_permissions(Permissions::CREATE_FORMS)
@@ -153,6 +155,7 @@ impl Form {
             period,
             items,
             condition,
+            answer_notification_webhook,
         }))
     }
 
@@ -239,6 +242,10 @@ impl Form {
 
     pub fn into_items(self) -> FormItems {
         self.content.items
+    }
+
+    pub fn answer_notification_webhook(&self) -> &Option<String> {
+        &self.content.answer_notification_webhook
     }
 }
 
