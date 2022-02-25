@@ -157,6 +157,7 @@ fn to_form(data: data::form::FormData) -> Result<Form> {
         starts_at,
         ends_at,
         items,
+        answer_notification_webhook,
     } = data.form;
 
     let starts_at = DateTime::from_utc(starts_at);
@@ -194,6 +195,7 @@ fn to_form(data: data::form::FormData) -> Result<Form> {
         period: FormPeriod::from_datetime(starts_at, ends_at)?,
         items: serde_json::from_value(items)?,
         condition,
+        answer_notification_webhook,
     }))
 }
 
@@ -207,6 +209,7 @@ fn from_form(form: Form) -> Result<data::form::Form> {
         period,
         items,
         condition: _,
+        answer_notification_webhook,
     } = form.into_content();
 
     Ok(data::form::Form {
@@ -218,6 +221,7 @@ fn from_form(form: Form) -> Result<data::form::Form> {
         starts_at: period.starts_at().utc(),
         ends_at: period.ends_at().utc(),
         items: serde_json::to_value(&items)?,
+        answer_notification_webhook,
     })
 }
 

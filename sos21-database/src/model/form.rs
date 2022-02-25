@@ -13,6 +13,7 @@ pub struct Form {
     pub starts_at: DateTime<Utc>,
     pub ends_at: DateTime<Utc>,
     pub items: serde_json::Value,
+    pub answer_notification_webhook: Option<String>,
 }
 
 #[derive(Debug, Clone)]
