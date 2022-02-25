@@ -112,12 +112,9 @@ where
     // Notify Slack
 
     if let Some(hook) = form.answer_notification_webhook() {
-        if let Err(_) = slack::send_form_answer_notification(
-            hook,
-            project.name(),
-            form.name()
-        )
-        .await
+        if slack::send_form_answer_notification(hook, project.name(), form.name())
+            .await
+            .is_err()
         {
             return Err(UseCaseError::UseCase(Error::NotificationFailed));
         };
