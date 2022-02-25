@@ -128,6 +128,7 @@ mod tests {
                 .map(FormItem::from_entity)
                 .collect(),
             condition: FormCondition::from_entity(test::model::mock_form_condition()),
+            answer_notification_webhook: test::model::mock_form_answer_notification_webhook(),
         };
 
         assert!(matches!(
@@ -162,6 +163,7 @@ mod tests {
                 .map(FormItem::from_entity)
                 .collect(),
             condition: FormCondition::from_entity(test::model::mock_form_condition()),
+            answer_notification_webhook: test::model::mock_form_answer_notification_webhook(),
         };
 
         assert!(matches!(
@@ -197,6 +199,7 @@ mod tests {
                 .map(FormItem::from_entity)
                 .collect(),
             condition: FormCondition::from_entity(test::model::mock_form_condition()),
+            answer_notification_webhook: test::model::mock_form_answer_notification_webhook(),
         };
 
         let result = create_form::run(&app, input).await;
@@ -232,6 +235,7 @@ mod tests {
                 .map(FormItem::from_entity)
                 .collect(),
             condition: FormCondition::from_entity(test::model::mock_form_condition()),
+            answer_notification_webhook: test::model::mock_form_answer_notification_webhook(),
         };
 
         assert!(matches!(
