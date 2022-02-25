@@ -1,4 +1,4 @@
-{ pkgs ? import ./nix/pkgs.nix}:
+{ pkgs ? import ./nix/pkgs.nix }:
 let
   sqlx-cli = pkgs.callPackage ./nix/sqlx-cli.nix { };
   crate2nix = import ./nix/crate2nix.nix { };
