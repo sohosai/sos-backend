@@ -16,6 +16,7 @@ pub struct Request {
     pub ends_at: DateTime,
     pub items: Vec<FormItem>,
     pub condition: FormCondition,
+    pub answer_notification_webhook: Option<String>, // TODO: Type this property with appropriate URL type with validation
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -96,6 +97,7 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
             .map(FormItem::into_use_case)
             .collect(),
         condition: request.condition.into_use_case(),
+        answer_notification_webhook: request.answer_notification_webhook,
     };
     let form = create_form::run(&ctx, input).await?;
     let form = Form::from_use_case(form);
