@@ -31,7 +31,7 @@ in
     enable = true;
     port = 3000;
     firebaseProjectId = "sos22-nightly";
-    databaseName = "sos22-nightly";
-    s3ObjectBucket = "sos22-nightly-objects";
+    databaseName = "sos21-nightly";
+    s3ObjectBucket = "sos21-nightly-objects";
   };
 }

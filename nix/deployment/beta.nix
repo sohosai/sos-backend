@@ -31,7 +31,7 @@ in
     enable = true;
     port = 3000;
     firebaseProjectId = "sos22-beta";
-    databaseName = "sos22-beta";
-    s3ObjectBucket = "sos22-beta-objects";
+    databaseName = "sos21-beta";
+    s3ObjectBucket = "sos21-beta-objects";
   };
 }
