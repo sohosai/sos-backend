@@ -32,8 +32,8 @@ in
   services.sos21-api-server = {
     enable = true;
     port = 3000;
-    firebaseProjectId = "sos21-main";
-    databaseName = "sos21-main";
-    s3ObjectBucket = "sos21-main-objects";
+    firebaseProjectId = "sos22-main";
+    databaseName = "sos22-main";
+    s3ObjectBucket = "sos22-main-objects";
   };
 }
