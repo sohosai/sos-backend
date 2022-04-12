@@ -327,6 +327,8 @@
 <span id="324">324</span>
 <span id="325">325</span>
 <span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">interface</span>;
@@ -460,8 +462,10 @@
         <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span>
-            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project_with_subowner</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project_with_subowner</span>(
+            <span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
+            <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
+        );
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -495,7 +499,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_create_owner</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -529,7 +533,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_create_other</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -558,7 +562,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_invalid</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_form</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
@@ -589,7 +593,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_file_share</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> (<span class="ident">form</span>, <span class="ident">item_id</span>) <span class="op">=</span> {
             <span class="kw">let</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">item</span>::<span class="ident">FormItemBody</span>::<span class="ident">File</span>(<span class="ident">item</span>::<span class="ident">FileFormItem</span> {

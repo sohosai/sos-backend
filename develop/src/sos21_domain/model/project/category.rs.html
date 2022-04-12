@@ -45,6 +45,12 @@
 <span id="42">42</span>
 <span id="43">43</span>
 <span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
 
@@ -53,19 +59,23 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ProjectCategory</span> {
-    <span class="ident">General</span>,
-    <span class="ident">Stage</span>,
-    <span class="ident">Cooking</span>,
-    <span class="ident">Food</span>,
+    <span class="ident">GeneralOnline</span>,
+    <span class="ident">GeneralPhysical</span>,
+    <span class="ident">StageOnline</span>,
+    <span class="ident">StagePhysical</span>,
+    <span class="ident">CookingPhysical</span>,
+    <span class="ident">FoodPhysical</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">ProjectCategory</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">enumerate</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">ProjectCategory</span><span class="op">&gt;</span> {
         [
-            <span class="ident">ProjectCategory</span>::<span class="ident">General</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Food</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span>,
         ]
         .<span class="ident">iter</span>()
         .<span class="ident">copied</span>()
@@ -82,10 +92,12 @@
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">ParseCategoryError</span>;
     <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ProjectCategory</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">s</span> {
-            <span class="string">&quot;general&quot;</span> <span class="op">|</span> <span class="string">&quot;General&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">General</span>),
-            <span class="string">&quot;stage&quot;</span> <span class="op">|</span> <span class="string">&quot;Stage&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>),
-            <span class="string">&quot;cooking&quot;</span> <span class="op">|</span> <span class="string">&quot;Cooking&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>),
-            <span class="string">&quot;food&quot;</span> <span class="op">|</span> <span class="string">&quot;Food&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">Food</span>),
+            <span class="string">&quot;general_online&quot;</span> <span class="op">|</span> <span class="string">&quot;GeneralOnline&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>),
+            <span class="string">&quot;general_physical&quot;</span> <span class="op">|</span> <span class="string">&quot;GeneralPhysical&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span>),
+            <span class="string">&quot;stage_online&quot;</span> <span class="op">|</span> <span class="string">&quot;Stage_online&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>),
+            <span class="string">&quot;stage_physical&quot;</span> <span class="op">|</span> <span class="string">&quot;StagePhysical&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span>),
+            <span class="string">&quot;cooking_physical&quot;</span> <span class="op">|</span> <span class="string">&quot;CookingPhysical&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span>),
+            <span class="string">&quot;food_physical&quot;</span> <span class="op">|</span> <span class="string">&quot;FoodPhysical&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span>),
             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">ParseCategoryError</span> { <span class="ident">_priv</span>: () }),
         }
     }

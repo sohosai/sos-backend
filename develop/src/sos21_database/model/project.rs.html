@@ -81,6 +81,8 @@
 <span id="78">78</span>
 <span id="79">79</span>
 <span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Display</span>};
@@ -95,10 +97,12 @@
 <span class="attribute">#[<span class="ident">sqlx</span>(<span class="ident">type_name</span> <span class="op">=</span> <span class="string">&quot;project_category&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">sqlx</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;snake_case&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ProjectCategory</span> {
-    <span class="ident">General</span>,
-    <span class="ident">Stage</span>,
-    <span class="ident">Cooking</span>,
-    <span class="ident">Food</span>,
+    <span class="ident">GeneralOnline</span>,
+    <span class="ident">GeneralPhysical</span>,
+    <span class="ident">StageOnline</span>,
+    <span class="ident">StagePhysical</span>,
+    <span class="ident">CookingPhysical</span>,
+    <span class="ident">FoodPhysical</span>,
 }
 
 <span class="ident">bitflags</span>::<span class="macro">bitflags</span><span class="macro">!</span> {

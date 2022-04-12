@@ -433,6 +433,8 @@
 <span id="430">430</span>
 <span id="431">431</span>
 <span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file</span>::<span class="ident">FileObject</span>;
@@ -561,7 +563,7 @@
 
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">other_answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
             <span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
             <span class="ident">other_project</span>.<span class="ident">id</span>(),
@@ -612,7 +614,7 @@
 
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
             <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
             <span class="ident">project</span>.<span class="ident">id</span>(),
@@ -662,8 +664,10 @@
 
         <span class="kw">let</span> (<span class="ident">owner_file</span>, <span class="ident">owner_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span>
-            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project_with_subowner</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project_with_subowner</span>(
+            <span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
+            <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
+        );
         <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
             <span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
             <span class="ident">project</span>.<span class="ident">id</span>(),
@@ -713,13 +717,13 @@
 
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
             <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
             <span class="ident">project</span>.<span class="ident">id</span>(),
             <span class="kw-2">&amp;</span><span class="ident">registration_form</span>,
         );
-        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">other_answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
             <span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
             <span class="ident">other_project</span>.<span class="ident">id</span>(),
@@ -772,7 +776,7 @@
 
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
             <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
             <span class="ident">project</span>.<span class="ident">id</span>(),
@@ -825,7 +829,7 @@
 
         <span class="kw">let</span> (<span class="ident">other_file</span>, <span class="ident">other_object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">answer</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
             <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
             <span class="ident">project</span>.<span class="ident">id</span>(),

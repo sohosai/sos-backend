@@ -627,6 +627,42 @@
 <span id="624">624</span>
 <span id="625">625</span>
 <span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
+<span id="643">643</span>
+<span id="644">644</span>
+<span id="645">645</span>
+<span id="646">646</span>
+<span id="647">647</span>
+<span id="648">648</span>
+<span id="649">649</span>
+<span id="650">650</span>
+<span id="651">651</span>
+<span id="652">652</span>
+<span id="653">653</span>
+<span id="654">654</span>
+<span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
 
@@ -694,21 +730,43 @@
     <span class="ident">subowner_id</span>: <span class="ident">UserId</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Error</span>)]</span>
-<span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;invalid project with same owner and subowner&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SameOwnerSubownerError</span> {
-    <span class="ident">_priv</span>: (),
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ContentErrorKind</span> {
+    <span class="ident">SameOwnerSubowner</span>,
+    <span class="ident">ArtisticStageProject</span>,
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to create a project from content&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ContentError</span> {
+    <span class="ident">kind</span>: <span class="ident">ContentErrorKind</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">ContentError</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">kind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ContentErrorKind</span> {
+        <span class="self">self</span>.<span class="ident">kind</span>
+    }
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">NewProjectErrorKind</span> {
     <span class="ident">TooManyProjects</span>,
     <span class="ident">SameOwnerSubowner</span>,
+    <span class="ident">ArtisticStageProject</span>,
     <span class="ident">NotAnsweredRegistrationForm</span>,
     <span class="ident">AlreadyProjectOwnerSubowner</span>,
     <span class="ident">AlreadyProjectSubownerSubowner</span>,
     <span class="ident">AlreadyPendingProjectOwnerSubowner</span>,
     <span class="ident">OutOfCreationPeriod</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">NewProjectErrorKind</span> {
+    <span class="kw">fn</span> <span class="ident">from_content_error_kind</span>(<span class="ident">content_error_kind</span>: <span class="ident">ContentErrorKind</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="kw">match</span> <span class="ident">content_error_kind</span> {
+            <span class="ident">ContentErrorKind</span>::<span class="ident">SameOwnerSubowner</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">SameOwnerSubowner</span>,
+            <span class="ident">ContentErrorKind</span>::<span class="ident">ArtisticStageProject</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">ArtisticStageProject</span>,
+        }
+    }
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Error</span>)]</span>
@@ -734,9 +792,9 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">from_content_error</span>(<span class="ident">_err</span>: <span class="ident">SameOwnerSubownerError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from_content_error</span>(<span class="ident">err</span>: <span class="ident">ContentError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">NewProjectError</span> {
-            <span class="ident">kind</span>: <span class="ident">NewProjectErrorKind</span>::<span class="ident">SameOwnerSubowner</span>,
+            <span class="ident">kind</span>: <span class="ident">NewProjectErrorKind</span>::<span class="ident">from_content_error_kind</span>(<span class="ident">err</span>.<span class="ident">kind</span>()),
         }
     }
 }
@@ -836,9 +894,20 @@
         <span class="ident">content</span>: <span class="ident">ProjectContent</span>,
         <span class="ident">owner_id</span>: <span class="ident">UserId</span>,
         <span class="ident">subowner_id</span>: <span class="ident">UserId</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">SameOwnerSubownerError</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">ContentError</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">owner_id</span> <span class="op">=</span><span class="op">=</span> <span class="ident">subowner_id</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">SameOwnerSubownerError</span> { <span class="ident">_priv</span>: () });
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ContentError</span> {
+                <span class="ident">kind</span>: <span class="ident">ContentErrorKind</span>::<span class="ident">SameOwnerSubowner</span>,
+            });
+        }
+
+        <span class="kw">if</span> <span class="ident">content</span>.<span class="ident">attributes</span>.<span class="ident">contains</span>(<span class="ident">ProjectAttribute</span>::<span class="ident">Artistic</span>)
+            <span class="op">&amp;&amp;</span> (<span class="ident">content</span>.<span class="ident">category</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>
+                <span class="op">|</span><span class="op">|</span> <span class="ident">content</span>.<span class="ident">category</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span>)
+        {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ContentError</span> {
+                <span class="ident">kind</span>: <span class="ident">ContentErrorKind</span>::<span class="ident">ArtisticStageProject</span>,
+            });
         }
 
         <span class="prelude-val">Ok</span>(<span class="ident">Project</span> {
@@ -919,7 +988,7 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">kind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectKind</span> {
         <span class="ident">ProjectKind</span> {
-            <span class="ident">is_cooking</span>: <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">category</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>,
+            <span class="ident">is_cooking</span>: <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">category</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span>,
             <span class="ident">is_outdoor</span>: <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">attributes</span>.<span class="ident">contains</span>(<span class="ident">ProjectAttribute</span>::<span class="ident">Outdoor</span>),
         }
     }
@@ -1087,14 +1156,14 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general_owner</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">project</span>.<span class="ident">is_visible_to</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general_subowner</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project_with_subowner</span>(
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project_with_subowner</span>(
             <span class="ident">test_model</span>::<span class="ident">new_user_id</span>(),
             <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
         );
@@ -1105,7 +1174,7 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_general_other</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">project</span>.<span class="ident">is_visible_to</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>));
     }
 
@@ -1113,7 +1182,7 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_committee_other</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_committee_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">project</span>.<span class="ident">is_visible_to</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>));
     }
 
@@ -1121,7 +1190,7 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_operator_other</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">project</span>.<span class="ident">is_visible_to</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>));
     }
 
@@ -1129,7 +1198,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_new_ok</span>() {
         <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">subowner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">owner</span>.<span class="ident">clone</span>(), <span class="ident">subowner</span>.<span class="ident">clone</span>()])
@@ -1147,7 +1216,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_new_not_answered</span>() {
         <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">subowner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
@@ -1168,7 +1237,7 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_new_same_owner_subowner</span>() {
         <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">owner</span>.<span class="ident">clone</span>()])
@@ -1186,10 +1255,10 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_new_already_project_owner</span>() {
         <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">subowner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">subowner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">subowner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="ident">subowner</span>.<span class="ident">assign_project_owner</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>).<span class="ident">unwrap</span>();
 
-        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">owner</span>.<span class="ident">clone</span>(), <span class="ident">subowner</span>.<span class="ident">clone</span>()])
@@ -1209,11 +1278,13 @@
         <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">subowner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span>
-            <span class="ident">test_model</span>::<span class="ident">new_general_project_with_subowner</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">subowner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project_with_subowner</span>(
+            <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
+            <span class="ident">subowner</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
+        );
         <span class="ident">subowner</span>.<span class="ident">assign_project_subowner</span>(<span class="kw-2">&amp;</span><span class="ident">project</span>).<span class="ident">unwrap</span>();
 
-        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>, <span class="ident">owner</span>.<span class="ident">clone</span>(), <span class="ident">subowner</span>.<span class="ident">clone</span>()])
@@ -1232,12 +1303,13 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_new_already_pending_project_owner</span>() {
         <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">subowner</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">pending_project1</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">subowner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">pending_project1</span> <span class="op">=</span>
+            <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">subowner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="ident">subowner</span>
             .<span class="ident">assign_pending_project_owner</span>(<span class="kw-2">&amp;</span><span class="ident">pending_project1</span>)
             .<span class="ident">unwrap</span>();
 
-        <span class="kw">let</span> <span class="ident">pending_project2</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">pending_project2</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">owner</span>.<span class="ident">clone</span>(), <span class="ident">subowner</span>.<span class="ident">clone</span>()])

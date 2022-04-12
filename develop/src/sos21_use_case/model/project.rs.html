@@ -141,6 +141,12 @@
 <span id="138">138</span>
 <span id="139">139</span>
 <span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">UserId</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>};
 
@@ -163,28 +169,34 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ProjectCategory</span> {
-    <span class="ident">General</span>,
-    <span class="ident">Stage</span>,
-    <span class="ident">Cooking</span>,
-    <span class="ident">Food</span>,
+    <span class="ident">GeneralOnline</span>,
+    <span class="ident">GeneralPhysical</span>,
+    <span class="ident">StageOnline</span>,
+    <span class="ident">StagePhysical</span>,
+    <span class="ident">CookingPhysical</span>,
+    <span class="ident">FoodPhysical</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">ProjectCategory</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_entity</span>(<span class="ident">category</span>: <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span> {
         <span class="kw">match</span> <span class="ident">category</span> {
-            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">General</span>,
-            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>,
-            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>,
-            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Food</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">Food</span>,
+            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>,
+            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span>,
+            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>,
+            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span>,
+            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span>,
+            <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span>,
         }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_entity</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ProjectCategory</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Stage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Food</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Food</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">entity</span>::<span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span>,
         }
     }
 }

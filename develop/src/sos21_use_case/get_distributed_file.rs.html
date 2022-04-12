@@ -233,6 +233,8 @@
 <span id="230">230</span>
 <span id="231">231</span>
 <span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">file_distribution</span>::{<span class="ident">FileDistributionDistributedFile</span>, <span class="ident">FileDistributionId</span>};
@@ -314,10 +316,10 @@
         <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
@@ -355,10 +357,10 @@
         <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">other_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">other_project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
@@ -396,7 +398,7 @@
         <span class="kw">let</span> (<span class="ident">file</span>, <span class="ident">object</span>) <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_file</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);
@@ -434,8 +436,10 @@
 
         <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span>
-            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project_with_subowner</span>(<span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>(), <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project_with_subowner</span>(
+            <span class="ident">owner</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
+            <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
+        );
 
         <span class="kw">let</span> <span class="ident">scope</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharingScope</span>::<span class="ident">Project</span>(<span class="ident">project</span>.<span class="ident">id</span>());
         <span class="kw">let</span> <span class="ident">sharing</span> <span class="op">=</span> <span class="ident">file_sharing</span>::<span class="ident">FileSharing</span>::<span class="ident">new</span>(<span class="ident">file</span>.<span class="ident">id</span>, <span class="ident">scope</span>);

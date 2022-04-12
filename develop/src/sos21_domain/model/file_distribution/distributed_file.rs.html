@@ -122,7 +122,7 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_general</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">FileDistributionFiles</span>::<span class="ident">from_sharings</span>(<span class="macro">vec</span><span class="macro">!</span>[(
             <span class="ident">project</span>.<span class="ident">id</span>(),
             <span class="ident">FileSharingId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>()),
@@ -139,7 +139,7 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_committee</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_committee_user</span>();
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">FileDistributionFiles</span>::<span class="ident">from_sharings</span>(<span class="macro">vec</span><span class="macro">!</span>[(
             <span class="ident">project</span>.<span class="ident">id</span>(),
             <span class="ident">FileSharingId</span>::<span class="ident">from_uuid</span>(<span class="ident">Uuid</span>::<span class="ident">new_v4</span>()),

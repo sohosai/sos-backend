@@ -128,6 +128,12 @@
 <span id="125">125</span>
 <span id="126">126</span>
 <span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">UserId</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>};
@@ -153,28 +159,34 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;snake_case&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ProjectCategory</span> {
-    <span class="ident">General</span>,
-    <span class="ident">Stage</span>,
-    <span class="ident">Cooking</span>,
-    <span class="ident">Food</span>,
+    <span class="ident">GeneralOnline</span>,
+    <span class="ident">GeneralPhysical</span>,
+    <span class="ident">StageOnline</span>,
+    <span class="ident">StagePhysical</span>,
+    <span class="ident">CookingPhysical</span>,
+    <span class="ident">FoodPhysical</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">ProjectCategory</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_use_case</span>(<span class="ident">category</span>: <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span> {
         <span class="kw">match</span> <span class="ident">category</span> {
-            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">General</span>,
-            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>,
-            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>,
-            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Food</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">Food</span>,
+            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>,
+            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span>,
+            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>,
+            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span>,
+            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span>,
+            <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span>,
         }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_use_case</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">ProjectCategory</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Stage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Food</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Food</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span>,
         }
     }
 }

@@ -421,13 +421,13 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_general_out_of_period</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">period</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_project_creation_period_to_now</span>();
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
             .<span class="ident">projects</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">project</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>)
             .<span class="kw">await</span>;
@@ -445,13 +445,13 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_general_in_period</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">period</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_project_creation_period_from_now</span>();
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
             .<span class="ident">projects</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">project</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>)
             .<span class="kw">await</span>;
