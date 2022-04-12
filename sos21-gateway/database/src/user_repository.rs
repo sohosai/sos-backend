@@ -10,8 +10,8 @@ use sos21_domain::model::{
     phone_number::PhoneNumber,
     project::ProjectId,
     user::{
-        User, UserAssignment, UserCategory, UserContent, UserEmailAddress, UserId,
-        UserKanaName, UserName, UserRole,
+        User, UserAssignment, UserCategory, UserContent, UserEmailAddress, UserId, UserKanaName,
+        UserName, UserRole,
     },
 };
 use sqlx::{Postgres, Transaction};
@@ -98,7 +98,7 @@ fn from_user(user: User) -> data::user::User {
     };
 
     let category = match category {
-        UserCategory::UndergraduateStudent=> data::user::UserCategory::UndergraduateStudent,
+        UserCategory::UndergraduateStudent => data::user::UserCategory::UndergraduateStudent,
         UserCategory::GraduateStudent => data::user::UserCategory::GraduateStudent,
         UserCategory::AcademicStaff => data::user::UserCategory::AcademicStaff,
     };
@@ -178,7 +178,7 @@ pub fn to_user(user: data::user::User) -> Result<User> {
     };
 
     let category = match category {
-        data::user::UserCategory::UndergraduateStudent =>UserCategory::UndergraduateStudent,
+        data::user::UserCategory::UndergraduateStudent => UserCategory::UndergraduateStudent,
         data::user::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
         data::user::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
     };

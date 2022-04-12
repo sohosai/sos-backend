@@ -94,7 +94,7 @@ where
 
     if let Some(category) = input.category {
         let category = match category {
-            UserCategory::UndergraduateStudent=>user::UserCategory::UndergraduateStudent,
+            UserCategory::UndergraduateStudent => user::UserCategory::UndergraduateStudent,
             UserCategory::GraduateStudent => user::UserCategory::GraduateStudent,
             UserCategory::AcademicStaff => user::UserCategory::AcademicStaff,
         };

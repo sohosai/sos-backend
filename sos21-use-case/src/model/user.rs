@@ -78,7 +78,7 @@ pub enum UserCategory {
 impl UserCategory {
     pub fn from_entity(category: entity::UserCategory) -> UserCategory {
         match category {
-            entity::UserCategory::UndergraduateStudent=>UserCategory::UndergraduateStudent,
+            entity::UserCategory::UndergraduateStudent => UserCategory::UndergraduateStudent,
             entity::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
             entity::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
         }

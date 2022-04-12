@@ -109,7 +109,7 @@ impl UserCategory {
 
     pub fn into_use_case(self) -> use_case::UserCategory {
         match self {
-            UserCategory::UndergraduateStudent=>use_case::UserCategory::UndergraduateStudent,
+            UserCategory::UndergraduateStudent => use_case::UserCategory::UndergraduateStudent,
             UserCategory::GraduateStudent => use_case::UserCategory::GraduateStudent,
             UserCategory::AcademicStaff => use_case::UserCategory::AcademicStaff,
         }

@@ -2,8 +2,7 @@ use crate::model::{
     date_time::DateTime,
     phone_number::PhoneNumber,
     user::{
-        User, UserCategory, UserContent, UserEmailAddress, UserId, UserKanaName,
-        UserName, UserRole,
+        User, UserCategory, UserContent, UserEmailAddress, UserId, UserKanaName, UserName, UserRole,
     },
 };
 

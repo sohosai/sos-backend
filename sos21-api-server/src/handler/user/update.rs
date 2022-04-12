@@ -60,7 +60,7 @@ impl From<update_any_user::Error> for Error {
             update_any_user::Error::InvalidKanaName => Error::InvalidField { field: "kana_name" },
             update_any_user::Error::InvalidPhoneNumber => Error::InvalidField {
                 field: "phone_number",
-            }
+            },
         }
     }
 }
