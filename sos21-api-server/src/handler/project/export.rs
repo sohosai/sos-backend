@@ -64,10 +64,12 @@ pub struct Request {
     pub field_attribute_committee: Option<String>,
     #[serde(default)]
     pub field_attribute_outdoor: Option<String>,
-    pub category_general: String,
-    pub category_stage: String,
-    pub category_cooking: String,
-    pub category_food: String,
+    pub category_general_online: String,
+    pub category_general_physical: String,
+    pub category_stage_online: String,
+    pub category_stage_physical: String,
+    pub category_cooking_physical: String,
+    pub category_food_physical: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -127,10 +129,12 @@ pub async fn handler(
             field_attribute_artistic,
             field_attribute_committee,
             field_attribute_outdoor,
-            category_general,
-            category_stage,
-            category_cooking,
-            category_food,
+            category_general_online,
+            category_general_physical,
+            category_stage_online,
+            category_stage_physical,
+            category_cooking_physical,
+            category_food_physical,
         } = request;
         let field_names = export_projects::InputFieldNames {
             id: field_id,
@@ -163,10 +167,12 @@ pub async fn handler(
             attribute_outdoor: field_attribute_outdoor,
         };
         let category_names = export_projects::InputCategoryNames {
-            general: category_general,
-            stage: category_stage,
-            cooking: category_cooking,
-            food: category_food,
+            general_online: category_general_online,
+            general_physical: category_general_physical,
+            stage_online: category_stage_online,
+            stage_physical: category_stage_physical,
+            cooking_physical: category_cooking_physical,
+            food_physical: category_food_physical,
         };
         export_projects::Input {
             field_names,
