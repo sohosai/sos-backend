@@ -2,8 +2,8 @@ use crate::context::ConfigContext;
 use crate::model::date_time::DateTime;
 use crate::model::permissions::Permissions;
 use crate::model::project::{
-    ProjectAttributes, ProjectCategory, ProjectDescription, ProjectGroupName, ProjectKanaGroupName,
-    ProjectKanaName, ProjectName,
+    ProjectAttribute, ProjectAttributes, ProjectCategory, ProjectDescription, ProjectGroupName,
+    ProjectKanaGroupName, ProjectKanaName, ProjectName,
 };
 use crate::model::user::{self, User, UserAssignment, UserId};
 
@@ -50,6 +50,7 @@ pub enum NewPendingProjectErrorKind {
     AlreadyProjectSubownerOwner,
     AlreadyPendingProjectOwnerOwner,
     OutOfCreationPeriod,
+    ArtisticStageProject,
 }
 
 #[derive(Debug, Clone, Error)]
@@ -103,6 +104,14 @@ impl PendingProject {
                 }
             };
             return Err(NewPendingProjectError { kind });
+        }
+
+        if (category == ProjectCategory::StageOnline || category == ProjectCategory::StagePhysical)
+            && attributes.contains(ProjectAttribute::Artistic)
+        {
+            return Err(NewPendingProjectError {
+                kind: NewPendingProjectErrorKind::ArtisticStageProject,
+            });
         }
 
         Ok(PendingProject::from_content(

@@ -39,6 +39,7 @@ pub enum Error {
     AlreadyProjectSubowner,
     AlreadyPendingProjectOwner,
     OutOfProjectCreationPeriod,
+    ArtisticStageProject,
 }
 
 impl HandlerResponse for Error {
@@ -50,6 +51,7 @@ impl HandlerResponse for Error {
             Error::AlreadyProjectSubowner => StatusCode::CONFLICT,
             Error::AlreadyPendingProjectOwner => StatusCode::CONFLICT,
             Error::OutOfProjectCreationPeriod => StatusCode::CONFLICT,
+            Error::ArtisticStageProject => StatusCode::CONFLICT,
         }
     }
 }
@@ -73,6 +75,7 @@ impl From<prepare_project::Error> for Error {
             prepare_project::Error::AlreadyProjectSubowner => Error::AlreadyProjectSubowner,
             prepare_project::Error::AlreadyPendingProjectOwner => Error::AlreadyPendingProjectOwner,
             prepare_project::Error::OutOfCreationPeriod => Error::OutOfProjectCreationPeriod,
+            prepare_project::Error::ArtisticStageProject => Error::ArtisticStageProject,
         }
     }
 }

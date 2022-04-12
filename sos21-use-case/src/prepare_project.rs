@@ -29,6 +29,7 @@ pub enum Error {
     AlreadyProjectSubowner,
     AlreadyPendingProjectOwner,
     OutOfCreationPeriod,
+    ArtisticStageProject,
 }
 
 impl Error {
@@ -69,6 +70,9 @@ impl Error {
             }
             pending_project::NewPendingProjectErrorKind::OutOfCreationPeriod => {
                 Error::OutOfCreationPeriod
+            }
+            pending_project::NewPendingProjectErrorKind::ArtisticStageProject => {
+                Error::ArtisticStageProject
             }
         }
     }
