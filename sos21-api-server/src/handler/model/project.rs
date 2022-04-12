@@ -22,10 +22,12 @@ impl ProjectId {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ProjectCategory {
-    General,
-    Stage,
-    Cooking,
-    Food,
+    GeneralOnline,
+    GeneralPhysical,
+    StageOnline,
+    StagePhysical,
+    CookingPhysical,
+    FoodPhysical,
 }
 
 impl ProjectCategory {

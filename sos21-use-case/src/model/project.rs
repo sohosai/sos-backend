@@ -19,28 +19,34 @@ impl ProjectId {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ProjectCategory {
-    General,
-    Stage,
-    Cooking,
-    Food,
+    GeneralOnline,
+    GeneralPhysical,
+    StageOnline,
+    StagePhysical,
+    CookingPhysical,
+    FoodPhysical,
 }
 
 impl ProjectCategory {
     pub fn from_entity(category: entity::ProjectCategory) -> ProjectCategory {
         match category {
-            entity::ProjectCategory::General => ProjectCategory::General,
-            entity::ProjectCategory::Stage => ProjectCategory::Stage,
-            entity::ProjectCategory::Cooking => ProjectCategory::Cooking,
-            entity::ProjectCategory::Food => ProjectCategory::Food,
+            entity::ProjectCategory::GeneralOnline => ProjectCategory::GeneralOnline,
+            entity::ProjectCategory::GeneralPhysical => ProjectCategory::GeneralPhysical,
+            entity::ProjectCategory::StageOnline => ProjectCategory::StageOnline,
+            entity::ProjectCategory::StagePhysical => ProjectCategory::StagePhysical,
+            entity::ProjectCategory::CookingPhysical => ProjectCategory::CookingPhysical,
+            entity::ProjectCategory::FoodPhysical => ProjectCategory::FoodPhysical,
         }
     }
 
     pub fn into_entity(self) -> entity::ProjectCategory {
         match self {
-            ProjectCategory::General => entity::ProjectCategory::General,
-            ProjectCategory::Stage => entity::ProjectCategory::Stage,
-            ProjectCategory::Cooking => entity::ProjectCategory::Cooking,
-            ProjectCategory::Food => entity::ProjectCategory::Food,
+            ProjectCategory::GeneralOnline => entity::ProjectCategory::GeneralOnline,
+            ProjectCategory::GeneralPhysical => entity::ProjectCategory::GeneralPhysical,
+            ProjectCategory::StageOnline => entity::ProjectCategory::StageOnline,
+            ProjectCategory::StagePhysical => entity::ProjectCategory::StagePhysical,
+            ProjectCategory::CookingPhysical => entity::ProjectCategory::CookingPhysical,
+            ProjectCategory::FoodPhysical => entity::ProjectCategory::FoodPhysical,
         }
     }
 }
