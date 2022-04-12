@@ -119,7 +119,7 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period_for(project::ProjectCategory::General, period)
+            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -150,7 +150,7 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period_for(project::ProjectCategory::General, period)
+            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -181,7 +181,7 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period_for(project::ProjectCategory::General, period)
+            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -195,7 +195,7 @@ mod tests {
                 .map(FormItem::from_entity)
                 .collect(),
             query: ProjectQuery(vec![ProjectQueryConjunction {
-                category: Some(ProjectCategory::General),
+                category: Some(ProjectCategory::GeneralOnline),
                 attributes: vec![],
             }]),
         };

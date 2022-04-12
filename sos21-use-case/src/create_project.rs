@@ -143,7 +143,7 @@ mod tests {
     #[tokio::test]
     async fn test_owner() {
         let user = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(user.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -164,10 +164,10 @@ mod tests {
     async fn test_already_project_owner() {
         let owner = test::model::new_general_user();
         let mut user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id().clone());
+        let project = test::model::new_general_online_project(user.id().clone());
         user.assign_project_owner(&project).unwrap();
 
-        let pending_project = test::model::new_general_pending_project(owner.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(owner.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), owner.clone()])
@@ -189,7 +189,7 @@ mod tests {
     async fn test_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
@@ -217,13 +217,13 @@ mod tests {
     async fn test_after_other_category_period_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(other.id().clone());
         let period = test::model::new_project_creation_period_to_now();
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
             .pending_projects(vec![pending_project.clone()])
-            .project_creation_period_for(project::ProjectCategory::Stage, period)
+            .project_creation_period_for(project::ProjectCategory::StageOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -247,13 +247,13 @@ mod tests {
     async fn test_with_period_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(other.id().clone());
         let period = test::model::new_project_creation_period_from_now();
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
             .pending_projects(vec![pending_project.clone()])
-            .project_creation_period_for(project::ProjectCategory::General, period)
+            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -274,13 +274,13 @@ mod tests {
     async fn test_after_period_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(other.id().clone());
         let period = test::model::new_project_creation_period_to_now();
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
             .pending_projects(vec![pending_project.clone()])
-            .project_creation_period_for(project::ProjectCategory::General, period)
+            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -297,13 +297,13 @@ mod tests {
     async fn test_before_period_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(other.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(other.id().clone());
         let period = test::model::new_project_creation_period_with_hours_from_now(1);
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])
             .pending_projects(vec![pending_project.clone()])
-            .project_creation_period_for(project::ProjectCategory::General, period)
+            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -320,7 +320,7 @@ mod tests {
     async fn test_other_with_registration_form_not_answered() {
         let owner = test::model::new_general_user();
         let subowner = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(owner.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(owner.id().clone());
 
         let operator = test::model::new_general_user();
         let registration_form1 = test::model::new_registration_form(operator.id().clone());
@@ -355,7 +355,7 @@ mod tests {
 
         let owner = test::model::new_general_user();
         let subowner = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(owner.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(owner.id().clone());
 
         let operator = test::model::new_general_user();
         let registration_form1 = test::model::new_registration_form(operator.id().clone());
@@ -364,7 +364,7 @@ mod tests {
             operator.id().clone(),
             project_query::ProjectQuery::from_conjunctions(vec![
                 project_query::ProjectQueryConjunction {
-                    category: Some(project::ProjectCategory::Stage),
+                    category: Some(project::ProjectCategory::StageOnline),
                     attributes: project::ProjectAttributes::from_attributes(vec![]).unwrap(),
                 },
             ])
@@ -424,7 +424,7 @@ mod tests {
 
         let owner = test::model::new_general_user();
         let subowner = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(owner.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(owner.id().clone());
 
         let operator = test::model::new_general_user();
         let registration_form = test::model::new_registration_form(operator.id().clone());

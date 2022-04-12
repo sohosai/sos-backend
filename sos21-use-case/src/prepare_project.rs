@@ -142,7 +142,7 @@ mod tests {
             group_name: test::model::mock_project_group_name().into_string(),
             kana_group_name: test::model::mock_project_kana_group_name().into_string(),
             description: test::model::mock_project_description().into_string(),
-            category: ProjectCategory::General,
+            category: ProjectCategory::GeneralOnline,
             attributes: Vec::new(),
         };
         (name, input)
@@ -175,7 +175,7 @@ mod tests {
         let period = test::model::new_project_creation_period_from_now();
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period_for(project::ProjectCategory::General, period)
+            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -198,7 +198,7 @@ mod tests {
         let period = test::model::new_project_creation_period_with_hours_from_now(1);
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period_for(project::ProjectCategory::General, period)
+            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -218,7 +218,7 @@ mod tests {
         let period = test::model::new_project_creation_period_to_now();
         let app = test::build_mock_app()
             .users(vec![user.clone()])
-            .project_creation_period_for(project::ProjectCategory::General, period)
+            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
             .build()
             .login_as(user.clone())
             .await;
@@ -235,7 +235,7 @@ mod tests {
     #[tokio::test]
     async fn test_already_project_owner() {
         let mut user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id().clone());
+        let project = test::model::new_general_online_project(user.id().clone());
         user.assign_project_owner(&project).unwrap();
 
         let app = test::build_mock_app()

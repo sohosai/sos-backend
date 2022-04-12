@@ -58,8 +58,8 @@ mod tests {
     ) -> (Login<test::context::MockApp>, FormId, HashSet<FormAnswerId>) {
         let operator = test::model::new_operator_user();
 
-        let project1 = test::model::new_general_project(login_user.id().clone());
-        let project2 = test::model::new_general_project(login_user.id().clone());
+        let project1 = test::model::new_general_online_project(login_user.id().clone());
+        let project2 = test::model::new_general_online_project(login_user.id().clone());
 
         let form1 = test::model::new_form(operator.id().clone());
         let form1_answer1 =
