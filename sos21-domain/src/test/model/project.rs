@@ -103,18 +103,37 @@ pub fn new_project(owner_id: UserId, category: ProjectCategory) -> Project {
     new_project_with_attributes(owner_id, category, &[])
 }
 
-pub fn new_general_project(owner_id: UserId) -> Project {
-    new_project(owner_id, ProjectCategory::General)
+pub fn new_general_online_project(owner_id: UserId) -> Project {
+    new_project(owner_id, ProjectCategory::GeneralOnline)
 }
 
-pub fn new_stage_project(owner_id: UserId) -> Project {
-    new_project(owner_id, ProjectCategory::Stage)
+pub fn new_general_physical_project(owner_id: UserId) -> Project {
+    new_project(owner_id, ProjectCategory::GeneralPhysical)
 }
 
-pub fn new_general_project_with_subowner(owner_id: UserId, subowner_id: UserId) -> Project {
-    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::General)
+pub fn new_stage_online_project(owner_id: UserId) -> Project {
+    new_project(owner_id, ProjectCategory::StageOnline)
 }
 
-pub fn new_stage_project_with_subowner(owner_id: UserId, subowner_id: UserId) -> Project {
-    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::Stage)
+pub fn new_stage_physical_project(owner_id: UserId) -> Project {
+    new_project(owner_id, ProjectCategory::StagePhysical)
+}
+
+pub fn new_general_online_project_with_subowner(owner_id: UserId, subowner_id: UserId) -> Project {
+    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::GeneralOnline)
+}
+
+pub fn new_general_physical_project_with_subowner(
+    owner_id: UserId,
+    subowner_id: UserId,
+) -> Project {
+    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::GeneralPhysical)
+}
+
+pub fn new_stage_online_project_with_subowner(owner_id: UserId, subowner_id: UserId) -> Project {
+    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::StageOnline)
+}
+
+pub fn new_stage_physical_project_with_subowner(owner_id: UserId, subowner_id: UserId) -> Project {
+    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::StagePhysical)
 }

@@ -396,7 +396,7 @@ mod tests {
     #[test]
     fn test_visibility_general_via_project() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_project(user.id().clone());
+        let user_project = test_model::new_general_online_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
@@ -485,9 +485,9 @@ mod tests {
     #[tokio::test]
     async fn test_answer_not_targeted() {
         let user = test_model::new_general_user();
-        let project = test_model::new_stage_project(user.id().clone());
+        let project = test_model::new_stage_online_project(user.id().clone());
         let query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
-            category: Some(ProjectCategory::General),
+            category: Some(ProjectCategory::GeneralOnline),
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         }])
         .unwrap();
@@ -509,7 +509,7 @@ mod tests {
     #[tokio::test]
     async fn test_answer_already_answered() {
         let user = test_model::new_general_user();
-        let project = test_model::new_stage_project(user.id().clone());
+        let project = test_model::new_stage_online_project(user.id().clone());
         let query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
@@ -535,7 +535,7 @@ mod tests {
     #[tokio::test]
     async fn test_answer_ok() {
         let user = test_model::new_general_user();
-        let project = test_model::new_stage_project(user.id().clone());
+        let project = test_model::new_stage_online_project(user.id().clone());
         let query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),

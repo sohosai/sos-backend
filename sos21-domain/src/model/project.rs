@@ -64,21 +64,43 @@ pub struct Project {
     subowner_id: UserId,
 }
 
-#[derive(Debug, Clone, Error)]
-#[error("invalid project with same owner and subowner")]
-pub struct SameOwnerSubownerError {
-    _priv: (),
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ContentErrorKind {
+    SameOwnerSubowner,
+    ArtisticStageProject,
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("failed to create a project from content")]
+pub struct ContentError {
+    kind: ContentErrorKind,
+}
+
+impl ContentError {
+    pub fn kind(&self) -> ContentErrorKind {
+        self.kind
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NewProjectErrorKind {
     TooManyProjects,
     SameOwnerSubowner,
+    ArtisticStageProject,
     NotAnsweredRegistrationForm,
     AlreadyProjectOwnerSubowner,
     AlreadyProjectSubownerSubowner,
     AlreadyPendingProjectOwnerSubowner,
     OutOfCreationPeriod,
+}
+
+impl NewProjectErrorKind {
+    fn from_content_error_kind(content_error_kind: ContentErrorKind) -> Self {
+        match content_error_kind {
+            ContentErrorKind::SameOwnerSubowner => Self::SameOwnerSubowner,
+            ContentErrorKind::ArtisticStageProject => Self::ArtisticStageProject,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Error)]
@@ -104,9 +126,9 @@ impl NewProjectError {
         }
     }
 
-    fn from_content_error(_err: SameOwnerSubownerError) -> Self {
+    fn from_content_error(err: ContentError) -> Self {
         NewProjectError {
-            kind: NewProjectErrorKind::SameOwnerSubowner,
+            kind: NewProjectErrorKind::from_content_error_kind(err.kind()),
         }
     }
 }
@@ -206,9 +228,20 @@ impl Project {
         content: ProjectContent,
         owner_id: UserId,
         subowner_id: UserId,
-    ) -> Result<Self, SameOwnerSubownerError> {
+    ) -> Result<Self, ContentError> {
         if owner_id == subowner_id {
-            return Err(SameOwnerSubownerError { _priv: () });
+            return Err(ContentError {
+                kind: ContentErrorKind::SameOwnerSubowner,
+            });
+        }
+
+        if content.attributes.contains(ProjectAttribute::Artistic)
+            && (content.category == ProjectCategory::StageOnline
+                || content.category == ProjectCategory::StagePhysical)
+        {
+            return Err(ContentError {
+                kind: ContentErrorKind::ArtisticStageProject,
+            });
         }
 
         Ok(Project {
@@ -289,7 +322,7 @@ impl Project {
 
     pub fn kind(&self) -> ProjectKind {
         ProjectKind {
-            is_cooking: self.content.category == ProjectCategory::Cooking,
+            is_cooking: self.content.category == ProjectCategory::CookingPhysical,
             is_outdoor: self.content.attributes.contains(ProjectAttribute::Outdoor),
         }
     }
@@ -457,14 +490,14 @@ mod tests {
     #[test]
     fn test_visibility_general_owner() {
         let user = test_model::new_general_user();
-        let project = test_model::new_general_project(user.id().clone());
+        let project = test_model::new_general_online_project(user.id().clone());
         assert!(project.is_visible_to(&user));
     }
 
     #[test]
     fn test_visibility_general_subowner() {
         let user = test_model::new_general_user();
-        let project = test_model::new_general_project_with_subowner(
+        let project = test_model::new_general_online_project_with_subowner(
             test_model::new_user_id(),
             user.id().clone(),
         );
@@ -475,7 +508,7 @@ mod tests {
     fn test_visibility_general_other() {
         let user = test_model::new_general_user();
         let other = test_model::new_general_user();
-        let project = test_model::new_general_project(other.id().clone());
+        let project = test_model::new_general_online_project(other.id().clone());
         assert!(!project.is_visible_to(&user));
     }
 
@@ -483,7 +516,7 @@ mod tests {
     fn test_visibility_committee_other() {
         let user = test_model::new_committee_user();
         let other = test_model::new_general_user();
-        let project = test_model::new_general_project(other.id().clone());
+        let project = test_model::new_general_online_project(other.id().clone());
         assert!(project.is_visible_to(&user));
     }
 
@@ -491,7 +524,7 @@ mod tests {
     fn test_visibility_operator_other() {
         let user = test_model::new_operator_user();
         let other = test_model::new_general_user();
-        let project = test_model::new_general_project(other.id().clone());
+        let project = test_model::new_general_online_project(other.id().clone());
         assert!(project.is_visible_to(&user));
     }
 
@@ -499,7 +532,7 @@ mod tests {
     async fn test_new_ok() {
         let owner = test_model::new_general_user();
         let subowner = test_model::new_general_user();
-        let pending_project = test_model::new_general_pending_project(owner.id().clone());
+        let pending_project = test_model::new_general_online_pending_project(owner.id().clone());
 
         let app = crate::test::build_mock_app()
             .users(vec![owner.clone(), subowner.clone()])
@@ -517,7 +550,7 @@ mod tests {
     async fn test_new_not_answered() {
         let owner = test_model::new_general_user();
         let subowner = test_model::new_general_user();
-        let pending_project = test_model::new_general_pending_project(owner.id().clone());
+        let pending_project = test_model::new_general_online_pending_project(owner.id().clone());
 
         let operator = test_model::new_general_user();
         let registration_form = test_model::new_registration_form(operator.id().clone());
@@ -538,7 +571,7 @@ mod tests {
     #[tokio::test]
     async fn test_new_same_owner_subowner() {
         let owner = test_model::new_general_user();
-        let pending_project = test_model::new_general_pending_project(owner.id().clone());
+        let pending_project = test_model::new_general_online_pending_project(owner.id().clone());
 
         let app = crate::test::build_mock_app()
             .users(vec![owner.clone()])
@@ -556,10 +589,10 @@ mod tests {
     async fn test_new_already_project_owner() {
         let owner = test_model::new_general_user();
         let mut subowner = test_model::new_general_user();
-        let project = test_model::new_general_project(subowner.id().clone());
+        let project = test_model::new_general_online_project(subowner.id().clone());
         subowner.assign_project_owner(&project).unwrap();
 
-        let pending_project = test_model::new_general_pending_project(owner.id().clone());
+        let pending_project = test_model::new_general_online_pending_project(owner.id().clone());
 
         let app = crate::test::build_mock_app()
             .users(vec![owner.clone(), subowner.clone()])
@@ -579,11 +612,13 @@ mod tests {
         let owner = test_model::new_general_user();
         let user = test_model::new_general_user();
         let mut subowner = test_model::new_general_user();
-        let project =
-            test_model::new_general_project_with_subowner(user.id().clone(), subowner.id().clone());
+        let project = test_model::new_general_online_project_with_subowner(
+            user.id().clone(),
+            subowner.id().clone(),
+        );
         subowner.assign_project_subowner(&project).unwrap();
 
-        let pending_project = test_model::new_general_pending_project(owner.id().clone());
+        let pending_project = test_model::new_general_online_pending_project(owner.id().clone());
 
         let app = crate::test::build_mock_app()
             .users(vec![user, owner.clone(), subowner.clone()])
@@ -602,12 +637,13 @@ mod tests {
     async fn test_new_already_pending_project_owner() {
         let owner = test_model::new_general_user();
         let mut subowner = test_model::new_general_user();
-        let pending_project1 = test_model::new_general_pending_project(subowner.id().clone());
+        let pending_project1 =
+            test_model::new_general_online_pending_project(subowner.id().clone());
         subowner
             .assign_pending_project_owner(&pending_project1)
             .unwrap();
 
-        let pending_project2 = test_model::new_general_pending_project(owner.id().clone());
+        let pending_project2 = test_model::new_general_online_pending_project(owner.id().clone());
 
         let app = crate::test::build_mock_app()
             .users(vec![owner.clone(), subowner.clone()])

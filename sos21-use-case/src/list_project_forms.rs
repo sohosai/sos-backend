@@ -58,7 +58,7 @@ mod tests {
     async fn test_general_any() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id().clone());
+        let project = test::model::new_general_online_project(user.id().clone());
         let form1 = test::model::new_form(user.id().clone());
         let form2 = test::model::new_form(user.id().clone());
         let form3 = test::model::new_form(other.id().clone());
@@ -91,7 +91,7 @@ mod tests {
         let user = test::model::new_general_user();
         let project = test::model::new_project_with_attributes(
             user.id().clone(),
-            project::ProjectCategory::General,
+            project::ProjectCategory::GeneralOnline,
             &[
                 project::ProjectAttribute::Academic,
                 project::ProjectAttribute::Artistic,

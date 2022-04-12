@@ -25,10 +25,12 @@ where
 
     for conj in query {
         let category = conj.category.as_ref().map(|category| match category {
-            ProjectCategory::General => "general",
-            ProjectCategory::Stage => "stage",
-            ProjectCategory::Cooking => "cooking",
-            ProjectCategory::Food => "food",
+            ProjectCategory::GeneralOnline => "general_online",
+            ProjectCategory::GeneralPhysical => "general_physical",
+            ProjectCategory::StageOnline => "stage_online",
+            ProjectCategory::StagePhysical => "stage_physical",
+            ProjectCategory::CookingPhysical => "cooking_physical",
+            ProjectCategory::FoodPhysical => "food_physical",
         });
         categories.push(category);
         attributes.push(conj.attributes.bits() as i32);

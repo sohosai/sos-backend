@@ -160,7 +160,7 @@ mod tests {
     #[tokio::test]
     async fn test_answer_in_period_general_owner() {
         let owner = test::model::new_general_user();
-        let project = test::model::new_general_project(owner.id().clone());
+        let project = test::model::new_general_online_project(owner.id().clone());
         let operator = test::model::new_operator_user();
 
         let (item_id, items, answer_items) = prepare_items();
@@ -207,7 +207,7 @@ mod tests {
     async fn test_answer_in_period_general_subowner() {
         let owner = test::model::new_general_user();
         let subowner = test::model::new_general_user();
-        let project = test::model::new_general_project_with_subowner(
+        let project = test::model::new_general_online_project_with_subowner(
             owner.id().clone(),
             subowner.id().clone(),
         );
@@ -257,7 +257,7 @@ mod tests {
     async fn test_answer_in_period_general_other() {
         let owner = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let project = test::model::new_general_project(owner.id().clone());
+        let project = test::model::new_general_online_project(owner.id().clone());
         let operator = test::model::new_operator_user();
 
         let (item_id, items, answer_items) = prepare_items();
@@ -302,7 +302,7 @@ mod tests {
     #[tokio::test]
     async fn test_answer_after_period_owner() {
         let owner = test::model::new_general_user();
-        let project = test::model::new_general_project(owner.id().clone());
+        let project = test::model::new_general_online_project(owner.id().clone());
         let operator = test::model::new_operator_user();
 
         let period = test::model::new_form_period_to_now();
@@ -334,7 +334,7 @@ mod tests {
     #[tokio::test]
     async fn test_answer_in_period_invalid() {
         let owner = test::model::new_general_user();
-        let project = test::model::new_general_project(owner.id().clone());
+        let project = test::model::new_general_online_project(owner.id().clone());
         let operator = test::model::new_operator_user();
 
         let form = test::model::new_form(operator.id().clone());
