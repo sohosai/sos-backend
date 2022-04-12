@@ -64,21 +64,43 @@ pub struct Project {
     subowner_id: UserId,
 }
 
-#[derive(Debug, Clone, Error)]
-#[error("invalid project with same owner and subowner")]
-pub struct SameOwnerSubownerError {
-    _priv: (),
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ContentErrorKind {
+    SameOwnerSubowner,
+    ArtisticStageProject,
+}
+
+#[derive(Debug, Error, Clone)]
+#[error("failed to create a project from content")]
+pub struct ContentError {
+    kind: ContentErrorKind,
+}
+
+impl ContentError {
+    pub fn kind(&self) -> ContentErrorKind {
+        self.kind
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NewProjectErrorKind {
     TooManyProjects,
     SameOwnerSubowner,
+    ArtisticStageProject,
     NotAnsweredRegistrationForm,
     AlreadyProjectOwnerSubowner,
     AlreadyProjectSubownerSubowner,
     AlreadyPendingProjectOwnerSubowner,
     OutOfCreationPeriod,
+}
+
+impl NewProjectErrorKind {
+    fn from_content_error_kind(content_error_kind: ContentErrorKind) -> Self {
+        match content_error_kind {
+            ContentErrorKind::SameOwnerSubowner => Self::SameOwnerSubowner,
+            ContentErrorKind::ArtisticStageProject => Self::ArtisticStageProject,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Error)]
@@ -104,9 +126,9 @@ impl NewProjectError {
         }
     }
 
-    fn from_content_error(_err: SameOwnerSubownerError) -> Self {
+    fn from_content_error(err: ContentError) -> Self {
         NewProjectError {
-            kind: NewProjectErrorKind::SameOwnerSubowner,
+            kind: NewProjectErrorKind::from_content_error_kind(err.kind()),
         }
     }
 }
@@ -206,9 +228,20 @@ impl Project {
         content: ProjectContent,
         owner_id: UserId,
         subowner_id: UserId,
-    ) -> Result<Self, SameOwnerSubownerError> {
+    ) -> Result<Self, ContentError> {
         if owner_id == subowner_id {
-            return Err(SameOwnerSubownerError { _priv: () });
+            return Err(ContentError {
+                kind: ContentErrorKind::SameOwnerSubowner,
+            });
+        }
+
+        if content.attributes.contains(ProjectAttribute::Artistic)
+            && (content.category == ProjectCategory::StageOnline
+                || content.category == ProjectCategory::StagePhysical)
+        {
+            return Err(ContentError {
+                kind: ContentErrorKind::ArtisticStageProject,
+            });
         }
 
         Ok(Project {

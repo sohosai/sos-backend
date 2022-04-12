@@ -15,6 +15,7 @@ pub enum Error {
     TooManyProjects,
     NotAnsweredRegistrationForm,
     SameOwnerSubowner,
+    ArtisticStageProject,
     AlreadyProjectOwner,
     AlreadyProjectSubowner,
     AlreadyPendingProjectOwner,
@@ -29,6 +30,7 @@ impl Error {
                 Error::NotAnsweredRegistrationForm
             }
             project::NewProjectErrorKind::SameOwnerSubowner => Error::SameOwnerSubowner,
+            project::NewProjectErrorKind::ArtisticStageProject => Error::ArtisticStageProject,
             project::NewProjectErrorKind::AlreadyProjectOwnerSubowner => Error::AlreadyProjectOwner,
             project::NewProjectErrorKind::AlreadyProjectSubownerSubowner => {
                 Error::AlreadyProjectSubowner
