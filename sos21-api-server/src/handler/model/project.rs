@@ -33,19 +33,23 @@ pub enum ProjectCategory {
 impl ProjectCategory {
     pub fn from_use_case(category: use_case::ProjectCategory) -> ProjectCategory {
         match category {
-            use_case::ProjectCategory::General => ProjectCategory::General,
-            use_case::ProjectCategory::Stage => ProjectCategory::Stage,
-            use_case::ProjectCategory::Cooking => ProjectCategory::Cooking,
-            use_case::ProjectCategory::Food => ProjectCategory::Food,
+            use_case::ProjectCategory::GeneralOnline => ProjectCategory::GeneralOnline,
+            use_case::ProjectCategory::GeneralPhysical => ProjectCategory::GeneralPhysical,
+            use_case::ProjectCategory::StageOnline => ProjectCategory::StageOnline,
+            use_case::ProjectCategory::StagePhysical => ProjectCategory::StagePhysical,
+            use_case::ProjectCategory::CookingPhysical => ProjectCategory::CookingPhysical,
+            use_case::ProjectCategory::FoodPhysical => ProjectCategory::FoodPhysical,
         }
     }
 
     pub fn into_use_case(self) -> use_case::ProjectCategory {
         match self {
-            ProjectCategory::General => use_case::ProjectCategory::General,
-            ProjectCategory::Stage => use_case::ProjectCategory::Stage,
-            ProjectCategory::Cooking => use_case::ProjectCategory::Cooking,
-            ProjectCategory::Food => use_case::ProjectCategory::Food,
+            ProjectCategory::GeneralOnline => use_case::ProjectCategory::GeneralOnline,
+            ProjectCategory::GeneralPhysical => use_case::ProjectCategory::GeneralPhysical,
+            ProjectCategory::StageOnline => use_case::ProjectCategory::StageOnline,
+            ProjectCategory::StagePhysical => use_case::ProjectCategory::StagePhysical,
+            ProjectCategory::CookingPhysical => use_case::ProjectCategory::CookingPhysical,
+            ProjectCategory::FoodPhysical => use_case::ProjectCategory::FoodPhysical,
         }
     }
 }
