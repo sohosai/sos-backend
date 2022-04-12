@@ -60,11 +60,7 @@ where
     let phone_number = phone_number::PhoneNumber::from_string(input.phone_number)
         .map_err(|err| UseCaseError::UseCase(Error::from_phone_number_error(err)))?;
     let category = match input.category {
-        UserCategory::UndergraduateStudent { affiliation } => {
-            let affiliation = user::UserAffiliation::from_string(affiliation)
-                .map_err(|err| UseCaseError::UseCase(Error::from_affiliation_error(err)))?;
-            user::UserCategory::UndergraduateStudent(affiliation)
-        }
+        UserCategory::UndergraduateStudent=>user::UserCategory::UndergraduateStudent,
         UserCategory::GraduateStudent => user::UserCategory::GraduateStudent,
         UserCategory::AcademicStaff => user::UserCategory::AcademicStaff,
     };

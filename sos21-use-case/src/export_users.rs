@@ -240,9 +240,7 @@ where
 
     if category.is_some() {
         let category_name = match user.category() {
-            user::UserCategory::UndergraduateStudent(_) => {
-                &input.category_names.undergraduate_student
-            }
+            user::UserCategory::UndergraduateStudent => &input.category_names.undergraduate_student,
             user::UserCategory::GraduateStudent => &input.category_names.graduate_student,
             user::UserCategory::AcademicStaff => &input.category_names.academic_staff,
         };

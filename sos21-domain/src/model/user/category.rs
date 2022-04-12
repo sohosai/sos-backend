@@ -2,7 +2,7 @@ use crate::model::user::UserAffiliation;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum UserCategory {
-    UndergraduateStudent(UserAffiliation),
+    UndergraduateStudent,
     GraduateStudent,
     AcademicStaff,
 }
@@ -10,7 +10,7 @@ pub enum UserCategory {
 impl UserCategory {
     pub fn affiliation(&self) -> Option<&UserAffiliation> {
         match self {
-            UserCategory::UndergraduateStudent(affiliation) => Some(&affiliation),
+            UserCategory::UndergraduateStudent => None,
             UserCategory::GraduateStudent => None,
             UserCategory::AcademicStaff => None,
         }

@@ -99,10 +99,7 @@ fn from_user(user: User) -> data::user::User {
     };
 
     let (category, affiliation) = match category {
-        UserCategory::UndergraduateStudent(affiliation) => (
-            data::user::UserCategory::UndergraduateStudent,
-            Some(affiliation.into_string()),
-        ),
+        UserCategory::UndergraduateStudent=> (data::user::UserCategory::UndergraduateStudent,None),
         UserCategory::GraduateStudent => (data::user::UserCategory::GraduateStudent, None),
         UserCategory::AcademicStaff => (data::user::UserCategory::AcademicStaff, None),
     };
@@ -184,12 +181,7 @@ pub fn to_user(user: data::user::User) -> Result<User> {
     };
 
     let category = match category {
-        data::user::UserCategory::UndergraduateStudent => {
-            let affiliation = affiliation
-                .context("category = 'undergraduate_student' but affiliation is null")?;
-            let affiliation = UserAffiliation::from_string(affiliation)?;
-            UserCategory::UndergraduateStudent(affiliation)
-        }
+        data::user::UserCategory::UndergraduateStudent =>UserCategory::UndergraduateStudent,
         data::user::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
         data::user::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
     };

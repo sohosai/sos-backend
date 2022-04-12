@@ -91,9 +91,9 @@ impl UserRole {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case", tag = "type")]
+#[serde(rename_all = "snake_case")]
 pub enum UserCategory {
-    UndergraduateStudent { affiliation: String },
+    UndergraduateStudent,
     GraduateStudent,
     AcademicStaff,
 }
@@ -101,9 +101,7 @@ pub enum UserCategory {
 impl UserCategory {
     pub fn from_use_case(category: use_case::UserCategory) -> UserCategory {
         match category {
-            use_case::UserCategory::UndergraduateStudent { affiliation } => {
-                UserCategory::UndergraduateStudent { affiliation }
-            }
+            use_case::UserCategory::UndergraduateStudent => UserCategory::UndergraduateStudent,
             use_case::UserCategory::GraduateStudent => UserCategory::GraduateStudent,
             use_case::UserCategory::AcademicStaff => UserCategory::AcademicStaff,
         }
@@ -111,9 +109,7 @@ impl UserCategory {
 
     pub fn into_use_case(self) -> use_case::UserCategory {
         match self {
-            UserCategory::UndergraduateStudent { affiliation } => {
-                use_case::UserCategory::UndergraduateStudent { affiliation }
-            }
+            UserCategory::UndergraduateStudent=>use_case::UserCategory::UndergraduateStudent,
             UserCategory::GraduateStudent => use_case::UserCategory::GraduateStudent,
             UserCategory::AcademicStaff => use_case::UserCategory::AcademicStaff,
         }

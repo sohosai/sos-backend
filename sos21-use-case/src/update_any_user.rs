@@ -99,11 +99,7 @@ where
 
     if let Some(category) = input.category {
         let category = match category {
-            UserCategory::UndergraduateStudent { affiliation } => {
-                let affiliation = user::UserAffiliation::from_string(affiliation)
-                    .map_err(|err| UseCaseError::UseCase(Error::from_affiliation_error(err)))?;
-                user::UserCategory::UndergraduateStudent(affiliation)
-            }
+            UserCategory::UndergraduateStudent=>user::UserCategory::UndergraduateStudent,
             UserCategory::GraduateStudent => user::UserCategory::GraduateStudent,
             UserCategory::AcademicStaff => user::UserCategory::AcademicStaff,
         };
