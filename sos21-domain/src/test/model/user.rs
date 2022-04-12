@@ -2,7 +2,7 @@ use crate::model::{
     date_time::DateTime,
     phone_number::PhoneNumber,
     user::{
-        User, UserAffiliation, UserCategory, UserContent, UserEmailAddress, UserId, UserKanaName,
+        User, UserCategory, UserContent, UserEmailAddress, UserId, UserKanaName,
         UserName, UserRole,
     },
 };
@@ -28,10 +28,6 @@ pub fn mock_user_email_address() -> UserEmailAddress {
 
 pub fn mock_phone_number() -> PhoneNumber {
     PhoneNumber::from_string("+81900000000").unwrap()
-}
-
-pub fn mock_user_affiliation() -> UserAffiliation {
-    UserAffiliation::from_string("情報学群情報科学類").unwrap()
 }
 
 pub fn mock_user_category() -> UserCategory {

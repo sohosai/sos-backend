@@ -28,7 +28,6 @@ pub struct InputFieldNames {
     pub kana_full_name: Option<String>,
     pub email: Option<String>,
     pub phone_number: Option<String>,
-    pub affiliation: Option<String>,
     pub role: Option<String>,
     pub category: Option<String>,
 }
@@ -96,7 +95,6 @@ where
         kana_full_name,
         email,
         phone_number,
-        affiliation,
         role,
         category,
     } = &input.field_names;
@@ -119,7 +117,6 @@ where
     write_field!(writer, kana_full_name);
     write_field!(writer, email);
     write_field!(writer, phone_number);
-    write_field!(writer, affiliation);
     write_field!(writer, role);
     write_field!(writer, category);
 
@@ -148,7 +145,6 @@ where
         kana_full_name,
         email,
         phone_number,
-        affiliation,
         role,
         category,
     } = &input.field_names;
@@ -220,14 +216,6 @@ where
         writer.write_field(raw)?;
     }
 
-    if affiliation.is_some() {
-        if let Some(affiliation) = user.affiliation() {
-            writer.write_field(affiliation.as_str())?;
-        } else {
-            writer.write_field("")?;
-        }
-    }
-
     if role.is_some() {
         let role_name = match user.role() {
             user::UserRole::Administrator => &input.role_names.administrator,
@@ -270,7 +258,6 @@ mod tests {
             kana_full_name: Some("名前（よみがな）".to_string()),
             email: Some("メールアドレス".to_string()),
             phone_number: Some("電話番号".to_string()),
-            affiliation: None,
             role: Some("権限".to_string()),
             category: Some("分類".to_string()),
         };

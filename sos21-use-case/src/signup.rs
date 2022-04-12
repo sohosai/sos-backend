@@ -13,7 +13,6 @@ pub enum Error {
     InvalidName,
     InvalidKanaName,
     InvalidPhoneNumber,
-    InvalidAffiliation,
 }
 
 impl Error {
@@ -31,10 +30,6 @@ impl Error {
 
     fn from_phone_number_error(_err: phone_number::FromStringError) -> Self {
         Error::InvalidPhoneNumber
-    }
-
-    fn from_affiliation_error(_err: user::affiliation::AffiliationError) -> Self {
-        Error::InvalidAffiliation
     }
 }
 

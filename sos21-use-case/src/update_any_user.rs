@@ -11,7 +11,6 @@ pub enum Error {
     InvalidName,
     InvalidKanaName,
     InvalidPhoneNumber,
-    InvalidAffiliation,
     InsufficientPermissions,
 }
 
@@ -26,10 +25,6 @@ impl Error {
 
     fn from_phone_number_error(_err: phone_number::FromStringError) -> Self {
         Error::InvalidPhoneNumber
-    }
-
-    fn from_affiliation_error(_err: user::affiliation::AffiliationError) -> Self {
-        Error::InvalidAffiliation
     }
 
     fn from_permissions_error(_err: user::RequirePermissionsError) -> Self {

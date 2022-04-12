@@ -29,8 +29,6 @@ pub struct Request {
     #[serde(default)]
     pub field_phone_number: Option<String>,
     #[serde(default)]
-    pub field_affiliation: Option<String>,
-    #[serde(default)]
     pub field_role: Option<String>,
     #[serde(default)]
     pub field_category: Option<String>,
@@ -82,7 +80,6 @@ pub async fn handler(
             field_kana_full_name,
             field_email,
             field_phone_number,
-            field_affiliation,
             field_role,
             field_category,
             role_administrator,
@@ -104,7 +101,6 @@ pub async fn handler(
             kana_full_name: field_kana_full_name,
             email: field_email,
             phone_number: field_phone_number,
-            affiliation: field_affiliation,
             role: field_role,
             category: field_category,
         };

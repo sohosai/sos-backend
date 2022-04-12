@@ -10,7 +10,7 @@ use sos21_domain::model::{
     phone_number::PhoneNumber,
     project::ProjectId,
     user::{
-        User, UserAffiliation, UserAssignment, UserCategory, UserContent, UserEmailAddress, UserId,
+        User, UserAssignment, UserCategory, UserContent, UserEmailAddress, UserId,
         UserKanaName, UserName, UserRole,
     },
 };
