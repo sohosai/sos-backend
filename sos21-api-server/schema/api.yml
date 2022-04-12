@@ -1075,6 +1075,7 @@ paths:
                                   - ALREADY_PROJECT_SUBOWNER
                                   - ALREADY_PENDING_PROJECT_OWNER
                                   - OUT_OF_PROJECT_CREATION_PERIOD
+                                  - ARTISTIC_STAGE_PROJECT
                     required:
                       - status
                       - error
