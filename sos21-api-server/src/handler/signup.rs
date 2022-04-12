@@ -51,9 +51,6 @@ impl From<signup::Error> for Error {
             signup::Error::InvalidPhoneNumber => Error::InvalidField {
                 field: "phone_number",
             },
-            signup::Error::InvalidAffiliation => Error::InvalidField {
-                field: "category.affiliation",
-            },
         }
     }
 }

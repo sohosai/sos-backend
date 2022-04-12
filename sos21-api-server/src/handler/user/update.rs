@@ -61,9 +61,6 @@ impl From<update_any_user::Error> for Error {
             update_any_user::Error::InvalidPhoneNumber => Error::InvalidField {
                 field: "phone_number",
             },
-            update_any_user::Error::InvalidAffiliation => Error::InvalidField {
-                field: "category.affiliation",
-            },
         }
     }
 }

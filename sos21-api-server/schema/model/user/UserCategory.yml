@@ -1,23 +1,9 @@
 title: UserCategory
-oneOf:
-  - type: object
-    properties:
-      type:
-        enum:
-          - undergraduate_student
-      affiliation:
-        type: string
-        example: "情報学群情報科学類"
-    required:
-      - type
-      - affiliation
-  - type: object
-    properties:
-      type:
-        enum:
-          - graduate_student
-          - academic_staff
-    required:
-      - type
+type: string
+enum:
+  - undergraduate_student
+  - graduate_student
+  - academic_staff
+example: undergraduate_student
 x-tags:
   - user
