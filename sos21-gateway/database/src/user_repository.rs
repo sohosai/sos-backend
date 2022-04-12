@@ -37,7 +37,6 @@ impl UserRepository for UserDatabase {
                 last_name: user.last_name,
                 kana_last_name: user.kana_last_name,
                 phone_number: user.phone_number,
-                affiliation: user.affiliation,
                 role: user.role,
                 category: user.category,
                 assignment: user.assignment,
@@ -98,10 +97,10 @@ fn from_user(user: User) -> data::user::User {
         None => (None, None, None),
     };
 
-    let (category, affiliation) = match category {
-        UserCategory::UndergraduateStudent=> (data::user::UserCategory::UndergraduateStudent,None),
-        UserCategory::GraduateStudent => (data::user::UserCategory::GraduateStudent, None),
-        UserCategory::AcademicStaff => (data::user::UserCategory::AcademicStaff, None),
+    let category = match category {
+        UserCategory::UndergraduateStudent=> data::user::UserCategory::UndergraduateStudent,
+        UserCategory::GraduateStudent => data::user::UserCategory::GraduateStudent,
+        UserCategory::AcademicStaff => data::user::UserCategory::AcademicStaff,
     };
 
     data::user::User {
@@ -113,7 +112,6 @@ fn from_user(user: User) -> data::user::User {
         kana_last_name,
         email: email.into_string(),
         phone_number: phone_number.into_string(),
-        affiliation,
         role: match role {
             UserRole::Administrator => data::user::UserRole::Administrator,
             UserRole::CommitteeOperator => data::user::UserRole::CommitteeOperator,
@@ -146,7 +144,6 @@ pub fn to_user(user: data::user::User) -> Result<User> {
         kana_last_name,
         email,
         phone_number,
-        affiliation,
         role,
         category,
         assignment,
