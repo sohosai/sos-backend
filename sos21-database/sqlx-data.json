@@ -337,344 +337,6 @@
       ]
     }
   },
-  "1f4eef59dd6e5539d0c369729d91fa82550a2f12106044be48e8ce952d2288c3": {
-    "query": "\nSELECT\n        projects.id AS \"id!\",\n        projects.index AS \"index!\",\n        projects.created_at AS \"created_at!\",\n        projects.updated_at AS \"updated_at!\",\n        projects.name AS \"name!\",\n        projects.kana_name AS \"kana_name!\",\n        projects.group_name AS \"group_name!\",\n        projects.kana_group_name AS \"kana_group_name!\",\n        projects.description AS \"description!\",\n        projects.category AS \"category!: ProjectCategory\",\n        projects.attributes AS \"attributes!: ProjectAttributes\",\n        owners.id AS \"owner_id!\",\n        owners.created_at AS \"owner_created_at!\",\n        owners.first_name AS \"owner_first_name!\",\n        owners.kana_first_name AS \"owner_kana_first_name!\",\n        owners.last_name AS \"owner_last_name!\",\n        owners.kana_last_name AS \"owner_kana_last_name!\",\n        owners.phone_number AS \"owner_phone_number!\",\n        owners.affiliation AS owner_affiliation,\n        owners.email AS \"owner_email!\",\n        owners.role AS \"owner_role!: UserRole\",\n        owners.category AS \"owner_category!: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id,\n        subowners.id AS \"subowner_id!\",\n        subowners.created_at AS \"subowner_created_at!\",\n        subowners.first_name AS \"subowner_first_name!\",\n        subowners.kana_first_name AS \"subowner_kana_first_name!\",\n        subowners.last_name AS \"subowner_last_name!\",\n        subowners.kana_last_name AS \"subowner_kana_last_name!\",\n        subowners.phone_number AS \"subowner_phone_number!\",\n        subowners.affiliation AS subowner_affiliation,\n        subowners.email AS \"subowner_email!\",\n        subowners.role AS \"subowner_role!: UserRole\",\n        subowners.category AS \"subowner_category!: UserCategory\",\n        subowners.assignment AS \"subowner_assignment: UserAssignment\",\n        subowners.assignment_owner_project_id AS subowner_assignment_owner_project_id,\n        subowners.assignment_subowner_project_id AS subowner_assignment_subowner_project_id,\n        subowners.assignment_owner_pending_project_id AS subowner_assignment_owner_pending_project_id\nFROM projects\nINNER JOIN users AS owners ON (owners.assignment = 'project_owner' AND owners.assignment_owner_project_id = projects.id)\nINNER JOIN users AS subowners ON (subowners.assignment = 'project_subowner' AND subowners.assignment_subowner_project_id = projects.id)\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id!",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "index!",
-          "type_info": "Int2"
-        },
-        {
-          "ordinal": 2,
-          "name": "created_at!",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 3,
-          "name": "updated_at!",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 4,
-          "name": "name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "kana_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 6,
-          "name": "group_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 7,
-          "name": "kana_group_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 8,
-          "name": "description!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 9,
-          "name": "category!: ProjectCategory",
-          "type_info": {
-            "Custom": {
-              "name": "project_category",
-              "kind": {
-                "Enum": [
-                  "general",
-                  "stage",
-                  "cooking",
-                  "food"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 10,
-          "name": "attributes!: ProjectAttributes",
-          "type_info": "Int4"
-        },
-        {
-          "ordinal": 11,
-          "name": "owner_id!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 12,
-          "name": "owner_created_at!",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 13,
-          "name": "owner_first_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 14,
-          "name": "owner_kana_first_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 15,
-          "name": "owner_last_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 16,
-          "name": "owner_kana_last_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 17,
-          "name": "owner_phone_number!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 18,
-          "name": "owner_affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 19,
-          "name": "owner_email!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 20,
-          "name": "owner_role!: UserRole",
-          "type_info": {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 21,
-          "name": "owner_category!: UserCategory",
-          "type_info": {
-            "Custom": {
-              "name": "user_category",
-              "kind": {
-                "Enum": [
-                  "undergraduate_student",
-                  "graduate_student",
-                  "academic_staff"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 22,
-          "name": "owner_assignment: UserAssignment",
-          "type_info": {
-            "Custom": {
-              "name": "user_assignment",
-              "kind": {
-                "Enum": [
-                  "project_owner",
-                  "project_subowner",
-                  "pending_project_owner"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 23,
-          "name": "owner_assignment_owner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 24,
-          "name": "owner_assignment_subowner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 25,
-          "name": "owner_assignment_owner_pending_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 26,
-          "name": "subowner_id!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 27,
-          "name": "subowner_created_at!",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 28,
-          "name": "subowner_first_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 29,
-          "name": "subowner_kana_first_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 30,
-          "name": "subowner_last_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 31,
-          "name": "subowner_kana_last_name!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 32,
-          "name": "subowner_phone_number!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 33,
-          "name": "subowner_affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 34,
-          "name": "subowner_email!",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 35,
-          "name": "subowner_role!: UserRole",
-          "type_info": {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 36,
-          "name": "subowner_category!: UserCategory",
-          "type_info": {
-            "Custom": {
-              "name": "user_category",
-              "kind": {
-                "Enum": [
-                  "undergraduate_student",
-                  "graduate_student",
-                  "academic_staff"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 37,
-          "name": "subowner_assignment: UserAssignment",
-          "type_info": {
-            "Custom": {
-              "name": "user_assignment",
-              "kind": {
-                "Enum": [
-                  "project_owner",
-                  "project_subowner",
-                  "pending_project_owner"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 38,
-          "name": "subowner_assignment_owner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 39,
-          "name": "subowner_assignment_subowner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 40,
-          "name": "subowner_assignment_owner_pending_project_id",
-          "type_info": "Uuid"
-        }
-      ],
-      "parameters": {
-        "Left": []
-      },
-      "nullable": [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true
-      ]
-    }
-  },
   "205caec1b0ececafcd1fbf7fff6613afc6e75df3d3d6e97d2514ffcb1f53c34a": {
     "query": "SELECT * FROM registration_form_answers WHERE registration_form_id = $1 AND pending_project_id = $2",
     "describe": {
@@ -793,16 +455,11 @@
         },
         {
           "ordinal": 7,
-          "name": "affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 8,
           "name": "email",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 9,
+          "ordinal": 8,
           "name": "role",
           "type_info": {
             "Custom": {
@@ -819,7 +476,7 @@
           }
         },
         {
-          "ordinal": 10,
+          "ordinal": 9,
           "name": "category",
           "type_info": {
             "Custom": {
@@ -835,7 +492,7 @@
           }
         },
         {
-          "ordinal": 11,
+          "ordinal": 10,
           "name": "assignment",
           "type_info": {
             "Custom": {
@@ -851,17 +508,17 @@
           }
         },
         {
-          "ordinal": 12,
+          "ordinal": 11,
           "name": "assignment_owner_project_id",
           "type_info": "Uuid"
         },
         {
-          "ordinal": 13,
+          "ordinal": 12,
           "name": "assignment_subowner_project_id",
           "type_info": "Uuid"
         },
         {
-          "ordinal": 14,
+          "ordinal": 13,
           "name": "assignment_owner_pending_project_id",
           "type_info": "Uuid"
         }
@@ -877,347 +534,6 @@
         false,
         false,
         false,
-        true,
-        false,
-        false,
-        false,
-        true,
-        true,
-        true,
-        true
-      ]
-    }
-  },
-  "297ebfd02b7b6ef485dfe8295a69ae009c9e5f3c6ce091a26bebf8d3d4fe4766": {
-    "query": "\nSELECT\n        projects.id,\n        projects.index,\n        projects.created_at,\n        projects.updated_at,\n        projects.name,\n        projects.kana_name,\n        projects.group_name,\n        projects.kana_group_name,\n        projects.description,\n        projects.category AS \"category: ProjectCategory\",\n        projects.attributes AS \"attributes: ProjectAttributes\",\n        owners.id AS owner_id,\n        owners.created_at AS owner_created_at,\n        owners.first_name AS owner_first_name,\n        owners.kana_first_name AS owner_kana_first_name,\n        owners.last_name AS owner_last_name,\n        owners.kana_last_name AS owner_kana_last_name,\n        owners.phone_number AS owner_phone_number,\n        owners.affiliation AS owner_affiliation,\n        owners.email AS owner_email,\n        owners.role AS \"owner_role: UserRole\",\n        owners.category AS \"owner_category: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id,\n        subowners.id AS subowner_id,\n        subowners.created_at AS subowner_created_at,\n        subowners.first_name AS subowner_first_name,\n        subowners.kana_first_name AS subowner_kana_first_name,\n        subowners.last_name AS subowner_last_name,\n        subowners.kana_last_name AS subowner_kana_last_name,\n        subowners.phone_number AS subowner_phone_number,\n        subowners.affiliation AS subowner_affiliation,\n        subowners.email AS subowner_email,\n        subowners.role AS \"subowner_role: UserRole\",\n        subowners.category AS \"subowner_category: UserCategory\",\n        subowners.assignment AS \"subowner_assignment: UserAssignment\",\n        subowners.assignment_owner_project_id AS subowner_assignment_owner_project_id,\n        subowners.assignment_subowner_project_id AS subowner_assignment_subowner_project_id,\n        subowners.assignment_owner_pending_project_id AS subowner_assignment_owner_pending_project_id\nFROM projects\nINNER JOIN users AS owners ON (owners.assignment = 'project_owner' AND owners.assignment_owner_project_id = projects.id)\nINNER JOIN users AS subowners ON (subowners.assignment = 'project_subowner' AND subowners.assignment_subowner_project_id = projects.id)\nWHERE projects.index = $1\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "index",
-          "type_info": "Int2"
-        },
-        {
-          "ordinal": 2,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 3,
-          "name": "updated_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 4,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "kana_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 6,
-          "name": "group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 7,
-          "name": "kana_group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 8,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 9,
-          "name": "category: ProjectCategory",
-          "type_info": {
-            "Custom": {
-              "name": "project_category",
-              "kind": {
-                "Enum": [
-                  "general",
-                  "stage",
-                  "cooking",
-                  "food"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 10,
-          "name": "attributes: ProjectAttributes",
-          "type_info": "Int4"
-        },
-        {
-          "ordinal": 11,
-          "name": "owner_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 12,
-          "name": "owner_created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 13,
-          "name": "owner_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 14,
-          "name": "owner_kana_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 15,
-          "name": "owner_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 16,
-          "name": "owner_kana_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 17,
-          "name": "owner_phone_number",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 18,
-          "name": "owner_affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 19,
-          "name": "owner_email",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 20,
-          "name": "owner_role: UserRole",
-          "type_info": {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 21,
-          "name": "owner_category: UserCategory",
-          "type_info": {
-            "Custom": {
-              "name": "user_category",
-              "kind": {
-                "Enum": [
-                  "undergraduate_student",
-                  "graduate_student",
-                  "academic_staff"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 22,
-          "name": "owner_assignment: UserAssignment",
-          "type_info": {
-            "Custom": {
-              "name": "user_assignment",
-              "kind": {
-                "Enum": [
-                  "project_owner",
-                  "project_subowner",
-                  "pending_project_owner"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 23,
-          "name": "owner_assignment_owner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 24,
-          "name": "owner_assignment_subowner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 25,
-          "name": "owner_assignment_owner_pending_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 26,
-          "name": "subowner_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 27,
-          "name": "subowner_created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 28,
-          "name": "subowner_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 29,
-          "name": "subowner_kana_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 30,
-          "name": "subowner_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 31,
-          "name": "subowner_kana_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 32,
-          "name": "subowner_phone_number",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 33,
-          "name": "subowner_affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 34,
-          "name": "subowner_email",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 35,
-          "name": "subowner_role: UserRole",
-          "type_info": {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 36,
-          "name": "subowner_category: UserCategory",
-          "type_info": {
-            "Custom": {
-              "name": "user_category",
-              "kind": {
-                "Enum": [
-                  "undergraduate_student",
-                  "graduate_student",
-                  "academic_staff"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 37,
-          "name": "subowner_assignment: UserAssignment",
-          "type_info": {
-            "Custom": {
-              "name": "user_assignment",
-              "kind": {
-                "Enum": [
-                  "project_owner",
-                  "project_subowner",
-                  "pending_project_owner"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 38,
-          "name": "subowner_assignment_owner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 39,
-          "name": "subowner_assignment_subowner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 40,
-          "name": "subowner_assignment_owner_pending_project_id",
-          "type_info": "Uuid"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Int2"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-        true,
-        true,
-        true,
-        true,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
         false,
         false,
         false,
@@ -1259,6 +575,65 @@
       "nullable": [
         null
       ]
+    }
+  },
+  "2ff528390b52b1d0631ac503143a66597d5e5491e1d00ec7a2375b5f64b3ce43": {
+    "query": "\nINSERT INTO users (\n    id,\n    created_at,\n    first_name,\n    kana_first_name,\n    last_name,\n    kana_last_name,\n    email,\n    phone_number,\n    role,\n    category,\n    assignment,\n    assignment_owner_project_id,\n    assignment_subowner_project_id,\n    assignment_owner_pending_project_id\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14 )\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Timestamptz",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          },
+          {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          },
+          {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          },
+          "Uuid",
+          "Uuid",
+          "Uuid"
+        ]
+      },
+      "nullable": []
     }
   },
   "3007224f8e0b16ea768297a18fee063716a19ef6a9451b9d8f83574ad3fc26f9": {
@@ -1398,6 +773,210 @@
         true,
         false,
         false
+      ]
+    }
+  },
+  "3e2deb5776254b057c1b76651c5be954a512f67199c68f222c09b3cde36d62dd": {
+    "query": "\nSELECT\n        pending_projects.id,\n        pending_projects.created_at,\n        pending_projects.updated_at,\n        pending_projects.name,\n        pending_projects.kana_name,\n        pending_projects.group_name,\n        pending_projects.kana_group_name,\n        pending_projects.description,\n        pending_projects.category AS \"category: ProjectCategory\",\n        pending_projects.attributes AS \"attributes: ProjectAttributes\",\n        owners.id AS owner_id,\n        owners.created_at AS owner_created_at,\n        owners.first_name AS owner_first_name,\n        owners.kana_first_name AS owner_kana_first_name,\n        owners.last_name AS owner_last_name,\n        owners.kana_last_name AS owner_kana_last_name,\n        owners.phone_number AS owner_phone_number,\n        owners.email AS owner_email,\n        owners.role AS \"owner_role: UserRole\",\n        owners.category AS \"owner_category: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id\nFROM pending_projects\nINNER JOIN users AS owners ON (\n    owners.assignment = 'pending_project_owner'\n    AND owners.assignment_owner_pending_project_id = pending_projects.id\n)\nWHERE pending_projects.id = $1\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "kana_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "kana_group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "category: ProjectCategory",
+          "type_info": {
+            "Custom": {
+              "name": "project_category",
+              "kind": {
+                "Enum": [
+                  "general",
+                  "stage",
+                  "cooking",
+                  "food"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 9,
+          "name": "attributes: ProjectAttributes",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 10,
+          "name": "owner_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 11,
+          "name": "owner_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 12,
+          "name": "owner_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 13,
+          "name": "owner_kana_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 14,
+          "name": "owner_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 15,
+          "name": "owner_kana_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 16,
+          "name": "owner_phone_number",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 17,
+          "name": "owner_email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 18,
+          "name": "owner_role: UserRole",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 19,
+          "name": "owner_category: UserCategory",
+          "type_info": {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 20,
+          "name": "owner_assignment: UserAssignment",
+          "type_info": {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 21,
+          "name": "owner_assignment_owner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 22,
+          "name": "owner_assignment_subowner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 23,
+          "name": "owner_assignment_owner_pending_project_id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true
       ]
     }
   },
@@ -1692,6 +1271,389 @@
           "Jsonb",
           "Uuid",
           "Uuid",
+          "Uuid",
+          "Uuid",
+          "Uuid"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "47c7f1569989cc68b5d9ed4e1d2e240985b91f450a540f58487167ec24301605": {
+    "query": "\nSELECT\n        projects.id AS \"id!\",\n        projects.index AS \"index!\",\n        projects.created_at AS \"created_at!\",\n        projects.updated_at AS \"updated_at!\",\n        projects.name AS \"name!\",\n        projects.kana_name AS \"kana_name!\",\n        projects.group_name AS \"group_name!\",\n        projects.kana_group_name AS \"kana_group_name!\",\n        projects.description AS \"description!\",\n        projects.category AS \"category!: ProjectCategory\",\n        projects.attributes AS \"attributes!: ProjectAttributes\",\n        owners.id AS \"owner_id!\",\n        owners.created_at AS \"owner_created_at!\",\n        owners.first_name AS \"owner_first_name!\",\n        owners.kana_first_name AS \"owner_kana_first_name!\",\n        owners.last_name AS \"owner_last_name!\",\n        owners.kana_last_name AS \"owner_kana_last_name!\",\n        owners.phone_number AS \"owner_phone_number!\",\n        owners.email AS \"owner_email!\",\n        owners.role AS \"owner_role!: UserRole\",\n        owners.category AS \"owner_category!: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id,\n        subowners.id AS \"subowner_id!\",\n        subowners.created_at AS \"subowner_created_at!\",\n        subowners.first_name AS \"subowner_first_name!\",\n        subowners.kana_first_name AS \"subowner_kana_first_name!\",\n        subowners.last_name AS \"subowner_last_name!\",\n        subowners.kana_last_name AS \"subowner_kana_last_name!\",\n        subowners.phone_number AS \"subowner_phone_number!\",\n        subowners.email AS \"subowner_email!\",\n        subowners.role AS \"subowner_role!: UserRole\",\n        subowners.category AS \"subowner_category!: UserCategory\",\n        subowners.assignment AS \"subowner_assignment: UserAssignment\",\n        subowners.assignment_owner_project_id AS subowner_assignment_owner_project_id,\n        subowners.assignment_subowner_project_id AS subowner_assignment_subowner_project_id,\n        subowners.assignment_owner_pending_project_id AS subowner_assignment_owner_pending_project_id\nFROM projects\nINNER JOIN users AS owners ON (owners.assignment = 'project_owner' AND owners.assignment_owner_project_id = projects.id)\nINNER JOIN users AS subowners ON (subowners.assignment = 'project_subowner' AND subowners.assignment_subowner_project_id = projects.id)\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id!",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "index!",
+          "type_info": "Int2"
+        },
+        {
+          "ordinal": 2,
+          "name": "created_at!",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "updated_at!",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 4,
+          "name": "name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "kana_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "group_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "kana_group_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "description!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
+          "name": "category!: ProjectCategory",
+          "type_info": {
+            "Custom": {
+              "name": "project_category",
+              "kind": {
+                "Enum": [
+                  "general",
+                  "stage",
+                  "cooking",
+                  "food"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 10,
+          "name": "attributes!: ProjectAttributes",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 11,
+          "name": "owner_id!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 12,
+          "name": "owner_created_at!",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 13,
+          "name": "owner_first_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 14,
+          "name": "owner_kana_first_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 15,
+          "name": "owner_last_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 16,
+          "name": "owner_kana_last_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 17,
+          "name": "owner_phone_number!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 18,
+          "name": "owner_email!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 19,
+          "name": "owner_role!: UserRole",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 20,
+          "name": "owner_category!: UserCategory",
+          "type_info": {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 21,
+          "name": "owner_assignment: UserAssignment",
+          "type_info": {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 22,
+          "name": "owner_assignment_owner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 23,
+          "name": "owner_assignment_subowner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 24,
+          "name": "owner_assignment_owner_pending_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 25,
+          "name": "subowner_id!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 26,
+          "name": "subowner_created_at!",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 27,
+          "name": "subowner_first_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 28,
+          "name": "subowner_kana_first_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 29,
+          "name": "subowner_last_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 30,
+          "name": "subowner_kana_last_name!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 31,
+          "name": "subowner_phone_number!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 32,
+          "name": "subowner_email!",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 33,
+          "name": "subowner_role!: UserRole",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 34,
+          "name": "subowner_category!: UserCategory",
+          "type_info": {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 35,
+          "name": "subowner_assignment: UserAssignment",
+          "type_info": {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 36,
+          "name": "subowner_assignment_owner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 37,
+          "name": "subowner_assignment_subowner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 38,
+          "name": "subowner_assignment_owner_pending_project_id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "4c92b111b749a6c83477f9c04810c25be7e9aebb6933fe5610ac5d6a34f25c81": {
+    "query": "\nUPDATE users\n  SET\n    first_name = $2,\n    kana_first_name = $3,\n    last_name = $4,\n    kana_last_name = $5,\n    phone_number = $6,\n    role = $7,\n    category = $8,\n    assignment = $9,\n    assignment_owner_project_id = $10,\n    assignment_subowner_project_id = $11,\n    assignment_owner_pending_project_id = $12\n  WHERE id = $1\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          },
+          {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          },
+          {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          },
           "Uuid",
           "Uuid",
           "Uuid"
@@ -2268,16 +2230,11 @@
         },
         {
           "ordinal": 7,
-          "name": "affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 8,
           "name": "email",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 9,
+          "ordinal": 8,
           "name": "role",
           "type_info": {
             "Custom": {
@@ -2294,7 +2251,7 @@
           }
         },
         {
-          "ordinal": 10,
+          "ordinal": 9,
           "name": "category",
           "type_info": {
             "Custom": {
@@ -2310,7 +2267,7 @@
           }
         },
         {
-          "ordinal": 11,
+          "ordinal": 10,
           "name": "assignment",
           "type_info": {
             "Custom": {
@@ -2326,17 +2283,17 @@
           }
         },
         {
-          "ordinal": 12,
+          "ordinal": 11,
           "name": "assignment_owner_project_id",
           "type_info": "Uuid"
         },
         {
-          "ordinal": 13,
+          "ordinal": 12,
           "name": "assignment_subowner_project_id",
           "type_info": "Uuid"
         },
         {
-          "ordinal": 14,
+          "ordinal": 13,
           "name": "assignment_owner_pending_project_id",
           "type_info": "Uuid"
         }
@@ -2354,347 +2311,6 @@
         false,
         false,
         false,
-        true,
-        false,
-        false,
-        false,
-        true,
-        true,
-        true,
-        true
-      ]
-    }
-  },
-  "87caa8e8b108b74245c3cccc1b910bfeaf34eb956aced8f825ccdf5d1f2a995a": {
-    "query": "\nSELECT\n        projects.id,\n        projects.index,\n        projects.created_at,\n        projects.updated_at,\n        projects.name,\n        projects.kana_name,\n        projects.group_name,\n        projects.kana_group_name,\n        projects.description,\n        projects.category AS \"category: ProjectCategory\",\n        projects.attributes AS \"attributes: ProjectAttributes\",\n        owners.id AS owner_id,\n        owners.created_at AS owner_created_at,\n        owners.first_name AS owner_first_name,\n        owners.kana_first_name AS owner_kana_first_name,\n        owners.last_name AS owner_last_name,\n        owners.kana_last_name AS owner_kana_last_name,\n        owners.phone_number AS owner_phone_number,\n        owners.affiliation AS owner_affiliation,\n        owners.email AS owner_email,\n        owners.role AS \"owner_role: UserRole\",\n        owners.category AS \"owner_category: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id,\n        subowners.id AS subowner_id,\n        subowners.created_at AS subowner_created_at,\n        subowners.first_name AS subowner_first_name,\n        subowners.kana_first_name AS subowner_kana_first_name,\n        subowners.last_name AS subowner_last_name,\n        subowners.kana_last_name AS subowner_kana_last_name,\n        subowners.phone_number AS subowner_phone_number,\n        subowners.affiliation AS subowner_affiliation,\n        subowners.email AS subowner_email,\n        subowners.role AS \"subowner_role: UserRole\",\n        subowners.category AS \"subowner_category: UserCategory\",\n        subowners.assignment AS \"subowner_assignment: UserAssignment\",\n        subowners.assignment_owner_project_id AS subowner_assignment_owner_project_id,\n        subowners.assignment_subowner_project_id AS subowner_assignment_subowner_project_id,\n        subowners.assignment_owner_pending_project_id AS subowner_assignment_owner_pending_project_id\nFROM projects\nINNER JOIN users AS owners ON (owners.assignment = 'project_owner' AND owners.assignment_owner_project_id = projects.id)\nINNER JOIN users AS subowners ON (subowners.assignment = 'project_subowner' AND subowners.assignment_subowner_project_id = projects.id)\nWHERE projects.id = $1\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "index",
-          "type_info": "Int2"
-        },
-        {
-          "ordinal": 2,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 3,
-          "name": "updated_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 4,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "kana_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 6,
-          "name": "group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 7,
-          "name": "kana_group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 8,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 9,
-          "name": "category: ProjectCategory",
-          "type_info": {
-            "Custom": {
-              "name": "project_category",
-              "kind": {
-                "Enum": [
-                  "general",
-                  "stage",
-                  "cooking",
-                  "food"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 10,
-          "name": "attributes: ProjectAttributes",
-          "type_info": "Int4"
-        },
-        {
-          "ordinal": 11,
-          "name": "owner_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 12,
-          "name": "owner_created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 13,
-          "name": "owner_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 14,
-          "name": "owner_kana_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 15,
-          "name": "owner_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 16,
-          "name": "owner_kana_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 17,
-          "name": "owner_phone_number",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 18,
-          "name": "owner_affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 19,
-          "name": "owner_email",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 20,
-          "name": "owner_role: UserRole",
-          "type_info": {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 21,
-          "name": "owner_category: UserCategory",
-          "type_info": {
-            "Custom": {
-              "name": "user_category",
-              "kind": {
-                "Enum": [
-                  "undergraduate_student",
-                  "graduate_student",
-                  "academic_staff"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 22,
-          "name": "owner_assignment: UserAssignment",
-          "type_info": {
-            "Custom": {
-              "name": "user_assignment",
-              "kind": {
-                "Enum": [
-                  "project_owner",
-                  "project_subowner",
-                  "pending_project_owner"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 23,
-          "name": "owner_assignment_owner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 24,
-          "name": "owner_assignment_subowner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 25,
-          "name": "owner_assignment_owner_pending_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 26,
-          "name": "subowner_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 27,
-          "name": "subowner_created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 28,
-          "name": "subowner_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 29,
-          "name": "subowner_kana_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 30,
-          "name": "subowner_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 31,
-          "name": "subowner_kana_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 32,
-          "name": "subowner_phone_number",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 33,
-          "name": "subowner_affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 34,
-          "name": "subowner_email",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 35,
-          "name": "subowner_role: UserRole",
-          "type_info": {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 36,
-          "name": "subowner_category: UserCategory",
-          "type_info": {
-            "Custom": {
-              "name": "user_category",
-              "kind": {
-                "Enum": [
-                  "undergraduate_student",
-                  "graduate_student",
-                  "academic_staff"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 37,
-          "name": "subowner_assignment: UserAssignment",
-          "type_info": {
-            "Custom": {
-              "name": "user_assignment",
-              "kind": {
-                "Enum": [
-                  "project_owner",
-                  "project_subowner",
-                  "pending_project_owner"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 38,
-          "name": "subowner_assignment_owner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 39,
-          "name": "subowner_assignment_subowner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 40,
-          "name": "subowner_assignment_owner_pending_project_id",
-          "type_info": "Uuid"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-        true,
-        true,
-        true,
-        true,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
         false,
         false,
         false,
@@ -3045,6 +2661,334 @@
       ]
     }
   },
+  "9bff2e7bfce39e929358678c7c7e0b14ebc12407bca8a7217f411a25570ebaa4": {
+    "query": "\nSELECT\n        projects.id,\n        projects.index,\n        projects.created_at,\n        projects.updated_at,\n        projects.name,\n        projects.kana_name,\n        projects.group_name,\n        projects.kana_group_name,\n        projects.description,\n        projects.category AS \"category: ProjectCategory\",\n        projects.attributes AS \"attributes: ProjectAttributes\",\n        owners.id AS owner_id,\n        owners.created_at AS owner_created_at,\n        owners.first_name AS owner_first_name,\n        owners.kana_first_name AS owner_kana_first_name,\n        owners.last_name AS owner_last_name,\n        owners.kana_last_name AS owner_kana_last_name,\n        owners.phone_number AS owner_phone_number,\n        owners.email AS owner_email,\n        owners.role AS \"owner_role: UserRole\",\n        owners.category AS \"owner_category: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id,\n        subowners.id AS subowner_id,\n        subowners.created_at AS subowner_created_at,\n        subowners.first_name AS subowner_first_name,\n        subowners.kana_first_name AS subowner_kana_first_name,\n        subowners.last_name AS subowner_last_name,\n        subowners.kana_last_name AS subowner_kana_last_name,\n        subowners.phone_number AS subowner_phone_number,\n        subowners.email AS subowner_email,\n        subowners.role AS \"subowner_role: UserRole\",\n        subowners.category AS \"subowner_category: UserCategory\",\n        subowners.assignment AS \"subowner_assignment: UserAssignment\",\n        subowners.assignment_owner_project_id AS subowner_assignment_owner_project_id,\n        subowners.assignment_subowner_project_id AS subowner_assignment_subowner_project_id,\n        subowners.assignment_owner_pending_project_id AS subowner_assignment_owner_pending_project_id\nFROM projects\nINNER JOIN users AS owners ON (owners.assignment = 'project_owner' AND owners.assignment_owner_project_id = projects.id)\nINNER JOIN users AS subowners ON (subowners.assignment = 'project_subowner' AND subowners.assignment_subowner_project_id = projects.id)\nWHERE projects.index = $1\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "index",
+          "type_info": "Int2"
+        },
+        {
+          "ordinal": 2,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 4,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "kana_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "kana_group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
+          "name": "category: ProjectCategory",
+          "type_info": {
+            "Custom": {
+              "name": "project_category",
+              "kind": {
+                "Enum": [
+                  "general",
+                  "stage",
+                  "cooking",
+                  "food"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 10,
+          "name": "attributes: ProjectAttributes",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 11,
+          "name": "owner_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 12,
+          "name": "owner_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 13,
+          "name": "owner_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 14,
+          "name": "owner_kana_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 15,
+          "name": "owner_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 16,
+          "name": "owner_kana_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 17,
+          "name": "owner_phone_number",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 18,
+          "name": "owner_email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 19,
+          "name": "owner_role: UserRole",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 20,
+          "name": "owner_category: UserCategory",
+          "type_info": {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 21,
+          "name": "owner_assignment: UserAssignment",
+          "type_info": {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 22,
+          "name": "owner_assignment_owner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 23,
+          "name": "owner_assignment_subowner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 24,
+          "name": "owner_assignment_owner_pending_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 25,
+          "name": "subowner_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 26,
+          "name": "subowner_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 27,
+          "name": "subowner_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 28,
+          "name": "subowner_kana_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 29,
+          "name": "subowner_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 30,
+          "name": "subowner_kana_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 31,
+          "name": "subowner_phone_number",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 32,
+          "name": "subowner_email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 33,
+          "name": "subowner_role: UserRole",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 34,
+          "name": "subowner_category: UserCategory",
+          "type_info": {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 35,
+          "name": "subowner_assignment: UserAssignment",
+          "type_info": {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 36,
+          "name": "subowner_assignment_owner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 37,
+          "name": "subowner_assignment_subowner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 38,
+          "name": "subowner_assignment_owner_pending_project_id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int2"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
   "a20363da27d1ad4105669d5e81ab9e3c2a6b43adf5c4dbb677e6223881cb3c19": {
     "query": "\nSELECT\n    file_sharings.id,\n    file_sharings.created_at,\n    file_sharings.file_id,\n    file_sharings.is_revoked,\n    file_sharings.expires_at,\n    file_sharings.scope AS \"scope: FileSharingScope\",\n    file_sharings.project_id,\n    file_sharings.project_query,\n    file_sharings.form_answer_project_id,\n    file_sharings.form_answer_form_id,\n    file_sharings.registration_form_answer_project_id,\n    file_sharings.registration_form_answer_pending_project_id,\n    file_sharings.registration_form_answer_registration_form_id,\n    files.created_at AS file_created_at,\n    files.author_id AS file_author_id,\n    files.object_id AS file_object_id,\n    files.blake3_digest AS file_blake3_digest,\n    files.name AS file_name,\n    files.type_ AS file_type,\n    files.size AS file_size\nFROM file_sharings\nINNER JOIN files ON (file_sharings.file_id = files.id)\nWHERE file_sharings.id = $1\n",
     "describe": {
@@ -3194,20 +3138,121 @@
       ]
     }
   },
-  "a29e6f939b4fa2447346d2545d82eed57841b7bd27a877e435f864d823d00982": {
-    "query": "\nUPDATE users\n  SET\n    first_name = $2,\n    kana_first_name = $3,\n    last_name = $4,\n    kana_last_name = $5,\n    phone_number = $6,\n    affiliation = $7,\n    role = $8,\n    category = $9,\n    assignment = $10,\n    assignment_owner_project_id = $11,\n    assignment_subowner_project_id = $12,\n    assignment_owner_pending_project_id = $13\n  WHERE id = $1\n",
+  "a303458c92a828fa889f3df50893443f64995852739823a0aa9d94f7015c4050": {
+    "query": "\nSELECT\n        projects.id,\n        projects.index,\n        projects.created_at,\n        projects.updated_at,\n        projects.name,\n        projects.kana_name,\n        projects.group_name,\n        projects.kana_group_name,\n        projects.description,\n        projects.category AS \"category: ProjectCategory\",\n        projects.attributes AS \"attributes: ProjectAttributes\",\n        owners.id AS owner_id,\n        owners.created_at AS owner_created_at,\n        owners.first_name AS owner_first_name,\n        owners.kana_first_name AS owner_kana_first_name,\n        owners.last_name AS owner_last_name,\n        owners.kana_last_name AS owner_kana_last_name,\n        owners.phone_number AS owner_phone_number,\n        owners.email AS owner_email,\n        owners.role AS \"owner_role: UserRole\",\n        owners.category AS \"owner_category: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id,\n        subowners.id AS subowner_id,\n        subowners.created_at AS subowner_created_at,\n        subowners.first_name AS subowner_first_name,\n        subowners.kana_first_name AS subowner_kana_first_name,\n        subowners.last_name AS subowner_last_name,\n        subowners.kana_last_name AS subowner_kana_last_name,\n        subowners.phone_number AS subowner_phone_number,\n        subowners.email AS subowner_email,\n        subowners.role AS \"subowner_role: UserRole\",\n        subowners.category AS \"subowner_category: UserCategory\",\n        subowners.assignment AS \"subowner_assignment: UserAssignment\",\n        subowners.assignment_owner_project_id AS subowner_assignment_owner_project_id,\n        subowners.assignment_subowner_project_id AS subowner_assignment_subowner_project_id,\n        subowners.assignment_owner_pending_project_id AS subowner_assignment_owner_pending_project_id\nFROM projects\nINNER JOIN users AS owners ON (owners.assignment = 'project_owner' AND owners.assignment_owner_project_id = projects.id)\nINNER JOIN users AS subowners ON (subowners.assignment = 'project_subowner' AND subowners.assignment_subowner_project_id = projects.id)\nWHERE projects.id = $1\n",
     "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Text",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "index",
+          "type_info": "Int2"
+        },
+        {
+          "ordinal": 2,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 4,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "kana_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "kana_group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 9,
+          "name": "category: ProjectCategory",
+          "type_info": {
+            "Custom": {
+              "name": "project_category",
+              "kind": {
+                "Enum": [
+                  "general",
+                  "stage",
+                  "cooking",
+                  "food"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 10,
+          "name": "attributes: ProjectAttributes",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 11,
+          "name": "owner_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 12,
+          "name": "owner_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 13,
+          "name": "owner_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 14,
+          "name": "owner_kana_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 15,
+          "name": "owner_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 16,
+          "name": "owner_kana_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 17,
+          "name": "owner_phone_number",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 18,
+          "name": "owner_email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 19,
+          "name": "owner_role: UserRole",
+          "type_info": {
             "Custom": {
               "name": "user_role",
               "kind": {
@@ -3219,8 +3264,12 @@
                 ]
               }
             }
-          },
-          {
+          }
+        },
+        {
+          "ordinal": 20,
+          "name": "owner_category: UserCategory",
+          "type_info": {
             "Custom": {
               "name": "user_category",
               "kind": {
@@ -3231,8 +3280,12 @@
                 ]
               }
             }
-          },
-          {
+          }
+        },
+        {
+          "ordinal": 21,
+          "name": "owner_assignment: UserAssignment",
+          "type_info": {
             "Custom": {
               "name": "user_assignment",
               "kind": {
@@ -3243,13 +3296,174 @@
                 ]
               }
             }
-          },
-          "Uuid",
-          "Uuid",
+          }
+        },
+        {
+          "ordinal": 22,
+          "name": "owner_assignment_owner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 23,
+          "name": "owner_assignment_subowner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 24,
+          "name": "owner_assignment_owner_pending_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 25,
+          "name": "subowner_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 26,
+          "name": "subowner_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 27,
+          "name": "subowner_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 28,
+          "name": "subowner_kana_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 29,
+          "name": "subowner_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 30,
+          "name": "subowner_kana_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 31,
+          "name": "subowner_phone_number",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 32,
+          "name": "subowner_email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 33,
+          "name": "subowner_role: UserRole",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 34,
+          "name": "subowner_category: UserCategory",
+          "type_info": {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 35,
+          "name": "subowner_assignment: UserAssignment",
+          "type_info": {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 36,
+          "name": "subowner_assignment_owner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 37,
+          "name": "subowner_assignment_subowner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 38,
+          "name": "subowner_assignment_owner_pending_project_id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
           "Uuid"
         ]
       },
-      "nullable": []
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true
+      ]
     }
   },
   "a3748679306a4942343d3dd608a29f009df5239452341e9ebf1c1fa62a9bb0e2": {
@@ -3262,66 +3476,6 @@
           "Varchar",
           "Varchar",
           "Jsonb"
-        ]
-      },
-      "nullable": []
-    }
-  },
-  "aa7bc2c66c907324b98301927fe88fdad1fb40429295f0acc4b661a149c4bcd2": {
-    "query": "\nINSERT INTO users (\n    id,\n    created_at,\n    first_name,\n    kana_first_name,\n    last_name,\n    kana_last_name,\n    email,\n    phone_number,\n    affiliation,\n    role,\n    category,\n    assignment,\n    assignment_owner_project_id,\n    assignment_subowner_project_id,\n    assignment_owner_pending_project_id\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15 )\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Varchar",
-          "Timestamptz",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          },
-          {
-            "Custom": {
-              "name": "user_category",
-              "kind": {
-                "Enum": [
-                  "undergraduate_student",
-                  "graduate_student",
-                  "academic_staff"
-                ]
-              }
-            }
-          },
-          {
-            "Custom": {
-              "name": "user_assignment",
-              "kind": {
-                "Enum": [
-                  "project_owner",
-                  "project_subowner",
-                  "pending_project_owner"
-                ]
-              }
-            }
-          },
-          "Uuid",
-          "Uuid",
-          "Uuid"
         ]
       },
       "nullable": []
@@ -3481,216 +3635,6 @@
         false,
         false,
         false
-      ]
-    }
-  },
-  "c90ab3dfe855e1a008c8a91c0ad7143dc94fc27b65d2c4f721e3ebb995fb9a25": {
-    "query": "\nSELECT\n        pending_projects.id,\n        pending_projects.created_at,\n        pending_projects.updated_at,\n        pending_projects.name,\n        pending_projects.kana_name,\n        pending_projects.group_name,\n        pending_projects.kana_group_name,\n        pending_projects.description,\n        pending_projects.category AS \"category: ProjectCategory\",\n        pending_projects.attributes AS \"attributes: ProjectAttributes\",\n        owners.id AS owner_id,\n        owners.created_at AS owner_created_at,\n        owners.first_name AS owner_first_name,\n        owners.kana_first_name AS owner_kana_first_name,\n        owners.last_name AS owner_last_name,\n        owners.kana_last_name AS owner_kana_last_name,\n        owners.phone_number AS owner_phone_number,\n        owners.affiliation AS owner_affiliation,\n        owners.email AS owner_email,\n        owners.role AS \"owner_role: UserRole\",\n        owners.category AS \"owner_category: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id\nFROM pending_projects\nINNER JOIN users AS owners ON (\n    owners.assignment = 'pending_project_owner'\n    AND owners.assignment_owner_pending_project_id = pending_projects.id\n)\nWHERE pending_projects.id = $1\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 2,
-          "name": "updated_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 3,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 4,
-          "name": "kana_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 6,
-          "name": "kana_group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 7,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 8,
-          "name": "category: ProjectCategory",
-          "type_info": {
-            "Custom": {
-              "name": "project_category",
-              "kind": {
-                "Enum": [
-                  "general",
-                  "stage",
-                  "cooking",
-                  "food"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 9,
-          "name": "attributes: ProjectAttributes",
-          "type_info": "Int4"
-        },
-        {
-          "ordinal": 10,
-          "name": "owner_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 11,
-          "name": "owner_created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 12,
-          "name": "owner_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 13,
-          "name": "owner_kana_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 14,
-          "name": "owner_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 15,
-          "name": "owner_kana_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 16,
-          "name": "owner_phone_number",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 17,
-          "name": "owner_affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 18,
-          "name": "owner_email",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 19,
-          "name": "owner_role: UserRole",
-          "type_info": {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 20,
-          "name": "owner_category: UserCategory",
-          "type_info": {
-            "Custom": {
-              "name": "user_category",
-              "kind": {
-                "Enum": [
-                  "undergraduate_student",
-                  "graduate_student",
-                  "academic_staff"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 21,
-          "name": "owner_assignment: UserAssignment",
-          "type_info": {
-            "Custom": {
-              "name": "user_assignment",
-              "kind": {
-                "Enum": [
-                  "project_owner",
-                  "project_subowner",
-                  "pending_project_owner"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 22,
-          "name": "owner_assignment_owner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 23,
-          "name": "owner_assignment_subowner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 24,
-          "name": "owner_assignment_owner_pending_project_id",
-          "type_info": "Uuid"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-        false,
-        false,
-        false,
-        true,
-        true,
-        true,
-        true
       ]
     }
   },
@@ -4107,16 +4051,11 @@
         },
         {
           "ordinal": 7,
-          "name": "affiliation",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 8,
           "name": "email",
           "type_info": "Varchar"
         },
         {
-          "ordinal": 9,
+          "ordinal": 8,
           "name": "role",
           "type_info": {
             "Custom": {
@@ -4133,7 +4072,7 @@
           }
         },
         {
-          "ordinal": 10,
+          "ordinal": 9,
           "name": "category",
           "type_info": {
             "Custom": {
@@ -4149,7 +4088,7 @@
           }
         },
         {
-          "ordinal": 11,
+          "ordinal": 10,
           "name": "assignment",
           "type_info": {
             "Custom": {
@@ -4165,17 +4104,17 @@
           }
         },
         {
-          "ordinal": 12,
+          "ordinal": 11,
           "name": "assignment_owner_project_id",
           "type_info": "Uuid"
         },
         {
-          "ordinal": 13,
+          "ordinal": 12,
           "name": "assignment_subowner_project_id",
           "type_info": "Uuid"
         },
         {
-          "ordinal": 14,
+          "ordinal": 13,
           "name": "assignment_owner_pending_project_id",
           "type_info": "Uuid"
         }
@@ -4193,7 +4132,6 @@
         false,
         false,
         false,
-        true,
         false,
         false,
         false,
