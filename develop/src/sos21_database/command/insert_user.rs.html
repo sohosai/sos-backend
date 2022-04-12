@@ -66,9 +66,6 @@
 <span id="63">63</span>
 <span id="64">64</span>
 <span id="65">65</span>
-<span id="66">66</span>
-<span id="67">67</span>
-<span id="68">68</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">User</span>;
 
@@ -87,7 +84,6 @@
         <span class="ident">kana_last_name</span>,
         <span class="ident">email</span>,
         <span class="ident">phone_number</span>,
-        <span class="ident">affiliation</span>,
         <span class="ident">role</span>,
         <span class="ident">category</span>,
         <span class="ident">assignment</span>,
@@ -107,14 +103,13 @@ INSERT INTO users (
     kana_last_name,
     email,
     phone_number,
-    affiliation,
     role,
     category,
     assignment,
     assignment_owner_project_id,
     assignment_subowner_project_id,
     assignment_owner_pending_project_id
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15 )
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14 )
 &quot;#</span>,
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
@@ -124,7 +119,6 @@ INSERT INTO users (
         <span class="ident">kana_last_name</span>,
         <span class="ident">email</span>,
         <span class="ident">phone_number</span>,
-        <span class="ident">affiliation</span>,
         <span class="ident">role</span> <span class="kw">as</span> <span class="kw">_</span>,
         <span class="ident">category</span> <span class="kw">as</span> <span class="kw">_</span>,
         <span class="ident">assignment</span> <span class="kw">as</span> <span class="kw">_</span>,

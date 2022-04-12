@@ -443,12 +443,6 @@
 <span id="440">440</span>
 <span id="441">441</span>
 <span id="442">442</span>
-<span id="443">443</span>
-<span id="444">444</span>
-<span id="445">445</span>
-<span id="446">446</span>
-<span id="447">447</span>
-<span id="448">448</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{<span class="ident">ConfigContext</span>, <span class="ident">FileRepository</span>, <span class="ident">UserInvitationRepository</span>, <span class="ident">UserRepository</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
@@ -461,7 +455,6 @@
 <span class="kw">use</span> <span class="ident">anyhow</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="ident">thiserror</span>::<span class="ident">Error</span>;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">affiliation</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">assignment</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">category</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">email</span>;
@@ -469,7 +462,6 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">file_usage_quota</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">name</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">role</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">affiliation</span>::<span class="ident">UserAffiliation</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">assignment</span>::<span class="ident">UserAssignment</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">category</span>::<span class="ident">UserCategory</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">email</span>::<span class="ident">UserEmailAddress</span>;
@@ -588,10 +580,6 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">phone_number</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">PhoneNumber</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">content</span>.<span class="ident">phone_number</span>
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">affiliation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">UserAffiliation</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">category</span>.<span class="ident">affiliation</span>()
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">email</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">UserEmailAddress</span> {

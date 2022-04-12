@@ -61,9 +61,6 @@
 <span id="58">58</span>
 <span id="59">59</span>
 <span id="60">60</span>
-<span id="61">61</span>
-<span id="62">62</span>
-<span id="63">63</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">UserAssignment</span>, <span class="ident">UserCategory</span>, <span class="ident">UserRole</span>};
 
@@ -78,7 +75,6 @@
     <span class="kw">pub</span> <span class="ident">last_name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">kana_last_name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">phone_number</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">affiliation</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">role</span>: <span class="ident">UserRole</span>,
     <span class="kw">pub</span> <span class="ident">category</span>: <span class="ident">UserCategory</span>,
     <span class="kw">pub</span> <span class="ident">assignment</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">UserAssignment</span><span class="op">&gt;</span>,
@@ -100,13 +96,12 @@ UPDATE users
     last_name = $4,
     kana_last_name = $5,
     phone_number = $6,
-    affiliation = $7,
-    role = $8,
-    category = $9,
-    assignment = $10,
-    assignment_owner_project_id = $11,
-    assignment_subowner_project_id = $12,
-    assignment_owner_pending_project_id = $13
+    role = $7,
+    category = $8,
+    assignment = $9,
+    assignment_owner_project_id = $10,
+    assignment_subowner_project_id = $11,
+    assignment_owner_pending_project_id = $12
   WHERE id = $1
 &quot;#</span>,
         <span class="ident">input</span>.<span class="ident">id</span>,
@@ -115,7 +110,6 @@ UPDATE users
         <span class="ident">input</span>.<span class="ident">last_name</span>,
         <span class="ident">input</span>.<span class="ident">kana_last_name</span>,
         <span class="ident">input</span>.<span class="ident">phone_number</span>,
-        <span class="ident">input</span>.<span class="ident">affiliation</span>,
         <span class="ident">input</span>.<span class="ident">role</span> <span class="kw">as</span> <span class="kw">_</span>,
         <span class="ident">input</span>.<span class="ident">category</span> <span class="kw">as</span> <span class="kw">_</span>,
         <span class="ident">input</span>.<span class="ident">assignment</span> <span class="kw">as</span> <span class="kw">_</span>,

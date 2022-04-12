@@ -194,15 +194,6 @@
 <span id="191">191</span>
 <span id="192">192</span>
 <span id="193">193</span>
-<span id="194">194</span>
-<span id="195">195</span>
-<span id="196">196</span>
-<span id="197">197</span>
-<span id="198">198</span>
-<span id="199">199</span>
-<span id="200">200</span>
-<span id="201">201</span>
-<span id="202">202</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::{<span class="ident">User</span>, <span class="ident">UserCategory</span>, <span class="ident">UserKanaName</span>, <span class="ident">UserName</span>};
@@ -219,7 +210,6 @@
     <span class="ident">InvalidName</span>,
     <span class="ident">InvalidKanaName</span>,
     <span class="ident">InvalidPhoneNumber</span>,
-    <span class="ident">InvalidAffiliation</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Error</span> {
@@ -237,10 +227,6 @@
 
     <span class="kw">fn</span> <span class="ident">from_phone_number_error</span>(<span class="ident">_err</span>: <span class="ident">phone_number</span>::<span class="ident">FromStringError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Error</span>::<span class="ident">InvalidPhoneNumber</span>
-    }
-
-    <span class="kw">fn</span> <span class="ident">from_affiliation_error</span>(<span class="ident">_err</span>: <span class="ident">user</span>::<span class="ident">affiliation</span>::<span class="ident">AffiliationError</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="ident">Error</span>::<span class="ident">InvalidAffiliation</span>
     }
 }
 
@@ -266,11 +252,7 @@
     <span class="kw">let</span> <span class="ident">phone_number</span> <span class="op">=</span> <span class="ident">phone_number</span>::<span class="ident">PhoneNumber</span>::<span class="ident">from_string</span>(<span class="ident">input</span>.<span class="ident">phone_number</span>)
         .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">from_phone_number_error</span>(<span class="ident">err</span>)))<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">category</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">input</span>.<span class="ident">category</span> {
-        <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> { <span class="ident">affiliation</span> } <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="kw">let</span> <span class="ident">affiliation</span> <span class="op">=</span> <span class="ident">user</span>::<span class="ident">UserAffiliation</span>::<span class="ident">from_string</span>(<span class="ident">affiliation</span>)
-                .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">from_affiliation_error</span>(<span class="ident">err</span>)))<span class="question-mark">?</span>;
-            <span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>(<span class="ident">affiliation</span>)
-        }
+        <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>,
         <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>,
         <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">user</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
     };

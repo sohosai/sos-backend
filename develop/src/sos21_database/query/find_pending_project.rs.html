@@ -93,8 +93,6 @@
 <span id="90">90</span>
 <span id="91">91</span>
 <span id="92">92</span>
-<span id="93">93</span>
-<span id="94">94</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">pending_project</span>::{<span class="ident">PendingProject</span>, <span class="ident">PendingProjectWithOwner</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
@@ -130,7 +128,6 @@ SELECT
         owners.last_name AS owner_last_name,
         owners.kana_last_name AS owner_kana_last_name,
         owners.phone_number AS owner_phone_number,
-        owners.affiliation AS owner_affiliation,
         owners.email AS owner_email,
         owners.role AS &quot;owner_role: UserRole&quot;,
         owners.category AS &quot;owner_category: UserCategory&quot;,
@@ -175,7 +172,6 @@ WHERE pending_projects.id = $1
         <span class="ident">last_name</span>: <span class="ident">row</span>.<span class="ident">owner_last_name</span>,
         <span class="ident">kana_last_name</span>: <span class="ident">row</span>.<span class="ident">owner_kana_last_name</span>,
         <span class="ident">phone_number</span>: <span class="ident">row</span>.<span class="ident">owner_phone_number</span>,
-        <span class="ident">affiliation</span>: <span class="ident">row</span>.<span class="ident">owner_affiliation</span>,
         <span class="ident">email</span>: <span class="ident">row</span>.<span class="ident">owner_email</span>,
         <span class="ident">role</span>: <span class="ident">row</span>.<span class="ident">owner_role</span>,
         <span class="ident">category</span>: <span class="ident">row</span>.<span class="ident">owner_category</span>,
