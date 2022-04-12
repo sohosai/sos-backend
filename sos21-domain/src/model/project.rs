@@ -289,7 +289,7 @@ impl Project {
 
     pub fn kind(&self) -> ProjectKind {
         ProjectKind {
-            is_cooking: self.content.category == ProjectCategory::Cooking,
+            is_cooking: self.content.category == ProjectCategory::CookingPhysical,
             is_outdoor: self.content.attributes.contains(ProjectAttribute::Outdoor),
         }
     }
