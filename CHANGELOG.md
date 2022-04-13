@@ -8,10 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 ### Changed
+
+- Append online `ProjectCategory` entries ([#140](https://github.com/sohosai/sos21-backend/pull/140))
+
 ### Deprecated
 ### Removed
+
+- `affiliation` field for user ([#139](https://github.com/sohosai/sos21-backend/pull/139))
+
 ### Fixed
+
+- Switch to 2022 configuration set([#138](https://github.com/sohosai/sos21-backend/pull/138))
+
 ### Security
+
 
 ## [0.5.3] - 2021-09-29
 
