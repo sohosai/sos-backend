@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - Project Code composition
+- Switch to `sos22-backend-infrasturucture` from `sos21` one.
 
 ## [0.6.0-beta] - 2022-04-13
 
