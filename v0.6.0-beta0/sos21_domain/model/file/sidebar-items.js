@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ShareWithExpirationErrorKind",""]],"mod":[["digest",""],["name",""],["size",""],["type_",""]],"struct":[["File",""],["FileId",""],["NonSharableFileError",""],["ShareWithExpirationError",""]]});
