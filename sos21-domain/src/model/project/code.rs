@@ -126,10 +126,10 @@ impl ProjectCode {
             }
         };
 
-        let index_slice = match s.len(){
+        let index_slice = match s.len() {
             4 => &s[1..4],
-            5=> &s[2..5],
-            _=> unreachable!()
+            5 => &s[2..5],
+            _ => unreachable!(),
         };
 
         let index = str::from_utf8(index_slice).map_err(ParseCodeError::from_index_utf8_error)?;
