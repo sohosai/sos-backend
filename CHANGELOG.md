@@ -8,11 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 ### Changed
-- Project Code composition
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## [0.6.0-beta2] - 2022-04-15
+
+### Changed
+
+- Project Code composition
 
 ## [0.6.0-beta] - 2022-04-13
 
