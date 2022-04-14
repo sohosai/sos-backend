@@ -13,18 +13,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 ### Security
 
-## [0.6.0-beta2] - 2022-04-15
-
-### Changed
-
-- Project Code composition
-- Switch to `sos22-backend-infrasturucture` from `sos21` one.
-
 ## [0.6.0-beta] - 2022-04-13
 
 ### Changed
 
 - Append online `ProjectCategory` entries ([#140](https://github.com/sohosai/sos21-backend/pull/140))
+- Project Code composition
+- Switch to `sos22-backend-infrasturucture` from `sos21` one.
 
 ### Removed
 
