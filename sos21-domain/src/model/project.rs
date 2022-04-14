@@ -319,14 +319,9 @@ impl Project {
     pub fn is_member(&self, user: &User) -> bool {
         &self.owner_id == user.id() || &self.subowner_id == user.id()
     }
-
     pub fn kind(&self) -> ProjectKind {
-        ProjectKind {
-            is_cooking: self.content.category == ProjectCategory::CookingPhysical,
-            is_outdoor: self.content.attributes.contains(ProjectAttribute::Outdoor),
-        }
+        self.category().into()
     }
-
     pub fn code(&self) -> ProjectCode {
         ProjectCode {
             kind: self.kind(),
