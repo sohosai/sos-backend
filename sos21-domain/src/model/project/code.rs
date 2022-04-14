@@ -1,14 +1,29 @@
 use std::fmt::{self, Display, Write};
 use std::str::{self, FromStr};
 
-use crate::model::project::{index, ProjectIndex};
+use crate::model::project::{index, ProjectCategory, ProjectIndex};
 
 use thiserror::Error;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ProjectKind {
-    pub is_cooking: bool,
-    pub is_outdoor: bool,
+pub enum ProjectKind {
+    General { is_online: bool },
+    Stage { is_online: bool },
+    Cooking,
+    Food,
+}
+
+impl From<ProjectCategory> for ProjectKind {
+    fn from(from: ProjectCategory) -> Self {
+        match from {
+            ProjectCategory::GeneralOnline => Self::General { is_online: true },
+            ProjectCategory::GeneralPhysical => Self::General { is_online: false },
+            ProjectCategory::StageOnline => Self::Stage { is_online: true },
+            ProjectCategory::StagePhysical => Self::Stage { is_online: false },
+            ProjectCategory::CookingPhysical => Self::Cooking,
+            ProjectCategory::FoodPhysical => Self::Food,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -20,8 +35,10 @@ pub struct ProjectCode {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ParseCodeErrorKind {
     MismatchedLength,
-    UnknownCookingFlag,
-    UnknownOutdoorFlag,
+    UnknownOnlineFlag,
+    UnknownGroup,
+    MissingOnlineFlag,
+    GotExtraOnlineFlag,
     InvalidIndex,
 }
 
@@ -61,36 +78,61 @@ impl ProjectCode {
     }
 
     pub fn parse_bytes(s: &[u8]) -> Result<Self, ParseCodeError> {
-        if s.len() != 5 {
-            return Err(ParseCodeError {
-                kind: ParseCodeErrorKind::MismatchedLength,
-            });
-        }
+        let kind = match s.len() {
+            4 => match s[0] {
+                b'G' | b'S' => {
+                    return Err(ParseCodeError {
+                        kind: ParseCodeErrorKind::MissingOnlineFlag,
+                    })
+                }
+                b'C' => ProjectKind::Cooking,
+                b'F' => ProjectKind::Food,
+                _ => {
+                    return Err(ParseCodeError {
+                        kind: ParseCodeErrorKind::UnknownGroup,
+                    })
+                }
+            },
+            5 => {
+                let is_online = match s[0] {
+                    b'P' => false,
+                    b'O' => true,
+                    _ => {
+                        return Err(ParseCodeError {
+                            kind: ParseCodeErrorKind::UnknownOnlineFlag,
+                        })
+                    }
+                };
 
-        let is_cooking = match s[0] {
-            b'C' => true,
-            b'G' => false,
+                match s[1] {
+                    b'G' => ProjectKind::General { is_online },
+                    b'S' => ProjectKind::Stage { is_online },
+                    b'C' | b'F' => {
+                        return Err(ParseCodeError {
+                            kind: ParseCodeErrorKind::GotExtraOnlineFlag,
+                        })
+                    }
+                    _ => {
+                        return Err(ParseCodeError {
+                            kind: ParseCodeErrorKind::UnknownGroup,
+                        })
+                    }
+                }
+            }
             _ => {
                 return Err(ParseCodeError {
-                    kind: ParseCodeErrorKind::UnknownCookingFlag,
+                    kind: ParseCodeErrorKind::MismatchedLength,
                 })
             }
         };
-        let is_outdoor = match s[1] {
-            b'O' => true,
-            b'I' => false,
-            _ => {
-                return Err(ParseCodeError {
-                    kind: ParseCodeErrorKind::UnknownOutdoorFlag,
-                })
-            }
-        };
-        let kind = ProjectKind {
-            is_cooking,
-            is_outdoor,
+
+        let index_slice = match s.len(){
+            4 => &s[1..4],
+            5=> &s[2..5],
+            _=> unreachable!()
         };
 
-        let index = str::from_utf8(&s[2..5]).map_err(ParseCodeError::from_index_utf8_error)?;
+        let index = str::from_utf8(index_slice).map_err(ParseCodeError::from_index_utf8_error)?;
         let index = index
             .parse()
             .map_err(ParseCodeError::from_index_parse_error)?;
@@ -108,10 +150,21 @@ impl FromStr for ProjectCode {
 
 impl Display for ProjectCode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let cooking = if self.kind.is_cooking { 'C' } else { 'G' };
-        let outdoor = if self.kind.is_outdoor { 'O' } else { 'I' };
-        f.write_char(cooking)?;
-        f.write_char(outdoor)?;
+        match self.kind {
+            ProjectKind::General { is_online } | ProjectKind::Stage { is_online } => {
+                f.write_char(if is_online { 'O' } else { 'P' })?;
+            }
+            _ => (),
+        };
+
+        let group = match self.kind {
+            ProjectKind::General { .. } => 'G',
+            ProjectKind::Stage { .. } => 'S',
+            ProjectKind::Food => 'F',
+            ProjectKind::Cooking => 'C',
+        };
+
+        f.write_char(group)?;
         write!(f, "{:03}", self.index.to_u16())
     }
 }
@@ -124,35 +177,50 @@ mod tests {
     #[test]
     fn test_valid() {
         assert_eq!(
-            ProjectCode::parse("GI001").unwrap(),
+            ProjectCode::parse("PG001").unwrap(),
             ProjectCode {
-                kind: ProjectKind {
-                    is_cooking: false,
-                    is_outdoor: false,
-                },
+                kind: ProjectKind::General { is_online: false },
                 index: ProjectIndex::from_u16(1).unwrap(),
             }
         );
 
         assert_eq!(
-            ProjectCode::parse("CO000").unwrap(),
+            ProjectCode::parse("PS000").unwrap(),
             ProjectCode {
-                kind: ProjectKind {
-                    is_cooking: true,
-                    is_outdoor: true,
-                },
+                kind: ProjectKind::Stage { is_online: false },
                 index: ProjectIndex::from_u16(0).unwrap(),
             }
         );
 
         assert_eq!(
-            ProjectCode::parse("CI999").unwrap(),
+            ProjectCode::parse("F000").unwrap(),
             ProjectCode {
-                kind: ProjectKind {
-                    is_cooking: true,
-                    is_outdoor: false,
-                },
-                index: ProjectIndex::from_u16(999).unwrap(),
+                kind: ProjectKind::Food,
+                index: ProjectIndex::from_u16(0).unwrap(),
+            }
+        );
+
+        assert_eq!(
+            ProjectCode::parse("C000").unwrap(),
+            ProjectCode {
+                kind: ProjectKind::Cooking,
+                index: ProjectIndex::from_u16(0).unwrap(),
+            }
+        );
+
+        assert_eq!(
+            ProjectCode::parse("OG000").unwrap(),
+            ProjectCode {
+                kind: ProjectKind::General { is_online: true },
+                index: ProjectIndex::from_u16(0).unwrap(),
+            }
+        );
+
+        assert_eq!(
+            ProjectCode::parse("OS000").unwrap(),
+            ProjectCode {
+                kind: ProjectKind::Stage { is_online: true },
+                index: ProjectIndex::from_u16(0).unwrap(),
             }
         );
     }
@@ -163,22 +231,47 @@ mod tests {
             ProjectCode::parse("").unwrap_err().kind(),
             ParseCodeErrorKind::MismatchedLength
         );
+
         assert_eq!(
-            ProjectCode::parse("CO01").unwrap_err().kind(),
+            ProjectCode::parse("OG0001").unwrap_err().kind(),
             ParseCodeErrorKind::MismatchedLength
         );
         assert_eq!(
-            ProjectCode::parse("COFFF").unwrap_err().kind(),
+            ProjectCode::parse("OGFFF").unwrap_err().kind(),
             ParseCodeErrorKind::InvalidIndex
         );
         assert!(ProjectCode::parse("XA000").is_err());
         assert_eq!(
-            ProjectCode::parse("AI001").unwrap_err().kind(),
-            ParseCodeErrorKind::UnknownCookingFlag
+            ProjectCode::parse("AG001").unwrap_err().kind(),
+            ParseCodeErrorKind::UnknownOnlineFlag
+        );
+
+        assert_eq!(
+            ProjectCode::parse("G001").unwrap_err().kind(),
+            ParseCodeErrorKind::MissingOnlineFlag
         );
         assert_eq!(
-            ProjectCode::parse("CA001").unwrap_err().kind(),
-            ParseCodeErrorKind::UnknownOutdoorFlag
+            ProjectCode::parse("S001").unwrap_err().kind(),
+            ParseCodeErrorKind::MissingOnlineFlag
+        );
+
+        assert_eq!(
+            ProjectCode::parse("PF001").unwrap_err().kind(),
+            ParseCodeErrorKind::GotExtraOnlineFlag
+        );
+        assert_eq!(
+            ProjectCode::parse("OC001").unwrap_err().kind(),
+            ParseCodeErrorKind::GotExtraOnlineFlag
+        );
+
+        assert_eq!(
+            ProjectCode::parse("A001").unwrap_err().kind(),
+            ParseCodeErrorKind::UnknownGroup
+        );
+
+        assert_eq!(
+            ProjectCode::parse("OA001").unwrap_err().kind(),
+            ParseCodeErrorKind::UnknownGroup
         );
     }
 
@@ -189,35 +282,33 @@ mod tests {
         }
 
         ser_de(ProjectCode {
-            kind: ProjectKind {
-                is_cooking: true,
-                is_outdoor: true,
-            },
+            kind: ProjectKind::General { is_online: false },
+            index: ProjectIndex::from_u16(1).unwrap(),
+        });
+
+        ser_de(ProjectCode {
+            kind: ProjectKind::Stage { is_online: false },
             index: ProjectIndex::from_u16(0).unwrap(),
         });
 
         ser_de(ProjectCode {
-            kind: ProjectKind {
-                is_cooking: false,
-                is_outdoor: true,
-            },
-            index: ProjectIndex::from_u16(125).unwrap(),
+            kind: ProjectKind::Food,
+            index: ProjectIndex::from_u16(0).unwrap(),
         });
 
         ser_de(ProjectCode {
-            kind: ProjectKind {
-                is_cooking: true,
-                is_outdoor: false,
-            },
-            index: ProjectIndex::from_u16(999).unwrap(),
+            kind: ProjectKind::Cooking,
+            index: ProjectIndex::from_u16(0).unwrap(),
         });
 
         ser_de(ProjectCode {
-            kind: ProjectKind {
-                is_cooking: false,
-                is_outdoor: false,
-            },
-            index: ProjectIndex::from_u16(10).unwrap(),
+            kind: ProjectKind::General { is_online: true },
+            index: ProjectIndex::from_u16(0).unwrap(),
+        });
+
+        ser_de(ProjectCode {
+            kind: ProjectKind::Stage { is_online: true },
+            index: ProjectIndex::from_u16(0).unwrap(),
         });
     }
 
@@ -227,10 +318,11 @@ mod tests {
             assert_eq!(ProjectCode::parse(code).unwrap().to_string(), code);
         }
 
-        de_ser("CO000");
-        de_ser("CI001");
-        de_ser("GO101");
-        de_ser("GI010");
-        de_ser("CO999");
+        de_ser("PG000");
+        de_ser("PS001");
+        de_ser("C010");
+        de_ser("F011");
+        de_ser("OG100");
+        de_ser("OS999");
     }
 }

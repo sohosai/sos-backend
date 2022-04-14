@@ -68,6 +68,7 @@ mod tests {
     use crate::model::project::ProjectId;
     use crate::{get_project_by_code, UseCaseError};
     use sos21_domain::test;
+    use sos21_domain::model::project::ProjectKind;
 
     // Checks that the normal user cannot read the others' project.
     #[tokio::test]
@@ -216,7 +217,7 @@ mod tests {
             .await;
 
         let mut code = project_other.code();
-        code.kind.is_cooking = !code.kind.is_cooking;
+        code.kind = ProjectKind::General { is_online: false };
         assert!(matches!(
             get_project_by_code::run(&app, code.to_string()).await,
             Err(UseCaseError::UseCase(get_project_by_code::Error::NotFound))
