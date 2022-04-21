@@ -41,10 +41,18 @@ pub fn new_pending_project(author_id: UserId, category: ProjectCategory) -> Pend
     new_pending_project_with_attributes(author_id, category, &[])
 }
 
-pub fn new_general_pending_project(author_id: UserId) -> PendingProject {
-    new_pending_project(author_id, ProjectCategory::General)
+pub fn new_general_online_pending_project(author_id: UserId) -> PendingProject {
+    new_pending_project(author_id, ProjectCategory::GeneralOnline)
 }
 
-pub fn new_stage_pending_project(author_id: UserId) -> PendingProject {
-    new_pending_project(author_id, ProjectCategory::Stage)
+pub fn new_general_physical_pending_project(author_id: UserId) -> PendingProject {
+    new_pending_project(author_id, ProjectCategory::GeneralPhysical)
+}
+
+pub fn new_stage_online_pending_project(author_id: UserId) -> PendingProject {
+    new_pending_project(author_id, ProjectCategory::StageOnline)
+}
+
+pub fn new_stage_physical_pending_project(author_id: UserId) -> PendingProject {
+    new_pending_project(author_id, ProjectCategory::StagePhysical)
 }

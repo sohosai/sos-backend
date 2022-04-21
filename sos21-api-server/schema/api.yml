@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: sos21-api-server
-  version: 0.5.3
+  version: 0.6.0
   contact:
     name: coord_e
     email: me@coord-e.com
@@ -1075,6 +1075,7 @@ paths:
                                   - ALREADY_PROJECT_SUBOWNER
                                   - ALREADY_PENDING_PROJECT_OWNER
                                   - OUT_OF_PROJECT_CREATION_PERIOD
+                                  - ARTISTIC_STAGE_PROJECT
                     required:
                       - status
                       - error

@@ -352,8 +352,9 @@ mod tests {
     ) -> (Login<test::context::MockApp>, RegistrationFormId) {
         let operator = test::model::new_operator_user();
 
-        let project = test::model::new_general_project(login_user.id().clone());
-        let pending_project = test::model::new_general_pending_project(login_user.id().clone());
+        let project = test::model::new_general_online_project(login_user.id().clone());
+        let pending_project =
+            test::model::new_general_online_pending_project(login_user.id().clone());
 
         let registration_form1 = test::model::new_registration_form(operator.id().clone());
         let registration_form1_id = RegistrationFormId::from_entity(registration_form1.id);

@@ -9,7 +9,6 @@ use crate::{DomainError, DomainResult};
 use anyhow::Context;
 use thiserror::Error;
 
-pub mod affiliation;
 pub mod assignment;
 pub mod category;
 pub mod email;
@@ -17,7 +16,6 @@ pub mod file_usage;
 pub mod file_usage_quota;
 pub mod name;
 pub mod role;
-pub use affiliation::UserAffiliation;
 pub use assignment::UserAssignment;
 pub use category::UserCategory;
 pub use email::UserEmailAddress;
@@ -136,10 +134,6 @@ impl User {
 
     pub fn phone_number(&self) -> &PhoneNumber {
         &self.content.phone_number
-    }
-
-    pub fn affiliation(&self) -> Option<&UserAffiliation> {
-        self.content.category.affiliation()
     }
 
     pub fn email(&self) -> &UserEmailAddress {

@@ -190,7 +190,7 @@ mod tests {
     #[test]
     fn test_visibility_general_via_matching_project() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_project(user.id().clone());
+        let user_project = test_model::new_general_online_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
@@ -206,7 +206,7 @@ mod tests {
     fn test_visibility_general_via_matching_non_owner_project() {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
-        let operator_project = test_model::new_general_project(operator.id().clone());
+        let operator_project = test_model::new_general_online_project(operator.id().clone());
         let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
@@ -220,10 +220,10 @@ mod tests {
     #[test]
     fn test_visibility_general_via_non_matching_project() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_project(user.id().clone());
+        let user_project = test_model::new_general_online_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
-            category: Some(ProjectCategory::Stage),
+            category: Some(ProjectCategory::StageOnline),
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         }])
         .unwrap();
@@ -235,7 +235,8 @@ mod tests {
     #[test]
     fn test_visibility_general_via_matching_pending_project() {
         let user = test_model::new_general_user();
-        let user_pending_project = test_model::new_general_pending_project(user.id().clone());
+        let user_pending_project =
+            test_model::new_general_online_pending_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
@@ -252,7 +253,7 @@ mod tests {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
         let operator_pending_project =
-            test_model::new_general_pending_project(operator.id().clone());
+            test_model::new_general_online_pending_project(operator.id().clone());
         let tautology_query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
@@ -268,10 +269,11 @@ mod tests {
     #[test]
     fn test_visibility_general_via_non_matching_pending_project() {
         let user = test_model::new_general_user();
-        let user_pending_project = test_model::new_general_pending_project(user.id().clone());
+        let user_pending_project =
+            test_model::new_general_online_pending_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
-            category: Some(ProjectCategory::Stage),
+            category: Some(ProjectCategory::StageOnline),
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         }])
         .unwrap();

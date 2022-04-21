@@ -158,10 +158,12 @@ fn from_project(project: Project) -> data::project::Project {
 
 pub fn from_project_category(category: ProjectCategory) -> data::project::ProjectCategory {
     match category {
-        ProjectCategory::General => data::project::ProjectCategory::General,
-        ProjectCategory::Stage => data::project::ProjectCategory::Stage,
-        ProjectCategory::Cooking => data::project::ProjectCategory::Cooking,
-        ProjectCategory::Food => data::project::ProjectCategory::Food,
+        ProjectCategory::GeneralOnline => data::project::ProjectCategory::GeneralOnline,
+        ProjectCategory::GeneralPhysical => data::project::ProjectCategory::GeneralPhysical,
+        ProjectCategory::StageOnline => data::project::ProjectCategory::StageOnline,
+        ProjectCategory::StagePhysical => data::project::ProjectCategory::StagePhysical,
+        ProjectCategory::CookingPhysical => data::project::ProjectCategory::CookingPhysical,
+        ProjectCategory::FoodPhysical => data::project::ProjectCategory::FoodPhysical,
     }
 }
 
@@ -179,10 +181,12 @@ pub fn from_project_attributes(attributes: &ProjectAttributes) -> data::project:
 
 pub fn to_project_category(category: data::project::ProjectCategory) -> ProjectCategory {
     match category {
-        data::project::ProjectCategory::General => ProjectCategory::General,
-        data::project::ProjectCategory::Stage => ProjectCategory::Stage,
-        data::project::ProjectCategory::Cooking => ProjectCategory::Cooking,
-        data::project::ProjectCategory::Food => ProjectCategory::Food,
+        data::project::ProjectCategory::GeneralOnline => ProjectCategory::GeneralOnline,
+        data::project::ProjectCategory::GeneralPhysical => ProjectCategory::GeneralPhysical,
+        data::project::ProjectCategory::StageOnline => ProjectCategory::StageOnline,
+        data::project::ProjectCategory::StagePhysical => ProjectCategory::StagePhysical,
+        data::project::ProjectCategory::CookingPhysical => ProjectCategory::CookingPhysical,
+        data::project::ProjectCategory::FoodPhysical => ProjectCategory::FoodPhysical,
     }
 }
 

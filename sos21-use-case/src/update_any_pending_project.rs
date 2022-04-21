@@ -159,7 +159,7 @@ mod tests {
     #[tokio::test]
     async fn test_general() {
         let user = test::model::new_general_user();
-        let pending_project = test::model::new_general_pending_project(user.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -190,7 +190,7 @@ mod tests {
     #[tokio::test]
     async fn test_committee() {
         let user = test::model::new_committee_user();
-        let pending_project = test::model::new_general_pending_project(user.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -221,7 +221,7 @@ mod tests {
     #[tokio::test]
     async fn test_operator() {
         let user = test::model::new_operator_user();
-        let pending_project = test::model::new_general_pending_project(user.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -252,7 +252,7 @@ mod tests {
     #[tokio::test]
     async fn test_admin() {
         let user = test::model::new_admin_user();
-        let pending_project = test::model::new_general_pending_project(user.id().clone());
+        let pending_project = test::model::new_general_online_pending_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])

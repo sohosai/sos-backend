@@ -5568,7 +5568,7 @@ rec {
       };
       "sos21-api-server" = rec {
         crateName = "sos21-api-server";
-        version = "0.5.3";
+        version = "0.6.0";
         edition = "2018";
         crateBin = [
           { name = "sos21-api-server"; path = "src/main.rs"; }
@@ -5736,7 +5736,7 @@ rec {
       };
       "sos21-database" = rec {
         crateName = "sos21-database";
-        version = "0.5.3";
+        version = "0.6.0";
         edition = "2018";
         src = (builtins.filterSource sourceFilter ./sos21-database);
         authors = [
@@ -5778,7 +5778,7 @@ rec {
       };
       "sos21-domain" = rec {
         crateName = "sos21-domain";
-        version = "0.5.3";
+        version = "0.6.0";
         edition = "2018";
         src = (builtins.filterSource sourceFilter ./sos21-domain);
         authors = [
@@ -5901,7 +5901,7 @@ rec {
       };
       "sos21-gateway-database" = rec {
         crateName = "sos21-gateway-database";
-        version = "0.5.3";
+        version = "0.6.0";
         edition = "2018";
         src = (builtins.filterSource sourceFilter ./sos21-gateway/database);
         authors = [
@@ -5951,7 +5951,7 @@ rec {
       };
       "sos21-gateway-s3" = rec {
         crateName = "sos21-gateway-s3";
-        version = "0.5.3";
+        version = "0.6.0";
         edition = "2018";
         src = (builtins.filterSource sourceFilter ./sos21-gateway/s3);
         authors = [
@@ -6005,7 +6005,7 @@ rec {
       };
       "sos21-run-migrations" = rec {
         crateName = "sos21-run-migrations";
-        version = "0.5.3";
+        version = "0.6.0";
         edition = "2018";
         crateBin = [
           { name = "sos21-run-migrations"; path = "src/main.rs"; }
@@ -6054,7 +6054,7 @@ rec {
       };
       "sos21-use-case" = rec {
         crateName = "sos21-use-case";
-        version = "0.5.3";
+        version = "0.6.0";
         edition = "2018";
         src = (builtins.filterSource sourceFilter ./sos21-use-case);
         authors = [

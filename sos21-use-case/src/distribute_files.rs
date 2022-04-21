@@ -251,7 +251,7 @@ mod tests {
     #[tokio::test]
     async fn test_general() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project(user.id().clone());
+        let project = test::model::new_general_online_project(user.id().clone());
         let (file, object) = test::model::new_file(user.id().clone());
         let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -283,7 +283,7 @@ mod tests {
     #[tokio::test]
     async fn test_committee() {
         let user = test::model::new_committee_user();
-        let project = test::model::new_general_project(user.id().clone());
+        let project = test::model::new_general_online_project(user.id().clone());
         let (file, object) = test::model::new_file(user.id().clone());
         let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -318,7 +318,7 @@ mod tests {
         let (file, object) = test::model::new_file(user.id().clone());
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_project(other.id().clone());
+        let other_project = test::model::new_general_online_project(other.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(other_project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -367,7 +367,7 @@ mod tests {
         let (file, object) = test::model::new_file(user.id().clone());
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_project(other.id().clone());
+        let other_project = test::model::new_general_online_project(other.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(other_project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -415,7 +415,7 @@ mod tests {
         let (file, object) = test::model::new_file(user.id().clone());
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_project(other.id().clone());
+        let other_project = test::model::new_general_online_project(other.id().clone());
 
         let sharing =
             file_sharing::FileSharing::new(file.id, file_sharing::FileSharingScope::Committee);
@@ -454,8 +454,8 @@ mod tests {
 
         let other1 = test::model::new_general_user();
         let other2 = test::model::new_general_user();
-        let other1_project = test::model::new_general_project(other1.id().clone());
-        let other2_project = test::model::new_general_project(other2.id().clone());
+        let other1_project = test::model::new_general_online_project(other1.id().clone());
+        let other2_project = test::model::new_general_online_project(other2.id().clone());
 
         let scope1 = file_sharing::FileSharingScope::Project(other1_project.id());
         let sharing1 = file_sharing::FileSharing::new(file1.id, scope1);
@@ -503,7 +503,7 @@ mod tests {
         let (file, object) = test::model::new_file(user.id().clone());
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_project(other.id().clone());
+        let other_project = test::model::new_general_online_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone()])

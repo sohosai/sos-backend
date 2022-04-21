@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v8
+      - uses: cachix/cachix-action@v10
         with:
           name: sos21-backend
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
@@ -60,7 +60,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v8
+      - uses: cachix/cachix-action@v10
         with:
           name: sos21-backend
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'

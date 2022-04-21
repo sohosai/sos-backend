@@ -4,7 +4,7 @@
     ./sos21-api-server.nix
   ];
 
-  # TODO: Inject these constants from sos21-backend-infrastructure
+  # TODO: Inject these constants from sos22-backend-infrastructure
   services.sos21-api-server = {
     databaseHost = "192.168.0.11";
     databasePort = 5432;

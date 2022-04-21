@@ -31,6 +31,7 @@ pub enum Error {
     TooManyProjects,
     NotAnsweredRegistrationForm,
     SameOwnerSubowner,
+    ArtisticStageProject,
     AlreadyProjectOwner,
     AlreadyProjectSubowner,
     AlreadyPendingProjectOwner,
@@ -44,6 +45,7 @@ impl HandlerResponse for Error {
             Error::TooManyProjects => StatusCode::CONFLICT,
             Error::NotAnsweredRegistrationForm => StatusCode::CONFLICT,
             Error::SameOwnerSubowner => StatusCode::CONFLICT,
+            Error::ArtisticStageProject => StatusCode::BAD_REQUEST,
             Error::AlreadyProjectOwner => StatusCode::CONFLICT,
             Error::AlreadyProjectSubowner => StatusCode::CONFLICT,
             Error::AlreadyPendingProjectOwner => StatusCode::CONFLICT,
@@ -61,6 +63,7 @@ impl From<create_project::Error> for Error {
                 Error::NotAnsweredRegistrationForm
             }
             create_project::Error::SameOwnerSubowner => Error::SameOwnerSubowner,
+            create_project::Error::ArtisticStageProject => Error::ArtisticStageProject,
             create_project::Error::AlreadyProjectOwner => Error::AlreadyProjectOwner,
             create_project::Error::AlreadyProjectSubowner => Error::AlreadyProjectSubowner,
             create_project::Error::AlreadyPendingProjectOwner => Error::AlreadyPendingProjectOwner,
