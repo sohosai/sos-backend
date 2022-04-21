@@ -113,7 +113,13 @@
                   "general",
                   "stage",
                   "cooking",
-                  "food"
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
                 ]
               }
             }
@@ -162,7 +168,13 @@
                         "general",
                         "stage",
                         "cooking",
-                        "food"
+                        "food",
+                        "general_online",
+                        "general_physical",
+                        "stage_online",
+                        "stage_physical",
+                        "cooking_physical",
+                        "food_physical"
                       ]
                     }
                   }
@@ -831,7 +843,13 @@
                   "general",
                   "stage",
                   "cooking",
-                  "food"
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
                 ]
               }
             }
@@ -1339,7 +1357,13 @@
                   "general",
                   "stage",
                   "cooking",
-                  "food"
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
                 ]
               }
             }
@@ -1697,7 +1721,13 @@
                   "general",
                   "stage",
                   "cooking",
-                  "food"
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
                 ]
               }
             }
@@ -2502,7 +2532,13 @@
                         "general",
                         "stage",
                         "cooking",
-                        "food"
+                        "food",
+                        "general_online",
+                        "general_physical",
+                        "stage_online",
+                        "stage_physical",
+                        "cooking_physical",
+                        "food_physical"
                       ]
                     }
                   }
@@ -2721,7 +2757,13 @@
                   "general",
                   "stage",
                   "cooking",
-                  "food"
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
                 ]
               }
             }
@@ -3198,7 +3240,13 @@
                   "general",
                   "stage",
                   "cooking",
-                  "food"
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
                 ]
               }
             }
@@ -3679,7 +3727,13 @@
                   "general",
                   "stage",
                   "cooking",
-                  "food"
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
                 ]
               }
             }
@@ -3881,7 +3935,13 @@
                   "general",
                   "stage",
                   "cooking",
-                  "food"
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
                 ]
               }
             }

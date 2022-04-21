@@ -28,6 +28,8 @@ jobs:
           ADMINISTRATOR_EMAIL: "${{ secrets.ADMINISTRATOR_EMAIL }}"
           STAGE_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_STAGE_PROJECT_CREATION_PERIOD }}"
           GENERAL_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_GENERAL_PROJECT_CREATION_PERIOD }}"
+          COOKING_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_COOKING_PROJECT_CREATION_PERIOD }}"
+          FOOD_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_FOOD_PROJECT_CREATION_PERIOD }}"
         run: |
           cat << EOS > ./configuration.nix
           { ... }:
@@ -35,14 +37,18 @@ jobs:
             services.sos21-api-server = {
               administratorEmail = "$ADMINISTRATOR_EMAIL";
               projectCreationPeriods = {
-                stage = "$STAGE_PROJECT_CREATION_PERIOD";
-                general = "$GENERAL_PROJECT_CREATION_PERIOD";
+                stage_online = "$STAGE_PROJECT_CREATION_PERIOD";
+                stage_physical = "$STAGE_PROJECT_CREATION_PERIOD";
+                general_online = "$GENERAL_PROJECT_CREATION_PERIOD";
+                general_physical = "$GENERAL_PROJECT_CREATION_PERIOD";
+                cooking_physical = "$COOKING_PROJECT_CREATION_PERIOD";
+                food_physical = "$FOOD_PROJECT_CREATION_PERIOD";
               };
             };
           }
           EOS
       - name: Deploy
-        uses: sohosai/sos21-backend-infrastructure/actions/deploy-production@main
+        uses: sohosai/sos22-backend-infrastructure/actions/deploy-production@main
         with:
           target: api.online.sohosai.com
           ssh_private_key: ./ssh_private_key
