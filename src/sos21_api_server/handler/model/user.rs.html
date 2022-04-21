@@ -145,10 +145,6 @@
 <span id="142">142</span>
 <span id="143">143</span>
 <span id="144">144</span>
-<span id="145">145</span>
-<span id="146">146</span>
-<span id="147">147</span>
-<span id="148">148</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 
@@ -243,9 +239,9 @@
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;snake_case&quot;</span>, <span class="ident">tag</span> <span class="op">=</span> <span class="string">&quot;type&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename_all</span> <span class="op">=</span> <span class="string">&quot;snake_case&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">UserCategory</span> {
-    <span class="ident">UndergraduateStudent</span> { <span class="ident">affiliation</span>: <span class="ident">String</span> },
+    <span class="ident">UndergraduateStudent</span>,
     <span class="ident">GraduateStudent</span>,
     <span class="ident">AcademicStaff</span>,
 }
@@ -253,9 +249,7 @@
 <span class="kw">impl</span> <span class="ident">UserCategory</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_use_case</span>(<span class="ident">category</span>: <span class="ident">use_case</span>::<span class="ident">UserCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UserCategory</span> {
         <span class="kw">match</span> <span class="ident">category</span> {
-            <span class="ident">use_case</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> { <span class="ident">affiliation</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> { <span class="ident">affiliation</span> }
-            }
+            <span class="ident">use_case</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>,
             <span class="ident">use_case</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>,
             <span class="ident">use_case</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
         }
@@ -263,9 +257,7 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_use_case</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">UserCategory</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> { <span class="ident">affiliation</span> } <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">use_case</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> { <span class="ident">affiliation</span> }
-            }
+            <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>,
             <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>,
             <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">use_case</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
         }

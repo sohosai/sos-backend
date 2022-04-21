@@ -131,10 +131,6 @@
 <span id="128">128</span>
 <span id="129">129</span>
 <span id="130">130</span>
-<span id="131">131</span>
-<span id="132">132</span>
-<span id="133">133</span>
-<span id="134">134</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::{<span class="ident">HandlerResponse</span>, <span class="ident">HandlerResult</span>};
@@ -166,8 +162,6 @@
     <span class="kw">pub</span> <span class="ident">field_email</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">field_phone_number</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">field_affiliation</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="kw">pub</span> <span class="ident">field_role</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
@@ -220,7 +214,6 @@
             <span class="ident">field_kana_full_name</span>,
             <span class="ident">field_email</span>,
             <span class="ident">field_phone_number</span>,
-            <span class="ident">field_affiliation</span>,
             <span class="ident">field_role</span>,
             <span class="ident">field_category</span>,
             <span class="ident">role_administrator</span>,
@@ -242,7 +235,6 @@
             <span class="ident">kana_full_name</span>: <span class="ident">field_kana_full_name</span>,
             <span class="ident">email</span>: <span class="ident">field_email</span>,
             <span class="ident">phone_number</span>: <span class="ident">field_phone_number</span>,
-            <span class="ident">affiliation</span>: <span class="ident">field_affiliation</span>,
             <span class="ident">role</span>: <span class="ident">field_role</span>,
             <span class="ident">category</span>: <span class="ident">field_category</span>,
         };

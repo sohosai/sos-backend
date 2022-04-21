@@ -234,7 +234,7 @@
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_general_any</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form2</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form3</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
@@ -273,7 +273,7 @@
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_pending_project_with_attributes</span>(
             <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
-            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>,
+            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>,
             <span class="kw-2">&amp;</span>[
                 <span class="ident">project</span>::<span class="ident">ProjectAttribute</span>::<span class="ident">Academic</span>,
                 <span class="ident">project</span>::<span class="ident">ProjectAttribute</span>::<span class="ident">Artistic</span>,

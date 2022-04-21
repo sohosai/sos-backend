@@ -215,6 +215,10 @@
 <span id="212">212</span>
 <span id="213">213</span>
 <span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
@@ -376,10 +380,12 @@
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_project_category</span>(<span class="ident">category</span>: <span class="ident">ProjectCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span> {
     <span class="kw">match</span> <span class="ident">category</span> {
-        <span class="ident">ProjectCategory</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>,
-        <span class="ident">ProjectCategory</span>::<span class="ident">Stage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>,
-        <span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>,
-        <span class="ident">ProjectCategory</span>::<span class="ident">Food</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Food</span>,
+        <span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>,
+        <span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span>,
+        <span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>,
+        <span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span>,
+        <span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span>,
+        <span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span>,
     }
 }
 
@@ -397,10 +403,12 @@
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_project_category</span>(<span class="ident">category</span>: <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span> {
     <span class="kw">match</span> <span class="ident">category</span> {
-        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">General</span>,
-        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>,
-        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span>,
-        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Food</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">Food</span>,
+        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>,
+        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span>,
+        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>,
+        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span>,
+        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span>,
+        <span class="ident">data</span>::<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span>,
     }
 }
 

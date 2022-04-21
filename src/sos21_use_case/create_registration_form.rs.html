@@ -337,7 +337,7 @@
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
@@ -368,7 +368,7 @@
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
@@ -399,7 +399,7 @@
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">user</span>.<span class="ident">clone</span>()])
-            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span>, <span class="ident">period</span>)
+            .<span class="ident">project_creation_period_for</span>(<span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>, <span class="ident">period</span>)
             .<span class="ident">build</span>()
             .<span class="ident">login_as</span>(<span class="ident">user</span>.<span class="ident">clone</span>())
             .<span class="kw">await</span>;
@@ -413,7 +413,7 @@
                 .<span class="ident">map</span>(<span class="ident">FormItem</span>::<span class="ident">from_entity</span>)
                 .<span class="ident">collect</span>(),
             <span class="ident">query</span>: <span class="ident">ProjectQuery</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
-                <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">General</span>),
+                <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>),
                 <span class="ident">attributes</span>: <span class="macro">vec</span><span class="macro">!</span>[],
             }]),
         };

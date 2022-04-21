@@ -121,10 +121,6 @@
 <span id="118">118</span>
 <span id="119">119</span>
 <span id="120">120</span>
-<span id="121">121</span>
-<span id="122">122</span>
-<span id="123">123</span>
-<span id="124">124</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::{
     <span class="ident">project</span>::{<span class="ident">Project</span>, <span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>, <span class="ident">ProjectWithOwners</span>},
@@ -158,7 +154,6 @@ SELECT
         owners.last_name AS owner_last_name,
         owners.kana_last_name AS owner_kana_last_name,
         owners.phone_number AS owner_phone_number,
-        owners.affiliation AS owner_affiliation,
         owners.email AS owner_email,
         owners.role AS &quot;owner_role: UserRole&quot;,
         owners.category AS &quot;owner_category: UserCategory&quot;,
@@ -173,7 +168,6 @@ SELECT
         subowners.last_name AS subowner_last_name,
         subowners.kana_last_name AS subowner_kana_last_name,
         subowners.phone_number AS subowner_phone_number,
-        subowners.affiliation AS subowner_affiliation,
         subowners.email AS subowner_email,
         subowners.role AS &quot;subowner_role: UserRole&quot;,
         subowners.category AS &quot;subowner_category: UserCategory&quot;,
@@ -217,7 +211,6 @@ WHERE projects.index = $1
         <span class="ident">last_name</span>: <span class="ident">row</span>.<span class="ident">owner_last_name</span>,
         <span class="ident">kana_last_name</span>: <span class="ident">row</span>.<span class="ident">owner_kana_last_name</span>,
         <span class="ident">phone_number</span>: <span class="ident">row</span>.<span class="ident">owner_phone_number</span>,
-        <span class="ident">affiliation</span>: <span class="ident">row</span>.<span class="ident">owner_affiliation</span>,
         <span class="ident">email</span>: <span class="ident">row</span>.<span class="ident">owner_email</span>,
         <span class="ident">role</span>: <span class="ident">row</span>.<span class="ident">owner_role</span>,
         <span class="ident">category</span>: <span class="ident">row</span>.<span class="ident">owner_category</span>,
@@ -234,7 +227,6 @@ WHERE projects.index = $1
         <span class="ident">last_name</span>: <span class="ident">row</span>.<span class="ident">subowner_last_name</span>,
         <span class="ident">kana_last_name</span>: <span class="ident">row</span>.<span class="ident">subowner_kana_last_name</span>,
         <span class="ident">phone_number</span>: <span class="ident">row</span>.<span class="ident">subowner_phone_number</span>,
-        <span class="ident">affiliation</span>: <span class="ident">row</span>.<span class="ident">subowner_affiliation</span>,
         <span class="ident">email</span>: <span class="ident">row</span>.<span class="ident">subowner_email</span>,
         <span class="ident">role</span>: <span class="ident">row</span>.<span class="ident">subowner_role</span>,
         <span class="ident">category</span>: <span class="ident">row</span>.<span class="ident">subowner_category</span>,

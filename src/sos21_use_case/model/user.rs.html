@@ -114,10 +114,6 @@
 <span id="111">111</span>
 <span id="112">112</span>
 <span id="113">113</span>
-<span id="114">114</span>
-<span id="115">115</span>
-<span id="116">116</span>
-<span id="117">117</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">sos21_domain</span>::<span class="ident">model</span>::<span class="ident">user</span> <span class="kw">as</span> <span class="ident">entity</span>;
@@ -191,7 +187,7 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">UserCategory</span> {
-    <span class="ident">UndergraduateStudent</span> { <span class="ident">affiliation</span>: <span class="ident">String</span> },
+    <span class="ident">UndergraduateStudent</span>,
     <span class="ident">GraduateStudent</span>,
     <span class="ident">AcademicStaff</span>,
 }
@@ -199,11 +195,7 @@
 <span class="kw">impl</span> <span class="ident">UserCategory</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_entity</span>(<span class="ident">category</span>: <span class="ident">entity</span>::<span class="ident">UserCategory</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UserCategory</span> {
         <span class="kw">match</span> <span class="ident">category</span> {
-            <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>(<span class="ident">affiliation</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> {
-                    <span class="ident">affiliation</span>: <span class="ident">affiliation</span>.<span class="ident">into_string</span>(),
-                }
-            }
+            <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">UndergraduateStudent</span>,
             <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">GraduateStudent</span>,
             <span class="ident">entity</span>::<span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">UserCategory</span>::<span class="ident">AcademicStaff</span>,
         }

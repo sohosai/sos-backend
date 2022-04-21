@@ -542,6 +542,12 @@
 <span id="539">539</span>
 <span id="540">540</span>
 <span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 
@@ -597,10 +603,12 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InputCategoryNames</span> {
-    <span class="kw">pub</span> <span class="ident">general</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">stage</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">cooking</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">food</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">general_online</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">general_physical</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">stage_online</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">stage_physical</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">cooking_physical</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">food_physical</span>: <span class="ident">String</span>,
 }
 
 <span class="attribute">#[<span class="ident">tracing</span>::<span class="ident">instrument</span>(<span class="ident">skip</span>(<span class="ident">ctx</span>))]</span>
@@ -863,10 +871,12 @@
 
     <span class="kw">if</span> <span class="ident">category</span>.<span class="ident">is_some</span>() {
         <span class="kw">let</span> <span class="ident">category_name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">data</span>.<span class="ident">project</span>.<span class="ident">category</span>() {
-            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">general</span>,
-            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">stage</span>,
-            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">cooking</span>,
-            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">Food</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">food</span>,
+            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">general_online</span>,
+            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">general_physical</span>,
+            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">stage_online</span>,
+            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">stage_physical</span>,
+            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">cooking_physical</span>,
+            <span class="ident">project</span>::<span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">category_names</span>.<span class="ident">food_physical</span>,
         };
         <span class="ident">writer</span>.<span class="ident">write_field</span>(<span class="ident">category_name</span>)<span class="question-mark">?</span>;
     }
@@ -991,8 +1001,8 @@
 
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">prepare_app</span>(<span class="ident">login_user</span>: <span class="ident">domain</span>::<span class="ident">user</span>::<span class="ident">User</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Login</span><span class="op">&lt;</span><span class="ident">test</span>::<span class="ident">context</span>::<span class="ident">MockApp</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">login_user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">project2</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">login_user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project2</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">other</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">build_mock_app</span>()
             .<span class="ident">users</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">login_user</span>.<span class="ident">clone</span>(), <span class="ident">other</span>.<span class="ident">clone</span>()])
@@ -1035,10 +1045,12 @@
             <span class="ident">attribute_outdoor</span>: <span class="prelude-val">Some</span>(<span class="string">&quot;屋外企画&quot;</span>.<span class="ident">to_string</span>()),
         };
         <span class="kw">let</span> <span class="ident">category_names</span> <span class="op">=</span> <span class="ident">export_projects</span>::<span class="ident">InputCategoryNames</span> {
-            <span class="ident">general</span>: <span class="string">&quot;一般&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="ident">stage</span>: <span class="string">&quot;ステージ&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="ident">cooking</span>: <span class="string">&quot;調理&quot;</span>.<span class="ident">to_string</span>(),
-            <span class="ident">food</span>: <span class="string">&quot;飲食物取扱&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="ident">general_online</span>: <span class="string">&quot;オンライン一般企画&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="ident">general_physical</span>: <span class="string">&quot;対面一般企画&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="ident">stage_online</span>: <span class="string">&quot;オンラインステージ企画&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="ident">stage_physical</span>: <span class="string">&quot;対面ステージ企画&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="ident">cooking_physical</span>: <span class="string">&quot;調理&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="ident">food_physical</span>: <span class="string">&quot;飲食物取扱&quot;</span>.<span class="ident">to_string</span>(),
         };
         <span class="ident">export_projects</span>::<span class="ident">Input</span> {
             <span class="ident">field_names</span>,

@@ -283,6 +283,8 @@
 <span id="280">280</span>
 <span id="281">281</span>
 <span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{<span class="ident">ConfigContext</span>, <span class="ident">RegistrationFormAnswerRepository</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
@@ -476,7 +478,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general_via_matching_project</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">tautology_query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
             <span class="ident">category</span>: <span class="prelude-val">None</span>,
@@ -492,7 +494,7 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_general_via_matching_non_owner_project</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">operator_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">operator_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">tautology_query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
             <span class="ident">category</span>: <span class="prelude-val">None</span>,
             <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),
@@ -506,10 +508,10 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general_via_non_matching_project</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
-            <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>),
+            <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>),
             <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),
         }])
         .<span class="ident">unwrap</span>();
@@ -521,7 +523,8 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general_via_matching_pending_project</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">user_pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_pending_project</span> <span class="op">=</span>
+            <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">tautology_query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
             <span class="ident">category</span>: <span class="prelude-val">None</span>,
@@ -538,7 +541,7 @@
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">operator_pending_project</span> <span class="op">=</span>
-            <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+            <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">tautology_query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
             <span class="ident">category</span>: <span class="prelude-val">None</span>,
             <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),
@@ -554,10 +557,11 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general_via_non_matching_pending_project</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">user_pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_pending_project</span> <span class="op">=</span>
+            <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
-            <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">Stage</span>),
+            <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span>),
             <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),
         }])
         .<span class="ident">unwrap</span>();

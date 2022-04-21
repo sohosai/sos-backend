@@ -66,6 +66,8 @@
 <span id="63">63</span>
 <span id="64">64</span>
 <span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
 
@@ -94,10 +96,12 @@
 
     <span class="kw">for</span> <span class="ident">conj</span> <span class="kw">in</span> <span class="ident">query</span> {
         <span class="kw">let</span> <span class="ident">category</span> <span class="op">=</span> <span class="ident">conj</span>.<span class="ident">category</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">category</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">category</span> {
-            <span class="ident">ProjectCategory</span>::<span class="ident">General</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;general&quot;</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Stage</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;stage&quot;</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Cooking</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;cooking&quot;</span>,
-            <span class="ident">ProjectCategory</span>::<span class="ident">Food</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;food&quot;</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;general_online&quot;</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">GeneralPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;general_physical&quot;</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">StageOnline</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;stage_online&quot;</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">StagePhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;stage_physical&quot;</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">CookingPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;cooking_physical&quot;</span>,
+            <span class="ident">ProjectCategory</span>::<span class="ident">FoodPhysical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;food_physical&quot;</span>,
         });
         <span class="ident">categories</span>.<span class="ident">push</span>(<span class="ident">category</span>);
         <span class="ident">attributes</span>.<span class="ident">push</span>(<span class="ident">conj</span>.<span class="ident">attributes</span>.<span class="ident">bits</span>() <span class="kw">as</span> <span class="ident">i32</span>);

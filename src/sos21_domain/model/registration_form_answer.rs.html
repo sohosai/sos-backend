@@ -464,6 +464,7 @@
 <span id="461">461</span>
 <span id="462">462</span>
 <span id="463">463</span>
+<span id="464">464</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{<span class="ident">ConfigContext</span>, <span class="ident">RegistrationFormAnswerRepository</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
@@ -825,7 +826,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
@@ -839,7 +840,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_committee</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_committee_user</span>();
-        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
@@ -853,7 +854,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_operator</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
@@ -867,7 +868,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general_via_owning_project</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
@@ -881,7 +882,8 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general_via_owning_pending_project</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">user_pending_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_pending_project</span> <span class="op">=</span>
+            <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form_answer</span> <span class="op">=</span>
@@ -898,7 +900,7 @@
     <span class="kw">fn</span> <span class="ident">test_visibility_general_via_non_owning_project</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
-        <span class="kw">let</span> <span class="ident">operator_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">operator_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form_answer</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form_answer_with_project</span>(
             <span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>(),
@@ -913,7 +915,7 @@
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">operator_pending_project</span> <span class="op">=</span>
-            <span class="ident">test_model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+            <span class="ident">test_model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form_answer</span> <span class="op">=</span>
             <span class="ident">test_model</span>::<span class="ident">new_registration_form_answer_with_pending_project</span>(

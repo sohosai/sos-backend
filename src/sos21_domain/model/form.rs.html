@@ -1030,7 +1030,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_visibility_general_via_project</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">user_project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_operator_user</span>();
         <span class="kw">let</span> <span class="ident">tautology_query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
             <span class="ident">category</span>: <span class="prelude-val">None</span>,
@@ -1119,9 +1119,9 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_answer_not_targeted</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_stage_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_stage_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
-            <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">General</span>),
+            <span class="ident">category</span>: <span class="prelude-val">Some</span>(<span class="ident">ProjectCategory</span>::<span class="ident">GeneralOnline</span>),
             <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),
         }])
         .<span class="ident">unwrap</span>();
@@ -1143,7 +1143,7 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_answer_already_answered</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_stage_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_stage_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
             <span class="ident">category</span>: <span class="prelude-val">None</span>,
             <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),
@@ -1169,7 +1169,7 @@
     <span class="attribute">#[<span class="ident">tokio</span>::<span class="ident">test</span>]</span>
     <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">test_answer_ok</span>() {
         <span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_general_user</span>();
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_stage_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test_model</span>::<span class="ident">new_stage_online_project</span>(<span class="ident">user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">query</span> <span class="op">=</span> <span class="ident">ProjectQuery</span>::<span class="ident">from_conjunctions</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ProjectQueryConjunction</span> {
             <span class="ident">category</span>: <span class="prelude-val">None</span>,
             <span class="ident">attributes</span>: <span class="ident">ProjectAttributes</span>::<span class="ident">from_attributes</span>(<span class="macro">vec</span><span class="macro">!</span>[]).<span class="ident">unwrap</span>(),

@@ -451,6 +451,7 @@
 <span id="448">448</span>
 <span id="449">449</span>
 <span id="450">450</span>
+<span id="451">451</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>};
 
@@ -806,8 +807,9 @@
     ) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Login</span><span class="op">&lt;</span><span class="ident">test</span>::<span class="ident">context</span>::<span class="ident">MockApp</span><span class="op">&gt;</span>, <span class="ident">RegistrationFormId</span>) {
         <span class="kw">let</span> <span class="ident">operator</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_operator_user</span>();
 
-        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_project</span>(<span class="ident">login_user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_pending_project</span>(<span class="ident">login_user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">project</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_project</span>(<span class="ident">login_user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
+        <span class="kw">let</span> <span class="ident">pending_project</span> <span class="op">=</span>
+            <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_general_online_pending_project</span>(<span class="ident">login_user</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">registration_form1</span> <span class="op">=</span> <span class="ident">test</span>::<span class="ident">model</span>::<span class="ident">new_registration_form</span>(<span class="ident">operator</span>.<span class="ident">id</span>().<span class="ident">clone</span>());
         <span class="kw">let</span> <span class="ident">registration_form1_id</span> <span class="op">=</span> <span class="ident">RegistrationFormId</span>::<span class="ident">from_entity</span>(<span class="ident">registration_form1</span>.<span class="ident">id</span>);
