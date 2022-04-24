@@ -158,7 +158,6 @@ mod tests {
             group_name: None,
             kana_group_name: None,
             description: None,
-            attributes: None,
         };
         (name, input)
     }
