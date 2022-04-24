@@ -1,5 +1,5 @@
 use crate::app::Context;
-use crate::handler::model::project::{Project,ProjectId};
+use crate::handler::model::project::{Project, ProjectId};
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
@@ -71,7 +71,7 @@ impl From<update_project::Error> for Error {
             },
             update_project::Error::InvalidDescription => Error::InvalidField {
                 field: "description",
-            }
+            },
         }
     }
 }
