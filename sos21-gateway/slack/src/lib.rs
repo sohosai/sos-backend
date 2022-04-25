@@ -1,26 +1,21 @@
-use slack_hook2::{Payload, SlackError, SlackText};
+use slack_hook::{Slack,PayloadBuilder,SlackTextContent::Text};
 use sos21_domain::model::{form::FormName, project::ProjectName};
-use tokio_compat_02::FutureExt;
 
-pub async fn send_form_answer_notification(
-    hook: impl reqwest::IntoUrl,
+pub fn send_form_answer_notification(
+    hook: &str,
     project_name: &ProjectName,
     form_name: &FormName,
-) -> Result<(), SlackError> {
-    let slack = slack_hook2::Slack::new(hook)?;
-
-    let slack_text = SlackText::new(format!(
+) -> Result<(), slack_hook::Error> {
+    let slack = Slack::new(hook)?;
+    let payload = PayloadBuilder::new()
+    .text(vec![
+      Text(format!(
         "企画「{}」が申請「{}」に回答しました。",
         project_name.as_str(),
         form_name.as_str()
-    ));
+    ).into())
+    ].as_slice())
+    .build()?;
 
-    slack
-        .send(&Payload {
-            text: Some(slack_text),
-            ..Default::default()
-        })
-        .compat()
-        .await?;
-    Ok(())
+    slack.send(&payload)
 }
