@@ -7819,6 +7819,70 @@ rec {
         };
         resolvedDefaultFeatures = [ "default" "std" ];
       };
+      "slack-hook" = rec {
+        crateName = "slack-hook";
+        version = "0.8.0";
+        edition = "2015";
+        sha256 = "04acix9baqgzm1g5kgmgjd5qdc5d6sps9i37a9syrlicfqrnpqjh";
+        authors = [
+          "Christopher Brickley <brickley@gmail.com>"
+        ];
+        dependencies = [
+          {
+            name = "chrono";
+            packageId = "chrono";
+          }
+          {
+            name = "error-chain";
+            packageId = "error-chain 0.11.0";
+          }
+          {
+            name = "hex";
+            packageId = "hex 0.3.2";
+          }
+          {
+            name = "reqwest";
+            packageId = "reqwest 0.9.24";
+          }
+          {
+            name = "serde";
+            packageId = "serde";
+          }
+          {
+            name = "serde_derive";
+            packageId = "serde_derive";
+          }
+          {
+            name = "serde_json";
+            packageId = "serde_json";
+          }
+          {
+            name = "url_serde";
+            packageId = "url_serde";
+          }
+        ];
+
+      };
+      "smallvec 0.6.14" = rec {
+        crateName = "smallvec";
+        version = "0.6.14";
+        edition = "2015";
+        sha256 = "1q4hz0ssnv24s6fq5kfp2wzrrprrrjiwc42a0h7s7nwym3mwlzxr";
+        libPath = "lib.rs";
+        authors = [
+          "Simon Sapin <simon.sapin@exyr.org>"
+        ];
+        dependencies = [
+          {
+            name = "maybe-uninit";
+            packageId = "maybe-uninit";
+          }
+        ];
+        features = {
+          "default" = [ "std" ];
+        };
+        resolvedDefaultFeatures = [ "default" "std" ];
+      };
       "smallvec 1.6.1" = rec {
         crateName = "smallvec";
         version = "1.6.1";
