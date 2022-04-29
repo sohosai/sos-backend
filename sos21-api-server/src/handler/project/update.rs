@@ -1,5 +1,5 @@
 use crate::app::Context;
-use crate::handler::model::project::{Project, ProjectAttribute, ProjectId};
+use crate::handler::model::project::{Project, ProjectId};
 use crate::handler::{HandlerResponse, HandlerResult};
 
 use serde::{Deserialize, Serialize};
@@ -20,8 +20,6 @@ pub struct Request {
     pub kana_group_name: Option<String>,
     #[serde(default)]
     pub description: Option<String>,
-    #[serde(default)]
-    pub attributes: Option<Vec<ProjectAttribute>>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -74,7 +72,6 @@ impl From<update_project::Error> for Error {
             update_project::Error::InvalidDescription => Error::InvalidField {
                 field: "description",
             },
-            update_project::Error::DuplicatedAttributes => Error::DuplicatedProjectAttributes,
         }
     }
 }
@@ -88,12 +85,6 @@ pub async fn handler(ctx: Login<Context>, request: Request) -> HandlerResult<Res
         group_name: request.group_name,
         kana_group_name: request.kana_group_name,
         description: request.description,
-        attributes: request.attributes.map(|attributes| {
-            attributes
-                .into_iter()
-                .map(ProjectAttribute::into_use_case)
-                .collect()
-        }),
     };
     let project = update_project::run(&ctx, input).await?;
     let project = Project::from_use_case(project);
