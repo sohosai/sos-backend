@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Bounded",""],["Unbounded",""]],"trait":[["Bound",""]]});

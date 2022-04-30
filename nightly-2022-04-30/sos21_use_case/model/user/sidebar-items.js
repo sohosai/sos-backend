@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["UserCategory",""],["UserRole",""]],"struct":[["User",""],["UserId",""],["UserKanaName",""],["UserName",""]]});
