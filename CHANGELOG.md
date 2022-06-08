@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Send Slack notification when a new form answer is submitted
+- Enable `workflow_dispatch` event on Beta/Main Workflows
 
 ### Changed
 ### Deprecated
