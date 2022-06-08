@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Claims","The decoded JWT claims returned from Firebase Authentication. https://firebase.google.com/docs/rules/rules-and-auth"]]});

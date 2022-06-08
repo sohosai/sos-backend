@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["CheckAnswerErrorKind",""],["FromBoxesErrorKind",""]],"mod":[["checkbox",""],["limit",""]],"struct":[["CheckAnswerError",""],["CheckboxFormItem",""],["CheckboxFormItemBoxes",""],["CheckboxFormItemContent",""],["FromBoxesError",""],["InconsistentCheckLimitsError",""]]});
