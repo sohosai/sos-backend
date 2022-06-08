@@ -11,6 +11,8 @@ use sos21_domain::context::{
 };
 use sos21_domain::model::{date_time::DateTime, form};
 
+use sos21_gateway_slack as slack;
+
 #[derive(Debug, Clone)]
 pub struct Input {
     pub project_id: ProjectId,
@@ -26,6 +28,7 @@ pub enum Error {
     AlreadyAnswered,
     InvalidItems(interface::form_answer::FormAnswerItemsError),
     InvalidAnswer(interface::form::CheckAnswerError),
+    NotificationFailed,
 }
 
 impl Error {
@@ -105,6 +108,15 @@ where
         .await
         .context("Failed to store a form answer")?;
     use_case_ensure!(answer.is_visible_to_with_project(login_user, &project));
+
+    // Notify Slack
+
+    if let Some(hook) = form.answer_notification_webhook() {
+        if slack::send_form_answer_notification(hook, project.name(), form.name()).is_err() {
+            return Err(UseCaseError::UseCase(Error::NotificationFailed));
+        };
+    }
+
     Ok(FormAnswer::from_entity(answer))
 }
 

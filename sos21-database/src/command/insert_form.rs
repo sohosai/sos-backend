@@ -15,6 +15,7 @@ where
         starts_at,
         ends_at,
         items,
+        answer_notification_webhook,
     } = form;
 
     sqlx::query!(
@@ -27,8 +28,9 @@ INSERT INTO forms (
     description,
     starts_at,
     ends_at,
-    items
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
+    items,
+    answer_notification_webhook
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 ,$9)
 "#,
         id,
         created_at,
@@ -38,6 +40,7 @@ INSERT INTO forms (
         starts_at,
         ends_at,
         items,
+        answer_notification_webhook
     )
     .execute(conn)
     .await
