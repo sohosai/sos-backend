@@ -73,6 +73,7 @@
 <span id="70">70</span>
 <span id="71">71</span>
 <span id="72">72</span>
+<span id="73">73</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::{<span class="ident">Form</span>, <span class="ident">FormData</span>, <span class="ident">FormProjectQueryConjunction</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
@@ -123,6 +124,7 @@ GROUP BY forms.id
             <span class="ident">starts_at</span>: <span class="ident">row</span>.<span class="ident">starts_at</span>,
             <span class="ident">ends_at</span>: <span class="ident">row</span>.<span class="ident">ends_at</span>,
             <span class="ident">items</span>: <span class="ident">row</span>.<span class="ident">items</span>,
+            <span class="ident">answer_notification_webhook</span>: <span class="ident">row</span>.<span class="ident">answer_notification_webhook</span>,
         };
 
         <span class="kw">let</span> <span class="ident">include_ids</span> <span class="op">=</span> <span class="ident">row</span>.<span class="ident">include_ids</span>.<span class="ident">unwrap_or_else</span>(<span class="ident">Vec</span>::<span class="ident">new</span>);

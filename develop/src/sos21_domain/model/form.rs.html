@@ -631,6 +631,17 @@
 <span id="628">628</span>
 <span id="629">629</span>
 <span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::<span class="ident">FormAnswerRepository</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
@@ -684,6 +695,7 @@
     <span class="kw">pub</span> <span class="ident">period</span>: <span class="ident">FormPeriod</span>,
     <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">FormItems</span>,
     <span class="kw">pub</span> <span class="ident">condition</span>: <span class="ident">FormCondition</span>,
+    <span class="kw">pub</span> <span class="ident">answer_notification_webhook</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
@@ -765,6 +777,7 @@
         <span class="ident">period</span>: <span class="ident">FormPeriod</span>,
         <span class="ident">items</span>: <span class="ident">FormItems</span>,
         <span class="ident">condition</span>: <span class="ident">FormCondition</span>,
+        <span class="ident">answer_notification_webhook</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">NewFormError</span><span class="op">&gt;</span> {
         <span class="ident">author</span>
             .<span class="ident">require_permissions</span>(<span class="ident">Permissions</span>::<span class="ident">CREATE_FORMS</span>)
@@ -787,6 +800,7 @@
             <span class="ident">period</span>,
             <span class="ident">items</span>,
             <span class="ident">condition</span>,
+            <span class="ident">answer_notification_webhook</span>,
         }))
     }
 
@@ -873,6 +887,10 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_items</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">FormItems</span> {
         <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">items</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">answer_notification_webhook</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">content</span>.<span class="ident">answer_notification_webhook</span>
     }
 }
 
@@ -1053,7 +1071,8 @@
                 <span class="ident">test_model</span>::<span class="ident">mock_form_description</span>(),
                 <span class="ident">period</span>,
                 <span class="ident">test_model</span>::<span class="ident">new_form_items</span>(),
-                <span class="ident">test_model</span>::<span class="ident">mock_form_condition</span>()
+                <span class="ident">test_model</span>::<span class="ident">mock_form_condition</span>(),
+                <span class="ident">test_model</span>::<span class="ident">mock_form_answer_notification_webhook</span>()
             ),
             <span class="prelude-val">Err</span>(<span class="ident">err</span>)
             <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">kind</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">NewFormErrorKind</span>::<span class="ident">TooEarlyPeriodStart</span>
@@ -1070,7 +1089,8 @@
                 <span class="ident">test_model</span>::<span class="ident">mock_form_description</span>(),
                 <span class="ident">test_model</span>::<span class="ident">new_form_period_from_now</span>(),
                 <span class="ident">test_model</span>::<span class="ident">new_form_items</span>(),
-                <span class="ident">test_model</span>::<span class="ident">mock_form_condition</span>()
+                <span class="ident">test_model</span>::<span class="ident">mock_form_condition</span>(),
+                <span class="ident">test_model</span>::<span class="ident">mock_form_answer_notification_webhook</span>()
             ),
             <span class="prelude-val">Err</span>(<span class="ident">err</span>)
             <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">kind</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">NewFormErrorKind</span>::<span class="ident">InsufficientPermissions</span>
@@ -1087,7 +1107,8 @@
                 <span class="ident">test_model</span>::<span class="ident">mock_form_description</span>(),
                 <span class="ident">test_model</span>::<span class="ident">new_form_period_from_now</span>(),
                 <span class="ident">test_model</span>::<span class="ident">new_form_items</span>(),
-                <span class="ident">test_model</span>::<span class="ident">mock_form_condition</span>()
+                <span class="ident">test_model</span>::<span class="ident">mock_form_condition</span>(),
+                <span class="ident">test_model</span>::<span class="ident">mock_form_answer_notification_webhook</span>()
             ),
             <span class="prelude-val">Err</span>(<span class="ident">err</span>)
             <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">kind</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">NewFormErrorKind</span>::<span class="ident">InsufficientPermissions</span>
@@ -1107,7 +1128,8 @@
                 <span class="ident">test_model</span>::<span class="ident">mock_form_description</span>(),
                 <span class="ident">period</span>,
                 <span class="ident">test_model</span>::<span class="ident">new_form_items</span>(),
-                <span class="ident">test_model</span>::<span class="ident">mock_form_condition</span>()
+                <span class="ident">test_model</span>::<span class="ident">mock_form_condition</span>(),
+                <span class="ident">test_model</span>::<span class="ident">mock_form_answer_notification_webhook</span>()
             ),
             <span class="prelude-val">Ok</span>(<span class="ident">got</span>)
             <span class="kw">if</span> <span class="ident">got</span>.<span class="ident">author_id</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">author</span>.<span class="ident">id</span>()

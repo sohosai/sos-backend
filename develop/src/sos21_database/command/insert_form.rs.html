@@ -48,6 +48,9 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">form</span>::<span class="ident">Form</span>;
 
@@ -66,6 +69,7 @@
         <span class="ident">starts_at</span>,
         <span class="ident">ends_at</span>,
         <span class="ident">items</span>,
+        <span class="ident">answer_notification_webhook</span>,
     } <span class="op">=</span> <span class="ident">form</span>;
 
     <span class="ident">sqlx</span>::<span class="macro">query</span><span class="macro">!</span>(
@@ -78,8 +82,9 @@ INSERT INTO forms (
     description,
     starts_at,
     ends_at,
-    items
-) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 )
+    items,
+    answer_notification_webhook
+) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8 ,$9)
 &quot;#</span>,
         <span class="ident">id</span>,
         <span class="ident">created_at</span>,
@@ -89,6 +94,7 @@ INSERT INTO forms (
         <span class="ident">starts_at</span>,
         <span class="ident">ends_at</span>,
         <span class="ident">items</span>,
+        <span class="ident">answer_notification_webhook</span>
     )
     .<span class="ident">execute</span>(<span class="ident">conn</span>)
     .<span class="kw">await</span>

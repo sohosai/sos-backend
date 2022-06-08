@@ -133,6 +133,9 @@
 <span id="130">130</span>
 <span id="131">131</span>
 <span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">app</span>::<span class="ident">Context</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::{
@@ -192,6 +195,7 @@
     <span class="ident">InvalidFormAnswer</span> {
         <span class="ident">id</span>: <span class="ident">FormItemId</span>,
     },
+    <span class="ident">NotificationFailed</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">HandlerResponse</span> <span class="kw">for</span> <span class="ident">Error</span> {
@@ -207,6 +211,7 @@
             <span class="ident">Error</span>::<span class="ident">MismatchedFormItemsLength</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">BAD_REQUEST</span>,
             <span class="ident">Error</span>::<span class="ident">MismatchedFormItemId</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">BAD_REQUEST</span>,
             <span class="ident">Error</span>::<span class="ident">InvalidFormAnswer</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">BAD_REQUEST</span>,
+            <span class="ident">Error</span>::<span class="ident">NotificationFailed</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">StatusCode</span>::<span class="ident">INTERNAL_SERVER_ERROR</span>,
         }
     }
 }
@@ -247,6 +252,7 @@
                     }
                 }
             },
+            <span class="ident">answer_form</span>::<span class="ident">Error</span>::<span class="ident">NotificationFailed</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Error</span>::<span class="ident">NotificationFailed</span>,
         }
     }
 }
