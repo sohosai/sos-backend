@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Send Slack notification when a new form answer is submitted
 - Enable `workflow_dispatch` event on Beta/Main Workflows
+- `/get-project-creation-availability` endpoint to check if it's in a project creation period ([#157](https://github.com/sohosai/sos21-backend/pull/157))
+
 
 ### Changed
 ### Deprecated
