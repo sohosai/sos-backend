@@ -94,6 +94,7 @@ pub fn endpoints(
             },
             / "file-sharing" / "list" => GET (handler::me::file_sharing::list),
         },
+        / "get-project-creation-availability" =>{noauth}  GET(handler::project_creation_availability::get),
         / "project" {
             / "prepare" => POST (handler::project::prepare),
             / "create" => POST (handler::project::create),
