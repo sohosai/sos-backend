@@ -7,6 +7,7 @@ pub mod form;
 pub mod form_answer;
 pub mod pending_project;
 pub mod project;
+pub mod project_creation_availability;
 pub mod project_query;
 pub mod registration_form;
 pub mod registration_form_answer;

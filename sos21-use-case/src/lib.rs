@@ -50,6 +50,7 @@ pub mod get_pending_project_registration_form;
 pub mod get_pending_project_registration_form_answer;
 pub mod get_project;
 pub mod get_project_by_code;
+pub mod get_project_creation_availability;
 pub mod get_project_form;
 pub mod get_project_form_answer;
 pub mod get_project_form_answer_shared_file;
