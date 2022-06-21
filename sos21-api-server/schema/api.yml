@@ -6122,6 +6122,32 @@ paths:
       operationId: meta/get-build-info
       description: ビルド時の情報を取得します。
       security: []
+  /get-project-creation-availability:
+    get:
+      description: '各企画区分について、企画登録期間かどうかを調べます。'
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: number
+                  general_online:
+                    type: boolean
+                  general_physical:
+                    type: boolean
+                  stage_online:
+                    type: boolean
+                  stage_physical:
+                    type: boolean
+                  cooking_physical:
+                    type: boolean
+                  food_physical:
+                    type: boolean
 components:
   securitySchemes:
     token:
