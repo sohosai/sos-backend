@@ -32,6 +32,7 @@ pub fn new_pending_project_with_attributes(
             description: test_model::mock_project_description(),
             category,
             attributes: ProjectAttributes::from_attributes(attributes.iter().copied()).unwrap(),
+            exceptional_complete_deadline: None,
         },
         author_id,
     )
