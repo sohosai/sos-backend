@@ -7,17 +7,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-
-- Send Slack notification when a new form answer is submitted
-- Enable `workflow_dispatch` event on Beta/Main Workflows
-- `/get-project-creation-availability` endpoint to check if it's in a project creation period ([#157](https://github.com/sohosai/sos21-backend/pull/157))
-- Store `exceptional_complete_deadline` and apply it to prepare project or to answer registration form([#158](https://github.com/sohosai/sos21-backend/pull/158))
-
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## [0.6.1-beta] - 2022-06-22
+
+### Added
+
+- Send Slack notification when a new form answer is submitted
+- Enable `workflow_dispatch` event on Beta/Main Workflows
+- `/get-project-creation-availability` endpoint to check if it's in a project creation period ([#157](https://github.com/sohosai/sos21-backend/pull/157))
+- Store `exceptional_complete_deadline` and apply it to prepare project or to answer registration form([#158](https://github.com/sohosai/sos21-backend/pull/158))
 
 ## [0.6.0] - 2022-04-13
 
