@@ -237,6 +237,10 @@
 <span id="234">234</span>
 <span id="235">235</span>
 <span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">project_repository</span>::{
     <span class="ident">from_project_attributes</span>, <span class="ident">from_project_category</span>, <span class="ident">to_project_attributes</span>, <span class="ident">to_project_category</span>,
@@ -397,6 +401,7 @@
         <span class="ident">starts_at</span>,
         <span class="ident">ends_at</span>,
         <span class="ident">items</span>,
+        <span class="ident">answer_notification_webhook</span>,
     } <span class="op">=</span> <span class="ident">data</span>.<span class="ident">form</span>;
 
     <span class="kw">let</span> <span class="ident">starts_at</span> <span class="op">=</span> <span class="ident">DateTime</span>::<span class="ident">from_utc</span>(<span class="ident">starts_at</span>);
@@ -434,6 +439,7 @@
         <span class="ident">period</span>: <span class="ident">FormPeriod</span>::<span class="ident">from_datetime</span>(<span class="ident">starts_at</span>, <span class="ident">ends_at</span>)<span class="question-mark">?</span>,
         <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">from_value</span>(<span class="ident">items</span>)<span class="question-mark">?</span>,
         <span class="ident">condition</span>,
+        <span class="ident">answer_notification_webhook</span>,
     }))
 }
 
@@ -447,6 +453,7 @@
         <span class="ident">period</span>,
         <span class="ident">items</span>,
         <span class="ident">condition</span>: <span class="kw">_</span>,
+        <span class="ident">answer_notification_webhook</span>,
     } <span class="op">=</span> <span class="ident">form</span>.<span class="ident">into_content</span>();
 
     <span class="prelude-val">Ok</span>(<span class="ident">data</span>::<span class="ident">form</span>::<span class="ident">Form</span> {
@@ -458,6 +465,7 @@
         <span class="ident">starts_at</span>: <span class="ident">period</span>.<span class="ident">starts_at</span>().<span class="ident">utc</span>(),
         <span class="ident">ends_at</span>: <span class="ident">period</span>.<span class="ident">ends_at</span>().<span class="ident">utc</span>(),
         <span class="ident">items</span>: <span class="ident">serde_json</span>::<span class="ident">to_value</span>(<span class="kw-2">&amp;</span><span class="ident">items</span>)<span class="question-mark">?</span>,
+        <span class="ident">answer_notification_webhook</span>,
     })
 }
 

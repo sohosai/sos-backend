@@ -105,6 +105,8 @@
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">handler</span>::<span class="ident">model</span>::<span class="ident">project</span>::<span class="ident">ProjectId</span>;
@@ -188,6 +190,7 @@
     <span class="kw">pub</span> <span class="ident">ends_at</span>: <span class="ident">DateTime</span>,
     <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FormItem</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">condition</span>: <span class="ident">FormCondition</span>,
+    <span class="kw">pub</span> <span class="ident">answer_notification_webhook</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Form</span> {
@@ -207,6 +210,7 @@
             <span class="ident">ends_at</span>: <span class="ident">DateTime</span>::<span class="ident">from_use_case</span>(<span class="ident">form</span>.<span class="ident">ends_at</span>),
             <span class="ident">items</span>,
             <span class="ident">condition</span>: <span class="ident">FormCondition</span>::<span class="ident">from_use_case</span>(<span class="ident">form</span>.<span class="ident">condition</span>),
+            <span class="ident">answer_notification_webhook</span>: <span class="ident">form</span>.<span class="ident">answer_notification_webhook</span>,
         }
     }
 }

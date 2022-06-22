@@ -257,6 +257,7 @@
 <span id="254">254</span>
 <span id="255">255</span>
 <span id="256">256</span>
+<span id="257">257</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">UseCaseError</span>, <span class="ident">UseCaseResult</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">pending_project</span>::<span class="ident">PendingProject</span>;
@@ -373,6 +374,7 @@
         <span class="ident">description</span>,
         <span class="ident">input</span>.<span class="ident">category</span>.<span class="ident">into_entity</span>(),
         <span class="ident">attributes</span>,
+        <span class="prelude-val">None</span>,
     )
     .<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> <span class="ident">UseCaseError</span>::<span class="ident">UseCase</span>(<span class="ident">Error</span>::<span class="ident">from_new_pending_project_error</span>(<span class="ident">err</span>)))<span class="question-mark">?</span>;
     <span class="ident">ctx</span>.<span class="ident">store_pending_project</span>(<span class="ident">pending_project</span>.<span class="ident">clone</span>())

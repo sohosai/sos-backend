@@ -85,6 +85,8 @@
 <span id="82">82</span>
 <span id="83">83</span>
 <span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::<span class="ident">ProjectId</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project_query</span>::<span class="ident">ProjectQuery</span>;
@@ -146,6 +148,7 @@
     <span class="kw">pub</span> <span class="ident">ends_at</span>: <span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FormItem</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">condition</span>: <span class="ident">FormCondition</span>,
+    <span class="kw">pub</span> <span class="ident">answer_notification_webhook</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Form</span> {
@@ -160,6 +163,7 @@
             <span class="ident">description</span>: <span class="ident">form</span>.<span class="ident">description</span>().<span class="ident">clone</span>().<span class="ident">into_string</span>(),
             <span class="ident">starts_at</span>: <span class="ident">period</span>.<span class="ident">starts_at</span>().<span class="ident">utc</span>(),
             <span class="ident">ends_at</span>: <span class="ident">period</span>.<span class="ident">ends_at</span>().<span class="ident">utc</span>(),
+            <span class="ident">answer_notification_webhook</span>: <span class="ident">form</span>.<span class="ident">answer_notification_webhook</span>().<span class="ident">clone</span>(),
             <span class="ident">items</span>: <span class="ident">form</span>
                 .<span class="ident">into_items</span>()
                 .<span class="ident">into_items</span>()

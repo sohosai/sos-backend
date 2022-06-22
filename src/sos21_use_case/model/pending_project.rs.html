@@ -57,6 +57,10 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttribute</span>, <span class="ident">ProjectCategory</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">user</span>::<span class="ident">UserId</span>;
@@ -91,6 +95,7 @@
     <span class="kw">pub</span> <span class="ident">description</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">category</span>: <span class="ident">ProjectCategory</span>,
     <span class="kw">pub</span> <span class="ident">attributes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProjectAttribute</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">exceptional_complete_deadline</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">DateTime</span><span class="op">&lt;</span><span class="ident">Utc</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">PendingProject</span> {
@@ -111,6 +116,9 @@
                 .<span class="ident">attributes</span>()
                 .<span class="ident">map</span>(<span class="ident">ProjectAttribute</span>::<span class="ident">from_entity</span>)
                 .<span class="ident">collect</span>(),
+            <span class="ident">exceptional_complete_deadline</span>: <span class="ident">pending_project</span>
+                .<span class="ident">exceptional_complete_deadline</span>()
+                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">utc</span>()),
         }
     }
 }
