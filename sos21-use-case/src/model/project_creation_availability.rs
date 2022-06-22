@@ -1,4 +1,4 @@
-use chrono::{DateTime,Utc};
+use chrono::{DateTime, Utc};
 
 #[derive(Debug, Clone, Copy)]
 pub struct ProjectCreationAvailability {

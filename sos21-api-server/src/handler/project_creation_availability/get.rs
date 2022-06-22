@@ -7,7 +7,6 @@ use sos21_use_case::get_project_creation_availability;
 use sos21_use_case::model::project_creation_availability::ProjectCreationAvailability;
 use warp::http::StatusCode;
 
-
 #[derive(Debug, Clone, Deserialize)]
 pub struct Request {}
 
@@ -39,7 +38,7 @@ impl HandlerResponse for Response {
 }
 
 #[macro_rules_attribute::macro_rules_attribute(handler!)]
-pub async fn handler(ctx: Context,_request: Request) -> HandlerResult<Response,Error> {
+pub async fn handler(ctx: Context, _request: Request) -> HandlerResult<Response, Error> {
     let ProjectCreationAvailability {
         timestamp,
         general_online,
@@ -51,7 +50,7 @@ pub async fn handler(ctx: Context,_request: Request) -> HandlerResult<Response,E
     } = get_project_creation_availability::run(&ctx);
 
     Ok(Response {
-        timestamp:DateTime::from_use_case(timestamp),
+        timestamp: DateTime::from_use_case(timestamp),
         general_online,
         general_physical,
         stage_online,
