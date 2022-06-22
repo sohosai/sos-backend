@@ -235,6 +235,7 @@
 <span id="232">232</span>
 <span id="233">233</span>
 <span id="234">234</span>
+<span id="235">235</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">Infallible</span>;
 
@@ -332,6 +333,7 @@
             },
             <span class="op">/</span> <span class="string">&quot;file-sharing&quot;</span> <span class="op">/</span> <span class="string">&quot;list&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">GET</span> (<span class="ident">handler</span>::<span class="ident">me</span>::<span class="ident">file_sharing</span>::<span class="ident">list</span>),
         },
+        <span class="op">/</span> <span class="string">&quot;get-project-creation-availability&quot;</span> <span class="op">=</span><span class="op">&gt;</span>{<span class="ident">noauth</span>}  <span class="ident">GET</span>(<span class="ident">handler</span>::<span class="ident">project_creation_availability</span>::<span class="ident">get</span>),
         <span class="op">/</span> <span class="string">&quot;project&quot;</span> {
             <span class="op">/</span> <span class="string">&quot;prepare&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">prepare</span>),
             <span class="op">/</span> <span class="string">&quot;create&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">POST</span> (<span class="ident">handler</span>::<span class="ident">project</span>::<span class="ident">create</span>),
