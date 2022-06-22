@@ -769,216 +769,6 @@
       ]
     }
   },
-  "3e2deb5776254b057c1b76651c5be954a512f67199c68f222c09b3cde36d62dd": {
-    "query": "\nSELECT\n        pending_projects.id,\n        pending_projects.created_at,\n        pending_projects.updated_at,\n        pending_projects.name,\n        pending_projects.kana_name,\n        pending_projects.group_name,\n        pending_projects.kana_group_name,\n        pending_projects.description,\n        pending_projects.category AS \"category: ProjectCategory\",\n        pending_projects.attributes AS \"attributes: ProjectAttributes\",\n        owners.id AS owner_id,\n        owners.created_at AS owner_created_at,\n        owners.first_name AS owner_first_name,\n        owners.kana_first_name AS owner_kana_first_name,\n        owners.last_name AS owner_last_name,\n        owners.kana_last_name AS owner_kana_last_name,\n        owners.phone_number AS owner_phone_number,\n        owners.email AS owner_email,\n        owners.role AS \"owner_role: UserRole\",\n        owners.category AS \"owner_category: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id\nFROM pending_projects\nINNER JOIN users AS owners ON (\n    owners.assignment = 'pending_project_owner'\n    AND owners.assignment_owner_pending_project_id = pending_projects.id\n)\nWHERE pending_projects.id = $1\n",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 2,
-          "name": "updated_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 3,
-          "name": "name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 4,
-          "name": "kana_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 5,
-          "name": "group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 6,
-          "name": "kana_group_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 7,
-          "name": "description",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 8,
-          "name": "category: ProjectCategory",
-          "type_info": {
-            "Custom": {
-              "name": "project_category",
-              "kind": {
-                "Enum": [
-                  "general",
-                  "stage",
-                  "cooking",
-                  "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 9,
-          "name": "attributes: ProjectAttributes",
-          "type_info": "Int4"
-        },
-        {
-          "ordinal": 10,
-          "name": "owner_id",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 11,
-          "name": "owner_created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 12,
-          "name": "owner_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 13,
-          "name": "owner_kana_first_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 14,
-          "name": "owner_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 15,
-          "name": "owner_kana_last_name",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 16,
-          "name": "owner_phone_number",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 17,
-          "name": "owner_email",
-          "type_info": "Varchar"
-        },
-        {
-          "ordinal": 18,
-          "name": "owner_role: UserRole",
-          "type_info": {
-            "Custom": {
-              "name": "user_role",
-              "kind": {
-                "Enum": [
-                  "administrator",
-                  "committee_operator",
-                  "committee",
-                  "general"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 19,
-          "name": "owner_category: UserCategory",
-          "type_info": {
-            "Custom": {
-              "name": "user_category",
-              "kind": {
-                "Enum": [
-                  "undergraduate_student",
-                  "graduate_student",
-                  "academic_staff"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 20,
-          "name": "owner_assignment: UserAssignment",
-          "type_info": {
-            "Custom": {
-              "name": "user_assignment",
-              "kind": {
-                "Enum": [
-                  "project_owner",
-                  "project_subowner",
-                  "pending_project_owner"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "ordinal": 21,
-          "name": "owner_assignment_owner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 22,
-          "name": "owner_assignment_subowner_project_id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 23,
-          "name": "owner_assignment_owner_pending_project_id",
-          "type_info": "Uuid"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-        true,
-        true,
-        true
-      ]
-    }
-  },
   "4000f93eecfdc29185f9db2651d9e846214a1f69099a59e5f7e5c98eb80a79d8": {
     "query": "SELECT sum(size)::bigint FROM files WHERE author_id = $1",
     "describe": {
@@ -1687,45 +1477,6 @@
         "Left": [
           "Uuid",
           "UuidArray"
-        ]
-      },
-      "nullable": []
-    }
-  },
-  "5543c84eccf39a5adcec770e7195aac7fd95c28f2301b8632e3c4d352f7b3678": {
-    "query": "\nINSERT INTO pending_projects (\n    id,\n    created_at,\n    updated_at,\n    name,\n    kana_name,\n    group_name,\n    kana_group_name,\n    description,\n    category,\n    attributes\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 )\n",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Timestamptz",
-          "Timestamptz",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          {
-            "Custom": {
-              "name": "project_category",
-              "kind": {
-                "Enum": [
-                  "general",
-                  "stage",
-                  "cooking",
-                  "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
-                ]
-              }
-            }
-          },
-          "Int4"
         ]
       },
       "nullable": []
@@ -4083,6 +3834,222 @@
       "nullable": []
     }
   },
+  "ef32b37880df821ef3bca2548c3807cdde737f75826fb724f4729bd518421558": {
+    "query": "\nSELECT\n        pending_projects.id,\n        pending_projects.created_at,\n        pending_projects.updated_at,\n        pending_projects.name,\n        pending_projects.kana_name,\n        pending_projects.group_name,\n        pending_projects.kana_group_name,\n        pending_projects.description,\n        pending_projects.category AS \"category: ProjectCategory\",\n        pending_projects.attributes AS \"attributes: ProjectAttributes\",\n        pending_projects.exceptional_complete_deadline,\n        owners.id AS owner_id,\n        owners.created_at AS owner_created_at,\n        owners.first_name AS owner_first_name,\n        owners.kana_first_name AS owner_kana_first_name,\n        owners.last_name AS owner_last_name,\n        owners.kana_last_name AS owner_kana_last_name,\n        owners.phone_number AS owner_phone_number,\n        owners.email AS owner_email,\n        owners.role AS \"owner_role: UserRole\",\n        owners.category AS \"owner_category: UserCategory\",\n        owners.assignment AS \"owner_assignment: UserAssignment\",\n        owners.assignment_owner_project_id AS owner_assignment_owner_project_id,\n        owners.assignment_subowner_project_id AS owner_assignment_subowner_project_id,\n        owners.assignment_owner_pending_project_id AS owner_assignment_owner_pending_project_id\nFROM pending_projects\nINNER JOIN users AS owners ON (\n    owners.assignment = 'pending_project_owner'\n    AND owners.assignment_owner_pending_project_id = pending_projects.id\n)\nWHERE pending_projects.id = $1\n",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 4,
+          "name": "kana_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 5,
+          "name": "group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 6,
+          "name": "kana_group_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "description",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 8,
+          "name": "category: ProjectCategory",
+          "type_info": {
+            "Custom": {
+              "name": "project_category",
+              "kind": {
+                "Enum": [
+                  "general",
+                  "stage",
+                  "cooking",
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 9,
+          "name": "attributes: ProjectAttributes",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 10,
+          "name": "exceptional_complete_deadline",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 11,
+          "name": "owner_id",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 12,
+          "name": "owner_created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 13,
+          "name": "owner_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 14,
+          "name": "owner_kana_first_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 15,
+          "name": "owner_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 16,
+          "name": "owner_kana_last_name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 17,
+          "name": "owner_phone_number",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 18,
+          "name": "owner_email",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 19,
+          "name": "owner_role: UserRole",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "administrator",
+                  "committee_operator",
+                  "committee",
+                  "general"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 20,
+          "name": "owner_category: UserCategory",
+          "type_info": {
+            "Custom": {
+              "name": "user_category",
+              "kind": {
+                "Enum": [
+                  "undergraduate_student",
+                  "graduate_student",
+                  "academic_staff"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 21,
+          "name": "owner_assignment: UserAssignment",
+          "type_info": {
+            "Custom": {
+              "name": "user_assignment",
+              "kind": {
+                "Enum": [
+                  "project_owner",
+                  "project_subowner",
+                  "pending_project_owner"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "ordinal": 22,
+          "name": "owner_assignment_owner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 23,
+          "name": "owner_assignment_subowner_project_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 24,
+          "name": "owner_assignment_owner_pending_project_id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
   "f3f58600e971f1be6cbe206bba24f77769f54c6230e28f5b3dc719b869d9cb3f": {
     "query": "SELECT * FROM users WHERE email = $1",
     "describe": {
@@ -4213,6 +4180,46 @@
         true,
         true
       ]
+    }
+  },
+  "fb20ca93a3e9d3ca0ccdcec33b8de03c9c1023257853cc8f8922ae14d359ddd7": {
+    "query": "\nINSERT INTO pending_projects (\n    id,\n    created_at,\n    updated_at,\n    name,\n    kana_name,\n    group_name,\n    kana_group_name,\n    description,\n    category,\n    attributes,\n    exceptional_complete_deadline\n) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 , $11)\n",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Timestamptz",
+          "Timestamptz",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          {
+            "Custom": {
+              "name": "project_category",
+              "kind": {
+                "Enum": [
+                  "general",
+                  "stage",
+                  "cooking",
+                  "food",
+                  "general_online",
+                  "general_physical",
+                  "stage_online",
+                  "stage_physical",
+                  "cooking_physical",
+                  "food_physical"
+                ]
+              }
+            }
+          },
+          "Int4",
+          "Timestamptz"
+        ]
+      },
+      "nullable": []
     }
   },
   "fd4e7d0c2c2b07f9543882cb1e18345abbc109ad7ac814f867495a22618e07a5": {
