@@ -6124,7 +6124,10 @@ paths:
       security: []
   /get-project-creation-availability:
     get:
-      description: "各企画区分について、企画登録期間かどうかを調べます。"
+      summary: /get-project-creation-availability
+      tags:
+        - project
+        - pending_project
       parameters: []
       responses:
         "200":
@@ -6148,6 +6151,9 @@ paths:
                     type: boolean
                   food_physical:
                     type: boolean
+      operationId: get-project-creation-availability
+      description: "各企画区分について、企画登録期間かどうかを調べます。"
+      security: []
 components:
   securitySchemes:
     token:
