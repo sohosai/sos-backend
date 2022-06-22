@@ -148,7 +148,7 @@ impl Project {
         let created_at = DateTime::now();
         if !(ctx
             .project_creation_period_for(pending_project.category())
-            .contains(created_at) && created_at <= pending_project.exceptional_complete_deadline().unwrap_or(created_at))
+            .contains(created_at) || created_at < pending_project.exceptional_complete_deadline().unwrap_or(created_at))
         {
             return Err(DomainError::Domain(NewProjectError {
                 kind: NewProjectErrorKind::OutOfCreationPeriod,
