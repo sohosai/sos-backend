@@ -31,6 +31,7 @@ pub struct PendingProject {
     pub description: String,
     pub category: ProjectCategory,
     pub attributes: Vec<ProjectAttribute>,
+    pub exceptional_complete_deadline: Option<DateTime<Utc>>,
 }
 
 impl PendingProject {
@@ -51,6 +52,9 @@ impl PendingProject {
                 .attributes()
                 .map(ProjectAttribute::from_entity)
                 .collect(),
+            exceptional_complete_deadline: pending_project
+                .exceptional_complete_deadline()
+                .map(|x| x.utc()),
         }
     }
 }
