@@ -465,6 +465,10 @@
 <span id="462">462</span>
 <span id="463">463</span>
 <span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::{<span class="ident">ConfigContext</span>, <span class="ident">RegistrationFormAnswerRepository</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">date_time</span>::<span class="ident">DateTime</span>;
@@ -581,9 +585,13 @@
         }
 
         <span class="kw">let</span> <span class="ident">created_at</span> <span class="op">=</span> <span class="ident">DateTime</span>::<span class="ident">now</span>();
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">ctx</span>
+        <span class="kw">if</span> <span class="op">!</span>(<span class="ident">ctx</span>
             .<span class="ident">project_creation_period_for</span>(<span class="ident">pending_project</span>.<span class="ident">category</span>())
             .<span class="ident">contains</span>(<span class="ident">created_at</span>)
+            <span class="op">|</span><span class="op">|</span> <span class="ident">created_at</span>
+                <span class="op">&lt;</span> <span class="ident">pending_project</span>
+                    .<span class="ident">exceptional_complete_deadline</span>()
+                    .<span class="ident">unwrap_or</span>(<span class="ident">created_at</span>))
         {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">DomainError</span>::<span class="ident">Domain</span>(<span class="ident">NewRegistrationFormAnswerError</span> {
                 <span class="ident">kind</span>: <span class="ident">NewRegistrationFormAnswerErrorKind</span>::<span class="ident">OutOfProjectCreationPeriod</span>,

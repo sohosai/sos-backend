@@ -93,6 +93,8 @@
 <span id="90">90</span>
 <span id="91">91</span>
 <span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">pending_project</span>::{<span class="ident">PendingProject</span>, <span class="ident">PendingProjectWithOwner</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">model</span>::<span class="ident">project</span>::{<span class="ident">ProjectAttributes</span>, <span class="ident">ProjectCategory</span>};
@@ -121,6 +123,7 @@ SELECT
         pending_projects.description,
         pending_projects.category AS &quot;category: ProjectCategory&quot;,
         pending_projects.attributes AS &quot;attributes: ProjectAttributes&quot;,
+        pending_projects.exceptional_complete_deadline,
         owners.id AS owner_id,
         owners.created_at AS owner_created_at,
         owners.first_name AS owner_first_name,
@@ -163,6 +166,7 @@ WHERE pending_projects.id = $1
         <span class="ident">description</span>: <span class="ident">row</span>.<span class="ident">description</span>,
         <span class="ident">category</span>: <span class="ident">row</span>.<span class="ident">category</span>,
         <span class="ident">attributes</span>: <span class="ident">row</span>.<span class="ident">attributes</span>,
+        <span class="ident">exceptional_complete_deadline</span>: <span class="ident">row</span>.<span class="ident">exceptional_complete_deadline</span>,
     };
     <span class="kw">let</span> <span class="ident">owner</span> <span class="op">=</span> <span class="ident">User</span> {
         <span class="ident">id</span>: <span class="ident">row</span>.<span class="ident">owner_id</span>,
