@@ -56,6 +56,7 @@ pub enum Error {
     InvalidFormAnswer {
         id: FormItemId,
     },
+    NotificationFailed,
 }
 
 impl HandlerResponse for Error {
@@ -71,6 +72,7 @@ impl HandlerResponse for Error {
             Error::MismatchedFormItemsLength => StatusCode::BAD_REQUEST,
             Error::MismatchedFormItemId { .. } => StatusCode::BAD_REQUEST,
             Error::InvalidFormAnswer { .. } => StatusCode::BAD_REQUEST,
+            Error::NotificationFailed => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
@@ -111,6 +113,7 @@ impl From<answer_form::Error> for Error {
                     }
                 }
             },
+            answer_form::Error::NotificationFailed => Error::NotificationFailed,
         }
     }
 }

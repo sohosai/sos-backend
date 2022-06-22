@@ -54,6 +54,7 @@ WHERE forms.id = $1
         starts_at: row.starts_at,
         ends_at: row.ends_at,
         items: row.items,
+        answer_notification_webhook: row.answer_notification_webhook,
     };
 
     let include_ids = row.include_ids.unwrap_or_else(Vec::new);

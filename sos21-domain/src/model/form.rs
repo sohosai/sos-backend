@@ -50,6 +50,7 @@ pub struct FormContent {
     pub period: FormPeriod,
     pub items: FormItems,
     pub condition: FormCondition,
+    pub answer_notification_webhook: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -131,6 +132,7 @@ impl Form {
         period: FormPeriod,
         items: FormItems,
         condition: FormCondition,
+        answer_notification_webhook: Option<String>,
     ) -> Result<Self, NewFormError> {
         author
             .require_permissions(Permissions::CREATE_FORMS)
@@ -153,6 +155,7 @@ impl Form {
             period,
             items,
             condition,
+            answer_notification_webhook,
         }))
     }
 
@@ -239,6 +242,10 @@ impl Form {
 
     pub fn into_items(self) -> FormItems {
         self.content.items
+    }
+
+    pub fn answer_notification_webhook(&self) -> &Option<String> {
+        &self.content.answer_notification_webhook
     }
 }
 
@@ -419,7 +426,8 @@ mod tests {
                 test_model::mock_form_description(),
                 period,
                 test_model::new_form_items(),
-                test_model::mock_form_condition()
+                test_model::mock_form_condition(),
+                test_model::mock_form_answer_notification_webhook()
             ),
             Err(err)
             if err.kind() == NewFormErrorKind::TooEarlyPeriodStart
@@ -436,7 +444,8 @@ mod tests {
                 test_model::mock_form_description(),
                 test_model::new_form_period_from_now(),
                 test_model::new_form_items(),
-                test_model::mock_form_condition()
+                test_model::mock_form_condition(),
+                test_model::mock_form_answer_notification_webhook()
             ),
             Err(err)
             if err.kind() == NewFormErrorKind::InsufficientPermissions
@@ -453,7 +462,8 @@ mod tests {
                 test_model::mock_form_description(),
                 test_model::new_form_period_from_now(),
                 test_model::new_form_items(),
-                test_model::mock_form_condition()
+                test_model::mock_form_condition(),
+                test_model::mock_form_answer_notification_webhook()
             ),
             Err(err)
             if err.kind() == NewFormErrorKind::InsufficientPermissions
@@ -473,7 +483,8 @@ mod tests {
                 test_model::mock_form_description(),
                 period,
                 test_model::new_form_items(),
-                test_model::mock_form_condition()
+                test_model::mock_form_condition(),
+                test_model::mock_form_answer_notification_webhook()
             ),
             Ok(got)
             if got.author_id() == author.id()

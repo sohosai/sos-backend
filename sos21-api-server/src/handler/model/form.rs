@@ -80,6 +80,7 @@ pub struct Form {
     pub ends_at: DateTime,
     pub items: Vec<FormItem>,
     pub condition: FormCondition,
+    pub answer_notification_webhook: Option<String>,
 }
 
 impl Form {
@@ -99,6 +100,7 @@ impl Form {
             ends_at: DateTime::from_use_case(form.ends_at),
             items,
             condition: FormCondition::from_use_case(form.condition),
+            answer_notification_webhook: form.answer_notification_webhook,
         }
     }
 }

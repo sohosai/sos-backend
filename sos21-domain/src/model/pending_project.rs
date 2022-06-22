@@ -35,6 +35,7 @@ pub struct PendingProjectContent {
     pub description: ProjectDescription,
     pub category: ProjectCategory,
     pub attributes: ProjectAttributes,
+    pub exceptional_complete_deadline: Option<DateTime>,
 }
 
 #[derive(Debug, Clone)]
@@ -77,6 +78,7 @@ impl PendingProject {
         description: ProjectDescription,
         category: ProjectCategory,
         attributes: ProjectAttributes,
+        exceptional_complete_deadline: Option<DateTime>,
     ) -> Result<Self, NewPendingProjectError>
     where
         C: ConfigContext,
@@ -126,6 +128,7 @@ impl PendingProject {
                 description,
                 category,
                 attributes,
+                exceptional_complete_deadline,
             },
             owner.id().clone(),
         ))
@@ -169,6 +172,10 @@ impl PendingProject {
 
     pub fn attributes(&self) -> &ProjectAttributes {
         &self.content.attributes
+    }
+
+    pub fn exceptional_complete_deadline(&self) -> &Option<DateTime> {
+        &self.content.exceptional_complete_deadline
     }
 
     pub fn owner_id(&self) -> &UserId {
@@ -337,6 +344,17 @@ impl PendingProject {
         self.content.updated_at = now;
         Ok(())
     }
+
+    pub fn set_exceptional_complete_deadline(
+        &mut self,
+        user: &User,
+        exceptional_complete_deadline: Option<DateTime>,
+    ) -> Result<(), NoUpdatePermissionError> {
+        user.require_permissions(Permissions::UPDATE_ALL_PENDING_PROJECTS)
+            .map_err(NoUpdatePermissionError::from_permissions_error)?;
+        self.content.exceptional_complete_deadline = exceptional_complete_deadline;
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -362,7 +380,8 @@ mod tests {
                 test_model::mock_project_kana_group_name(),
                 test_model::mock_project_description(),
                 ProjectCategory::GeneralOnline,
-                ProjectAttributes::from_attributes(vec![]).unwrap()
+                ProjectAttributes::from_attributes(vec![]).unwrap(),
+                None
             )
             .unwrap_err()
             .kind(),
@@ -390,7 +409,8 @@ mod tests {
                 test_model::mock_project_kana_group_name(),
                 test_model::mock_project_description(),
                 ProjectCategory::GeneralOnline,
-                ProjectAttributes::from_attributes(vec![]).unwrap()
+                ProjectAttributes::from_attributes(vec![]).unwrap(),
+                None
             )
             .unwrap_err()
             .kind(),
@@ -416,7 +436,8 @@ mod tests {
                 test_model::mock_project_kana_group_name(),
                 test_model::mock_project_description(),
                 ProjectCategory::GeneralOnline,
-                ProjectAttributes::from_attributes(vec![]).unwrap()
+                ProjectAttributes::from_attributes(vec![]).unwrap(),
+                None
             )
             .unwrap_err()
             .kind(),

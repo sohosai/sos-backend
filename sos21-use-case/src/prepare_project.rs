@@ -113,6 +113,7 @@ where
         description,
         input.category.into_entity(),
         attributes,
+        None,
     )
     .map_err(|err| UseCaseError::UseCase(Error::from_new_pending_project_error(err)))?;
     ctx.store_pending_project(pending_project.clone())

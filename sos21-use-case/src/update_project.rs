@@ -1,5 +1,5 @@
 use crate::error::{UseCaseError, UseCaseResult};
-use crate::model::project::{Project, ProjectAttribute, ProjectFromEntityInput, ProjectId};
+use crate::model::project::{Project, ProjectFromEntityInput, ProjectId};
 
 use anyhow::Context;
 use sos21_domain::context::project_repository::{self, ProjectRepository};
@@ -14,7 +14,6 @@ pub struct Input {
     pub group_name: Option<String>,
     pub kana_group_name: Option<String>,
     pub description: Option<String>,
-    pub attributes: Option<Vec<ProjectAttribute>>,
 }
 
 #[derive(Debug, Clone)]
@@ -25,7 +24,6 @@ pub enum Error {
     InvalidGroupName,
     InvalidKanaGroupName,
     InvalidDescription,
-    DuplicatedAttributes,
     InsufficientPermissions,
     OutOfCreationPeriod,
 }
@@ -53,10 +51,6 @@ impl Error {
 
     fn from_description_error(_err: project::description::DescriptionError) -> Self {
         Error::InvalidDescription
-    }
-
-    fn from_attributes_error(_err: project::attribute::DuplicatedAttributesError) -> Self {
-        Error::DuplicatedAttributes
     }
 }
 
@@ -129,16 +123,6 @@ where
             .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
     }
 
-    if let Some(attributes) = input.attributes {
-        let attributes = project::ProjectAttributes::from_attributes(
-            attributes.into_iter().map(ProjectAttribute::into_entity),
-        )
-        .map_err(|err| UseCaseError::UseCase(Error::from_attributes_error(err)))?;
-        project
-            .set_attributes(ctx, login_user, attributes)
-            .map_err(|err| UseCaseError::UseCase(Error::from_update_error(err)))?;
-    }
-
     ctx.store_project(project.clone())
         .await
         .context("Failed to store a updated project")?;
@@ -174,7 +158,6 @@ mod tests {
             group_name: None,
             kana_group_name: None,
             description: None,
-            attributes: None,
         };
         (name, input)
     }

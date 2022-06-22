@@ -16,6 +16,7 @@ pub struct PendingProject {
     pub description: String,
     pub category: ProjectCategory,
     pub attributes: ProjectAttributes,
+    pub exceptional_complete_deadline: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Clone)]

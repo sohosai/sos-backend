@@ -14,6 +14,7 @@ pub struct Input {
     pub ends_at: chrono::DateTime<chrono::Utc>,
     pub items: Vec<FormItem>,
     pub condition: FormCondition,
+    pub answer_notification_webhook: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -75,9 +76,18 @@ where
     let ends_at = DateTime::from_utc(input.ends_at);
     let period = form::FormPeriod::from_datetime(starts_at, ends_at)
         .map_err(|err| UseCaseError::UseCase(Error::from_period_error(err)))?;
+    let answer_notification_webhook = input.answer_notification_webhook;
 
-    let form = form::Form::new(login_user, name, description, period, items, condition)
-        .map_err(|err| UseCaseError::UseCase(Error::from_new_form_error(err)))?;
+    let form = form::Form::new(
+        login_user,
+        name,
+        description,
+        period,
+        items,
+        condition,
+        answer_notification_webhook,
+    )
+    .map_err(|err| UseCaseError::UseCase(Error::from_new_form_error(err)))?;
     ctx.store_form(form.clone())
         .await
         .context("Failed to store a form")?;
@@ -118,6 +128,7 @@ mod tests {
                 .map(FormItem::from_entity)
                 .collect(),
             condition: FormCondition::from_entity(test::model::mock_form_condition()),
+            answer_notification_webhook: test::model::mock_form_answer_notification_webhook(),
         };
 
         assert!(matches!(
@@ -152,6 +163,7 @@ mod tests {
                 .map(FormItem::from_entity)
                 .collect(),
             condition: FormCondition::from_entity(test::model::mock_form_condition()),
+            answer_notification_webhook: test::model::mock_form_answer_notification_webhook(),
         };
 
         assert!(matches!(
@@ -187,6 +199,7 @@ mod tests {
                 .map(FormItem::from_entity)
                 .collect(),
             condition: FormCondition::from_entity(test::model::mock_form_condition()),
+            answer_notification_webhook: test::model::mock_form_answer_notification_webhook(),
         };
 
         let result = create_form::run(&app, input).await;
@@ -222,6 +235,7 @@ mod tests {
                 .map(FormItem::from_entity)
                 .collect(),
             condition: FormCondition::from_entity(test::model::mock_form_condition()),
+            answer_notification_webhook: test::model::mock_form_answer_notification_webhook(),
         };
 
         assert!(matches!(

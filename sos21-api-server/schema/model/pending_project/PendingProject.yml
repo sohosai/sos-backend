@@ -25,6 +25,8 @@ properties:
     type: array
     items:
       $ref: ../project/ProjectAttribute.yml
+  exceptional_complete_deadline:
+    $ref: ../DateTime.yml
 required:
   - id
   - created_at

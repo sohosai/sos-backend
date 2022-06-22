@@ -260,6 +260,8 @@ pub use invite_user::handler as invite_user;
 pub mod assign_user_role_to_email;
 pub use assign_user_role_to_email::handler as assign_user_role_to_email;
 
+pub mod project_creation_availability;
+
 pub trait HandlerResponse: Serialize {
     /// Server errors are returned as `anyhow::Error`, not as `HandlerResponse`.
     /// Thus, it always stands that `!x.status_code().is_server_error()`.
