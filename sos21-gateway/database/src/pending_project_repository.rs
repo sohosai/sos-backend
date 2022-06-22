@@ -80,6 +80,7 @@ fn from_pending_project(pending_project: PendingProject) -> data::pending_projec
         description,
         category,
         attributes,
+        exceptional_complete_deadline,
     } = pending_project.into_content();
 
     data::pending_project::PendingProject {
@@ -93,6 +94,7 @@ fn from_pending_project(pending_project: PendingProject) -> data::pending_projec
         description: description.into_string(),
         category: from_project_category(category),
         attributes: from_project_attributes(&attributes),
+        exceptional_complete_deadline: exceptional_complete_deadline.map(|x| x.utc()),
     }
 }
 
@@ -115,6 +117,7 @@ fn to_pending_project_with_owner(
         description,
         category,
         attributes,
+        exceptional_complete_deadline,
     } = pending_project;
 
     let pending_project = PendingProject::from_content(
@@ -129,6 +132,7 @@ fn to_pending_project_with_owner(
             description: ProjectDescription::from_string(description)?,
             category: to_project_category(category),
             attributes: to_project_attributes(attributes)?,
+            exceptional_complete_deadline: exceptional_complete_deadline.map(DateTime::from_utc),
         },
         UserId(owner.id.clone()),
     );
