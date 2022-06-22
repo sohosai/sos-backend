@@ -38,12 +38,14 @@ where
 
 #[cfg(test)]
 mod tests {
-    use chrono::Duration;
+    use chrono::{Duration, Utc};
+    use sos21_domain::model::date_time::DateTime;
     use sos21_domain::model::project::ProjectCategory;
-    use sos21_domain::model::project_creation_period::{self, ProjectCreationPeriod};
-    use sos21_domain::test;
+    use sos21_domain::model::project_creation_period::ProjectCreationPeriod;
 
+    use crate::get_project_creation_availability;
     use crate::model::project_creation_availability::ProjectCreationAvailability;
+    use sos21_domain::test;
 
     // Checks that it returns correct project creation availability at runtime
     #[tokio::test]
@@ -54,17 +56,20 @@ mod tests {
 
         let now = Utc::now();
         let past_period = ProjectCreationPeriod::from_datetime(
-            now - Duration::minutes(10),
-            now - Duration::minutes(5),
-        );
+            DateTime::from_utc(now - Duration::minutes(10)),
+            DateTime::from_utc(now - Duration::minutes(5)),
+        )
+        .unwrap();
         let ongoing_period = ProjectCreationPeriod::from_datetime(
-            now - Duration::minutes(5),
-            now + Duration::minutes(5),
-        );
+            DateTime::from_utc(now - Duration::minutes(5)),
+            DateTime::from_utc(now + Duration::minutes(5)),
+        )
+        .unwrap();
         let future_period = ProjectCreationPeriod::from_datetime(
-            now + Duration::minutes(5),
-            now + Duration::minutes(10),
-        );
+            DateTime::from_utc(now + Duration::minutes(5)),
+            DateTime::from_utc(now + Duration::minutes(10)),
+        )
+        .unwrap();
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone(), operator.clone()])
@@ -85,15 +90,15 @@ mod tests {
             .await;
 
         assert!(matches!(
-            get_project_creation_availability::run(&app, input).await,
-            ProjectCreationAvailability{
+            get_project_creation_availability::run(&app),
+            ProjectCreationAvailability {
                 timestamp: _,
-                general_online: false, // never
-                general_physical: true, // always
-                stage_online: false// past
-                stage_physical: true // ongoing
-                cooking_physical: false // future
-                food_physical: true // ongoing
+                general_online: false,   // never
+                general_physical: true,  // always
+                stage_online: false,     // past
+                stage_physical: true,    // ongoing
+                cooking_physical: false, // future
+                food_physical: true      // ongoing
             }
         ));
     }
