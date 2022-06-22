@@ -25,6 +25,7 @@ SELECT
         pending_projects.description,
         pending_projects.category AS "category: ProjectCategory",
         pending_projects.attributes AS "attributes: ProjectAttributes",
+        pending_projects.exceptional_complete_deadline,
         owners.id AS owner_id,
         owners.created_at AS owner_created_at,
         owners.first_name AS owner_first_name,
@@ -67,6 +68,7 @@ WHERE pending_projects.id = $1
         description: row.description,
         category: row.category,
         attributes: row.attributes,
+        exceptional_complete_deadline: row.exceptional_complete_deadline,
     };
     let owner = User {
         id: row.owner_id,
