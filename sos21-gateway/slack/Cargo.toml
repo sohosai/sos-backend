@@ -1,6 +1,6 @@
 [package]
 name = "sos21-gateway-slack"
-version = "0.6.1-beta"
+version = "0.6.1"
 authors = ["yuseiito <me@yuseiito.com>"]
 edition = "2018"
 

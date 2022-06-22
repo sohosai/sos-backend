@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: sos21-api-server
-  version: 0.6.1-beta
+  version: 0.6.1
   contact:
     name: coord_e
     email: me@coord-e.com
