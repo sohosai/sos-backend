@@ -6124,10 +6124,10 @@ paths:
       security: []
   /get-project-creation-availability:
     get:
-      description: '各企画区分について、企画登録期間かどうかを調べます。'
+      description: "各企画区分について、企画登録期間かどうかを調べます。"
       parameters: []
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
