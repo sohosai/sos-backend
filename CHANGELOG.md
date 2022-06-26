@@ -13,6 +13,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 ### Security
 
+## [0.6.2] - 2022-06-26
+
+### Fixed
+
+- Avoid project index collision by replacing `count_projects` with `get_next_index`([#158](https://github.com/sohosai/sos21-backend/pull/161))
+
 ## [0.6.1] - 2022-06-22
 
 ### Added

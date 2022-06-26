@@ -368,6 +368,23 @@ impl ProjectRepository for MockApp {
         Ok(len)
     }
 
+    async fn get_next_index(&self) -> Result<u64> {
+        let latest_index = self
+            .projects
+            .lock()
+            .await
+            .iter()
+            .map(|(_, x)| x.clone().index().to_u16())
+            .max();
+
+        let index = match latest_index {
+            Some(index) => (index + 1).into(),
+            None => 0,
+        };
+
+        Ok(index)
+    }
+
     async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>> {
         futures::stream::iter(self.projects.lock().await.values().cloned())
             .then(|project| async move {
