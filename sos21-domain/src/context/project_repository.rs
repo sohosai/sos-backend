@@ -18,6 +18,7 @@ pub trait ProjectRepository {
     async fn get_project(&self, id: ProjectId) -> Result<Option<ProjectWithOwners>>;
     async fn get_project_by_index(&self, index: ProjectIndex) -> Result<Option<ProjectWithOwners>>;
     async fn count_projects(&self) -> Result<u64>;
+    async fn get_next_index(&self) -> Result<u64>;
     async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>>;
 }
 
@@ -55,6 +56,13 @@ macro_rules! delegate_project_repository {
             ) -> ::anyhow::Result<u64> {
                 $target.count_projects().await
             }
+
+            async fn get_next_index(
+                &$sel,
+            ) -> ::anyhow::Result<u64> {
+                $target.get_next_index().await
+            }
+
             async fn list_projects(
                 &$sel,
             ) -> ::anyhow::Result<
@@ -82,6 +90,10 @@ impl<C: ProjectRepository + Sync> ProjectRepository for &C {
 
     async fn count_projects(&self) -> Result<u64> {
         <C as ProjectRepository>::count_projects(self).await
+    }
+
+    async fn get_next_index(&self) -> Result<u64> {
+        <C as ProjectRepository>::get_next_index(self).await
     }
 
     async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>> {
