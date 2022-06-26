@@ -173,11 +173,8 @@ impl Project {
             }));
         }
 
-        let projects_count = ctx
-            .count_projects()
-            .await
-            .context("Failed to count projects")?;
-        let projects_count = match projects_count.try_into() {
+        let index = ctx.get_next_index().await.context("Failed to get index")?;
+        let index = match index.try_into() {
             Ok(count) => count,
             Err(err) => {
                 return Err(DomainError::Domain(
@@ -185,10 +182,11 @@ impl Project {
                 ))
             }
         };
-        let index = match ProjectIndex::from_u16(projects_count) {
+        let index = match ProjectIndex::from_u16(index) {
             Ok(index) => index,
             Err(err) => return Err(DomainError::Domain(NewProjectError::from_index_error(err))),
         };
+
 
         if let Some(assignment) = subowner.assignment() {
             let kind = match assignment {
