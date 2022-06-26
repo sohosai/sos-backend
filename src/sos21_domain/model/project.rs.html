@@ -659,9 +659,6 @@
 <span id="656">656</span>
 <span id="657">657</span>
 <span id="658">658</span>
-<span id="659">659</span>
-<span id="660">660</span>
-<span id="661">661</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryInto</span>;
 
@@ -838,11 +835,8 @@
             }));
         }
 
-        <span class="kw">let</span> <span class="ident">projects_count</span> <span class="op">=</span> <span class="ident">ctx</span>
-            .<span class="ident">count_projects</span>()
-            .<span class="kw">await</span>
-            .<span class="ident">context</span>(<span class="string">&quot;Failed to count projects&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">projects_count</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">projects_count</span>.<span class="ident">try_into</span>() {
+        <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">get_next_index</span>().<span class="kw">await</span>.<span class="ident">context</span>(<span class="string">&quot;Failed to get index&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">index</span>.<span class="ident">try_into</span>() {
             <span class="prelude-val">Ok</span>(<span class="ident">count</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">count</span>,
             <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">DomainError</span>::<span class="ident">Domain</span>(
@@ -850,7 +844,7 @@
                 ))
             }
         };
-        <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">ProjectIndex</span>::<span class="ident">from_u16</span>(<span class="ident">projects_count</span>) {
+        <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">ProjectIndex</span>::<span class="ident">from_u16</span>(<span class="ident">index</span>) {
             <span class="prelude-val">Ok</span>(<span class="ident">index</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">index</span>,
             <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">DomainError</span>::<span class="ident">Domain</span>(<span class="ident">NewProjectError</span>::<span class="ident">from_index_error</span>(<span class="ident">err</span>))),
         };
