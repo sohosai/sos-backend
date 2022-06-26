@@ -187,7 +187,6 @@ impl Project {
             Err(err) => return Err(DomainError::Domain(NewProjectError::from_index_error(err))),
         };
 
-
         if let Some(assignment) = subowner.assignment() {
             let kind = match assignment {
                 UserAssignment::ProjectOwner(_) => NewProjectErrorKind::AlreadyProjectOwnerSubowner,
