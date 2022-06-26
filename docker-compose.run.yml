@@ -10,7 +10,7 @@ services:
     depends_on:
       - api-server
   api-server:
-    image: ghcr.io/sohosai/sos21-backend:v0.6.0-beta
+    image: ghcr.io/sohosai/sos21-backend:v0.6.2
     command: sos21-api-server
     environment:
       SOS21_API_SERVER_JWT_AUDIENCE: ${SOS21_FIREBASE_PROJECT_ID:?}
@@ -32,7 +32,7 @@ services:
       - run-migrations
       - create-bucket
   run-migrations:
-    image: ghcr.io/sohosai/sos21-backend:v0.6.0-beta
+    image: ghcr.io/sohosai/sos21-backend:v0.6.2
     command: sos21-run-migrations --wait
     environment:
       SOS21_RUN_MIGRATIONS_POSTGRES_URI: "postgres://sos21:sos21@db:5432/sos21"
