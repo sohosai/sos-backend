@@ -3450,6 +3450,24 @@
       ]
     }
   },
+  "b2c0efcee2f08899a94f774c64d864fd35df50821dea090bd6babf313bebf5ee": {
+    "query": "SELECT max(index)+1 as \"index\" FROM projects",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "index",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        null
+      ]
+    }
+  },
   "cba625a5d5e572deccd73971f40d1a0031b4b6082163a0639799dde7404c0c0d": {
     "query": "\nSELECT count(registration_forms.id)\nFROM registration_forms\nWHERE (\n    SELECT\n        bool_or((\n            registration_form_project_query_conjunctions.category = pending_projects.category IS NOT FALSE\n            AND registration_form_project_query_conjunctions.attributes | pending_projects.attributes = pending_projects.attributes\n        ))\n    FROM registration_form_project_query_conjunctions, pending_projects\n    WHERE registration_form_project_query_conjunctions.registration_form_id = registration_forms.id AND pending_projects.id = $1\n)\n",
     "describe": {
