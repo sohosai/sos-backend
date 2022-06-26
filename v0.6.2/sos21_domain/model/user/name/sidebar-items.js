@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["KanaNameError",""],["NameError",""],["UserKanaName",""],["UserName",""]]});
