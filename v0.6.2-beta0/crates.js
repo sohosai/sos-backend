@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["sos21_api_server","sos21_database","sos21_domain","sos21_gateway_database","sos21_gateway_s3","sos21_gateway_slack","sos21_run_migrations","sos21_use_case"];
