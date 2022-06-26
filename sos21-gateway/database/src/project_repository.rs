@@ -69,6 +69,11 @@ impl ProjectRepository for ProjectDatabase {
         query::count_projects(&mut *lock).await
     }
 
+    async fn get_next_index(&self) -> Result<u64> {
+        let mut lock = self.0.lock().await;
+        query::get_next_index(&mut *lock).await
+    }
+
     async fn list_projects(&self) -> Result<Vec<ProjectWithOwners>> {
         let mut lock = self.0.lock().await;
         query::list_projects(&mut *lock)
