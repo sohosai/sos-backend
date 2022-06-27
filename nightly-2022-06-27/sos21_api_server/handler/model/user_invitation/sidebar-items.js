@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["UserInvitationRole",""]],"struct":[["UserInvitation",""],["UserInvitationId",""]]});
