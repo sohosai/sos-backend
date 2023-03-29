@@ -50,7 +50,7 @@ jobs:
           }
           EOS
       - name: Deploy
-        uses: sohosai/sos22-backend-infrastructure/actions/deploy-staging@main
+        uses: sohosai/sos-backend-infrastructure/actions/deploy-staging@main
         with:
           target: api.beta.online.sohosai.com
           ssh_private_key: ./ssh_private_key
