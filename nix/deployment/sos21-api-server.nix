@@ -97,6 +97,7 @@ in
     users.users.sos23 = {
       name = "sos23";
       group = "sos23";
+      isSystemUser = true;
     };
     users.groups.sos21 = {
       name = "sos23";
