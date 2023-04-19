@@ -11,6 +11,8 @@ mod key_store;
 use bearer::Bearer;
 use claim::Claims;
 pub use key_store::KeyStore;
+use sos21_domain::model::user::UserEmailAddress;
+use sos21_gateway_slack::report_suspicious_email;
 
 #[derive(Debug, Clone)]
 pub struct AuthenticationInfo {
@@ -73,6 +75,12 @@ async fn handle_validation(
         return Err(warp::reject::custom(
             AuthenticationError::UnverifiedEmailAddress,
         ));
+    }
+
+    if let Err(_) = UserEmailAddress::from_string(&email) {
+        if let Err(e) = report_suspicious_email(&config.admin_report_slack_webhook, &email) {
+            tracing::error!("Failed to deliver suspicious account report. Reason: {}", e);
+        }
     }
 
     Ok(AuthenticationInfo {

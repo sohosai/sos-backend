@@ -2789,6 +2789,7 @@ dependencies = [
  "sos21-domain",
  "sos21-gateway-database",
  "sos21-gateway-s3",
+ "sos21-gateway-slack",
  "sos21-use-case",
  "sqlx",
  "structopt",
