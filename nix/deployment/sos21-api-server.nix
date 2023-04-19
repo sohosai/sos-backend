@@ -218,6 +218,7 @@ in
             SOS21_API_SERVER_S3_ENDPOINT = cfg.s3Endpoint;
             SOS21_API_SERVER_S3_OBJECT_BUCKET = cfg.s3ObjectBucket;
             SOS21_API_SERVER_ADMINISTRATOR_EMAIL = cfg.administratorEmail;
+            SOS21_API_SERVER_ADMIN_REPORT_SLACK_WEBHOOK = cfg.adminReportSlackWebhook;
             SOS21_API_SERVER_BIND = "0.0.0.0:${toString cfg.port}";
           } // mapAttrs' (n: v: nameValuePair "SOS21_API_SERVER_PROJECT_CREATION_PERIOD_${n}" v) cfg.projectCreationPeriods;
         script = ''

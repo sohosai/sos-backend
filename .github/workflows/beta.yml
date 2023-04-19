@@ -28,6 +28,7 @@ jobs:
       - name: Create NixOS configuration from secrets
         env:
           ADMINISTRATOR_EMAIL: "${{ secrets.ADMINISTRATOR_EMAIL }}"
+          ADMIN_REPORT_SLACK_WEBHOOK: "${{ secrets.ADMIN_REPORT_SLACK_WEBHOOK }}"
           STAGE_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_STAGE_PROJECT_CREATION_PERIOD }}"
           GENERAL_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_GENERAL_PROJECT_CREATION_PERIOD }}"
           COOKING_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_COOKING_PROJECT_CREATION_PERIOD }}"
@@ -38,6 +39,7 @@ jobs:
           {
             services.sos21-api-server = {
               administratorEmail = "$ADMINISTRATOR_EMAIL";
+              adminReportSlackWebhook = "$ADMIN_REPORT_SLACK_WEBHOOK";
               projectCreationPeriods = {
                 stage_online = "$STAGE_PROJECT_CREATION_PERIOD";
                 stage_physical = "$STAGE_PROJECT_CREATION_PERIOD";
