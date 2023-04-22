@@ -10,14 +10,14 @@ name: Main
 jobs:
   deploy:
     name: Deploy
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v10
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
         with:
-          name: sos21-backend
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          name: sos-backend
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN_JSYS23 }}"
       - name: Create ssh private key file
         env:
           SSH_PRIVATE_KEY: "${{ secrets.SSH_PRIVATE_KEY }}"
@@ -62,10 +62,10 @@ jobs:
         run: rm -f ./ssh_private_key
   tag:
     name: Tag
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: deploy
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           # GITHUB_TOKEN user cannot trigger another workflow
           token: "${{ secrets.TAGGER_PAT }}"

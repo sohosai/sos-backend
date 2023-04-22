@@ -1,11 +1,11 @@
 let
   nixpkgs = builtins.fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/cd63096d6d887d689543a0b97743d28995bc9bc3.tar.gz";
-    sha256 = "1wg61h4gndm3vcprdcg7rc4s1v3jkm5xd7lw8r2f67w502y94gcy";
+    url = "https://github.com/NixOS/nixpkgs/archive/refs/tags/22.11.tar.gz";
+    sha256 = "11w3wn2yjhaa5pv20gbfbirvjq6i3m7pqrq2msf0g7cv44vijwgw";
   };
   moz_overlay = builtins.fetchTarball {
-    url = "https://github.com/mozilla/nixpkgs-mozilla/archive/8c007b60731c07dd7a052cce508de3bb1ae849b4.tar.gz";
-    sha256 = "1zybp62zz0h077zm2zmqs2wcg3whg6jqaah9hcl1gv4x8af4zhs6";
+    url = "https://github.com/mozilla/nixpkgs-mozilla/archive/78e723925daf5c9e8d0a1837ec27059e61649cb6.tar.gz";
+    sha256 = "0k3jxk21s28jsfpmqv39vyhfz2srfm81kp4xnpzgsbjn77rhwn03";
   };
 in
 import nixpkgs {

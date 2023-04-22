@@ -245,7 +245,7 @@ where
     } = &input.field_names;
 
     if id.is_some() {
-        writer.write_field(data.project.id().to_uuid().to_hyphenated().to_string())?;
+        writer.write_field(data.project.id().to_uuid().hyphenated().to_string())?;
     }
 
     if code.is_some() {

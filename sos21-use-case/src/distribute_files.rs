@@ -152,7 +152,7 @@ where
             .await
             .context("Failed to get a project")?,
         InputProject::Code(project_code) => {
-            let code = project::ProjectCode::parse(&project_code)
+            let code = project::ProjectCode::parse(project_code)
                 .map_err(|err| UseCaseError::UseCase(Error::from_code_error(err)))?;
 
             ctx.get_project_by_index(code.index)

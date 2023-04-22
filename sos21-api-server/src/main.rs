@@ -39,8 +39,10 @@ struct Opt {
     #[structopt(long, env = "SOS21_API_SERVER_ADMINISTRATOR_EMAIL")]
     administrator_email: String,
     #[structopt(long, env = "SOS21_API_SERVER_START_PROJECT_CREATION_PERIOD")]
+    #[allow(dead_code)]
     start_project_creation_period: Option<i64>,
     #[structopt(long, env = "SOS21_API_SERVER_END_PROJECT_CREATION_PERIOD")]
+    #[allow(dead_code)]
     end_project_creation_period: Option<i64>,
     #[structopt(short, long, env = "SOS21_API_SERVER_BIND")]
     bind: SocketAddr,
