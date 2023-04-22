@@ -142,10 +142,8 @@ mod tests {
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_project_with_subowner(
-            owner.id().clone(),
-            user.id().clone(),
-        );
+        let project =
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
         let form = test::model::new_form(other.id().clone());
 
         let app = test::build_mock_app()

@@ -320,7 +320,9 @@ where
     if category.is_some() {
         let category_name = match data.project.category() {
             project::ProjectCategory::General => &input.category_names.general,
-            project::ProjectCategory::CookingRequiringPreparationArea => &input.category_names.cooking_requiring_preparation_area,
+            project::ProjectCategory::CookingRequiringPreparationArea => {
+                &input.category_names.cooking_requiring_preparation_area
+            }
             project::ProjectCategory::Cooking => &input.category_names.cooking,
             project::ProjectCategory::Food => &input.category_names.food,
             project::ProjectCategory::Stage => &input.category_names.stage,

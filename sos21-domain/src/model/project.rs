@@ -236,7 +236,8 @@ impl Project {
             });
         }
 
-        if content.attributes.contains(ProjectAttribute::Artistic) && content.category == ProjectCategory::Stage
+        if content.attributes.contains(ProjectAttribute::Artistic)
+            && content.category == ProjectCategory::Stage
         {
             return Err(ContentError {
                 kind: ContentErrorKind::ArtisticStageProject,
@@ -606,10 +607,8 @@ mod tests {
         let owner = test_model::new_general_user();
         let user = test_model::new_general_user();
         let mut subowner = test_model::new_general_user();
-        let project = test_model::new_general_project_with_subowner(
-            user.id().clone(),
-            subowner.id().clone(),
-        );
+        let project =
+            test_model::new_general_project_with_subowner(user.id().clone(), subowner.id().clone());
         subowner.assign_project_subowner(&project).unwrap();
 
         let pending_project = test_model::new_general_pending_project(owner.id().clone());
@@ -631,8 +630,7 @@ mod tests {
     async fn test_new_already_pending_project_owner() {
         let owner = test_model::new_general_user();
         let mut subowner = test_model::new_general_user();
-        let pending_project1 =
-            test_model::new_general_pending_project(subowner.id().clone());
+        let pending_project1 = test_model::new_general_pending_project(subowner.id().clone());
         subowner
             .assign_pending_project_owner(&pending_project1)
             .unwrap();

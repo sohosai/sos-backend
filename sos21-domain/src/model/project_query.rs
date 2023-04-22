@@ -151,8 +151,7 @@ mod tests {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
-        let pending_project =
-            test_model::new_general_pending_project(test_model::new_user_id());
+        let pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         assert!(conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
@@ -326,12 +325,8 @@ mod tests {
             category: Some(ProjectCategory::General),
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
-        assert!(conj.check_project(&test_model::new_general_project(
-            test_model::new_user_id()
-        )));
-        assert!(!conj.check_project(&test_model::new_stage_project(
-            test_model::new_user_id()
-        )));
+        assert!(conj.check_project(&test_model::new_general_project(test_model::new_user_id())));
+        assert!(!conj.check_project(&test_model::new_stage_project(test_model::new_user_id())));
     }
 
     #[test]
@@ -398,8 +393,7 @@ mod tests {
             ])
             .unwrap(),
         };
-        let pending_project =
-            test_model::new_general_pending_project(test_model::new_user_id());
+        let pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         assert!(!conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
@@ -453,8 +447,7 @@ mod tests {
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
         let query = ProjectQuery::from_conjunctions(vec![conj]).unwrap();
-        let pending_project =
-            test_model::new_general_pending_project(test_model::new_user_id());
+        let pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         assert!(query.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
@@ -492,8 +485,7 @@ mod tests {
     #[test]
     fn test_pending_project_contradiction() {
         let query = ProjectQuery::from_conjunctions(vec![]).unwrap();
-        let pending_project =
-            test_model::new_general_pending_project(test_model::new_user_id());
+        let pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         assert!(!query.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),

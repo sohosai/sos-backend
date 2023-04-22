@@ -118,4 +118,3 @@ pub fn new_general_project_with_subowner(owner_id: UserId, subowner_id: UserId) 
 pub fn new_stage_project_with_subowner(owner_id: UserId, subowner_id: UserId) -> Project {
     new_project_with_subowner(owner_id, subowner_id, ProjectCategory::Stage)
 }
-

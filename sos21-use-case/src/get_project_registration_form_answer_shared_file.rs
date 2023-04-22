@@ -217,10 +217,8 @@ mod tests {
 
         let (owner_file, owner_object) = test::model::new_file(owner.id().clone());
         let registration_form = test::model::new_registration_form(operator.id().clone());
-        let project = test::model::new_general_project_with_subowner(
-            owner.id().clone(),
-            user.id().clone(),
-        );
+        let project =
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
         let answer = test::model::new_registration_form_answer_with_project(
             owner.id().clone(),
             project.id(),

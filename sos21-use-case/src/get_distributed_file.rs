@@ -198,10 +198,8 @@ mod tests {
 
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project_with_subowner(
-            owner.id().clone(),
-            user.id().clone(),
-        );
+        let project =
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);

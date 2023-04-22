@@ -18,7 +18,9 @@ impl From<ProjectCategory> for ProjectKind {
     fn from(from: ProjectCategory) -> Self {
         match from {
             ProjectCategory::General => Self::General,
-            ProjectCategory::CookingRequiringPreparationArea => Self::CookingRequiringPreparationArea,
+            ProjectCategory::CookingRequiringPreparationArea => {
+                Self::CookingRequiringPreparationArea
+            }
             ProjectCategory::Cooking => Self::Cooking,
             ProjectCategory::Food => Self::Food,
             ProjectCategory::Stage => Self::Stage,
@@ -124,7 +126,7 @@ impl Display for ProjectCode {
             ProjectKind::Stage => 'S',
             ProjectKind::Food => 'F',
             ProjectKind::Cooking => 'C',
-            ProjectKind::CookingRequiringPreparationArea => 'A'
+            ProjectKind::CookingRequiringPreparationArea => 'A',
         };
 
         f.write_char(group)?;

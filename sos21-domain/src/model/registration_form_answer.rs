@@ -418,8 +418,7 @@ mod tests {
     #[test]
     fn test_visibility_general_via_owning_pending_project() {
         let user = test_model::new_general_user();
-        let user_pending_project =
-            test_model::new_general_pending_project(user.id().clone());
+        let user_pending_project = test_model::new_general_pending_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let registration_form = test_model::new_registration_form(operator.id().clone());
         let registration_form_answer =

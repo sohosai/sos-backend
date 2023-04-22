@@ -88,10 +88,8 @@ mod tests {
         let mut other2 = test::model::new_general_user();
         let project1 = test::model::new_general_project(other1.id().clone());
         other1.assign_project_owner(&project1).unwrap();
-        let project2 = test::model::new_general_project_with_subowner(
-            other2.id().clone(),
-            user.id().clone(),
-        );
+        let project2 =
+            test::model::new_general_project_with_subowner(other2.id().clone(), user.id().clone());
         other2.assign_project_owner(&project2).unwrap();
         user.assign_project_subowner(&project2).unwrap();
 

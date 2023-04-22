@@ -27,7 +27,9 @@ where
         let category = conj.category.as_ref().map(|category| match category {
             ProjectCategory::General => "general",
             ProjectCategory::Cooking => "cooking",
-            ProjectCategory::CookingRequiringPreparationArea => "cooking_requiring_preparation_area",
+            ProjectCategory::CookingRequiringPreparationArea => {
+                "cooking_requiring_preparation_area"
+            }
             ProjectCategory::Food => "food",
             ProjectCategory::Stage => "stage",
         });

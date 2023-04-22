@@ -30,20 +30,24 @@ impl ProjectCategory {
     pub fn from_entity(category: entity::ProjectCategory) -> ProjectCategory {
         match category {
             entity::ProjectCategory::General => ProjectCategory::General,
-            entity::ProjectCategory::CookingRequiringPreparationArea => ProjectCategory::CookingRequiringPreparationArea,
+            entity::ProjectCategory::CookingRequiringPreparationArea => {
+                ProjectCategory::CookingRequiringPreparationArea
+            }
             entity::ProjectCategory::Cooking => ProjectCategory::Cooking,
             entity::ProjectCategory::Food => ProjectCategory::Food,
-            entity::ProjectCategory::Stage => ProjectCategory::Stage
+            entity::ProjectCategory::Stage => ProjectCategory::Stage,
         }
     }
 
     pub fn into_entity(self) -> entity::ProjectCategory {
         match self {
             ProjectCategory::General => entity::ProjectCategory::General,
-            ProjectCategory::CookingRequiringPreparationArea => entity::ProjectCategory::CookingRequiringPreparationArea,
+            ProjectCategory::CookingRequiringPreparationArea => {
+                entity::ProjectCategory::CookingRequiringPreparationArea
+            }
             ProjectCategory::Cooking => entity::ProjectCategory::Cooking,
             ProjectCategory::Food => entity::ProjectCategory::Food,
-            ProjectCategory::Stage => entity::ProjectCategory::Stage
+            ProjectCategory::Stage => entity::ProjectCategory::Stage,
         }
     }
 }

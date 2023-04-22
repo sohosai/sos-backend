@@ -33,7 +33,9 @@ impl ProjectCategory {
     pub fn from_use_case(category: use_case::ProjectCategory) -> ProjectCategory {
         match category {
             use_case::ProjectCategory::General => ProjectCategory::General,
-            use_case::ProjectCategory::CookingRequiringPreparationArea => ProjectCategory::CookingRequiringPreparationArea,
+            use_case::ProjectCategory::CookingRequiringPreparationArea => {
+                ProjectCategory::CookingRequiringPreparationArea
+            }
             use_case::ProjectCategory::Cooking => ProjectCategory::Cooking,
             use_case::ProjectCategory::Stage => ProjectCategory::Stage,
             use_case::ProjectCategory::Food => ProjectCategory::Food,
@@ -43,10 +45,12 @@ impl ProjectCategory {
     pub fn into_use_case(self) -> use_case::ProjectCategory {
         match self {
             ProjectCategory::General => use_case::ProjectCategory::General,
-            ProjectCategory::CookingRequiringPreparationArea => use_case::ProjectCategory::CookingRequiringPreparationArea,
+            ProjectCategory::CookingRequiringPreparationArea => {
+                use_case::ProjectCategory::CookingRequiringPreparationArea
+            }
             ProjectCategory::Cooking => use_case::ProjectCategory::Cooking,
             ProjectCategory::Food => use_case::ProjectCategory::Food,
-            ProjectCategory::Stage => use_case::ProjectCategory::Stage
+            ProjectCategory::Stage => use_case::ProjectCategory::Stage,
         }
     }
 }

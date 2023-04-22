@@ -132,7 +132,7 @@ pub async fn handler(
             category_cooking_requiring_preparation_area,
             category_cooking,
             category_food,
-            category_stage
+            category_stage,
         } = request;
         let field_names = export_projects::InputFieldNames {
             id: field_id,

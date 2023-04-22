@@ -76,8 +76,7 @@ mod tests {
         let operator = test::model::new_operator_user();
 
         let project = test::model::new_general_project(login_user.id().clone());
-        let pending_project =
-            test::model::new_general_pending_project(login_user.id().clone());
+        let pending_project = test::model::new_general_pending_project(login_user.id().clone());
 
         let registration_form1 = test::model::new_registration_form(operator.id().clone());
         let registration_form1_answer1 = test::model::new_registration_form_answer_with_project(

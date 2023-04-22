@@ -157,10 +157,8 @@ mod tests {
     async fn test_general_subowner_project() {
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project_with_subowner(
-            owner.id().clone(),
-            user.id().clone(),
-        );
+        let project =
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
         let other = test::model::new_general_user();
         let (other_file, other_object) = test::model::new_file(other.id().clone());
 

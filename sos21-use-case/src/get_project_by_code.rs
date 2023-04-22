@@ -116,10 +116,8 @@ mod tests {
     async fn test_general_subowner() {
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
-        let project = test::model::new_general_project_with_subowner(
-            owner.id().clone(),
-            user.id().clone(),
-        );
+        let project =
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![owner.clone(), user.clone()])

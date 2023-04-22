@@ -108,8 +108,7 @@ impl PendingProject {
             return Err(NewPendingProjectError { kind });
         }
 
-        if category == ProjectCategory::Stage && attributes.contains(ProjectAttribute::Artistic)
-        {
+        if category == ProjectCategory::Stage && attributes.contains(ProjectAttribute::Artistic) {
             return Err(NewPendingProjectError {
                 kind: NewPendingProjectErrorKind::ArtisticStageProject,
             });
@@ -392,10 +391,8 @@ mod tests {
     async fn test_new_already_project_subowner() {
         let mut owner = test_model::new_general_user();
         let user = test_model::new_general_user();
-        let project = test_model::new_general_project_with_subowner(
-            user.id().clone(),
-            owner.id().clone(),
-        );
+        let project =
+            test_model::new_general_project_with_subowner(user.id().clone(), owner.id().clone());
         owner.assign_project_subowner(&project).unwrap();
 
         assert_eq!(

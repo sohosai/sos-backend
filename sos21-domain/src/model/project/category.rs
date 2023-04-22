@@ -6,11 +6,11 @@ use thiserror::Error;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ProjectCategory {
-    General, // 一般企画（飲食物取扱い企画、調理企画を除く）
+    General,                         // 一般企画（飲食物取扱い企画、調理企画を除く）
     CookingRequiringPreparationArea, // 一般企画（調理企画（仕込場が必要））
-    Cooking, // 一般企画（調理企画（仕込場が不要））
-    Food, // 一般企画（飲食物取扱い企画）
-    Stage, // ステージ企画
+    Cooking,                         // 一般企画（調理企画（仕込場が不要））
+    Food,                            // 一般企画（飲食物取扱い企画）
+    Stage,                           // ステージ企画
 }
 
 impl ProjectCategory {
@@ -40,7 +40,9 @@ impl FromStr for ProjectCategory {
             "general" | "General" => Ok(ProjectCategory::General),
             "stage" | "Stage" => Ok(ProjectCategory::Stage),
             "food" | "Food" => Ok(ProjectCategory::Food),
-            "cooking_requiring_preparation_area" | "CookingRequiringPreparationArea" => Ok(ProjectCategory::CookingRequiringPreparationArea),
+            "cooking_requiring_preparation_area" | "CookingRequiringPreparationArea" => {
+                Ok(ProjectCategory::CookingRequiringPreparationArea)
+            }
             "cooking" | "Cooking" => Ok(ProjectCategory::Cooking),
             _ => Err(ParseCategoryError { _priv: () }),
         }

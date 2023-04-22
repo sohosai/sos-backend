@@ -70,11 +70,11 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone(), operator.clone()])
+            .project_creation_period_for(ProjectCategory::General, ProjectCreationPeriod::never())
             .project_creation_period_for(
-                ProjectCategory::General,
-                ProjectCreationPeriod::never(),
+                ProjectCategory::CookingRequiringPreparationArea,
+                future_period,
             )
-            .project_creation_period_for(ProjectCategory::CookingRequiringPreparationArea, future_period)
             .project_creation_period_for(ProjectCategory::Cooking, ongoing_period)
             .project_creation_period_for(ProjectCategory::Food, ongoing_period)
             .project_creation_period_for(ProjectCategory::Stage, past_period)

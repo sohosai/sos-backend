@@ -44,7 +44,7 @@ pub async fn handler(ctx: Context, _request: Request) -> HandlerResult<Response,
         cooking_requiring_preparation_area,
         cooking,
         food,
-        stage
+        stage,
     } = get_project_creation_availability::run(&ctx);
 
     Ok(Response {
@@ -53,6 +53,6 @@ pub async fn handler(ctx: Context, _request: Request) -> HandlerResult<Response,
         cooking_requiring_preparation_area,
         cooking,
         food,
-        stage
+        stage,
     })
 }
