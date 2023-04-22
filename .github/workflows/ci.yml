@@ -5,44 +5,44 @@ name: CI
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v10
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
         with:
           name: sos21-backend
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - run: nix-build
   build-shell:
     name: Build shell
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v10
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
         with:
           name: sos21-backend
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - run: nix-build shell.nix -A inputDerivation
   build-script-shell:
     name: Build shell for scripts
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v10
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
         with:
           name: sos21-backend
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - run: nix-build script/shell.nix -A inputDerivation
   fmt:
     name: Rustfmt
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v10
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
         with:
           name: sos21-backend
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -53,11 +53,11 @@ jobs:
           args: --all -- --check
   clippy:
     name: Clippy
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v10
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
         with:
           name: sos21-backend
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -71,19 +71,19 @@ jobs:
           args: -- -D warnings
   lint-api-schema:
     name: Lint OpenAPI schema
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
       - run: nix-env -f ./nix/pkgs.nix -iA nodejs
       - run: cd sos21-api-server/schema; npm install
       - run: cd sos21-api-server/schema; npm run lint
   nixpkgs-fmt:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v10
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
         with:
           name: sos21-backend
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"

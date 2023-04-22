@@ -8,10 +8,10 @@ name: Generate documentation
 jobs:
   api-server:
     name: Generate documentation from OpenAPI schema
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
       - run: nix-env -f ./nix/pkgs.nix -iA nodejs
       - run: cd sos21-api-server/schema; npm install
       - run: cd sos21-api-server/schema; npm run build:doc -- --output dist/api-server.html
@@ -23,11 +23,11 @@ jobs:
           keep_files: true
   rustdoc:
     name: Generate rustdoc documentation
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v10
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
         with:
           name: sos21-backend
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
