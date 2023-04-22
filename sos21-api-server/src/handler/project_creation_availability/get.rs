@@ -13,12 +13,11 @@ pub struct Request {}
 #[derive(Debug, Clone, Serialize)]
 pub struct Response {
     pub timestamp: DateTime,
-    pub general_online: bool,
-    pub general_physical: bool,
-    pub stage_online: bool,
-    pub stage_physical: bool,
-    pub cooking_physical: bool,
-    pub food_physical: bool,
+    pub general: bool,
+    pub cooking_requiring_preparation_area: bool,
+    pub cooking: bool,
+    pub food: bool,
+    pub stage: bool,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -41,21 +40,19 @@ impl HandlerResponse for Response {
 pub async fn handler(ctx: Context, _request: Request) -> HandlerResult<Response, Error> {
     let ProjectCreationAvailability {
         timestamp,
-        general_online,
-        general_physical,
-        stage_online,
-        stage_physical,
-        cooking_physical,
-        food_physical,
+        general,
+        cooking_requiring_preparation_area,
+        cooking,
+        food,
+        stage
     } = get_project_creation_availability::run(&ctx);
 
     Ok(Response {
         timestamp: DateTime::from_use_case(timestamp),
-        general_online,
-        general_physical,
-        stage_online,
-        stage_physical,
-        cooking_physical,
-        food_physical,
+        general,
+        cooking_requiring_preparation_area,
+        cooking,
+        food,
+        stage
     })
 }

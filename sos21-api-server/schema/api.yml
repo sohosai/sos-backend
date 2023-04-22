@@ -6139,17 +6139,15 @@ paths:
                 properties:
                   timestamp:
                     type: number
-                  general_online:
+                  general:
                     type: boolean
-                  general_physical:
+                  cooking_requiring_preparation_area:
                     type: boolean
-                  stage_online:
+                  cooking:
                     type: boolean
-                  stage_physical:
+                  food:
                     type: boolean
-                  cooking_physical:
-                    type: boolean
-                  food_physical:
+                  stage:
                     type: boolean
       operationId: get-project-creation-availability
       description: "各企画区分について、企画登録期間かどうかを調べます。"
