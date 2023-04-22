@@ -6,23 +6,21 @@ use thiserror::Error;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ProjectCategory {
-    GeneralOnline,
-    GeneralPhysical,
-    StageOnline,
-    StagePhysical,
-    CookingPhysical,
-    FoodPhysical,
+    General, // 一般企画（飲食物取扱い企画、調理企画を除く）
+    CookingRequiringPreparationArea, // 一般企画（調理企画（仕込場が必要））
+    Cooking, // 一般企画（調理企画（仕込場が不要））
+    Food, // 一般企画（飲食物取扱い企画）
+    Stage, // ステージ企画
 }
 
 impl ProjectCategory {
     pub fn enumerate() -> impl Iterator<Item = ProjectCategory> {
         [
-            ProjectCategory::GeneralOnline,
-            ProjectCategory::GeneralPhysical,
-            ProjectCategory::StageOnline,
-            ProjectCategory::StagePhysical,
-            ProjectCategory::CookingPhysical,
-            ProjectCategory::FoodPhysical,
+            ProjectCategory::General,
+            ProjectCategory::CookingRequiringPreparationArea,
+            ProjectCategory::Cooking,
+            ProjectCategory::Food,
+            ProjectCategory::Stage,
         ]
         .iter()
         .copied()
@@ -39,12 +37,11 @@ impl FromStr for ProjectCategory {
     type Err = ParseCategoryError;
     fn from_str(s: &str) -> Result<ProjectCategory, Self::Err> {
         match s {
-            "general_online" | "GeneralOnline" => Ok(ProjectCategory::GeneralOnline),
-            "general_physical" | "GeneralPhysical" => Ok(ProjectCategory::GeneralPhysical),
-            "stage_online" | "Stage_online" => Ok(ProjectCategory::StageOnline),
-            "stage_physical" | "StagePhysical" => Ok(ProjectCategory::StagePhysical),
-            "cooking_physical" | "CookingPhysical" => Ok(ProjectCategory::CookingPhysical),
-            "food_physical" | "FoodPhysical" => Ok(ProjectCategory::FoodPhysical),
+            "general" | "General" => Ok(ProjectCategory::General),
+            "stage" | "Stage" => Ok(ProjectCategory::Stage),
+            "food" | "Food" => Ok(ProjectCategory::Food),
+            "cooking_requiring_preparation_area" | "CookingRequiringPreparationArea" => Ok(ProjectCategory::CookingRequiringPreparationArea),
+            "cooking" | "Cooking" => Ok(ProjectCategory::Cooking),
             _ => Err(ParseCategoryError { _priv: () }),
         }
     }

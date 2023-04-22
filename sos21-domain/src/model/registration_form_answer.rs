@@ -362,7 +362,7 @@ mod tests {
     #[test]
     fn test_visibility_general() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let registration_form = test_model::new_registration_form(operator.id().clone());
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
@@ -376,7 +376,7 @@ mod tests {
     #[test]
     fn test_visibility_committee() {
         let user = test_model::new_committee_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let registration_form = test_model::new_registration_form(operator.id().clone());
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
@@ -390,7 +390,7 @@ mod tests {
     #[test]
     fn test_visibility_operator() {
         let user = test_model::new_operator_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let registration_form = test_model::new_registration_form(operator.id().clone());
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
@@ -404,7 +404,7 @@ mod tests {
     #[test]
     fn test_visibility_general_via_owning_project() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let registration_form = test_model::new_registration_form(operator.id().clone());
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
@@ -419,7 +419,7 @@ mod tests {
     fn test_visibility_general_via_owning_pending_project() {
         let user = test_model::new_general_user();
         let user_pending_project =
-            test_model::new_general_online_pending_project(user.id().clone());
+            test_model::new_general_pending_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let registration_form = test_model::new_registration_form(operator.id().clone());
         let registration_form_answer =
@@ -436,7 +436,7 @@ mod tests {
     fn test_visibility_general_via_non_owning_project() {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
-        let operator_project = test_model::new_general_online_project(operator.id().clone());
+        let operator_project = test_model::new_general_project(operator.id().clone());
         let registration_form = test_model::new_registration_form(operator.id().clone());
         let registration_form_answer = test_model::new_registration_form_answer_with_project(
             user.id().clone(),
@@ -451,7 +451,7 @@ mod tests {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
         let operator_pending_project =
-            test_model::new_general_online_pending_project(operator.id().clone());
+            test_model::new_general_pending_project(operator.id().clone());
         let registration_form = test_model::new_registration_form(operator.id().clone());
         let registration_form_answer =
             test_model::new_registration_form_answer_with_pending_project(
