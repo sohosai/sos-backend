@@ -11,12 +11,11 @@ use uuid::Uuid;
 #[sqlx(type_name = "project_category")]
 #[sqlx(rename_all = "snake_case")]
 pub enum ProjectCategory {
-    GeneralOnline,
-    GeneralPhysical,
-    StageOnline,
-    StagePhysical,
-    CookingPhysical,
-    FoodPhysical,
+    General, // 一般企画（飲食物取扱い企画、調理企画を除く）
+    CookingRequiringPreparationArea, // 一般企画（調理企画（仕込場が必要））
+    Cooking, // 一般企画（調理企画（仕込場が不要））
+    Food, // 一般企画（飲食物取扱い企画）
+    Stage, // ステージ企画
 }
 
 bitflags::bitflags! {
