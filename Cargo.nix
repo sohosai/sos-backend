@@ -237,7 +237,8 @@ rec {
           {
             name = "memchr";
             packageId = "memchr";
-            optional = true;
+            # TODO: cargo.nixを直接編集するのではなくoverrideしてfalseにする
+            # optional = true;
             usesDefaultFeatures = false;
           }
         ];
