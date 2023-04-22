@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FormItemCondition",""],["SizeErrorKind",""]],"struct":[["FormItemConditions",""],["SizeError",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FormItemCondition","SizeErrorKind"],"struct":["FormItemConditions","SizeError"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["get_next_index",""]]});
+window.SIDEBAR_ITEMS = {"fn":["get_next_index"]};

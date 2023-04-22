@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["find_registration_form",""]]});
+window.SIDEBAR_ITEMS = {"fn":["find_registration_form"],"struct":["Record"]};

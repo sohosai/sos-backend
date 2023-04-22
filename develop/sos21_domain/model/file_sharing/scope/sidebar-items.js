@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FileSharingScope",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FileSharingScope"]};

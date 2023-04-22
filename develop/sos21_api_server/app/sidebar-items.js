@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["App",""],["Context",""]]});
+window.SIDEBAR_ITEMS = {"struct":["App","Context","S3Client"]};

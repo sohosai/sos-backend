@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["from_user",""],["from_user_assignment",""],["to_user",""]],"struct":[["UserDatabase",""]]});
+window.SIDEBAR_ITEMS = {"fn":["from_user","from_user_assignment","to_user"],"struct":["UserDatabase"]};

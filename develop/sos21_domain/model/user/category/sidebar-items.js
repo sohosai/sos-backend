@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["UserCategory",""]]});
+window.SIDEBAR_ITEMS = {"enum":["UserCategory"]};

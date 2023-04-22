@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["RegistrationForm",""],["RegistrationFormId",""]]});
+window.SIDEBAR_ITEMS = {"struct":["RegistrationForm","RegistrationFormId"]};

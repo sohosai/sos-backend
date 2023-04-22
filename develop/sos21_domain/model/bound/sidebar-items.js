@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Bounded",""],["Unbounded",""]],"trait":[["Bound",""]]});
+window.SIDEBAR_ITEMS = {"struct":["Bounded","Unbounded"],"trait":["Bound"]};

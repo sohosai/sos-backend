@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["migrate",""]],"mod":[["command",""],["model",""],["query",""]]});
+window.SIDEBAR_ITEMS = {"fn":["migrate"],"mod":["command","model","query"]};

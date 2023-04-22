@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["get",""],["registration_form",""],["update",""],["update_any",""]]});
+window.SIDEBAR_ITEMS = {"mod":["get","registration_form","update","update_any"]};

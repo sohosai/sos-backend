@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["FormAnswerItemText",""],["TextError",""]]});
+window.SIDEBAR_ITEMS = {"struct":["FormAnswerItemText","TextError"]};

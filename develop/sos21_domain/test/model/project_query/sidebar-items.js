@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["mock_project_query",""]]});
+window.SIDEBAR_ITEMS = {"fn":["mock_project_query"]};

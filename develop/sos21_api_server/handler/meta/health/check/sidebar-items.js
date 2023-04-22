@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error",""],["UnavailableError",""]],"fn":[["check_database",""],["check_s3",""],["handler",""]],"struct":[["Request",""],["Response",""]]});
+window.SIDEBAR_ITEMS = {"enum":["Error","UnavailableError"],"fn":["check_database","check_s3","handler","run"],"struct":["Request","Response"]};

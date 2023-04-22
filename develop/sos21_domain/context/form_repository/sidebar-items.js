@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["ProjectForm",""]],"trait":[["FormRepository",""]]});
+window.SIDEBAR_ITEMS = {"struct":["ProjectForm"],"trait":["FormRepository"]};

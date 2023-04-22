@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["from_form",""],["from_project_query",""],["to_form",""]],"struct":[["FormDatabase",""]]});
+window.SIDEBAR_ITEMS = {"fn":["from_form","from_project_query","to_form"],"struct":["FormDatabase"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FromProjectsErrorKind",""]],"struct":[["FormCondition",""],["FormConditionProjectSet",""],["FromProjectsError",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FromProjectsErrorKind"],"struct":["FormCondition","FormConditionProjectSet","FromProjectsError"]};

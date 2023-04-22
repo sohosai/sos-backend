@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FormItemCondition",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FormItemCondition"]};

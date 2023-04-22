@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["delete_form_condition_includes",""]]});
+window.SIDEBAR_ITEMS = {"fn":["delete_form_condition_includes"]};

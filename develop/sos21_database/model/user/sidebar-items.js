@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["UserAssignment",""],["UserCategory",""],["UserRole",""]],"struct":[["User",""]]});
+window.SIDEBAR_ITEMS = {"enum":["UserAssignment","UserCategory","UserRole"],"struct":["User"]};

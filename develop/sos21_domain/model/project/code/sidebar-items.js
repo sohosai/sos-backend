@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ParseCodeErrorKind",""],["ProjectKind",""]],"struct":[["ParseCodeError",""],["ProjectCode",""]]});
+window.SIDEBAR_ITEMS = {"enum":["ParseCodeErrorKind","ProjectKind"],"struct":["ParseCodeError","ProjectCode"]};

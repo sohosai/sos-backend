@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error",""]],"fn":[["run",""],["write_header",""],["write_record",""]],"struct":[["Input",""],["InputCategoryNames",""],["InputFieldNames",""],["InputRoleNames",""]]});
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["run","write_header","write_record"],"macro":["write_field"],"static":["CALLSITE","META"],"struct":["Input","InputCategoryNames","InputFieldNames","InputRoleNames"]};

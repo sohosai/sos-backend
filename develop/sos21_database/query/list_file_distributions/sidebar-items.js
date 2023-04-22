@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["list_file_distributions",""]]});
+window.SIDEBAR_ITEMS = {"fn":["list_file_distributions"],"struct":["Record"]};

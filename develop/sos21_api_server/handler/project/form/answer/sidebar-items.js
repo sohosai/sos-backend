@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error",""]],"fn":[["handler",""]],"mod":[["file_sharing",""],["get",""],["update",""]],"struct":[["Request",""],["Response",""]]});
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["handler","run"],"mod":["file_sharing","get","update"],"struct":["Request","Response"]};

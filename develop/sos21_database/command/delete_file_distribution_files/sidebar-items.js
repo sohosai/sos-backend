@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["delete_file_distribution_files",""]]});
+window.SIDEBAR_ITEMS = {"fn":["delete_file_distribution_files"]};

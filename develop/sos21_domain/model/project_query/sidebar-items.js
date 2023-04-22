@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FromConjunctionsErrorKind",""]],"struct":[["FromConjunctionsError",""],["ProjectQuery",""],["ProjectQueryConjunction",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FromConjunctionsErrorKind","__Enum6497025444466205817"],"struct":["FromConjunctionsError","ProjectQuery","ProjectQueryConjunction"]};

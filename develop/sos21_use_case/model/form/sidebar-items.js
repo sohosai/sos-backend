@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["item",""]],"struct":[["Form",""],["FormCondition",""],["FormId",""]]});
+window.SIDEBAR_ITEMS = {"mod":["item"],"struct":["Form","FormCondition","FormId"]};

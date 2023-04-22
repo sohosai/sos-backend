@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error",""]],"fn":[["run",""]],"struct":[["ProjectForm",""]]});
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["run"],"static":["CALLSITE","META"],"struct":["ProjectForm"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["ProjectCreationAvailability",""]]});
+window.SIDEBAR_ITEMS = {"struct":["ProjectCreationAvailability"]};

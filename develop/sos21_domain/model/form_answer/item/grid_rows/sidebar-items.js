@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FromRowAnswersErrorKind",""]],"struct":[["FormAnswerItemGridRows",""],["FromRowAnswersError",""],["GridRadioRowAnswer",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FromRowAnswersErrorKind"],"struct":["FormAnswerItemGridRows","FromRowAnswersError","GridRadioRowAnswer"]};

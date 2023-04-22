@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["NameLengthError",""]],"struct":[["GroupNameError",""],["KanaGroupNameError",""],["KanaNameError",""],["NameError",""],["ProjectGroupName",""],["ProjectKanaGroupName",""],["ProjectKanaName",""],["ProjectName",""],["ProjectNameString","A project-name string."]]});
+window.SIDEBAR_ITEMS = {"enum":["NameLengthError"],"fn":["is_small"],"struct":["GroupNameError","KanaGroupNameError","KanaNameError","NameError","ProjectGroupName","ProjectKanaGroupName","ProjectKanaName","ProjectName","ProjectNameString"]};

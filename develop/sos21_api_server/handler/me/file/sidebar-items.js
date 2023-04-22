@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["check_usage",""],["list",""]]});
+window.SIDEBAR_ITEMS = {"mod":["check_usage","list"]};

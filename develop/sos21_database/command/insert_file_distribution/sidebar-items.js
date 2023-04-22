@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["insert_file_distribution",""]]});
+window.SIDEBAR_ITEMS = {"fn":["insert_file_distribution"]};

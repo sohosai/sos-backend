@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["AuthenticationErrorId",""],["ErrorBody",""],["RequestErrorId",""]],"struct":[["Error",""]]});
+window.SIDEBAR_ITEMS = {"enum":["AuthenticationErrorId","ErrorBody","RequestErrorId"],"struct":["Error"]};

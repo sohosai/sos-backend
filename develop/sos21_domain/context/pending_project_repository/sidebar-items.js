@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["PendingProjectWithOwner",""]],"trait":[["PendingProjectRepository",""]]});
+window.SIDEBAR_ITEMS = {"struct":["PendingProjectWithOwner"],"trait":["PendingProjectRepository"]};

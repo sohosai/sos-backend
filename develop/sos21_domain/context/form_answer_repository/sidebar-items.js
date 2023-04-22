@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["FormAnswerRepository",""]]});
+window.SIDEBAR_ITEMS = {"trait":["FormAnswerRepository"]};

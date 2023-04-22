@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["BoundError",""],["LimitedInteger","A range-limited integer."]],"type":[["BoundedInteger",""]]});
+window.SIDEBAR_ITEMS = {"struct":["BoundError","LimitedInteger"],"type":["BoundedInteger"]};

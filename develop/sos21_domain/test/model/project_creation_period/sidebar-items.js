@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["mock_project_creation_period_with_end",""],["mock_project_creation_period_with_start",""],["new_project_creation_period_from_now",""],["new_project_creation_period_to_now",""],["new_project_creation_period_with_hours_from_now",""]]});
+window.SIDEBAR_ITEMS = {"fn":["mock_project_creation_period_with_end","mock_project_creation_period_with_start","new_project_creation_period_from_now","new_project_creation_period_to_now","new_project_creation_period_with_hours_from_now"]};

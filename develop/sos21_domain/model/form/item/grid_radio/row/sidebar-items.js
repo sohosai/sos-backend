@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["GridRadioRow",""],["GridRadioRowId",""],["GridRadioRowLabel",""],["LabelError",""]]});
+window.SIDEBAR_ITEMS = {"struct":["GridRadioRow","GridRadioRowId","GridRadioRowLabel","LabelError"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["PendingProjectRegistrationForm",""]],"trait":[["RegistrationFormRepository",""]]});
+window.SIDEBAR_ITEMS = {"struct":["PendingProjectRegistrationForm"],"trait":["RegistrationFormRepository"]};

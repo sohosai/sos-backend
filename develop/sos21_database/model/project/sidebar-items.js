@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ProjectCategory",""]],"struct":[["FromBitsError",""],["Project",""],["ProjectAttributes",""],["ProjectWithOwners",""]]});
+window.SIDEBAR_ITEMS = {"enum":["ProjectCategory"],"struct":["FromBitsError","Project","ProjectAttributes","ProjectWithOwners"],"trait":["__BitFlags"]};

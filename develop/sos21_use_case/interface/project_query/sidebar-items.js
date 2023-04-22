@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ProjectQueryError",""]],"fn":[["to_project_query",""],["to_project_query_conjunction",""]]});
+window.SIDEBAR_ITEMS = {"enum":["ProjectQueryError"],"fn":["to_project_query","to_project_query_conjunction"]};

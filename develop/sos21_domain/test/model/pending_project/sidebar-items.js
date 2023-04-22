@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["new_general_online_pending_project",""],["new_general_physical_pending_project",""],["new_pending_project",""],["new_pending_project_id",""],["new_pending_project_with_attributes","Panics"],["new_stage_online_pending_project",""],["new_stage_physical_pending_project",""]]});
+window.SIDEBAR_ITEMS = {"fn":["new_general_online_pending_project","new_general_physical_pending_project","new_pending_project","new_pending_project_id","new_pending_project_with_attributes","new_stage_online_pending_project","new_stage_physical_pending_project"]};

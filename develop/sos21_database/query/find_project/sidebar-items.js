@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["find_project",""]]});
+window.SIDEBAR_ITEMS = {"fn":["find_project"],"struct":["Record"]};

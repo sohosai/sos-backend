@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["AnswerErrorKind",""]],"mod":[["description",""],["name",""]],"struct":[["AnswerError",""],["RegistrationForm",""],["RegistrationFormId",""]]});
+window.SIDEBAR_ITEMS = {"enum":["AnswerErrorKind"],"mod":["description","name"],"struct":["AnswerError","RegistrationForm","RegistrationFormId"]};

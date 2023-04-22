@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["CheckboxFormItemLimit",""],["LimitError",""]]});
+window.SIDEBAR_ITEMS = {"struct":["CheckboxFormItemLimit","LimitError"]};

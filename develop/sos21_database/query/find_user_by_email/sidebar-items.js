@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["find_user_by_email",""]]});
+window.SIDEBAR_ITEMS = {"fn":["find_user_by_email"]};

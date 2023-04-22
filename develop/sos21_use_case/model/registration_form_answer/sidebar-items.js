@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["RegistrationFormAnswerRespondent",""]],"struct":[["RegistrationFormAnswer",""],["RegistrationFormAnswerId",""]]});
+window.SIDEBAR_ITEMS = {"enum":["RegistrationFormAnswerRespondent"],"struct":["RegistrationFormAnswer","RegistrationFormAnswerId"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Radio",""],["RadioId",""]]});
+window.SIDEBAR_ITEMS = {"struct":["Radio","RadioId"]};

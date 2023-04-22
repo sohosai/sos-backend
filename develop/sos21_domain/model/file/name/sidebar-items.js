@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["FileName",""],["NameError",""]]});
+window.SIDEBAR_ITEMS = {"struct":["FileName","NameError"]};

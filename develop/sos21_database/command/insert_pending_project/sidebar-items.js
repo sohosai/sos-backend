@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["insert_pending_project",""]]});
+window.SIDEBAR_ITEMS = {"fn":["insert_pending_project"]};

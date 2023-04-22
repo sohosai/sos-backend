@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["RegistrationForm",""],["RegistrationFormData",""],["RegistrationFormProjectQueryConjunction",""]]});
+window.SIDEBAR_ITEMS = {"struct":["RegistrationForm","RegistrationFormData","RegistrationFormProjectQueryConjunction"]};

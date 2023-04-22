@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["send_form_answer_notification",""]]});
+window.SIDEBAR_ITEMS = {"fn":["send_form_answer_notification"]};

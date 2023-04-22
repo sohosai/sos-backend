@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["list_forms_by_project",""]],"struct":[["ProjectFormData",""]]});
+window.SIDEBAR_ITEMS = {"fn":["list_forms_by_project"],"struct":["ProjectFormData","Record"]};

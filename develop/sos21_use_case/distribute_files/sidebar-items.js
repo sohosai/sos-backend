@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error",""],["InputFile",""],["InputProject",""]],"fn":[["run",""],["to_file_sharing",""],["to_project",""]],"struct":[["Input",""],["InputFileMapping",""]]});
+window.SIDEBAR_ITEMS = {"enum":["Error","InputFile","InputProject"],"fn":["run","to_file_sharing","to_project"],"static":["CALLSITE","META"],"struct":["Input","InputFileMapping"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["get_build_info",""],["health",""]]});
+window.SIDEBAR_ITEMS = {"mod":["get_build_info","health"]};

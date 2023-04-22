@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["FileSize",""]]});
+window.SIDEBAR_ITEMS = {"struct":["FileSize"]};

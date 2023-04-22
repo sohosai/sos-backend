@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["FormPeriod",""],["PeriodError",""]]});
+window.SIDEBAR_ITEMS = {"struct":["FormPeriod","PeriodError"]};

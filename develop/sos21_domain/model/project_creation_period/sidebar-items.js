@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ProjectCreationPeriodInner",""]],"struct":[["PeriodError",""],["ProjectCreationPeriod",""]]});
+window.SIDEBAR_ITEMS = {"enum":["ProjectCreationPeriodInner"],"struct":["PeriodError","ProjectCreationPeriod"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["LengthError",""],["TextFormItemLength",""]]});
+window.SIDEBAR_ITEMS = {"struct":["LengthError","TextFormItemLength"]};

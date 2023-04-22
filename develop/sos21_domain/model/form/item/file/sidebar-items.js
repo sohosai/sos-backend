@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["CheckAnswerErrorKind",""]],"mod":[["types",""]],"struct":[["CheckAnswerError",""],["FileFormItem",""]]});
+window.SIDEBAR_ITEMS = {"enum":["CheckAnswerErrorKind"],"mod":["types"],"struct":["CheckAnswerError","FileFormItem"]};
