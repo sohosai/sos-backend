@@ -167,7 +167,7 @@ where
     } = &input.field_names;
 
     if id.is_some() {
-        writer.write_field(answer.id().to_uuid().hyphenated().to_string())?;
+        writer.write_field(answer.id().to_uuid().to_hyphenated().to_string())?;
     }
 
     if created_at.is_some() {
@@ -176,14 +176,14 @@ where
     }
 
     if project_id.is_some() {
-        writer.write_field(answer.project_id().to_uuid().hyphenated().to_string())?;
+        writer.write_field(answer.project_id().to_uuid().to_hyphenated().to_string())?;
     }
 
     if author_id.is_some() {
         writer.write_field(&answer.author_id().0)?;
     }
 
-    let answer_id = answer.id().to_uuid().hyphenated().to_string();
+    let answer_id = answer.id().to_uuid().to_hyphenated().to_string();
     let render = |sharing_ids| {
         (input.render_file_answer)(RenderFileAnswerInput {
             answer_id: answer_id.clone(),
@@ -279,7 +279,7 @@ where
         FormAnswerItemBody::File(sharings) => {
             let sharings = sharings
                 .sharing_answers()
-                .map(|answer| answer.sharing_id.to_uuid().hyphenated().to_string())
+                .map(|answer| answer.sharing_id.to_uuid().to_hyphenated().to_string())
                 .collect();
             let field = (render_file_answer)(sharings).context("Failed to render file answer")?;
             writer.write_field(field)?;
