@@ -16,7 +16,7 @@ bitflags = "1"
 serde_json = "1"
 
 [dependencies.sqlx]
-version = "0.5.8"
+version = "0.5"
 features = [
   "bit-vec",
   "chrono",
@@ -27,3 +27,6 @@ features = [
   "runtime-tokio-rustls",
   "uuid",
 ]
+
+[build-dependencies]
+syn = "1"

@@ -1580,9 +1580,9 @@ dependencies = [
 
 [[package]]
 name = "linux-raw-sys"
-version = "0.3.3"
+version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9b085a4f2cde5781fc4b1717f2e86c62f5cda49de7ba99a7c2eae02b61c9064c"
+checksum = "36eb31c1778188ae1e64398743890d0877fef36d11521ac60406b42016e8c2cf"
 
 [[package]]
 name = "lock_api"
@@ -2988,6 +2988,7 @@ dependencies = [
  "sos21-use-case",
  "sqlx",
  "structopt",
+ "syn 1.0.109",
  "thiserror",
  "tokio 1.27.0",
  "tracing",
@@ -3010,6 +3011,7 @@ dependencies = [
  "futures 0.3.28",
  "serde_json",
  "sqlx",
+ "syn 1.0.109",
  "uuid 0.8.2",
 ]
 
@@ -3032,6 +3034,7 @@ dependencies = [
  "paste",
  "rand 0.8.5",
  "serde",
+ "syn 1.0.109",
  "thiserror",
  "tokio 1.27.0",
  "typenum",
@@ -3051,6 +3054,7 @@ dependencies = [
  "sos21-database",
  "sos21-domain",
  "sqlx",
+ "syn 1.0.109",
  "uuid 0.8.2",
 ]
 
@@ -3065,6 +3069,7 @@ dependencies = [
  "rusoto_core",
  "rusoto_s3",
  "sos21-domain",
+ "syn 1.0.109",
  "thiserror",
  "tokio 1.27.0",
 ]
@@ -3076,6 +3081,7 @@ dependencies = [
  "anyhow",
  "slack-hook",
  "sos21-domain",
+ "syn 1.0.109",
  "url 2.3.1",
 ]
 
@@ -3087,6 +3093,7 @@ dependencies = [
  "sos21-database",
  "sqlx",
  "structopt",
+ "syn 1.0.109",
  "tokio 1.27.0",
  "tracing",
  "tracing-futures",
@@ -3105,6 +3112,7 @@ dependencies = [
  "mime",
  "sos21-domain",
  "sos21-gateway-slack",
+ "syn 1.0.109",
  "tokio 1.27.0",
  "tracing",
  "tracing-futures",

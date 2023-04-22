@@ -4466,9 +4466,9 @@ rec {
       };
       "linux-raw-sys" = rec {
         crateName = "linux-raw-sys";
-        version = "0.3.3";
+        version = "0.3.4";
         edition = "2018";
-        sha256 = "0k06r5hjpq7aqakrkfp7knjcvxb2dklg45qp9gy82myy5i7ml24v";
+        sha256 = "1ky2x0b21d060k31llhidprzwxq81n4l71rrchgax241fz0k3srn";
         authors = [
           "Dan Gohman <dev@sunfishcode.online>"
         ];
@@ -8817,6 +8817,10 @@ rec {
         ];
         buildDependencies = [
           {
+            name = "syn";
+            packageId = "syn 1.0.109";
+          }
+          {
             name = "vergen";
             packageId = "vergen";
             usesDefaultFeatures = false;
@@ -8863,6 +8867,12 @@ rec {
           {
             name = "uuid";
             packageId = "uuid 0.8.2";
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "syn";
+            packageId = "syn 1.0.109";
           }
         ];
 
@@ -8966,6 +8976,12 @@ rec {
             features = [ "serde" "v4" ];
           }
         ];
+        buildDependencies = [
+          {
+            name = "syn";
+            packageId = "syn 1.0.109";
+          }
+        ];
         devDependencies = [
           {
             name = "maplit";
@@ -9042,6 +9058,12 @@ rec {
             packageId = "uuid 0.8.2";
           }
         ];
+        buildDependencies = [
+          {
+            name = "syn";
+            packageId = "syn 1.0.109";
+          }
+        ];
 
       };
       "sos21-gateway-s3" = rec {
@@ -9096,6 +9118,12 @@ rec {
             features = [ "rt" ];
           }
         ];
+        buildDependencies = [
+          {
+            name = "syn";
+            packageId = "syn 1.0.109";
+          }
+        ];
 
       };
       "sos21-gateway-slack" = rec {
@@ -9122,6 +9150,12 @@ rec {
           {
             name = "url";
             packageId = "url 2.3.1";
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "syn";
+            packageId = "syn 1.0.109";
           }
         ];
 
@@ -9171,6 +9205,12 @@ rec {
           {
             name = "tracing-subscriber";
             packageId = "tracing-subscriber";
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "syn";
+            packageId = "syn 1.0.109";
           }
         ];
 
@@ -9229,6 +9269,12 @@ rec {
             name = "uuid";
             packageId = "uuid 0.8.2";
             features = [ "v4" ];
+          }
+        ];
+        buildDependencies = [
+          {
+            name = "syn";
+            packageId = "syn 1.0.109";
           }
         ];
         devDependencies = [
