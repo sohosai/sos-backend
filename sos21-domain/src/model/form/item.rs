@@ -505,10 +505,7 @@ impl CheckFormItems {
             }
         };
 
-        if !item
-            .boxes()
-            .any(|checkbox| checkbox.id == checkbox_id)
-        {
+        if !item.boxes().any(|checkbox| checkbox.id == checkbox_id) {
             return Err(FromItemsError {
                 kind: FromItemsErrorKind::UnknownCheckboxIdInConditions {
                     provenance,
@@ -550,10 +547,7 @@ impl CheckFormItems {
             }
         };
 
-        if !item
-            .buttons()
-            .any(|button| button.id == radio_id)
-        {
+        if !item.buttons().any(|button| button.id == radio_id) {
             return Err(FromItemsError {
                 kind: FromItemsErrorKind::UnknownRadioIdInConditions {
                     provenance,
@@ -595,10 +589,7 @@ impl CheckFormItems {
             }
         };
 
-        if !item
-            .columns()
-            .any(|column| column.id == column_id)
-        {
+        if !item.columns().any(|column| column.id == column_id) {
             return Err(FromItemsError {
                 kind: FromItemsErrorKind::UnknownGridRadioColumnIdInConditions {
                     provenance,
