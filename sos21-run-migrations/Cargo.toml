@@ -9,7 +9,7 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 anyhow = "1"
 sos21-database = { path = "../sos21-database" }
-sqlx = { version = "0.6.3", features = ["postgres", "runtime-tokio-rustls"] }
+sqlx = { version = "0.5.8", features = ["postgres", "runtime-tokio-rustls"] }
 structopt = "0.3"
 tokio = { version = "1", features = ["full"] }
 tracing = "0.1"
