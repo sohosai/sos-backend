@@ -11,8 +11,8 @@ jobs:
       - uses: cachix/install-nix-action@v20
       - uses: cachix/cachix-action@v12
         with:
-          name: sos21-backend
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          name: sos-backend
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN_JSYS23 }}'
       - run: nix-build
   build-shell:
     name: Build shell
@@ -22,8 +22,8 @@ jobs:
       - uses: cachix/install-nix-action@v20
       - uses: cachix/cachix-action@v12
         with:
-          name: sos21-backend
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          name: sos-backend
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN_JSYS23 }}'
       - run: nix-build shell.nix -A inputDerivation
   build-script-shell:
     name: Build shell for scripts
@@ -33,8 +33,8 @@ jobs:
       - uses: cachix/install-nix-action@v20
       - uses: cachix/cachix-action@v12
         with:
-          name: sos21-backend
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          name: sos-backend
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN_JSYS23 }}'
       - run: nix-build script/shell.nix -A inputDerivation
   fmt:
     name: Rustfmt
@@ -44,8 +44,8 @@ jobs:
       - uses: cachix/install-nix-action@v20
       - uses: cachix/cachix-action@v12
         with:
-          name: sos21-backend
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          name: sos-backend
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN_JSYS23 }}'
       - run: nix-env -f ./nix/pkgs.nix -iA rustPlatform.rust.cargo
       - uses: actions-rs/cargo@v1
         with:
@@ -59,8 +59,8 @@ jobs:
       - uses: cachix/install-nix-action@v20
       - uses: cachix/cachix-action@v12
         with:
-          name: sos21-backend
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          name: sos-backend
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN_JSYS23 }}'
       - run: nix-env -f ./nix/pkgs.nix -iA rustPlatform.rust.cargo
       - uses: actions-rs/clippy-check@v1
         env:
@@ -85,7 +85,7 @@ jobs:
       - uses: cachix/install-nix-action@v20
       - uses: cachix/cachix-action@v12
         with:
-          name: sos21-backend
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          name: sos-backend
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN_JSYS23 }}"
       - run: nix-env -f ./nix/pkgs.nix -iA nixpkgs-fmt
       - run: nixpkgs-fmt --check $(find . -name '*.nix' ! -name 'Cargo.nix')
