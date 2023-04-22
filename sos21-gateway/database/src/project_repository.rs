@@ -181,6 +181,7 @@ pub fn from_project_attributes(attributes: &ProjectAttributes) -> data::project:
             ProjectAttribute::Artistic => data::project::ProjectAttributes::ARTISTIC,
             ProjectAttribute::Committee => data::project::ProjectAttributes::COMMITTEE,
             ProjectAttribute::Outdoor => data::project::ProjectAttributes::OUTDOOR,
+            ProjectAttribute::Indoor => data::project::ProjectAttributes::INDOOR,
         })
         .collect()
 }
@@ -217,6 +218,10 @@ pub fn to_project_attributes(
     if attributes.contains(data::project::ProjectAttributes::OUTDOOR) {
         result.insert(ProjectAttribute::Outdoor);
         attributes.remove(data::project::ProjectAttributes::OUTDOOR);
+    }
+    if attributes.contains(data::project::ProjectAttributes::INDOOR) {
+        result.insert(ProjectAttribute::Indoor);
+        attributes.remove(data::project::ProjectAttributes::INDOOR);
     }
     ensure!(attributes.is_empty());
 

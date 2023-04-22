@@ -48,6 +48,7 @@ pub struct InputFieldNames {
     pub attribute_artistic: Option<String>,
     pub attribute_committee: Option<String>,
     pub attribute_outdoor: Option<String>,
+    pub attribute_indoor: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -151,6 +152,7 @@ where
         attribute_artistic,
         attribute_committee,
         attribute_outdoor,
+        attribute_indoor,
     } = &input.field_names;
 
     macro_rules! write_field {
@@ -189,6 +191,7 @@ where
     write_field!(writer, attribute_artistic);
     write_field!(writer, attribute_committee);
     write_field!(writer, attribute_outdoor);
+    write_field!(writer, attribute_indoor);
 
     // this terminates the record (see docs on `csv::Writer::write_record`)
     writer.write_record(std::iter::empty::<&[u8]>())?;
@@ -241,6 +244,7 @@ where
         attribute_artistic,
         attribute_committee,
         attribute_outdoor,
+        attribute_indoor,
     } = &input.field_names;
 
     if id.is_some() {
@@ -378,6 +382,18 @@ where
         }
     }
 
+    if attribute_indoor.is_some() {
+        if data
+            .project
+            .attributes()
+            .contains(project::ProjectAttribute::Indoor)
+        {
+            writer.write_field(b"TRUE")?;
+        } else {
+            writer.write_field(b"FALSE")?;
+        }
+    }
+
     // this terminates the record (see docs on `csv::Writer::write_record`)
     writer.write_record(std::iter::empty::<&[u8]>())?;
 
@@ -492,6 +508,7 @@ mod tests {
             attribute_artistic: Some("芸術企画".to_string()),
             attribute_committee: Some("委員会企画".to_string()),
             attribute_outdoor: Some("屋外企画".to_string()),
+            attribute_indoor: Some("屋内企画".to_string()),
         };
         let category_names = export_projects::InputCategoryNames {
             general: "一般企画（食品取扱い企画を除く）".to_string(),

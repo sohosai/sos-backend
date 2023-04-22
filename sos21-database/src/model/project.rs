@@ -24,6 +24,7 @@ bitflags::bitflags! {
         const ARTISTIC  = 0b00000010;
         const COMMITTEE = 0b00000100;
         const OUTDOOR   = 0b00001000;
+        const INDOOR    = 0b00010000;
     }
 }
 

@@ -58,6 +58,7 @@ pub enum ProjectAttribute {
     Artistic,
     Committee,
     Outdoor,
+    Indoor,
 }
 
 impl ProjectAttribute {
@@ -67,6 +68,7 @@ impl ProjectAttribute {
             entity::ProjectAttribute::Artistic => ProjectAttribute::Artistic,
             entity::ProjectAttribute::Committee => ProjectAttribute::Committee,
             entity::ProjectAttribute::Outdoor => ProjectAttribute::Outdoor,
+            entity::ProjectAttribute::Indoor => ProjectAttribute::Indoor,
         }
     }
 
@@ -76,6 +78,7 @@ impl ProjectAttribute {
             ProjectAttribute::Artistic => entity::ProjectAttribute::Artistic,
             ProjectAttribute::Committee => entity::ProjectAttribute::Committee,
             ProjectAttribute::Outdoor => entity::ProjectAttribute::Outdoor,
+            ProjectAttribute::Indoor => entity::ProjectAttribute::Indoor,
         }
     }
 }

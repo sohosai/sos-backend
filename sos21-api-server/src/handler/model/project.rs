@@ -62,6 +62,7 @@ pub enum ProjectAttribute {
     Artistic,
     Committee,
     Outdoor,
+    Indoor,
 }
 
 impl ProjectAttribute {
@@ -71,6 +72,7 @@ impl ProjectAttribute {
             use_case::ProjectAttribute::Artistic => ProjectAttribute::Artistic,
             use_case::ProjectAttribute::Committee => ProjectAttribute::Committee,
             use_case::ProjectAttribute::Outdoor => ProjectAttribute::Outdoor,
+            use_case::ProjectAttribute::Indoor => ProjectAttribute::Indoor,
         }
     }
 
@@ -80,6 +82,7 @@ impl ProjectAttribute {
             ProjectAttribute::Artistic => use_case::ProjectAttribute::Artistic,
             ProjectAttribute::Committee => use_case::ProjectAttribute::Committee,
             ProjectAttribute::Outdoor => use_case::ProjectAttribute::Outdoor,
+            ProjectAttribute::Indoor => use_case::ProjectAttribute::Indoor,
         }
     }
 }
