@@ -16,7 +16,8 @@ impl DateTime {
     }
 
     pub fn jst(&self) -> chrono::DateTime<chrono::FixedOffset> {
-        let jst = chrono::FixedOffset::east(9 * 3600);
+        // FIXME: 範囲外の場合のハンドリングをする
+        let jst = chrono::FixedOffset::east_opt(9 * 3600).unwrap();
         self.0.with_timezone(&jst)
     }
 }

@@ -129,11 +129,10 @@ impl RadioFormItem {
             (_, Some(answer)) => answer,
         };
 
-        if self
+        if !self
             .buttons
             .buttons()
-            .find(|button| button.id == answer)
-            .is_none()
+            .any(|button| button.id == answer)
         {
             return Err(CheckAnswerError {
                 kind: CheckAnswerErrorKind::UnknownRadioId { id: answer },

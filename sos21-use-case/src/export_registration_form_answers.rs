@@ -128,7 +128,7 @@ where
     write_field!(writer, author_id);
 
     for item in registration_form.items.items() {
-        write_item_header_fields(writer, &item)?;
+        write_item_header_fields(writer, item)?;
     }
 
     // this terminates the record (see docs on `csv::Writer::write_record`)

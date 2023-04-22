@@ -27,9 +27,7 @@ pub fn new_form_answer_id() -> FormAnswerId {
 
 pub fn mock_form_answer_item_text(item: &TextFormItem) -> Option<FormAnswerItemText> {
     let text = if let Some(min_length) = item.min_length() {
-        let text = std::iter::repeat('テ')
-            .take(min_length as usize)
-            .collect::<String>();
+        let text = "テ".repeat(min_length as usize);
         FormAnswerItemText::from_string(text).unwrap()
     } else {
         FormAnswerItemText::from_string("ア").unwrap()

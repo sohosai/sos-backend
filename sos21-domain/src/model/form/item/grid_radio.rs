@@ -277,10 +277,9 @@ impl GridRadioFormItem {
             }
 
             if let Some(column_id) = row_answer.value {
-                if self
+                if !self
                     .columns()
-                    .find(|column| column.id == column_id)
-                    .is_none()
+                    .any(|column| column.id == column_id)
                 {
                     return Err(CheckAnswerError {
                         kind: CheckAnswerErrorKind::UnknownGridRadioColumnId { id: column_id },

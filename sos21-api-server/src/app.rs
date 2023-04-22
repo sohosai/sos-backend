@@ -70,10 +70,11 @@ impl App {
                 "never" => ProjectCreationPeriod::never(),
                 _ => {
                     let (starts_at, ends_at) = period
-                        .split_once("-")
+                        .split_once('-')
                         .context("period must be delimited with '-'")?;
-                    let starts_at = DateTime::from_utc(Utc.timestamp_millis(starts_at.parse()?));
-                    let ends_at = DateTime::from_utc(Utc.timestamp_millis(ends_at.parse()?));
+                    // FIXME: 範囲外の場合にハンドリングする
+                    let starts_at = DateTime::from_utc(Utc.timestamp_millis_opt(starts_at.parse()?).unwrap());
+                    let ends_at = DateTime::from_utc(Utc.timestamp_millis_opt(ends_at.parse()?).unwrap());
                     ProjectCreationPeriod::from_datetime(starts_at, ends_at)
                         .context("invalid project creation period")?
                 }

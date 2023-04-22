@@ -51,7 +51,7 @@ WHERE registration_forms.id = $1
 
     let query = row
         .query
-        .unwrap_or_else(Vec::new)
+        .unwrap_or_default()
         .into_iter()
         .map(
             |(category, attributes)| RegistrationFormProjectQueryConjunction {

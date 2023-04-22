@@ -41,7 +41,6 @@ impl RegistrationForm {
             items: registratiion_form
                 .items
                 .into_items()
-                .into_iter()
                 .map(FormItem::from_entity)
                 .collect(),
             query: ProjectQuery::from_entity(registratiion_form.query),
