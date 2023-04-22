@@ -52,12 +52,11 @@ pub struct InputFieldNames {
 
 #[derive(Debug, Clone)]
 pub struct InputCategoryNames {
-    pub general_online: String,
-    pub general_physical: String,
-    pub stage_online: String,
-    pub stage_physical: String,
-    pub cooking_physical: String,
-    pub food_physical: String,
+    pub general: String,
+    pub cooking_requiring_preparation_area: String,
+    pub cooking: String,
+    pub food: String,
+    pub stage: String,
 }
 
 #[tracing::instrument(skip(ctx))]
@@ -320,12 +319,11 @@ where
 
     if category.is_some() {
         let category_name = match data.project.category() {
-            project::ProjectCategory::GeneralOnline => &input.category_names.general_online,
-            project::ProjectCategory::GeneralPhysical => &input.category_names.general_physical,
-            project::ProjectCategory::StageOnline => &input.category_names.stage_online,
-            project::ProjectCategory::StagePhysical => &input.category_names.stage_physical,
-            project::ProjectCategory::CookingPhysical => &input.category_names.cooking_physical,
-            project::ProjectCategory::FoodPhysical => &input.category_names.food_physical,
+            project::ProjectCategory::General => &input.category_names.general,
+            project::ProjectCategory::CookingRequiringPreparationArea => &input.category_names.cooking_requiring_preparation_area,
+            project::ProjectCategory::Cooking => &input.category_names.cooking,
+            project::ProjectCategory::Food => &input.category_names.food,
+            project::ProjectCategory::Stage => &input.category_names.stage,
         };
         writer.write_field(category_name)?;
     }
@@ -450,8 +448,8 @@ mod tests {
 
     async fn prepare_app(login_user: domain::user::User) -> Login<test::context::MockApp> {
         let other = test::model::new_general_user();
-        let project1 = test::model::new_general_online_project(login_user.id().clone());
-        let project2 = test::model::new_general_online_project(other.id().clone());
+        let project1 = test::model::new_general_project(login_user.id().clone());
+        let project2 = test::model::new_general_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![login_user.clone(), other.clone()])
@@ -494,12 +492,11 @@ mod tests {
             attribute_outdoor: Some("屋外企画".to_string()),
         };
         let category_names = export_projects::InputCategoryNames {
-            general_online: "オンライン一般企画".to_string(),
-            general_physical: "対面一般企画".to_string(),
-            stage_online: "オンラインステージ企画".to_string(),
-            stage_physical: "対面ステージ企画".to_string(),
-            cooking_physical: "調理".to_string(),
-            food_physical: "飲食物取扱".to_string(),
+            general: "一般企画（食品取扱い企画を除く）".to_string(),
+            cooking_requiring_preparation_area: "調理を行う企画（仕込場が必要）".to_string(),
+            cooking: "調理を行う企画（仕込場が不要）".to_string(),
+            food: "飲食物取扱い企画".to_string(),
+            stage: "ステージ企画".to_string(),
         };
         export_projects::Input {
             field_names,

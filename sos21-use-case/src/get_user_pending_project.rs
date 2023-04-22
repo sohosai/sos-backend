@@ -43,11 +43,11 @@ mod tests {
     #[tokio::test]
     async fn test_get() {
         let mut user = test::model::new_general_user();
-        let pending_project1 = test::model::new_general_online_pending_project(user.id().clone());
+        let pending_project1 = test::model::new_general_pending_project(user.id().clone());
         user.assign_pending_project_owner(&pending_project1)
             .unwrap();
         let mut other = test::model::new_general_user();
-        let pending_project2 = test::model::new_general_online_pending_project(other.id().clone());
+        let pending_project2 = test::model::new_general_pending_project(other.id().clone());
         other
             .assign_pending_project_owner(&pending_project2)
             .unwrap();
@@ -67,7 +67,7 @@ mod tests {
     async fn test_not_found() {
         let user = test::model::new_general_user();
         let mut other = test::model::new_general_user();
-        let pending_project = test::model::new_general_online_pending_project(other.id().clone());
+        let pending_project = test::model::new_general_pending_project(other.id().clone());
         other
             .assign_pending_project_owner(&pending_project)
             .unwrap();

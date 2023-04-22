@@ -78,10 +78,10 @@ mod tests {
         let (file, object) = test::model::new_file(operator.id().clone());
 
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_online_project(other.id().clone());
+        let other_project = test::model::new_general_project(other.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -119,10 +119,10 @@ mod tests {
         let (file, object) = test::model::new_file(operator.id().clone());
 
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_online_project(other.id().clone());
+        let other_project = test::model::new_general_project(other.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(other_project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -160,7 +160,7 @@ mod tests {
         let (file, object) = test::model::new_file(operator.id().clone());
 
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let scope = file_sharing::FileSharingScope::Project(project.id());
         let sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -198,7 +198,7 @@ mod tests {
 
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project_with_subowner(
+        let project = test::model::new_general_project_with_subowner(
             owner.id().clone(),
             user.id().clone(),
         );

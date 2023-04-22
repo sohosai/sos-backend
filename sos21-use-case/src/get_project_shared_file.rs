@@ -78,7 +78,7 @@ mod tests {
     async fn test_general_others_project() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_online_project(other.id().clone());
+        let other_project = test::model::new_general_project(other.id().clone());
         let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let sharing = file_sharing::FileSharing::new(
@@ -113,7 +113,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_owner_project() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
         let other = test::model::new_general_user();
         let (other_file, other_object) = test::model::new_file(other.id().clone());
 
@@ -149,7 +149,7 @@ mod tests {
     async fn test_general_subowner_project() {
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project_with_subowner(
+        let project = test::model::new_general_project_with_subowner(
             owner.id().clone(),
             user.id().clone(),
         );
@@ -187,9 +187,9 @@ mod tests {
     #[tokio::test]
     async fn test_general_others_owner() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_online_project(other.id().clone());
+        let other_project = test::model::new_general_project(other.id().clone());
         let (other_file, other_object) = test::model::new_file(other.id().clone());
 
         let sharing = file_sharing::FileSharing::new(
@@ -225,7 +225,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_owner_revoked() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
         let other = test::model::new_general_user();
         let (other_file, other_object) = test::model::new_file(other.id().clone());
 
@@ -263,7 +263,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_owner_expired() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
         let other = test::model::new_general_user();
         let (other_file, other_object) = test::model::new_file(other.id().clone());
 

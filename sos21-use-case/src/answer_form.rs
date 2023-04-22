@@ -142,7 +142,7 @@ mod tests {
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_online_project_with_subowner(
+        let project = test::model::new_general_project_with_subowner(
             owner.id().clone(),
             user.id().clone(),
         );
@@ -179,7 +179,7 @@ mod tests {
     async fn test_create_owner() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
         let form = test::model::new_form(other.id().clone());
 
         let app = test::build_mock_app()
@@ -213,7 +213,7 @@ mod tests {
     async fn test_create_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_online_project(other.id().clone());
+        let project = test::model::new_general_project(other.id().clone());
         let form = test::model::new_form(other.id().clone());
 
         let app = test::build_mock_app()
@@ -242,7 +242,7 @@ mod tests {
     async fn test_invalid() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
         let form = test::model::new_form(other.id().clone());
 
         let app = test::build_mock_app()
@@ -273,7 +273,7 @@ mod tests {
     async fn test_file_share() {
         let user = test::model::new_general_user();
         let other = test::model::new_operator_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let (form, item_id) = {
             let body = item::FormItemBody::File(item::FileFormItem {

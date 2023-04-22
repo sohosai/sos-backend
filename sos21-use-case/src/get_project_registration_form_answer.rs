@@ -83,7 +83,7 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_online_project(other.id().clone());
+        let project_other = test::model::new_general_project(other.id().clone());
         let registration_form = test::model::new_registration_form(other.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
             other.id().clone(),
@@ -119,7 +119,7 @@ mod tests {
         let user = test::model::new_general_user();
         let subowner = test::model::new_general_user();
         let operator = test::model::new_operator_user();
-        let project = test::model::new_general_online_project_with_subowner(
+        let project = test::model::new_general_project_with_subowner(
             user.id().clone(),
             subowner.id().clone(),
         );
@@ -157,7 +157,7 @@ mod tests {
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
         let operator = test::model::new_operator_user();
-        let project = test::model::new_general_online_project_with_subowner(
+        let project = test::model::new_general_project_with_subowner(
             owner.id().clone(),
             user.id().clone(),
         );
@@ -194,7 +194,7 @@ mod tests {
     async fn test_committee_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_online_project(other.id().clone());
+        let project_other = test::model::new_general_project(other.id().clone());
         let registration_form = test::model::new_registration_form(other.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
             other.id().clone(),
@@ -228,7 +228,7 @@ mod tests {
     async fn test_operator_other() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_online_project(other.id().clone());
+        let project_other = test::model::new_general_project(other.id().clone());
         let registration_form = test::model::new_registration_form(other.id().clone());
         let answer_other = test::model::new_registration_form_answer_with_project(
             other.id().clone(),

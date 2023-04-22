@@ -70,7 +70,7 @@ mod tests {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
         let pending_project_other =
-            test::model::new_general_online_pending_project(other.id().clone());
+            test::model::new_general_pending_project(other.id().clone());
         let registration_form = test::model::new_registration_form(user.id().clone());
 
         let app = test::build_mock_app()
@@ -98,7 +98,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_author() {
         let user = test::model::new_general_user();
-        let pending_project = test::model::new_general_online_pending_project(user.id().clone());
+        let pending_project = test::model::new_general_pending_project(user.id().clone());
         let registration_form = test::model::new_registration_form(user.id().clone());
 
         let app = test::build_mock_app()
@@ -128,7 +128,7 @@ mod tests {
         let user = test::model::new_operator_user();
         let pending_project = test::model::new_pending_project_with_attributes(
             user.id().clone(),
-            project::ProjectCategory::GeneralOnline,
+            project::ProjectCategory::General,
             &[
                 project::ProjectAttribute::Academic,
                 project::ProjectAttribute::Artistic,
@@ -174,7 +174,7 @@ mod tests {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
         let pending_project_other =
-            test::model::new_general_online_pending_project(other.id().clone());
+            test::model::new_general_pending_project(other.id().clone());
         let registration_form = test::model::new_registration_form(user.id().clone());
 
         let app = test::build_mock_app()
@@ -204,7 +204,7 @@ mod tests {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
         let pending_project_other =
-            test::model::new_general_online_pending_project(other.id().clone());
+            test::model::new_general_pending_project(other.id().clone());
         let registration_form = test::model::new_registration_form(user.id().clone());
 
         let app = test::build_mock_app()

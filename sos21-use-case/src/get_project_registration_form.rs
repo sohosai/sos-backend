@@ -65,7 +65,7 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_online_project(other.id().clone());
+        let project_other = test::model::new_general_project(other.id().clone());
         let registration_form = test::model::new_registration_form(user.id().clone());
 
         let app = test::build_mock_app()
@@ -93,7 +93,7 @@ mod tests {
     #[tokio::test]
     async fn test_general_owner() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
         let registration_form = test::model::new_registration_form(user.id().clone());
 
         let app = test::build_mock_app()
@@ -117,7 +117,7 @@ mod tests {
     async fn test_general_subowner() {
         let owner = test::model::new_general_user();
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project_with_subowner(
+        let project = test::model::new_general_project_with_subowner(
             owner.id().clone(),
             user.id().clone(),
         );
@@ -145,7 +145,7 @@ mod tests {
         let user = test::model::new_operator_user();
         let project = test::model::new_project_with_attributes(
             user.id().clone(),
-            project::ProjectCategory::GeneralOnline,
+            project::ProjectCategory::General,
             &[
                 project::ProjectAttribute::Academic,
                 project::ProjectAttribute::Artistic,
@@ -190,7 +190,7 @@ mod tests {
     async fn test_committee_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_online_project(other.id().clone());
+        let project_other = test::model::new_general_project(other.id().clone());
         let registration_form = test::model::new_registration_form(user.id().clone());
 
         let app = test::build_mock_app()
@@ -214,7 +214,7 @@ mod tests {
     async fn test_operator_other() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_online_project(other.id().clone());
+        let project_other = test::model::new_general_project(other.id().clone());
         let registration_form = test::model::new_registration_form(user.id().clone());
 
         let app = test::build_mock_app()
