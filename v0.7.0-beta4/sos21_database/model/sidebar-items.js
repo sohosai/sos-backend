@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["file","file_distribution","file_sharing","form","form_answer","pending_project","project","registration_form","registration_form_answer","user","user_invitation"]};
