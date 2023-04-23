@@ -95,6 +95,14 @@
 <a href="#95" id="95">95</a>
 <a href="#96" id="96">96</a>
 <a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::config::Config;
 
 <span class="kw">use </span>anyhow::Context <span class="kw">as _</span>;
@@ -108,6 +116,8 @@
 <span class="kw">use </span>bearer::Bearer;
 <span class="kw">use </span>claim::Claims;
 <span class="kw">pub use </span>key_store::KeyStore;
+<span class="kw">use </span>sos21_domain::model::user::UserEmailAddress;
+<span class="kw">use </span>sos21_gateway_slack::report_suspicious_email;
 
 <span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>AuthenticationInfo {
@@ -170,6 +180,12 @@
         <span class="kw">return </span><span class="prelude-val">Err</span>(warp::reject::custom(
             AuthenticationError::UnverifiedEmailAddress,
         ));
+    }
+
+    <span class="kw">if </span>UserEmailAddress::from_string(<span class="kw-2">&amp;</span>email).is_err() {
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = report_suspicious_email(<span class="kw-2">&amp;</span>config.admin_report_slack_webhook, <span class="kw-2">&amp;</span>email) {
+            <span class="macro">tracing::error!</span>(<span class="string">&quot;Failed to deliver suspicious account report. Reason: {}&quot;</span>, e);
+        }
     }
 
     <span class="prelude-val">Ok</span>(AuthenticationInfo {
