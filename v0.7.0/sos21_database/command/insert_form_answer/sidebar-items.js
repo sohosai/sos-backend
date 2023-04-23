@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["insert_form_answer"]};

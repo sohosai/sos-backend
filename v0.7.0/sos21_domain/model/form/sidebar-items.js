@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AnswerErrorKind","NewFormErrorKind","SetPeriodErrorKind"],"mod":["condition","description","item","name","period"],"struct":["AnswerError","Form","FormContent","FormId","NewFormError","NoUpdatePermissionError","SetPeriodError"]};
