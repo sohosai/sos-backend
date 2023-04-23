@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["delete_pending_project"]};
