@@ -30,7 +30,7 @@ in
   services.sos21-api-server = {
     enable = true;
     port = 3000;
-    firebaseProjectId = "sos22-beta";
+    firebaseProjectId = "sos23-beta";
     databaseName = "sos21-beta";
     s3ObjectBucket = "sos21-beta-objects";
   };

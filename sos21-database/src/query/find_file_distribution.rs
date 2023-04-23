@@ -49,7 +49,7 @@ WHERE file_distributions.id = $1
 
     let files = row
         .files
-        .unwrap_or_else(Vec::new)
+        .unwrap_or_default()
         .into_iter()
         .map(|(project_id, sharing_id)| FileDistributionFile {
             project_id,

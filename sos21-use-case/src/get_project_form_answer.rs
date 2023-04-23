@@ -65,7 +65,7 @@ mod tests {
     async fn test_general_other() {
         let user = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_online_project(other.id().clone());
+        let project_other = test::model::new_general_project(other.id().clone());
         assert!(!project_other.is_visible_to(&user));
         let form = test::model::new_form(other.id().clone());
         let answer_other = test::model::new_form_answer(other.id().clone(), &project_other, &form);
@@ -97,7 +97,7 @@ mod tests {
     async fn test_committee_other() {
         let user = test::model::new_committee_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_online_project(other.id().clone());
+        let project_other = test::model::new_general_project(other.id().clone());
         let form = test::model::new_form(other.id().clone());
         let answer_other = test::model::new_form_answer(other.id().clone(), &project_other, &form);
 
@@ -122,7 +122,7 @@ mod tests {
     async fn test_operator_other() {
         let user = test::model::new_operator_user();
         let other = test::model::new_general_user();
-        let project_other = test::model::new_general_online_project(other.id().clone());
+        let project_other = test::model::new_general_project(other.id().clone());
         let form = test::model::new_form(other.id().clone());
         let answer_other = test::model::new_form_answer(other.id().clone(), &project_other, &form);
 

@@ -128,11 +128,11 @@ mod tests {
             excludes: FormConditionProjectSet::from_projects(vec![]).unwrap(),
         };
 
-        let project1 = test_model::new_general_online_project(test_model::new_user_id());
+        let project1 = test_model::new_general_project(test_model::new_user_id());
         assert!(condition.check(&project1));
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -144,7 +144,7 @@ mod tests {
 
     #[test]
     fn test_exclude_tautology() {
-        let project1 = test_model::new_general_online_project(test_model::new_user_id());
+        let project1 = test_model::new_general_project(test_model::new_user_id());
 
         let conj = ProjectQueryConjunction {
             category: None,
@@ -159,7 +159,7 @@ mod tests {
 
         assert!(!condition.check(&project1));
 
-        let project2 = test_model::new_general_online_project(test_model::new_user_id());
+        let project2 = test_model::new_general_project(test_model::new_user_id());
         assert!(condition.check(&project2));
     }
 
@@ -172,11 +172,11 @@ mod tests {
             excludes: FormConditionProjectSet::from_projects(vec![]).unwrap(),
         };
 
-        let project1 = test_model::new_general_online_project(test_model::new_user_id());
+        let project1 = test_model::new_general_project(test_model::new_user_id());
         assert!(!condition.check(&project1));
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -188,7 +188,7 @@ mod tests {
 
     #[test]
     fn test_include_contradiction() {
-        let project1 = test_model::new_general_online_project(test_model::new_user_id());
+        let project1 = test_model::new_general_project(test_model::new_user_id());
 
         let query = ProjectQuery::from_conjunctions(vec![]).unwrap();
         let condition = FormCondition {
@@ -198,7 +198,7 @@ mod tests {
         };
 
         assert!(condition.check(&project1));
-        let project2 = test_model::new_general_online_project(test_model::new_user_id());
+        let project2 = test_model::new_general_project(test_model::new_user_id());
         assert!(!condition.check(&project2));
     }
 
@@ -206,12 +206,12 @@ mod tests {
     fn test_include_exclude() {
         let project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[],
         );
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Academic],
         );
 

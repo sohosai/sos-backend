@@ -30,7 +30,7 @@ in
   services.sos21-api-server = {
     enable = true;
     port = 3000;
-    firebaseProjectId = "sos22-nightly";
+    firebaseProjectId = "sos23-nightly";
     databaseName = "sos21-nightly";
     s3ObjectBucket = "sos21-nightly-objects";
   };

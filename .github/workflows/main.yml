@@ -10,14 +10,14 @@ name: Main
 jobs:
   deploy:
     name: Deploy
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v10
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
         with:
-          name: sos21-backend
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          name: sos-backend
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN_JSYS23 }}"
       - name: Create ssh private key file
         env:
           SSH_PRIVATE_KEY: "${{ secrets.SSH_PRIVATE_KEY }}"
@@ -28,9 +28,11 @@ jobs:
       - name: Create NixOS configuration from secrets
         env:
           ADMINISTRATOR_EMAIL: "${{ secrets.ADMINISTRATOR_EMAIL }}"
+          ADMIN_REPORT_SLACK_WEBHOOK: "${{ secrets.ADMIN_REPORT_SLACK_WEBHOOK }}"
           STAGE_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_STAGE_PROJECT_CREATION_PERIOD }}"
           GENERAL_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_GENERAL_PROJECT_CREATION_PERIOD }}"
           COOKING_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_COOKING_PROJECT_CREATION_PERIOD }}"
+          COOKING_REQUIRING_PREPARATION_AREA_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_COOKING_REQUIRING_PREPARATION_AREA_PROJECT_CREATION_PERIOD }}"
           FOOD_PROJECT_CREATION_PERIOD: "${{ secrets.MAIN_FOOD_PROJECT_CREATION_PERIOD }}"
         run: |
           cat << EOS > ./configuration.nix
@@ -38,19 +40,19 @@ jobs:
           {
             services.sos21-api-server = {
               administratorEmail = "$ADMINISTRATOR_EMAIL";
+              adminReportSlackWebhook = "$ADMIN_REPORT_SLACK_WEBHOOK";
               projectCreationPeriods = {
-                stage_online = "$STAGE_PROJECT_CREATION_PERIOD";
-                stage_physical = "$STAGE_PROJECT_CREATION_PERIOD";
-                general_online = "$GENERAL_PROJECT_CREATION_PERIOD";
-                general_physical = "$GENERAL_PROJECT_CREATION_PERIOD";
-                cooking_physical = "$COOKING_PROJECT_CREATION_PERIOD";
-                food_physical = "$FOOD_PROJECT_CREATION_PERIOD";
+                stage = "$STAGE_PROJECT_CREATION_PERIOD";
+                general = "$GENERAL_PROJECT_CREATION_PERIOD";
+                cooking = "$COOKING_PROJECT_CREATION_PERIOD";
+                cooking_requiring_preparation_area = "$COOKING_REQUIRING_PREPARATION_AREA_PROJECT_CREATION_PERIOD";
+                food = "$FOOD_PROJECT_CREATION_PERIOD";
               };
             };
           }
           EOS
       - name: Deploy
-        uses: sohosai/sos22-backend-infrastructure/actions/deploy-production@main
+        uses: sohosai/sos-backend-infrastructure/actions/deploy-production@main
         with:
           target: api.online.sohosai.com
           ssh_private_key: ./ssh_private_key
@@ -62,10 +64,10 @@ jobs:
         run: rm -f ./ssh_private_key
   tag:
     name: Tag
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: deploy
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           # GITHUB_TOKEN user cannot trigger another workflow
           token: "${{ secrets.TAGGER_PAT }}"

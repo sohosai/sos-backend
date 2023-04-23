@@ -166,13 +166,13 @@ mod tests {
     #[tokio::test]
     async fn test_general_out_of_period() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
         let period = test::model::new_project_creation_period_to_now();
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .projects(vec![project.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .await;
@@ -190,13 +190,13 @@ mod tests {
     #[tokio::test]
     async fn test_general_in_period() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
         let period = test::model::new_project_creation_period_from_now();
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
             .projects(vec![project.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .await;

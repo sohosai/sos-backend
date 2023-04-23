@@ -15,23 +15,20 @@ where
 
     ProjectCreationAvailability {
         timestamp: now,
-        general_physical: ctx
-            .project_creation_period_for(ProjectCategory::GeneralPhysical)
+        general: ctx
+            .project_creation_period_for(ProjectCategory::General)
             .contains(now_entity),
-        general_online: ctx
-            .project_creation_period_for(ProjectCategory::GeneralOnline)
+        cooking_requiring_preparation_area: ctx
+            .project_creation_period_for(ProjectCategory::CookingRequiringPreparationArea)
             .contains(now_entity),
-        stage_physical: ctx
-            .project_creation_period_for(ProjectCategory::StagePhysical)
+        cooking: ctx
+            .project_creation_period_for(ProjectCategory::Cooking)
             .contains(now_entity),
-        stage_online: ctx
-            .project_creation_period_for(ProjectCategory::StageOnline)
+        food: ctx
+            .project_creation_period_for(ProjectCategory::Food)
             .contains(now_entity),
-        cooking_physical: ctx
-            .project_creation_period_for(ProjectCategory::CookingPhysical)
-            .contains(now_entity),
-        food_physical: ctx
-            .project_creation_period_for(ProjectCategory::FoodPhysical)
+        stage: ctx
+            .project_creation_period_for(ProjectCategory::Stage)
             .contains(now_entity),
     }
 }
@@ -73,18 +70,14 @@ mod tests {
 
         let app = test::build_mock_app()
             .users(vec![user.clone(), other.clone(), operator.clone()])
+            .project_creation_period_for(ProjectCategory::General, ProjectCreationPeriod::never())
             .project_creation_period_for(
-                ProjectCategory::GeneralOnline,
-                ProjectCreationPeriod::never(),
+                ProjectCategory::CookingRequiringPreparationArea,
+                future_period,
             )
-            .project_creation_period_for(
-                ProjectCategory::GeneralPhysical,
-                ProjectCreationPeriod::always(),
-            )
-            .project_creation_period_for(ProjectCategory::StageOnline, past_period)
-            .project_creation_period_for(ProjectCategory::StagePhysical, ongoing_period)
-            .project_creation_period_for(ProjectCategory::CookingPhysical, future_period)
-            .project_creation_period_for(ProjectCategory::FoodPhysical, ongoing_period)
+            .project_creation_period_for(ProjectCategory::Cooking, ongoing_period)
+            .project_creation_period_for(ProjectCategory::Food, ongoing_period)
+            .project_creation_period_for(ProjectCategory::Stage, past_period)
             .build()
             .login_as(user.clone())
             .await;
@@ -93,12 +86,11 @@ mod tests {
             get_project_creation_availability::run(&app),
             ProjectCreationAvailability {
                 timestamp: _,
-                general_online: false,   // never
-                general_physical: true,  // always
-                stage_online: false,     // past
-                stage_physical: true,    // ongoing
-                cooking_physical: false, // future
-                food_physical: true      // ongoing
+                general: false,
+                cooking_requiring_preparation_area: false,
+                cooking: true,
+                food: true,
+                stage: false
             }
         ));
     }

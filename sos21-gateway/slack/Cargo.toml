@@ -1,6 +1,6 @@
 [package]
 name = "sos21-gateway-slack"
-version = "0.6.2"
+version = "0.7.0"
 authors = ["yuseiito <me@yuseiito.com>"]
 edition = "2018"
 
@@ -11,3 +11,6 @@ anyhow = "1"
 url = "2.2.2"
 slack-hook = "0.8.0"
 sos21-domain = { path = "../../sos21-domain" }
+
+[build-dependencies]
+syn = "1"

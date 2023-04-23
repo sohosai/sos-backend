@@ -178,7 +178,7 @@ mod tests {
     #[tokio::test]
     async fn test_general() {
         let user = test::model::new_general_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -209,7 +209,7 @@ mod tests {
     #[tokio::test]
     async fn test_committee() {
         let user = test::model::new_committee_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -240,7 +240,7 @@ mod tests {
     #[tokio::test]
     async fn test_operator() {
         let user = test::model::new_operator_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])
@@ -271,7 +271,7 @@ mod tests {
     #[tokio::test]
     async fn test_admin() {
         let user = test::model::new_admin_user();
-        let project = test::model::new_general_online_project(user.id().clone());
+        let project = test::model::new_general_project(user.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![user.clone()])

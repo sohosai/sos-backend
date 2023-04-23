@@ -22,34 +22,35 @@ impl ProjectId {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ProjectCategory {
-    GeneralOnline,
-    GeneralPhysical,
-    StageOnline,
-    StagePhysical,
-    CookingPhysical,
-    FoodPhysical,
+    General,
+    CookingRequiringPreparationArea,
+    Cooking,
+    Food,
+    Stage,
 }
 
 impl ProjectCategory {
     pub fn from_use_case(category: use_case::ProjectCategory) -> ProjectCategory {
         match category {
-            use_case::ProjectCategory::GeneralOnline => ProjectCategory::GeneralOnline,
-            use_case::ProjectCategory::GeneralPhysical => ProjectCategory::GeneralPhysical,
-            use_case::ProjectCategory::StageOnline => ProjectCategory::StageOnline,
-            use_case::ProjectCategory::StagePhysical => ProjectCategory::StagePhysical,
-            use_case::ProjectCategory::CookingPhysical => ProjectCategory::CookingPhysical,
-            use_case::ProjectCategory::FoodPhysical => ProjectCategory::FoodPhysical,
+            use_case::ProjectCategory::General => ProjectCategory::General,
+            use_case::ProjectCategory::CookingRequiringPreparationArea => {
+                ProjectCategory::CookingRequiringPreparationArea
+            }
+            use_case::ProjectCategory::Cooking => ProjectCategory::Cooking,
+            use_case::ProjectCategory::Stage => ProjectCategory::Stage,
+            use_case::ProjectCategory::Food => ProjectCategory::Food,
         }
     }
 
     pub fn into_use_case(self) -> use_case::ProjectCategory {
         match self {
-            ProjectCategory::GeneralOnline => use_case::ProjectCategory::GeneralOnline,
-            ProjectCategory::GeneralPhysical => use_case::ProjectCategory::GeneralPhysical,
-            ProjectCategory::StageOnline => use_case::ProjectCategory::StageOnline,
-            ProjectCategory::StagePhysical => use_case::ProjectCategory::StagePhysical,
-            ProjectCategory::CookingPhysical => use_case::ProjectCategory::CookingPhysical,
-            ProjectCategory::FoodPhysical => use_case::ProjectCategory::FoodPhysical,
+            ProjectCategory::General => use_case::ProjectCategory::General,
+            ProjectCategory::CookingRequiringPreparationArea => {
+                use_case::ProjectCategory::CookingRequiringPreparationArea
+            }
+            ProjectCategory::Cooking => use_case::ProjectCategory::Cooking,
+            ProjectCategory::Food => use_case::ProjectCategory::Food,
+            ProjectCategory::Stage => use_case::ProjectCategory::Stage,
         }
     }
 }
@@ -61,6 +62,7 @@ pub enum ProjectAttribute {
     Artistic,
     Committee,
     Outdoor,
+    Indoor,
 }
 
 impl ProjectAttribute {
@@ -70,6 +72,7 @@ impl ProjectAttribute {
             use_case::ProjectAttribute::Artistic => ProjectAttribute::Artistic,
             use_case::ProjectAttribute::Committee => ProjectAttribute::Committee,
             use_case::ProjectAttribute::Outdoor => ProjectAttribute::Outdoor,
+            use_case::ProjectAttribute::Indoor => ProjectAttribute::Indoor,
         }
     }
 
@@ -79,6 +82,7 @@ impl ProjectAttribute {
             ProjectAttribute::Artistic => use_case::ProjectAttribute::Artistic,
             ProjectAttribute::Committee => use_case::ProjectAttribute::Committee,
             ProjectAttribute::Outdoor => use_case::ProjectAttribute::Outdoor,
+            ProjectAttribute::Indoor => use_case::ProjectAttribute::Indoor,
         }
     }
 }

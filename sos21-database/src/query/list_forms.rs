@@ -50,11 +50,11 @@ GROUP BY forms.id
             answer_notification_webhook: row.answer_notification_webhook,
         };
 
-        let include_ids = row.include_ids.unwrap_or_else(Vec::new);
-        let exclude_ids = row.exclude_ids.unwrap_or_else(Vec::new);
+        let include_ids = row.include_ids.unwrap_or_default();
+        let exclude_ids = row.exclude_ids.unwrap_or_default();
         let query = row
             .query
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_default()
             .into_iter()
             .map(|(category, attributes)| FormProjectQueryConjunction {
                 category,

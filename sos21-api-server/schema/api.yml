@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: sos21-api-server
-  version: 0.6.2
+  version: 0.7.0
   contact:
     name: coord_e
     email: me@coord-e.com
@@ -1986,6 +1986,12 @@ paths:
           in: query
           name: field_attribute_outdoor
           description: 与えられた場合、その名前の列で企画が屋外企画かどうかを出力します。
+        - schema:
+            type: string
+            example: 屋内企画
+          in: query
+          name: field_attribute_indoor
+          description: 与えられた場合、その名前の列で企画が屋内企画かどうかを出力します。
         - schema:
             type: string
             example: 一般
@@ -6139,17 +6145,15 @@ paths:
                 properties:
                   timestamp:
                     type: number
-                  general_online:
+                  general:
                     type: boolean
-                  general_physical:
+                  cooking_requiring_preparation_area:
                     type: boolean
-                  stage_online:
+                  cooking:
                     type: boolean
-                  stage_physical:
+                  food:
                     type: boolean
-                  cooking_physical:
-                    type: boolean
-                  food_physical:
+                  stage:
                     type: boolean
       operationId: get-project-creation-availability
       description: "各企画区分について、企画登録期間かどうかを調べます。"

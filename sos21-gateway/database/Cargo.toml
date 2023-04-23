@@ -1,6 +1,6 @@
 [package]
 name = "sos21-gateway-database"
-version = "0.6.2"
+version = "0.7.0"
 authors = ["coord_e <me@coord-e.com>", "azarashi2931 <az@rashi.email>"]
 edition = "2018"
 readme = "README.md"
@@ -17,3 +17,6 @@ uuid = "0.8"
 sos21-database = { path = "../../sos21-database" }
 sos21-domain = { path = "../../sos21-domain" }
 sqlx = { version = "0.5", features = ["postgres"] }
+
+[build-dependencies]
+syn = "1"

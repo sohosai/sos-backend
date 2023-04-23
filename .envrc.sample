@@ -20,5 +20,6 @@ export SOS21_API_SERVER_S3_ENDPOINT="http://localhost:${MINIO_PORT}"
 export SOS21_API_SERVER_S3_OBJECT_BUCKET=object
 export SOS21_API_SERVER_ADMINISTRATOR_EMAIL=<administrator email address>
 export SOS21_API_SERVER_BIND=127.0.0.1:3000
+export SOS21_API_SERVER_ADMIN_REPORT_SLACK_WEBHOOK=<administrator slack webhook url>
 
 export RUST_BACKTRACE=1

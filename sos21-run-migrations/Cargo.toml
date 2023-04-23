@@ -1,7 +1,7 @@
 [package]
 name = "sos21-run-migrations"
-version = "0.6.2"
-authors = ["coord.e <me@coord-e.com>"]
+version = "0.7.0"
+authors = ["coord.e <me@coord-e.com>", "yuseiito <me@yuseiito.com>", "momeemt <me@momee.mt>"]
 edition = "2018"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
@@ -15,3 +15,6 @@ tokio = { version = "1", features = ["full"] }
 tracing = "0.1"
 tracing-futures = "0.2"
 tracing-subscriber = "0.2"
+
+[build-dependencies]
+syn = "1"

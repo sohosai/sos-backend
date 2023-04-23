@@ -1,9 +1,8 @@
 type: string
 title: ProjectCategory
 enum:
-  - general_online
-  - general_physical
-  - stage_online
-  - stage_physical
-  - cooking_physical
-  - food_physical
+  - general
+  - cooking_requiring_preparation_area
+  - cooking
+  - food
+  - stage

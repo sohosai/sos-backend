@@ -39,6 +39,10 @@ in
         type = types.str;
       };
 
+      adminReportSlackWebhook = mkOption {
+        type = types.str;
+      };
+
       projectCreationPeriods = mkOption {
         type = types.attrsOf types.str;
         default = { };
@@ -94,12 +98,13 @@ in
 
   config = mkIf cfg.enable {
 
-    users.users.sos21 = {
-      name = "sos21";
-      group = "sos21";
+    users.users.sos23 = {
+      name = "sos23";
+      group = "sos23";
+      isSystemUser = true;
     };
     users.groups.sos21 = {
-      name = "sos21";
+      name = "sos23";
     };
 
     systemd.services.sos21-run-migrations =
@@ -107,8 +112,8 @@ in
         envFile = "/var/tmp/sos21-run-migrations-keys";
         preStart = makeKeyLoadScript {
           name = "sos21-run-migrations-pre-start";
-          user = config.users.users.sos21.name;
-          group = config.users.users.sos21.group;
+          user = config.users.users.sos23.name;
+          group = config.users.users.sos23.group;
           inherit envFile;
           keys = {
             DB_USERNAME = cfg.databaseUsernameFile;
@@ -122,8 +127,8 @@ in
         serviceConfig = {
           Type = "oneshot";
           ExecStartPre = "+${preStart}";
-          User = config.users.users.sos21.name;
-          Group = config.users.users.sos21.group;
+          User = config.users.users.sos23.name;
+          Group = config.users.users.sos23.group;
         };
         postStart = "rm -f '${envFile}'";
         script = ''
@@ -148,8 +153,8 @@ in
         envFile = "/var/tmp/sos21-create-bucket-keys";
         preStart = makeKeyLoadScript {
           name = "sos21-create-bucket-pre-start";
-          user = config.users.users.sos21.name;
-          group = config.users.users.sos21.group;
+          user = config.users.users.sos23.name;
+          group = config.users.users.sos23.group;
           inherit envFile;
           keys = {
             ACCESS_KEY = cfg.s3AccessKeyFile;
@@ -163,8 +168,8 @@ in
         serviceConfig = {
           Type = "oneshot";
           ExecStartPre = "+${preStart}";
-          User = config.users.users.sos21.name;
-          Group = config.users.users.sos21.group;
+          User = config.users.users.sos23.name;
+          Group = config.users.users.sos23.group;
         };
         postStart = "rm -f '${envFile}'";
         script = ''
@@ -184,8 +189,8 @@ in
         envFile = "/var/tmp/sos21-api-server-keys";
         preStart = makeKeyLoadScript {
           name = "sos21-api-server-pre-start";
-          user = config.users.users.sos21.name;
-          group = config.users.users.sos21.group;
+          user = config.users.users.sos23.name;
+          group = config.users.users.sos23.group;
           inherit envFile;
           keys = {
             DB_USERNAME = cfg.databaseUsernameFile;
@@ -204,8 +209,8 @@ in
         ];
         serviceConfig = {
           ExecStartPre = "+${preStart}";
-          User = config.users.users.sos21.name;
-          Group = config.users.users.sos21.group;
+          User = config.users.users.sos23.name;
+          Group = config.users.users.sos23.group;
           AmbientCapabilities = "CAP_NET_BIND_SERVICE";
         };
         postStop = "rm -f '${envFile}'";
@@ -218,6 +223,7 @@ in
             SOS21_API_SERVER_S3_ENDPOINT = cfg.s3Endpoint;
             SOS21_API_SERVER_S3_OBJECT_BUCKET = cfg.s3ObjectBucket;
             SOS21_API_SERVER_ADMINISTRATOR_EMAIL = cfg.administratorEmail;
+            SOS21_API_SERVER_ADMIN_REPORT_SLACK_WEBHOOK = cfg.adminReportSlackWebhook;
             SOS21_API_SERVER_BIND = "0.0.0.0:${toString cfg.port}";
           } // mapAttrs' (n: v: nameValuePair "SOS21_API_SERVER_PROJECT_CREATION_PERIOD_${n}" v) cfg.projectCreationPeriods;
         script = ''
