@@ -77,7 +77,7 @@ async fn handle_validation(
         ));
     }
 
-    if let Err(_) = UserEmailAddress::from_string(&email) {
+    if UserEmailAddress::from_string(&email).is_err() {
         if let Err(e) = report_suspicious_email(&config.admin_report_slack_webhook, &email) {
             tracing::error!("Failed to deliver suspicious account report. Reason: {}", e);
         }
