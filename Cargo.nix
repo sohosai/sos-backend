@@ -8763,6 +8763,10 @@ rec {
             packageId = "sos21-gateway-s3";
           }
           {
+            name = "sos21-gateway-slack";
+            packageId = "sos21-gateway-slack";
+          }
+          {
             name = "sos21-use-case";
             packageId = "sos21-use-case";
           }
