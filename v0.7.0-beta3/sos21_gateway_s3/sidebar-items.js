@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["object_repository"],"struct":["S3","S3Client"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["new_general_pending_project","new_pending_project","new_pending_project_id","new_pending_project_with_attributes","new_stage_pending_project"]};

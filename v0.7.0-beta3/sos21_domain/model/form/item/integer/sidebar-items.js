@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CheckAnswerErrorKind","FromContentErrorKind"],"mod":["limit","unit"],"struct":["CheckAnswerError","FromContentError","IntegerFormItem","IntegerFormItemContent"]};
