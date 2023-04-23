@@ -72,7 +72,7 @@ mod tests {
         let user = test::model::new_operator_user();
 
         let other = test::model::new_general_user();
-        let other_project = test::model::new_general_online_project(other.id().clone());
+        let other_project = test::model::new_general_project(other.id().clone());
 
         let (file, object) = test::model::new_file(user.id().clone());
         let sharing = file_sharing::FileSharing::new(

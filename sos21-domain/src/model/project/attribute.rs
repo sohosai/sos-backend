@@ -9,6 +9,7 @@ pub enum ProjectAttribute {
     Artistic,
     Committee,
     Outdoor,
+    Indoor,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]

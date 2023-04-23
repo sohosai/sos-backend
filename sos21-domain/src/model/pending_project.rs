@@ -108,9 +108,7 @@ impl PendingProject {
             return Err(NewPendingProjectError { kind });
         }
 
-        if (category == ProjectCategory::StageOnline || category == ProjectCategory::StagePhysical)
-            && attributes.contains(ProjectAttribute::Artistic)
-        {
+        if category == ProjectCategory::Stage && attributes.contains(ProjectAttribute::Artistic) {
             return Err(NewPendingProjectError {
                 kind: NewPendingProjectErrorKind::ArtisticStageProject,
             });
@@ -367,7 +365,7 @@ mod tests {
     #[tokio::test]
     async fn test_new_already_project_owner() {
         let mut owner = test_model::new_general_user();
-        let project = test_model::new_general_online_project(owner.id().clone());
+        let project = test_model::new_general_project(owner.id().clone());
         owner.assign_project_owner(&project).unwrap();
 
         assert_eq!(
@@ -379,7 +377,7 @@ mod tests {
                 test_model::mock_project_group_name(),
                 test_model::mock_project_kana_group_name(),
                 test_model::mock_project_description(),
-                ProjectCategory::GeneralOnline,
+                ProjectCategory::General,
                 ProjectAttributes::from_attributes(vec![]).unwrap(),
                 None
             )
@@ -393,10 +391,8 @@ mod tests {
     async fn test_new_already_project_subowner() {
         let mut owner = test_model::new_general_user();
         let user = test_model::new_general_user();
-        let project = test_model::new_general_online_project_with_subowner(
-            user.id().clone(),
-            owner.id().clone(),
-        );
+        let project =
+            test_model::new_general_project_with_subowner(user.id().clone(), owner.id().clone());
         owner.assign_project_subowner(&project).unwrap();
 
         assert_eq!(
@@ -408,7 +404,7 @@ mod tests {
                 test_model::mock_project_group_name(),
                 test_model::mock_project_kana_group_name(),
                 test_model::mock_project_description(),
-                ProjectCategory::GeneralOnline,
+                ProjectCategory::General,
                 ProjectAttributes::from_attributes(vec![]).unwrap(),
                 None
             )
@@ -421,7 +417,7 @@ mod tests {
     #[tokio::test]
     async fn test_new_already_pending_project_owner() {
         let mut owner = test_model::new_general_user();
-        let pending_project = test_model::new_general_online_pending_project(owner.id().clone());
+        let pending_project = test_model::new_general_pending_project(owner.id().clone());
         owner
             .assign_pending_project_owner(&pending_project)
             .unwrap();
@@ -435,7 +431,7 @@ mod tests {
                 test_model::mock_project_group_name(),
                 test_model::mock_project_kana_group_name(),
                 test_model::mock_project_description(),
-                ProjectCategory::GeneralOnline,
+                ProjectCategory::General,
                 ProjectAttributes::from_attributes(vec![]).unwrap(),
                 None
             )

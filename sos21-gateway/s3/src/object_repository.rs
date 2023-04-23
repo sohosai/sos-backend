@@ -280,5 +280,5 @@ async fn upload_part(input: UploadPartInput) -> anyhow::Result<rusoto_s3::Comple
 }
 
 fn to_object_key(id: ObjectId) -> String {
-    id.to_uuid().hyphenated().to_string()
+    id.to_uuid().to_hyphenated().to_string()
 }
