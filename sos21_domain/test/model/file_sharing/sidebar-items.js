@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["new_expired_file_sharing",""],["new_file_sharing_id",""]]});
+window.SIDEBAR_ITEMS = {"fn":["new_expired_file_sharing","new_file_sharing_id"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["update_form_answer",""]],"struct":[["Input",""]]});
+window.SIDEBAR_ITEMS = {"fn":["update_form_answer"],"struct":["Input"]};

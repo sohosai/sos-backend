@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["UserRole",""]],"struct":[["RequirePermissionsError",""]]});
+window.SIDEBAR_ITEMS = {"enum":["UserRole"],"struct":["RequirePermissionsError"]};

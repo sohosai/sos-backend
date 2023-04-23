@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["check",""],["check_liveness",""]]});
+window.SIDEBAR_ITEMS = {"mod":["check","check_liveness"]};

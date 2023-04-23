@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["update_file_sharing",""]],"struct":[["Input",""]]});
+window.SIDEBAR_ITEMS = {"fn":["update_file_sharing"],"struct":["Input"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["insert_user",""]]});
+window.SIDEBAR_ITEMS = {"fn":["insert_user"]};

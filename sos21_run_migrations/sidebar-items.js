@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["main",""],["run",""],["run_migrations",""]],"struct":[["Opt",""]]});
+window.SIDEBAR_ITEMS = {"fn":["main","run","run_migrations"],"static":["CALLSITE","META"],"struct":["Opt"]};

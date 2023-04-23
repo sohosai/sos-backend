@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["FileDistributionRepository",""]]});
+window.SIDEBAR_ITEMS = {"trait":["FileDistributionRepository"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FormAnswerItemBody",""],["LengthErrorKind",""]],"mod":[["checks",""],["file_sharings",""],["grid_rows",""],["text",""]],"struct":[["FormAnswerItem",""],["FormAnswerItems",""],["LengthError",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FormAnswerItemBody","LengthErrorKind"],"mod":["checks","file_sharings","grid_rows","text"],"struct":["FormAnswerItem","FormAnswerItems","LengthError"]};

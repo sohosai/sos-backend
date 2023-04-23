@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["FormItemName",""],["ItemNameError",""]]});
+window.SIDEBAR_ITEMS = {"struct":["FormItemName","ItemNameError"]};

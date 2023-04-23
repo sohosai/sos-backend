@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["app",""],["config",""],["filter",""],["handler",""],["server",""]],"struct":[["Config",""],["Server",""]]});
+window.SIDEBAR_ITEMS = {"mod":["app","config","filter","handler","server"],"struct":["Config","Server"]};

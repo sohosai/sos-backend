@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["MockApp",""],["MockAppBuilder",""],["OutOfLimitSizeError",""]]});
+window.SIDEBAR_ITEMS = {"struct":["MockApp","MockAppBuilder","OutOfLimitSizeError"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["GridRadioRequired",""]],"struct":[["GridRadioColumn",""],["GridRadioColumnId",""],["GridRadioRow",""],["GridRadioRowId",""]]});
+window.SIDEBAR_ITEMS = {"enum":["GridRadioRequired"],"struct":["GridRadioColumn","GridRadioColumnId","GridRadioRow","GridRadioRowId"]};

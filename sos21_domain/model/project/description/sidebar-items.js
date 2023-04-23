@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["DescriptionError",""],["ProjectDescription","A description text of projects, whose length is 1 ..= 50 chars."]]});
+window.SIDEBAR_ITEMS = {"struct":["DescriptionError","ProjectDescription"]};

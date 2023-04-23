@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["DescriptionError",""],["RegistrationFormDescription",""]]});
+window.SIDEBAR_ITEMS = {"struct":["DescriptionError","RegistrationFormDescription"]};

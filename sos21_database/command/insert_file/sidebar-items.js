@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["insert_file",""]]});
+window.SIDEBAR_ITEMS = {"fn":["insert_file"]};

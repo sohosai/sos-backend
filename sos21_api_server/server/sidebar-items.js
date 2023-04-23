@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["FETCH_MINIMUM_INTERVAL",""]],"fn":[["spawn_key_refresh_worker",""]],"struct":[["Server",""]]});
+window.SIDEBAR_ITEMS = {"constant":["FETCH_MINIMUM_INTERVAL"],"fn":["spawn_key_refresh_worker"],"static":["CALLSITE","META"],"struct":["Server"]};

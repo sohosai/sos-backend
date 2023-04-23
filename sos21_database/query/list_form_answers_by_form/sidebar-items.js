@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["list_form_answers_by_form",""]]});
+window.SIDEBAR_ITEMS = {"fn":["list_form_answers_by_form"]};

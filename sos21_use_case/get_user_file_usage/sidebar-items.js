@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["run",""]],"struct":[["Output",""]]});
+window.SIDEBAR_ITEMS = {"fn":["run"],"static":["CALLSITE","META"],"struct":["Output"]};

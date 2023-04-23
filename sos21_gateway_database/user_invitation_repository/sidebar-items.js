@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["from_user_invitation",""],["from_user_invitation_role",""],["to_user_invitation",""],["to_user_invitation_role",""]],"struct":[["UserInvitationDatabase",""]]});
+window.SIDEBAR_ITEMS = {"fn":["from_user_invitation","from_user_invitation_role","to_user_invitation","to_user_invitation_role"],"struct":["UserInvitationDatabase"]};

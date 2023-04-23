@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FromCheckedIdsErrorKind",""]],"struct":[["FormAnswerItemChecks",""],["FromCheckedIdsError",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FromCheckedIdsErrorKind"],"struct":["FormAnswerItemChecks","FromCheckedIdsError"]};

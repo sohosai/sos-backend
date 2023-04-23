@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["build_mock_app",""]],"mod":[["context",""],["model",""]]});
+window.SIDEBAR_ITEMS = {"fn":["build_mock_app"],"mod":["context","model"]};

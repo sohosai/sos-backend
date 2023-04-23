@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Checkbox",""],["CheckboxId",""]]});
+window.SIDEBAR_ITEMS = {"struct":["Checkbox","CheckboxId"]};

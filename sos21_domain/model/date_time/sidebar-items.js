@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["DateTime","A point of time without timezone-related semantics."]]});
+window.SIDEBAR_ITEMS = {"struct":["DateTime"]};

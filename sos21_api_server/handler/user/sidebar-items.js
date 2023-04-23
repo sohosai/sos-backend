@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["export",""],["get",""],["list",""],["update",""]]});
+window.SIDEBAR_ITEMS = {"mod":["export","get","list","update"]};

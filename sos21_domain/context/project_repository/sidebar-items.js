@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["ProjectWithOwners",""]],"trait":[["ProjectRepository",""]]});
+window.SIDEBAR_ITEMS = {"struct":["ProjectWithOwners"],"trait":["ProjectRepository"]};

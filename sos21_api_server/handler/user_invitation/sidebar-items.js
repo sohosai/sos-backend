@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["delete",""],["get",""],["list",""]]});
+window.SIDEBAR_ITEMS = {"mod":["delete","get","list"]};

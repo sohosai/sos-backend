@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["list_file_sharings_by_user",""]],"struct":[["FileWithSharing",""]]});
+window.SIDEBAR_ITEMS = {"fn":["list_file_sharings_by_user"],"struct":["FileWithSharing","Record"]};

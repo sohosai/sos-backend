@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["create",""],["export",""],["file_distribution",""],["file_sharing",""],["form",""],["get",""],["list",""],["prepare",""],["registration_form",""],["update",""],["update_any",""]]});
+window.SIDEBAR_ITEMS = {"mod":["create","export","file_distribution","file_sharing","form","get","list","prepare","registration_form","update","update_any"]};

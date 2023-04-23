@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["FileDistribution",""],["FileDistributionData",""],["FileDistributionFile",""]]});
+window.SIDEBAR_ITEMS = {"struct":["FileDistribution","FileDistributionData","FileDistributionFile"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["IntegerFormItemUnit",""],["UnitError",""]]});
+window.SIDEBAR_ITEMS = {"struct":["IntegerFormItemUnit","UnitError"]};

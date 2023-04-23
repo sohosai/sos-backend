@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["KanaNameError",""],["NameError",""],["UserKanaName",""],["UserName",""]]});
+window.SIDEBAR_ITEMS = {"struct":["KanaNameError","NameError","UserKanaName","UserName"]};

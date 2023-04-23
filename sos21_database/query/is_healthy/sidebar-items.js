@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["is_healthy",""]]});
+window.SIDEBAR_ITEMS = {"fn":["is_healthy"]};

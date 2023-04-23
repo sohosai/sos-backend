@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["ProjectQuery",""],["ProjectQueryConjunction",""]]});
+window.SIDEBAR_ITEMS = {"struct":["ProjectQuery","ProjectQueryConjunction"]};

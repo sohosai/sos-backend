@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["UseCaseError",""]],"type":[["UseCaseResult",""]]});
+window.SIDEBAR_ITEMS = {"enum":["UseCaseError"],"type":["UseCaseResult"]};

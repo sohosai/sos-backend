@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["file",""],["file_distribution",""],["file_sharing",""],["form",""],["form_answer",""],["pending_project",""],["project",""],["project_creation_availability",""],["project_query",""],["registration_form",""],["registration_form_answer",""],["stream",""],["user",""],["user_invitation",""]]});
+window.SIDEBAR_ITEMS = {"mod":["file","file_distribution","file_sharing","form","form_answer","pending_project","project","project_creation_availability","project_query","registration_form","registration_form_answer","stream","user","user_invitation"]};

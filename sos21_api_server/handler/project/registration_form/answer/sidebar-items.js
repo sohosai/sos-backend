@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["file_sharing",""],["get",""],["update",""]]});
+window.SIDEBAR_ITEMS = {"mod":["file_sharing","get","update"]};

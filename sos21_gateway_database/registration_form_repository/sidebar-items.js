@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["from_project_query",""],["from_registration_form",""],["to_registration_form",""]],"struct":[["RegistrationFormDatabase",""]]});
+window.SIDEBAR_ITEMS = {"fn":["from_project_query","from_registration_form","to_registration_form"],"struct":["RegistrationFormDatabase"]};

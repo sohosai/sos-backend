@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ProjectAttribute",""],["ProjectCategory",""]],"struct":[["Project",""],["ProjectFromEntityInput",""],["ProjectId",""]]});
+window.SIDEBAR_ITEMS = {"enum":["ProjectAttribute","ProjectCategory"],"struct":["Project","ProjectFromEntityInput","ProjectId"]};

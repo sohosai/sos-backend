@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FromTypesErrorKind",""]],"struct":[["FileFormItemTypes",""],["FromTypesError",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FromTypesErrorKind"],"struct":["FileFormItemTypes","FromTypesError"]};

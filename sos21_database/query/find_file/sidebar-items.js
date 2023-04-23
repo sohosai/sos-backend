@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["find_file",""]]});
+window.SIDEBAR_ITEMS = {"fn":["find_file"]};

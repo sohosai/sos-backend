@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["update_pending_project",""]],"struct":[["Input",""]]});
+window.SIDEBAR_ITEMS = {"fn":["update_pending_project"],"struct":["Input"]};

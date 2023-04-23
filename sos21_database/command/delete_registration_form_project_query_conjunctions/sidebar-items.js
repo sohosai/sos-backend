@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["delete_registration_form_project_query_conjunctions",""]]});
+window.SIDEBAR_ITEMS = {"fn":["delete_registration_form_project_query_conjunctions"]};

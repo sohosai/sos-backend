@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["UserFileUsageQuotaKind",""]],"struct":[["UserFileUsageQuota",""]]});
+window.SIDEBAR_ITEMS = {"enum":["UserFileUsageQuotaKind"],"struct":["UserFileUsageQuota"]};

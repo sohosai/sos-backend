@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["parse_max_age",""]],"struct":[["Key",""],["KeyStore",""],["Response",""]]});
+window.SIDEBAR_ITEMS = {"fn":["parse_max_age"],"static":["CALLSITE","META"],"struct":["Key","KeyStore","Response"]};

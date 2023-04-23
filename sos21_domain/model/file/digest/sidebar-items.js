@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["FileBlake3Digest",""],["InvalidLengthError",""]]});
+window.SIDEBAR_ITEMS = {"struct":["FileBlake3Digest","InvalidLengthError"]};

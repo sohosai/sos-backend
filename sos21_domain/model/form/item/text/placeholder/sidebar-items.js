@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["PlaceholderError",""],["TextFormItemPlaceholder",""]]});
+window.SIDEBAR_ITEMS = {"struct":["PlaceholderError","TextFormItemPlaceholder"]};

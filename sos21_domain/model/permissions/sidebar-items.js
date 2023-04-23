@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["PermissionsFlags",""]],"struct":[["Permissions",""]]});
+window.SIDEBAR_ITEMS = {"enum":["PermissionsFlags"],"macro":["define_permissions"],"struct":["Permissions"]};

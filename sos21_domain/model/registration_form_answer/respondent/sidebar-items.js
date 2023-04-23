@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["RegistrationFormAnswerRespondent",""]]});
+window.SIDEBAR_ITEMS = {"enum":["RegistrationFormAnswerRespondent"]};

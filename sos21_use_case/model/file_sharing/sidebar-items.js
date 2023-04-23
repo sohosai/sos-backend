@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FileSharingScope",""]],"struct":[["FileSharing",""],["FileSharingId",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FileSharingScope"],"struct":["FileSharing","FileSharingId"]};

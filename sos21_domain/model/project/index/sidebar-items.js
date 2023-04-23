@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["FromU16Error",""],["ProjectIndex",""]]});
+window.SIDEBAR_ITEMS = {"struct":["FromU16Error","ProjectIndex"]};

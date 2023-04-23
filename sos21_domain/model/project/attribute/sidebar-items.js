@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ProjectAttribute",""]],"struct":[["DuplicatedAttributesError",""],["ProjectAttributes",""]]});
+window.SIDEBAR_ITEMS = {"enum":["ProjectAttribute"],"struct":["DuplicatedAttributesError","ProjectAttributes"]};

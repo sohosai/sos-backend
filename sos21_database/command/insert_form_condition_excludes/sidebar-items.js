@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["insert_form_condition_excludes",""]]});
+window.SIDEBAR_ITEMS = {"fn":["insert_form_condition_excludes"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["list_projects",""]]});
+window.SIDEBAR_ITEMS = {"fn":["list_projects"],"struct":["Record"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["CheckAnswerErrorKind",""],["FromBoxesErrorKind",""]],"mod":[["checkbox",""],["limit",""]],"struct":[["CheckAnswerError",""],["CheckboxFormItem",""],["CheckboxFormItemBoxes",""],["CheckboxFormItemContent",""],["FromBoxesError",""],["InconsistentCheckLimitsError",""]]});
+window.SIDEBAR_ITEMS = {"enum":["CheckAnswerErrorKind","FromBoxesErrorKind"],"mod":["checkbox","limit"],"struct":["CheckAnswerError","CheckboxFormItem","CheckboxFormItemBoxes","CheckboxFormItemContent","FromBoxesError","InconsistentCheckLimitsError"]};

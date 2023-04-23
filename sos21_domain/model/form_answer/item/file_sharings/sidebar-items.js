@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["FromSharingsErrorKind",""]],"struct":[["FileSharingAnswer",""],["FormAnswerItemFileSharings",""],["FromSharingsError",""]]});
+window.SIDEBAR_ITEMS = {"enum":["FromSharingsErrorKind"],"struct":["FileSharingAnswer","FormAnswerItemFileSharings","FromSharingsError"]};

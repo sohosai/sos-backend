@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["insert_file_sharing",""]]});
+window.SIDEBAR_ITEMS = {"fn":["insert_file_sharing"]};

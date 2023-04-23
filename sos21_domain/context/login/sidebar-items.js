@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["LoginError",""]],"struct":[["Login",""]]});
+window.SIDEBAR_ITEMS = {"enum":["LoginError"],"struct":["Login"]};

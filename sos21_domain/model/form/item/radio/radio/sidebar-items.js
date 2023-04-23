@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["LabelError",""],["Radio",""],["RadioId",""],["RadioLabel",""]]});
+window.SIDEBAR_ITEMS = {"struct":["LabelError","Radio","RadioId","RadioLabel"]};

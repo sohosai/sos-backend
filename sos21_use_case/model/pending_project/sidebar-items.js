@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["PendingProject",""],["PendingProjectId",""]]});
+window.SIDEBAR_ITEMS = {"struct":["PendingProject","PendingProjectId"]};

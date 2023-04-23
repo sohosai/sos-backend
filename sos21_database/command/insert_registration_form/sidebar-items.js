@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["insert_registration_form",""]]});
+window.SIDEBAR_ITEMS = {"fn":["insert_registration_form"]};

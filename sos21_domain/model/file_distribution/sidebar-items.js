@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["description",""],["distributed_file",""],["files",""],["name",""]],"struct":[["FileDistribution",""],["FileDistributionId",""],["NotTargetedError",""]]});
+window.SIDEBAR_ITEMS = {"mod":["description","distributed_file","files","name"],"struct":["FileDistribution","FileDistributionId","NotTargetedError"]};
