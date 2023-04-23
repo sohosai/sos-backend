@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["LengthErrorKind"],"fn":["is_kana_char","is_kana_string","is_stripped_string"],"struct":["KanaString","LengthError","LengthLimitedString","NotKanaError","NotStrippedError","StrippedString"],"type":["BoundedLengthError","LengthBoundedString"]};

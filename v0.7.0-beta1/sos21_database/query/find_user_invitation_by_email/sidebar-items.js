@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["find_user_invitation_by_email"]};
