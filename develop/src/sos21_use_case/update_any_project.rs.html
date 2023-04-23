@@ -477,7 +477,7 @@
     </span><span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_general() {
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
@@ -508,7 +508,7 @@
     </span><span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_committee() {
         <span class="kw">let </span>user = test::model::new_committee_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
@@ -539,7 +539,7 @@
     </span><span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_operator() {
         <span class="kw">let </span>user = test::model::new_operator_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
@@ -570,7 +570,7 @@
     </span><span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_admin() {
         <span class="kw">let </span>user = test::model::new_admin_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])

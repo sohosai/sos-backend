@@ -400,7 +400,7 @@
             group_name: test::model::mock_project_group_name().into_string(),
             kana_group_name: test::model::mock_project_kana_group_name().into_string(),
             description: test::model::mock_project_description().into_string(),
-            category: ProjectCategory::GeneralOnline,
+            category: ProjectCategory::General,
             attributes: Vec::new(),
         };
         (name, input)
@@ -433,7 +433,7 @@
         <span class="kw">let </span>period = test::model::new_project_creation_period_from_now();
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -456,7 +456,7 @@
         <span class="kw">let </span>period = test::model::new_project_creation_period_with_hours_from_now(<span class="number">1</span>);
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -476,7 +476,7 @@
         <span class="kw">let </span>period = test::model::new_project_creation_period_to_now();
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -493,7 +493,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_already_project_owner() {
         <span class="kw">let </span><span class="kw-2">mut </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         user.assign_project_owner(<span class="kw-2">&amp;</span>project).unwrap();
 
         <span class="kw">let </span>app = test::build_mock_app()

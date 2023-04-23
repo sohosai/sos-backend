@@ -216,8 +216,8 @@
         login_user: domain::user::User,
     ) -&gt; (Login&lt;test::context::MockApp&gt;, Vec&lt;domain::project::Project&gt;) {
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project1 = test::model::new_general_online_project(login_user.id().clone());
-        <span class="kw">let </span>project2 = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project1 = test::model::new_general_project(login_user.id().clone());
+        <span class="kw">let </span>project2 = test::model::new_general_project(other.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[login_user.clone(), other.clone()])

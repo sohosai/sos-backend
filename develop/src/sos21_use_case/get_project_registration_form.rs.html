@@ -231,8 +231,6 @@
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
 <a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::error::{UseCaseError, UseCaseResult};
 <span class="kw">use </span><span class="kw">crate</span>::model::{
     project::ProjectId,
@@ -300,7 +298,7 @@
     </span><span class="kw">async fn </span>test_general_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project_other = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project_other = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
@@ -328,7 +326,7 @@
     </span><span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_general_owner() {
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
@@ -352,10 +350,8 @@
     </span><span class="kw">async fn </span>test_general_subowner() {
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project_with_subowner(
-            owner.id().clone(),
-            user.id().clone(),
-        );
+        <span class="kw">let </span>project =
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
@@ -380,7 +376,7 @@
         <span class="kw">let </span>user = test::model::new_operator_user();
         <span class="kw">let </span>project = test::model::new_project_with_attributes(
             user.id().clone(),
-            project::ProjectCategory::GeneralOnline,
+            project::ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 project::ProjectAttribute::Academic,
                 project::ProjectAttribute::Artistic,
@@ -425,7 +421,7 @@
     </span><span class="kw">async fn </span>test_committee_other() {
         <span class="kw">let </span>user = test::model::new_committee_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project_other = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project_other = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
@@ -449,7 +445,7 @@
     </span><span class="kw">async fn </span>test_operator_other() {
         <span class="kw">let </span>user = test::model::new_operator_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project_other = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project_other = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()

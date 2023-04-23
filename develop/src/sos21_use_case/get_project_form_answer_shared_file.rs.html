@@ -435,7 +435,7 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>form = test::model::new_form(operator.id().clone());
-        <span class="kw">let </span>other_project = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>other_project = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>other_answer = test::model::new_form_answer(other.id().clone(), <span class="kw-2">&amp;</span>other_project, <span class="kw-2">&amp;</span>form);
 
         <span class="kw">let </span>sharing = file_sharing::FileSharing::new(
@@ -477,7 +477,7 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>form = test::model::new_form(operator.id().clone());
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>answer = test::model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>project, <span class="kw-2">&amp;</span>form);
 
         <span class="kw">let </span>sharing = file_sharing::FileSharing::new(
@@ -520,9 +520,9 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>form = test::model::new_form(operator.id().clone());
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>answer = test::model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>project, <span class="kw-2">&amp;</span>form);
-        <span class="kw">let </span>other_project = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>other_project = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>other_answer = test::model::new_form_answer(other.id().clone(), <span class="kw-2">&amp;</span>other_project, <span class="kw-2">&amp;</span>form);
 
         <span class="kw">let </span>sharing = file_sharing::FileSharing::new(
@@ -566,7 +566,7 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>form = test::model::new_form(operator.id().clone());
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>answer = test::model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>project, <span class="kw-2">&amp;</span>form);
 
         <span class="kw">let </span><span class="kw-2">mut </span>sharing = file_sharing::FileSharing::new(
@@ -612,7 +612,7 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>form = test::model::new_form(operator.id().clone());
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>answer = test::model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>project, <span class="kw-2">&amp;</span>form);
 
         <span class="kw">let </span>sharing = test::model::new_expired_file_sharing(

@@ -65,6 +65,7 @@
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::model::project::{ProjectAttributes, ProjectCategory};
 
 <span class="kw">use </span>anyhow::{Context, <span class="prelude-ty">Result</span>};
@@ -92,12 +93,13 @@
 
     <span class="kw">for </span>conj <span class="kw">in </span>query {
         <span class="kw">let </span>category = conj.category.as_ref().map(|category| <span class="kw">match </span>category {
-            ProjectCategory::GeneralOnline =&gt; <span class="string">&quot;general_online&quot;</span>,
-            ProjectCategory::GeneralPhysical =&gt; <span class="string">&quot;general_physical&quot;</span>,
-            ProjectCategory::StageOnline =&gt; <span class="string">&quot;stage_online&quot;</span>,
-            ProjectCategory::StagePhysical =&gt; <span class="string">&quot;stage_physical&quot;</span>,
-            ProjectCategory::CookingPhysical =&gt; <span class="string">&quot;cooking_physical&quot;</span>,
-            ProjectCategory::FoodPhysical =&gt; <span class="string">&quot;food_physical&quot;</span>,
+            ProjectCategory::General =&gt; <span class="string">&quot;general&quot;</span>,
+            ProjectCategory::Cooking =&gt; <span class="string">&quot;cooking&quot;</span>,
+            ProjectCategory::CookingRequiringPreparationArea =&gt; {
+                <span class="string">&quot;cooking_requiring_preparation_area&quot;
+            </span>}
+            ProjectCategory::Food =&gt; <span class="string">&quot;food&quot;</span>,
+            ProjectCategory::Stage =&gt; <span class="string">&quot;stage&quot;</span>,
         });
         categories.push(category);
         attributes.push(conj.attributes.bits() <span class="kw">as </span>i32);

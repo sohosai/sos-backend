@@ -383,13 +383,13 @@
     </span><span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_general_out_of_period() {
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>period = test::model::new_project_creation_period_to_now();
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
             .projects(<span class="macro">vec!</span>[project.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .<span class="kw">await</span>;
@@ -407,13 +407,13 @@
     </span><span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_general_in_period() {
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>period = test::model::new_project_creation_period_from_now();
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
             .projects(<span class="macro">vec!</span>[project.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user)
             .<span class="kw">await</span>;

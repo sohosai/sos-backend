@@ -361,11 +361,11 @@
             excludes: FormConditionProjectSet::from_projects(<span class="macro">vec!</span>[]).unwrap(),
         };
 
-        <span class="kw">let </span>project1 = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project1 = test_model::new_general_project(test_model::new_user_id());
         <span class="macro">assert!</span>(condition.check(<span class="kw-2">&amp;</span>project1));
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -377,7 +377,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_exclude_tautology() {
-        <span class="kw">let </span>project1 = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project1 = test_model::new_general_project(test_model::new_user_id());
 
         <span class="kw">let </span>conj = ProjectQueryConjunction {
             category: <span class="prelude-val">None</span>,
@@ -392,7 +392,7 @@
 
         <span class="macro">assert!</span>(!condition.check(<span class="kw-2">&amp;</span>project1));
 
-        <span class="kw">let </span>project2 = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project2 = test_model::new_general_project(test_model::new_user_id());
         <span class="macro">assert!</span>(condition.check(<span class="kw-2">&amp;</span>project2));
     }
 
@@ -405,11 +405,11 @@
             excludes: FormConditionProjectSet::from_projects(<span class="macro">vec!</span>[]).unwrap(),
         };
 
-        <span class="kw">let </span>project1 = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project1 = test_model::new_general_project(test_model::new_user_id());
         <span class="macro">assert!</span>(!condition.check(<span class="kw-2">&amp;</span>project1));
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -421,7 +421,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_include_contradiction() {
-        <span class="kw">let </span>project1 = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project1 = test_model::new_general_project(test_model::new_user_id());
 
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[]).unwrap();
         <span class="kw">let </span>condition = FormCondition {
@@ -431,7 +431,7 @@
         };
 
         <span class="macro">assert!</span>(condition.check(<span class="kw-2">&amp;</span>project1));
-        <span class="kw">let </span>project2 = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project2 = test_model::new_general_project(test_model::new_user_id());
         <span class="macro">assert!</span>(!condition.check(<span class="kw-2">&amp;</span>project2));
     }
 
@@ -439,12 +439,12 @@
     </span><span class="kw">fn </span>test_include_exclude() {
         <span class="kw">let </span>project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[],
         );
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic],
         );
 

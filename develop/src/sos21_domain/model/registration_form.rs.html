@@ -280,8 +280,6 @@
 <a href="#280" id="280">280</a>
 <a href="#281" id="281">281</a>
 <a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::context::{ConfigContext, RegistrationFormAnswerRepository};
 <span class="kw">use </span><span class="kw">crate</span>::model::date_time::DateTime;
 <span class="kw">use </span><span class="kw">crate</span>::model::form::item::{<span class="self">self</span>, FormItemId, FormItems};
@@ -474,7 +472,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_general_via_matching_project() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>user_project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>user_project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>tautology_query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
             category: <span class="prelude-val">None</span>,
@@ -490,7 +488,7 @@
     </span><span class="kw">fn </span>test_visibility_general_via_matching_non_owner_project() {
         <span class="kw">let </span>user = test_model::new_general_user();
         <span class="kw">let </span>operator = test_model::new_operator_user();
-        <span class="kw">let </span>operator_project = test_model::new_general_online_project(operator.id().clone());
+        <span class="kw">let </span>operator_project = test_model::new_general_project(operator.id().clone());
         <span class="kw">let </span>tautology_query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
             category: <span class="prelude-val">None</span>,
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
@@ -504,10 +502,10 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_general_via_non_matching_project() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>user_project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>user_project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::StageOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
         }])
         .unwrap();
@@ -519,8 +517,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_general_via_matching_pending_project() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>user_pending_project =
-            test_model::new_general_online_pending_project(user.id().clone());
+        <span class="kw">let </span>user_pending_project = test_model::new_general_pending_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>tautology_query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
             category: <span class="prelude-val">None</span>,
@@ -537,7 +534,7 @@
         <span class="kw">let </span>user = test_model::new_general_user();
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>operator_pending_project =
-            test_model::new_general_online_pending_project(operator.id().clone());
+            test_model::new_general_pending_project(operator.id().clone());
         <span class="kw">let </span>tautology_query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
             category: <span class="prelude-val">None</span>,
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
@@ -553,11 +550,10 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_general_via_non_matching_pending_project() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>user_pending_project =
-            test_model::new_general_online_pending_project(user.id().clone());
+        <span class="kw">let </span>user_pending_project = test_model::new_general_pending_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::StageOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
         }])
         .unwrap();

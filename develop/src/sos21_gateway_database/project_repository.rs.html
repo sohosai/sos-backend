@@ -221,6 +221,13 @@
 <a href="#221" id="221">221</a>
 <a href="#222" id="222">222</a>
 <a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::collections::HashSet;
 <span class="kw">use </span>std::convert::TryInto;
 
@@ -386,12 +393,13 @@
 
 <span class="kw">pub fn </span>from_project_category(category: ProjectCategory) -&gt; data::project::ProjectCategory {
     <span class="kw">match </span>category {
-        ProjectCategory::GeneralOnline =&gt; data::project::ProjectCategory::GeneralOnline,
-        ProjectCategory::GeneralPhysical =&gt; data::project::ProjectCategory::GeneralPhysical,
-        ProjectCategory::StageOnline =&gt; data::project::ProjectCategory::StageOnline,
-        ProjectCategory::StagePhysical =&gt; data::project::ProjectCategory::StagePhysical,
-        ProjectCategory::CookingPhysical =&gt; data::project::ProjectCategory::CookingPhysical,
-        ProjectCategory::FoodPhysical =&gt; data::project::ProjectCategory::FoodPhysical,
+        ProjectCategory::General =&gt; data::project::ProjectCategory::General,
+        ProjectCategory::CookingRequiringPreparationArea =&gt; {
+            data::project::ProjectCategory::CookingRequiringPreparationArea
+        }
+        ProjectCategory::Cooking =&gt; data::project::ProjectCategory::Cooking,
+        ProjectCategory::Food =&gt; data::project::ProjectCategory::Food,
+        ProjectCategory::Stage =&gt; data::project::ProjectCategory::Stage,
     }
 }
 
@@ -403,18 +411,20 @@
             ProjectAttribute::Artistic =&gt; data::project::ProjectAttributes::ARTISTIC,
             ProjectAttribute::Committee =&gt; data::project::ProjectAttributes::COMMITTEE,
             ProjectAttribute::Outdoor =&gt; data::project::ProjectAttributes::OUTDOOR,
+            ProjectAttribute::Indoor =&gt; data::project::ProjectAttributes::INDOOR,
         })
         .collect()
 }
 
 <span class="kw">pub fn </span>to_project_category(category: data::project::ProjectCategory) -&gt; ProjectCategory {
     <span class="kw">match </span>category {
-        data::project::ProjectCategory::GeneralOnline =&gt; ProjectCategory::GeneralOnline,
-        data::project::ProjectCategory::GeneralPhysical =&gt; ProjectCategory::GeneralPhysical,
-        data::project::ProjectCategory::StageOnline =&gt; ProjectCategory::StageOnline,
-        data::project::ProjectCategory::StagePhysical =&gt; ProjectCategory::StagePhysical,
-        data::project::ProjectCategory::CookingPhysical =&gt; ProjectCategory::CookingPhysical,
-        data::project::ProjectCategory::FoodPhysical =&gt; ProjectCategory::FoodPhysical,
+        data::project::ProjectCategory::General =&gt; ProjectCategory::General,
+        data::project::ProjectCategory::CookingRequiringPreparationArea =&gt; {
+            ProjectCategory::CookingRequiringPreparationArea
+        }
+        data::project::ProjectCategory::Cooking =&gt; ProjectCategory::Cooking,
+        data::project::ProjectCategory::Food =&gt; ProjectCategory::Food,
+        data::project::ProjectCategory::Stage =&gt; ProjectCategory::Stage,
     }
 }
 
@@ -438,6 +448,10 @@
     <span class="kw">if </span>attributes.contains(data::project::ProjectAttributes::OUTDOOR) {
         result.insert(ProjectAttribute::Outdoor);
         attributes.remove(data::project::ProjectAttributes::OUTDOOR);
+    }
+    <span class="kw">if </span>attributes.contains(data::project::ProjectAttributes::INDOOR) {
+        result.insert(ProjectAttribute::Indoor);
+        attributes.remove(data::project::ProjectAttributes::INDOOR);
     }
     <span class="macro">ensure!</span>(attributes.is_empty());
 

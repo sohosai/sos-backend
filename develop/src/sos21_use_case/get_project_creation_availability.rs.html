@@ -95,14 +95,6 @@
 <a href="#95" id="95">95</a>
 <a href="#96" id="96">96</a>
 <a href="#97" id="97">97</a>
-<a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a>
-<a href="#101" id="101">101</a>
-<a href="#102" id="102">102</a>
-<a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
-<a href="#105" id="105">105</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::model::project_creation_availability::ProjectCreationAvailability;
 
 <span class="kw">use </span>chrono::Utc;
@@ -120,23 +112,20 @@
 
     ProjectCreationAvailability {
         timestamp: now,
-        general_physical: ctx
-            .project_creation_period_for(ProjectCategory::GeneralPhysical)
+        general: ctx
+            .project_creation_period_for(ProjectCategory::General)
             .contains(now_entity),
-        general_online: ctx
-            .project_creation_period_for(ProjectCategory::GeneralOnline)
+        cooking_requiring_preparation_area: ctx
+            .project_creation_period_for(ProjectCategory::CookingRequiringPreparationArea)
             .contains(now_entity),
-        stage_physical: ctx
-            .project_creation_period_for(ProjectCategory::StagePhysical)
+        cooking: ctx
+            .project_creation_period_for(ProjectCategory::Cooking)
             .contains(now_entity),
-        stage_online: ctx
-            .project_creation_period_for(ProjectCategory::StageOnline)
+        food: ctx
+            .project_creation_period_for(ProjectCategory::Food)
             .contains(now_entity),
-        cooking_physical: ctx
-            .project_creation_period_for(ProjectCategory::CookingPhysical)
-            .contains(now_entity),
-        food_physical: ctx
-            .project_creation_period_for(ProjectCategory::FoodPhysical)
+        stage: ctx
+            .project_creation_period_for(ProjectCategory::Stage)
             .contains(now_entity),
     }
 }
@@ -178,18 +167,14 @@
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone(), other.clone(), operator.clone()])
+            .project_creation_period_for(ProjectCategory::General, ProjectCreationPeriod::never())
             .project_creation_period_for(
-                ProjectCategory::GeneralOnline,
-                ProjectCreationPeriod::never(),
+                ProjectCategory::CookingRequiringPreparationArea,
+                future_period,
             )
-            .project_creation_period_for(
-                ProjectCategory::GeneralPhysical,
-                ProjectCreationPeriod::always(),
-            )
-            .project_creation_period_for(ProjectCategory::StageOnline, past_period)
-            .project_creation_period_for(ProjectCategory::StagePhysical, ongoing_period)
-            .project_creation_period_for(ProjectCategory::CookingPhysical, future_period)
-            .project_creation_period_for(ProjectCategory::FoodPhysical, ongoing_period)
+            .project_creation_period_for(ProjectCategory::Cooking, ongoing_period)
+            .project_creation_period_for(ProjectCategory::Food, ongoing_period)
+            .project_creation_period_for(ProjectCategory::Stage, past_period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -198,12 +183,11 @@
             get_project_creation_availability::run(<span class="kw-2">&amp;</span>app),
             ProjectCreationAvailability {
                 timestamp: <span class="kw">_</span>,
-                general_online: <span class="bool-val">false</span>,   <span class="comment">// never
-                </span>general_physical: <span class="bool-val">true</span>,  <span class="comment">// always
-                </span>stage_online: <span class="bool-val">false</span>,     <span class="comment">// past
-                </span>stage_physical: <span class="bool-val">true</span>,    <span class="comment">// ongoing
-                </span>cooking_physical: <span class="bool-val">false</span>, <span class="comment">// future
-                </span>food_physical: <span class="bool-val">true      </span><span class="comment">// ongoing
+                general: <span class="bool-val">false</span>,
+                cooking_requiring_preparation_area: <span class="bool-val">false</span>,
+                cooking: <span class="bool-val">true</span>,
+                food: <span class="bool-val">true</span>,
+                stage: <span class="bool-val">false
             </span>}
         ));
     }

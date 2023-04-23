@@ -131,6 +131,10 @@
 <a href="#131" id="131">131</a>
 <a href="#132" id="132">132</a>
 <a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::handler::model::date_time::DateTime;
 <span class="kw">use </span><span class="kw">crate</span>::handler::model::user::{UserId, UserKanaName, UserName};
 
@@ -155,34 +159,35 @@
 <span class="attr">#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = <span class="string">&quot;snake_case&quot;</span>)]
 </span><span class="kw">pub enum </span>ProjectCategory {
-    GeneralOnline,
-    GeneralPhysical,
-    StageOnline,
-    StagePhysical,
-    CookingPhysical,
-    FoodPhysical,
+    General,
+    CookingRequiringPreparationArea,
+    Cooking,
+    Food,
+    Stage,
 }
 
 <span class="kw">impl </span>ProjectCategory {
     <span class="kw">pub fn </span>from_use_case(category: use_case::ProjectCategory) -&gt; ProjectCategory {
         <span class="kw">match </span>category {
-            use_case::ProjectCategory::GeneralOnline =&gt; ProjectCategory::GeneralOnline,
-            use_case::ProjectCategory::GeneralPhysical =&gt; ProjectCategory::GeneralPhysical,
-            use_case::ProjectCategory::StageOnline =&gt; ProjectCategory::StageOnline,
-            use_case::ProjectCategory::StagePhysical =&gt; ProjectCategory::StagePhysical,
-            use_case::ProjectCategory::CookingPhysical =&gt; ProjectCategory::CookingPhysical,
-            use_case::ProjectCategory::FoodPhysical =&gt; ProjectCategory::FoodPhysical,
+            use_case::ProjectCategory::General =&gt; ProjectCategory::General,
+            use_case::ProjectCategory::CookingRequiringPreparationArea =&gt; {
+                ProjectCategory::CookingRequiringPreparationArea
+            }
+            use_case::ProjectCategory::Cooking =&gt; ProjectCategory::Cooking,
+            use_case::ProjectCategory::Stage =&gt; ProjectCategory::Stage,
+            use_case::ProjectCategory::Food =&gt; ProjectCategory::Food,
         }
     }
 
     <span class="kw">pub fn </span>into_use_case(<span class="self">self</span>) -&gt; use_case::ProjectCategory {
         <span class="kw">match </span><span class="self">self </span>{
-            ProjectCategory::GeneralOnline =&gt; use_case::ProjectCategory::GeneralOnline,
-            ProjectCategory::GeneralPhysical =&gt; use_case::ProjectCategory::GeneralPhysical,
-            ProjectCategory::StageOnline =&gt; use_case::ProjectCategory::StageOnline,
-            ProjectCategory::StagePhysical =&gt; use_case::ProjectCategory::StagePhysical,
-            ProjectCategory::CookingPhysical =&gt; use_case::ProjectCategory::CookingPhysical,
-            ProjectCategory::FoodPhysical =&gt; use_case::ProjectCategory::FoodPhysical,
+            ProjectCategory::General =&gt; use_case::ProjectCategory::General,
+            ProjectCategory::CookingRequiringPreparationArea =&gt; {
+                use_case::ProjectCategory::CookingRequiringPreparationArea
+            }
+            ProjectCategory::Cooking =&gt; use_case::ProjectCategory::Cooking,
+            ProjectCategory::Food =&gt; use_case::ProjectCategory::Food,
+            ProjectCategory::Stage =&gt; use_case::ProjectCategory::Stage,
         }
     }
 }
@@ -194,6 +199,7 @@
     Artistic,
     Committee,
     Outdoor,
+    Indoor,
 }
 
 <span class="kw">impl </span>ProjectAttribute {
@@ -203,6 +209,7 @@
             use_case::ProjectAttribute::Artistic =&gt; ProjectAttribute::Artistic,
             use_case::ProjectAttribute::Committee =&gt; ProjectAttribute::Committee,
             use_case::ProjectAttribute::Outdoor =&gt; ProjectAttribute::Outdoor,
+            use_case::ProjectAttribute::Indoor =&gt; ProjectAttribute::Indoor,
         }
     }
 
@@ -212,6 +219,7 @@
             ProjectAttribute::Artistic =&gt; use_case::ProjectAttribute::Artistic,
             ProjectAttribute::Committee =&gt; use_case::ProjectAttribute::Committee,
             ProjectAttribute::Outdoor =&gt; use_case::ProjectAttribute::Outdoor,
+            ProjectAttribute::Indoor =&gt; use_case::ProjectAttribute::Indoor,
         }
     }
 }

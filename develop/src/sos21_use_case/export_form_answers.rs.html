@@ -556,7 +556,7 @@
     } = <span class="kw-2">&amp;</span>input.field_names;
 
     <span class="kw">if </span>id.is_some() {
-        writer.write_field(answer.id().to_uuid().hyphenated().to_string())<span class="question-mark">?</span>;
+        writer.write_field(answer.id().to_uuid().to_hyphenated().to_string())<span class="question-mark">?</span>;
     }
 
     <span class="kw">if </span>created_at.is_some() {
@@ -565,14 +565,14 @@
     }
 
     <span class="kw">if </span>project_id.is_some() {
-        writer.write_field(answer.project_id().to_uuid().hyphenated().to_string())<span class="question-mark">?</span>;
+        writer.write_field(answer.project_id().to_uuid().to_hyphenated().to_string())<span class="question-mark">?</span>;
     }
 
     <span class="kw">if </span>author_id.is_some() {
         writer.write_field(<span class="kw-2">&amp;</span>answer.author_id().<span class="number">0</span>)<span class="question-mark">?</span>;
     }
 
-    <span class="kw">let </span>answer_id = answer.id().to_uuid().hyphenated().to_string();
+    <span class="kw">let </span>answer_id = answer.id().to_uuid().to_hyphenated().to_string();
     <span class="kw">let </span>render = |sharing_ids| {
         (input.render_file_answer)(RenderFileAnswerInput {
             answer_id: answer_id.clone(),
@@ -668,7 +668,7 @@
         FormAnswerItemBody::File(sharings) =&gt; {
             <span class="kw">let </span>sharings = sharings
                 .sharing_answers()
-                .map(|answer| answer.sharing_id.to_uuid().hyphenated().to_string())
+                .map(|answer| answer.sharing_id.to_uuid().to_hyphenated().to_string())
                 .collect();
             <span class="kw">let </span>field = (render_file_answer)(sharings).context(<span class="string">&quot;Failed to render file answer&quot;</span>)<span class="question-mark">?</span>;
             writer.write_field(field)<span class="question-mark">?</span>;
@@ -691,8 +691,8 @@
     ) -&gt; (Login&lt;test::context::MockApp&gt;, FormId) {
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
-        <span class="kw">let </span>project1 = test::model::new_general_online_project(login_user.id().clone());
-        <span class="kw">let </span>project2 = test::model::new_general_online_project(login_user.id().clone());
+        <span class="kw">let </span>project1 = test::model::new_general_project(login_user.id().clone());
+        <span class="kw">let </span>project2 = test::model::new_general_project(login_user.id().clone());
 
         <span class="kw">let </span>form1 = test::model::new_form(operator.id().clone());
         <span class="kw">let </span>form1_id = FormId::from_entity(form1.id());

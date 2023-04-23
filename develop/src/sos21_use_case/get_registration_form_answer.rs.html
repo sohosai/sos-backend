@@ -201,7 +201,7 @@
     </span><span class="kw">async fn </span>test_general_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>operator = test::model::new_operator_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(user.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(user.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
         <span class="kw">let </span>answer = test::model::new_registration_form_answer_with_pending_project(
             user.id().clone(),
@@ -235,7 +235,7 @@
     </span><span class="kw">async fn </span>test_committee_other() {
         <span class="kw">let </span>user = test::model::new_committee_user();
         <span class="kw">let </span>operator = test::model::new_operator_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(user.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(user.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
         <span class="kw">let </span>answer = test::model::new_registration_form_answer_with_pending_project(
             user.id().clone(),
@@ -265,7 +265,7 @@
     </span><span class="kw">async fn </span>test_operator_other() {
         <span class="kw">let </span>user = test::model::new_operator_user();
         <span class="kw">let </span>operator = test::model::new_operator_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(user.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(user.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
         <span class="kw">let </span>answer = test::model::new_registration_form_answer_with_pending_project(
             user.id().clone(),

@@ -230,8 +230,6 @@
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
 <a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::error::{UseCaseError, UseCaseResult};
 <span class="kw">use </span><span class="kw">crate</span>::model::file_distribution::{FileDistributionDistributedFile, FileDistributionId};
 <span class="kw">use </span><span class="kw">crate</span>::model::project::ProjectId;
@@ -312,10 +310,10 @@
         <span class="kw">let </span>(file, object) = test::model::new_file(operator.id().clone());
 
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
 
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>other_project = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>other_project = test::model::new_general_project(other.id().clone());
 
         <span class="kw">let </span>scope = file_sharing::FileSharingScope::Project(project.id());
         <span class="kw">let </span>sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -353,10 +351,10 @@
         <span class="kw">let </span>(file, object) = test::model::new_file(operator.id().clone());
 
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
 
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>other_project = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>other_project = test::model::new_general_project(other.id().clone());
 
         <span class="kw">let </span>scope = file_sharing::FileSharingScope::Project(other_project.id());
         <span class="kw">let </span>sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -394,7 +392,7 @@
         <span class="kw">let </span>(file, object) = test::model::new_file(operator.id().clone());
 
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
 
         <span class="kw">let </span>scope = file_sharing::FileSharingScope::Project(project.id());
         <span class="kw">let </span>sharing = file_sharing::FileSharing::new(file.id, scope);
@@ -432,10 +430,8 @@
 
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project_with_subowner(
-            owner.id().clone(),
-            user.id().clone(),
-        );
+        <span class="kw">let </span>project =
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
 
         <span class="kw">let </span>scope = file_sharing::FileSharingScope::Project(project.id());
         <span class="kw">let </span>sharing = file_sharing::FileSharing::new(file.id, scope);

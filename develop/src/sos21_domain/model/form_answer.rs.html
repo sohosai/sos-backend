@@ -654,7 +654,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_general() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>user_project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>user_project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>form = test_model::new_form(operator.id().clone());
         <span class="kw">let </span>form_answer = test_model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>user_project, <span class="kw-2">&amp;</span>form);
@@ -664,7 +664,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_committee() {
         <span class="kw">let </span>user = test_model::new_committee_user();
-        <span class="kw">let </span>user_project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>user_project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>form = test_model::new_form(operator.id().clone());
         <span class="kw">let </span>form_answer = test_model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>user_project, <span class="kw-2">&amp;</span>form);
@@ -674,7 +674,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_operator() {
         <span class="kw">let </span>user = test_model::new_operator_user();
-        <span class="kw">let </span>user_project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>user_project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>form = test_model::new_form(operator.id().clone());
         <span class="kw">let </span>form_answer = test_model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>user_project, <span class="kw-2">&amp;</span>form);
@@ -684,7 +684,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_general_via_owning_project() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>user_project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>user_project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>form = test_model::new_form(operator.id().clone());
         <span class="kw">let </span>form_answer = test_model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>user_project, <span class="kw-2">&amp;</span>form);
@@ -695,7 +695,7 @@
     </span><span class="kw">fn </span>test_visibility_general_via_non_owning_project() {
         <span class="kw">let </span>user = test_model::new_general_user();
         <span class="kw">let </span>operator = test_model::new_operator_user();
-        <span class="kw">let </span>operator_project = test_model::new_general_online_project(operator.id().clone());
+        <span class="kw">let </span>operator_project = test_model::new_general_project(operator.id().clone());
         <span class="kw">let </span>form = test_model::new_form(operator.id().clone());
         <span class="kw">let </span>form_answer = test_model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>operator_project, <span class="kw-2">&amp;</span>form);
         <span class="macro">assert!</span>(!form_answer.is_visible_to_with_project(<span class="kw-2">&amp;</span>user, <span class="kw-2">&amp;</span>operator_project));
@@ -707,7 +707,7 @@
         <span class="kw">use </span><span class="kw">crate</span>::model::form_answer::item <span class="kw">as </span>answer_item;
 
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>user_project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>user_project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
 
         <span class="kw">let </span>(items, answer_items, item_id) = {
@@ -758,7 +758,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_set_items_general_after_period() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>user_project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>user_project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>period = test_model::new_form_period_to_now();
         <span class="kw">let </span>form = test_model::new_form_with_period(operator.id().clone(), period);

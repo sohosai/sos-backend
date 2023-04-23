@@ -118,7 +118,7 @@
     </span><span class="kw">fn </span>test_visibility_general() {
         <span class="kw">let </span>user = test_model::new_general_user();
         <span class="kw">let </span>operator = test_model::new_operator_user();
-        <span class="kw">let </span>project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>files = FileDistributionFiles::from_sharings(<span class="macro">vec!</span>[(
             project.id(),
             FileSharingId::from_uuid(Uuid::new_v4()),
@@ -135,7 +135,7 @@
     </span><span class="kw">fn </span>test_visibility_committee() {
         <span class="kw">let </span>user = test_model::new_committee_user();
         <span class="kw">let </span>operator = test_model::new_operator_user();
-        <span class="kw">let </span>project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>files = FileDistributionFiles::from_sharings(<span class="macro">vec!</span>[(
             project.id(),
             FileSharingId::from_uuid(Uuid::new_v4()),

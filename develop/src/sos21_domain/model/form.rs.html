@@ -1044,7 +1044,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_general_via_project() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>user_project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>user_project = test_model::new_general_project(user.id().clone());
         <span class="kw">let </span>operator = test_model::new_operator_user();
         <span class="kw">let </span>tautology_query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
             category: <span class="prelude-val">None</span>,
@@ -1137,9 +1137,9 @@
     </span><span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_answer_not_targeted() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_stage_online_project(user.id().clone());
+        <span class="kw">let </span>project = test_model::new_stage_project(user.id().clone());
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::GeneralOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::General),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
         }])
         .unwrap();
@@ -1161,7 +1161,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_answer_already_answered() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_stage_online_project(user.id().clone());
+        <span class="kw">let </span>project = test_model::new_stage_project(user.id().clone());
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
             category: <span class="prelude-val">None</span>,
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
@@ -1187,7 +1187,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_answer_ok() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_stage_online_project(user.id().clone());
+        <span class="kw">let </span>project = test_model::new_stage_project(user.id().clone());
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
             category: <span class="prelude-val">None</span>,
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),

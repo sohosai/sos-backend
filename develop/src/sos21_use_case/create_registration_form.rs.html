@@ -333,7 +333,7 @@
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -364,7 +364,7 @@
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -395,7 +395,7 @@
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -409,7 +409,7 @@
                 .map(FormItem::from_entity)
                 .collect(),
             query: ProjectQuery(<span class="macro">vec!</span>[ProjectQueryConjunction {
-                category: <span class="prelude-val">Some</span>(ProjectCategory::GeneralOnline),
+                category: <span class="prelude-val">Some</span>(ProjectCategory::General),
                 attributes: <span class="macro">vec!</span>[],
             }]),
         };

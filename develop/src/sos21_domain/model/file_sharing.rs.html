@@ -901,13 +901,13 @@
         <span class="kw">use </span><span class="kw">crate</span>::model::project_query::{ProjectQuery, ProjectQueryConjunction};
 
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::GeneralOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::General),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
         }])
         .unwrap();
         <span class="kw">let </span>scope = FileSharingScope::ProjectQuery(query);
         <span class="kw">let </span>sharing = FileSharing::new(test_model::new_file_id(), scope);
-        <span class="kw">let </span>project = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project = test_model::new_general_project(test_model::new_user_id());
         <span class="macro">assert!</span>(sharing.to_witness_with_project(<span class="kw-2">&amp;</span>project).is_ok());
     }
 
@@ -920,7 +920,7 @@
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[]).unwrap();
         <span class="kw">let </span>scope = FileSharingScope::ProjectQuery(query);
         <span class="kw">let </span>sharing = FileSharing::new(test_model::new_file_id(), scope);
-        <span class="kw">let </span>project = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project = test_model::new_general_project(test_model::new_user_id());
         <span class="macro">assert!</span>(<span class="macro">matches!</span>(
             sharing
                 .to_witness_with_project(<span class="kw-2">&amp;</span>project)
@@ -938,7 +938,7 @@
             test_model::new_file_id(),
             FileSharingScope::Project(test_model::new_project_id()),
         );
-        <span class="kw">let </span>project = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project = test_model::new_general_project(test_model::new_user_id());
         <span class="macro">assert!</span>(<span class="macro">matches!</span>(
             sharing
                 .to_witness_with_project(<span class="kw-2">&amp;</span>project)
@@ -960,7 +960,7 @@
         <span class="kw">let </span>owner_id = test_model::new_user_id();
         <span class="kw">let </span>answer = test_model::new_form_answer(
             owner_id.clone(),
-            <span class="kw-2">&amp;</span>test_model::new_general_online_project(owner_id.clone()),
+            <span class="kw-2">&amp;</span>test_model::new_general_project(owner_id.clone()),
             <span class="kw-2">&amp;</span>form,
         );
         <span class="macro">assert!</span>(<span class="macro">matches!</span>(

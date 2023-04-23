@@ -524,7 +524,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_answer_in_period_general_owner() {
         <span class="kw">let </span>owner = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(owner.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(owner.id().clone());
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>(item_id, items, answer_items) = prepare_items();
@@ -571,7 +571,7 @@
     </span><span class="kw">async fn </span>test_answer_in_period_general_subowner() {
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span>subowner = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project_with_subowner(
+        <span class="kw">let </span>project = test::model::new_general_project_with_subowner(
             owner.id().clone(),
             subowner.id().clone(),
         );
@@ -621,7 +621,7 @@
     </span><span class="kw">async fn </span>test_answer_in_period_general_other() {
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(owner.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(owner.id().clone());
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>(item_id, items, answer_items) = prepare_items();
@@ -666,7 +666,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_answer_after_period_owner() {
         <span class="kw">let </span>owner = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(owner.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(owner.id().clone());
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>period = test::model::new_form_period_to_now();
@@ -698,7 +698,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_answer_in_period_invalid() {
         <span class="kw">let </span>owner = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(owner.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(owner.id().clone());
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>form = test::model::new_form(operator.id().clone());

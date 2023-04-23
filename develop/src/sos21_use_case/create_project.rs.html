@@ -631,7 +631,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_owner() {
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(user.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
@@ -652,10 +652,10 @@
     </span><span class="kw">async fn </span>test_already_project_owner() {
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span><span class="kw-2">mut </span>user = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         user.assign_project_owner(<span class="kw-2">&amp;</span>project).unwrap();
 
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone(), owner.clone()])
@@ -677,7 +677,7 @@
     </span><span class="kw">async fn </span>test_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(other.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(other.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone(), other.clone()])
@@ -705,13 +705,13 @@
     </span><span class="kw">async fn </span>test_after_other_category_period_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(other.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(other.id().clone());
         <span class="kw">let </span>period = test::model::new_project_creation_period_to_now();
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone(), other.clone()])
             .pending_projects(<span class="macro">vec!</span>[pending_project.clone()])
-            .project_creation_period_for(project::ProjectCategory::StageOnline, period)
+            .project_creation_period_for(project::ProjectCategory::Stage, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -735,13 +735,13 @@
     </span><span class="kw">async fn </span>test_with_period_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(other.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(other.id().clone());
         <span class="kw">let </span>period = test::model::new_project_creation_period_from_now();
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone(), other.clone()])
             .pending_projects(<span class="macro">vec!</span>[pending_project.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -762,13 +762,13 @@
     </span><span class="kw">async fn </span>test_after_period_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(other.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(other.id().clone());
         <span class="kw">let </span>period = test::model::new_project_creation_period_to_now();
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone(), other.clone()])
             .pending_projects(<span class="macro">vec!</span>[pending_project.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -785,13 +785,13 @@
     </span><span class="kw">async fn </span>test_before_period_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(other.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(other.id().clone());
         <span class="kw">let </span>period = test::model::new_project_creation_period_with_hours_from_now(<span class="number">1</span>);
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone(), other.clone()])
             .pending_projects(<span class="macro">vec!</span>[pending_project.clone()])
-            .project_creation_period_for(project::ProjectCategory::GeneralOnline, period)
+            .project_creation_period_for(project::ProjectCategory::General, period)
             .build()
             .login_as(user.clone())
             .<span class="kw">await</span>;
@@ -808,7 +808,7 @@
     </span><span class="kw">async fn </span>test_other_with_registration_form_not_answered() {
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span>subowner = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>operator = test::model::new_general_user();
         <span class="kw">let </span>registration_form1 = test::model::new_registration_form(operator.id().clone());
@@ -843,7 +843,7 @@
 
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span>subowner = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>operator = test::model::new_general_user();
         <span class="kw">let </span>registration_form1 = test::model::new_registration_form(operator.id().clone());
@@ -852,7 +852,7 @@
             operator.id().clone(),
             project_query::ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[
                 project_query::ProjectQueryConjunction {
-                    category: <span class="prelude-val">Some</span>(project::ProjectCategory::StageOnline),
+                    category: <span class="prelude-val">Some</span>(project::ProjectCategory::Stage),
                     attributes: project::ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
                 },
             ])
@@ -912,7 +912,7 @@
 
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span>subowner = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>operator = test::model::new_general_user();
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());

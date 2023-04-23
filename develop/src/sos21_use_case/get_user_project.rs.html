@@ -124,8 +124,6 @@
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
 <a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::error::{UseCaseError, UseCaseResult};
 <span class="kw">use </span><span class="kw">crate</span>::model::project::{Project, ProjectFromEntityInput};
 
@@ -193,9 +191,9 @@
     </span><span class="kw">async fn </span>test_general_owner() {
         <span class="kw">let </span><span class="kw-2">mut </span>user = test::model::new_general_user();
         <span class="kw">let </span><span class="kw-2">mut </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project1 = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project1 = test::model::new_general_project(user.id().clone());
         user.assign_project_owner(<span class="kw-2">&amp;</span>project1).unwrap();
-        <span class="kw">let </span>project2 = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project2 = test::model::new_general_project(other.id().clone());
         other.assign_project_owner(<span class="kw-2">&amp;</span>project2).unwrap();
 
         <span class="kw">let </span>app = test::build_mock_app()
@@ -214,12 +212,10 @@
         <span class="kw">let </span><span class="kw-2">mut </span>user = test::model::new_general_user();
         <span class="kw">let </span><span class="kw-2">mut </span>other1 = test::model::new_general_user();
         <span class="kw">let </span><span class="kw-2">mut </span>other2 = test::model::new_general_user();
-        <span class="kw">let </span>project1 = test::model::new_general_online_project(other1.id().clone());
+        <span class="kw">let </span>project1 = test::model::new_general_project(other1.id().clone());
         other1.assign_project_owner(<span class="kw-2">&amp;</span>project1).unwrap();
-        <span class="kw">let </span>project2 = test::model::new_general_online_project_with_subowner(
-            other2.id().clone(),
-            user.id().clone(),
-        );
+        <span class="kw">let </span>project2 =
+            test::model::new_general_project_with_subowner(other2.id().clone(), user.id().clone());
         other2.assign_project_owner(<span class="kw-2">&amp;</span>project2).unwrap();
         user.assign_project_subowner(<span class="kw-2">&amp;</span>project2).unwrap();
 
@@ -238,7 +234,7 @@
     </span><span class="kw">async fn </span>test_general_not_found() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span><span class="kw-2">mut </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(other.id().clone());
         other.assign_project_owner(<span class="kw-2">&amp;</span>project).unwrap();
 
         <span class="kw">let </span>app = test::build_mock_app()

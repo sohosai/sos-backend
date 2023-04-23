@@ -144,6 +144,10 @@
 <a href="#144" id="144">144</a>
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::model::user::{UserId, UserKanaName, UserName};
 
 <span class="kw">use </span>chrono::{DateTime, Utc};
@@ -165,34 +169,35 @@
 
 <span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 </span><span class="kw">pub enum </span>ProjectCategory {
-    GeneralOnline,
-    GeneralPhysical,
-    StageOnline,
-    StagePhysical,
-    CookingPhysical,
-    FoodPhysical,
+    General,
+    CookingRequiringPreparationArea,
+    Cooking,
+    Food,
+    Stage,
 }
 
 <span class="kw">impl </span>ProjectCategory {
     <span class="kw">pub fn </span>from_entity(category: entity::ProjectCategory) -&gt; ProjectCategory {
         <span class="kw">match </span>category {
-            entity::ProjectCategory::GeneralOnline =&gt; ProjectCategory::GeneralOnline,
-            entity::ProjectCategory::GeneralPhysical =&gt; ProjectCategory::GeneralPhysical,
-            entity::ProjectCategory::StageOnline =&gt; ProjectCategory::StageOnline,
-            entity::ProjectCategory::StagePhysical =&gt; ProjectCategory::StagePhysical,
-            entity::ProjectCategory::CookingPhysical =&gt; ProjectCategory::CookingPhysical,
-            entity::ProjectCategory::FoodPhysical =&gt; ProjectCategory::FoodPhysical,
+            entity::ProjectCategory::General =&gt; ProjectCategory::General,
+            entity::ProjectCategory::CookingRequiringPreparationArea =&gt; {
+                ProjectCategory::CookingRequiringPreparationArea
+            }
+            entity::ProjectCategory::Cooking =&gt; ProjectCategory::Cooking,
+            entity::ProjectCategory::Food =&gt; ProjectCategory::Food,
+            entity::ProjectCategory::Stage =&gt; ProjectCategory::Stage,
         }
     }
 
     <span class="kw">pub fn </span>into_entity(<span class="self">self</span>) -&gt; entity::ProjectCategory {
         <span class="kw">match </span><span class="self">self </span>{
-            ProjectCategory::GeneralOnline =&gt; entity::ProjectCategory::GeneralOnline,
-            ProjectCategory::GeneralPhysical =&gt; entity::ProjectCategory::GeneralPhysical,
-            ProjectCategory::StageOnline =&gt; entity::ProjectCategory::StageOnline,
-            ProjectCategory::StagePhysical =&gt; entity::ProjectCategory::StagePhysical,
-            ProjectCategory::CookingPhysical =&gt; entity::ProjectCategory::CookingPhysical,
-            ProjectCategory::FoodPhysical =&gt; entity::ProjectCategory::FoodPhysical,
+            ProjectCategory::General =&gt; entity::ProjectCategory::General,
+            ProjectCategory::CookingRequiringPreparationArea =&gt; {
+                entity::ProjectCategory::CookingRequiringPreparationArea
+            }
+            ProjectCategory::Cooking =&gt; entity::ProjectCategory::Cooking,
+            ProjectCategory::Food =&gt; entity::ProjectCategory::Food,
+            ProjectCategory::Stage =&gt; entity::ProjectCategory::Stage,
         }
     }
 }
@@ -203,6 +208,7 @@
     Artistic,
     Committee,
     Outdoor,
+    Indoor,
 }
 
 <span class="kw">impl </span>ProjectAttribute {
@@ -212,6 +218,7 @@
             entity::ProjectAttribute::Artistic =&gt; ProjectAttribute::Artistic,
             entity::ProjectAttribute::Committee =&gt; ProjectAttribute::Committee,
             entity::ProjectAttribute::Outdoor =&gt; ProjectAttribute::Outdoor,
+            entity::ProjectAttribute::Indoor =&gt; ProjectAttribute::Indoor,
         }
     }
 
@@ -221,6 +228,7 @@
             ProjectAttribute::Artistic =&gt; entity::ProjectAttribute::Artistic,
             ProjectAttribute::Committee =&gt; entity::ProjectAttribute::Committee,
             ProjectAttribute::Outdoor =&gt; entity::ProjectAttribute::Outdoor,
+            ProjectAttribute::Indoor =&gt; entity::ProjectAttribute::Indoor,
         }
     }
 }

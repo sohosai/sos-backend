@@ -209,7 +209,7 @@
     </span><span class="kw">async fn </span>test_general_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project_other = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project_other = test::model::new_general_project(other.id().clone());
         <span class="macro">assert!</span>(!project_other.is_visible_to(<span class="kw-2">&amp;</span>user));
         <span class="kw">let </span>form = test::model::new_form(other.id().clone());
         <span class="kw">let </span>answer_other = test::model::new_form_answer(other.id().clone(), <span class="kw-2">&amp;</span>project_other, <span class="kw-2">&amp;</span>form);
@@ -241,7 +241,7 @@
     </span><span class="kw">async fn </span>test_committee_other() {
         <span class="kw">let </span>user = test::model::new_committee_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project_other = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project_other = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>form = test::model::new_form(other.id().clone());
         <span class="kw">let </span>answer_other = test::model::new_form_answer(other.id().clone(), <span class="kw-2">&amp;</span>project_other, <span class="kw-2">&amp;</span>form);
 
@@ -266,7 +266,7 @@
     </span><span class="kw">async fn </span>test_operator_other() {
         <span class="kw">let </span>user = test::model::new_operator_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project_other = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project_other = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>form = test::model::new_form(other.id().clone());
         <span class="kw">let </span>answer_other = test::model::new_form_answer(other.id().clone(), <span class="kw-2">&amp;</span>project_other, <span class="kw-2">&amp;</span>form);
 

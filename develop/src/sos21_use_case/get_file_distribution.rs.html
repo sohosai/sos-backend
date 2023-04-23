@@ -185,7 +185,7 @@
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>other_project = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>other_project = test::model::new_general_project(other.id().clone());
 
         <span class="kw">let </span>(file, object) = test::model::new_file(operator.id().clone());
         <span class="kw">let </span>sharing = file_sharing::FileSharing::new(
@@ -223,7 +223,7 @@
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>other_project = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>other_project = test::model::new_general_project(other.id().clone());
 
         <span class="kw">let </span>(file, object) = test::model::new_file(operator.id().clone());
         <span class="kw">let </span>sharing = file_sharing::FileSharing::new(

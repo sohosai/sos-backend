@@ -173,7 +173,7 @@
     </span><span class="kw">async fn </span>test_general_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>operator = test::model::new_operator_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>form = test::model::new_form(operator.id().clone());
         <span class="kw">let </span>answer = test::model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>project, <span class="kw-2">&amp;</span>form);
 
@@ -199,7 +199,7 @@
     </span><span class="kw">async fn </span>test_committee_other() {
         <span class="kw">let </span>user = test::model::new_committee_user();
         <span class="kw">let </span>operator = test::model::new_operator_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>form = test::model::new_form(operator.id().clone());
         <span class="kw">let </span>answer = test::model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>project, <span class="kw-2">&amp;</span>form);
 
@@ -225,7 +225,7 @@
     </span><span class="kw">async fn </span>test_operator_other() {
         <span class="kw">let </span>user = test::model::new_operator_user();
         <span class="kw">let </span>operator = test::model::new_operator_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>form = test::model::new_form(operator.id().clone());
         <span class="kw">let </span>answer = test::model::new_form_answer(user.id().clone(), <span class="kw-2">&amp;</span>project, <span class="kw-2">&amp;</span>form);
 

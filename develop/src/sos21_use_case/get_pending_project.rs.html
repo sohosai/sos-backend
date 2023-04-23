@@ -140,7 +140,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_get_owner() {
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(user.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])
@@ -161,7 +161,7 @@
     </span><span class="kw">async fn </span>test_get_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(other.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(other.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone(), other.clone()])
@@ -181,7 +181,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_not_found() {
         <span class="kw">let </span>user = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(user.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(user.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[user.clone()])

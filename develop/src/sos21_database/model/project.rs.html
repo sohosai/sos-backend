@@ -93,13 +93,12 @@
 #[sqlx(type_name = <span class="string">&quot;project_category&quot;</span>)]
 #[sqlx(rename_all = <span class="string">&quot;snake_case&quot;</span>)]
 </span><span class="kw">pub enum </span>ProjectCategory {
-    GeneralOnline,
-    GeneralPhysical,
-    StageOnline,
-    StagePhysical,
-    CookingPhysical,
-    FoodPhysical,
-}
+    General,                         <span class="comment">// 一般企画（飲食物取扱い企画、調理企画を除く）
+    </span>CookingRequiringPreparationArea, <span class="comment">// 一般企画（調理企画（仕込場が必要））
+    </span>Cooking,                         <span class="comment">// 一般企画（調理企画（仕込場が不要））
+    </span>Food,                            <span class="comment">// 一般企画（飲食物取扱い企画）
+    </span>Stage,                           <span class="comment">// ステージ企画
+</span>}
 
 <span class="macro">bitflags::bitflags! </span>{
     <span class="kw">pub struct </span>ProjectAttributes: u32 {
@@ -107,6 +106,7 @@
         <span class="kw">const </span>ARTISTIC  = <span class="number">0b00000010</span>;
         <span class="kw">const </span>COMMITTEE = <span class="number">0b00000100</span>;
         <span class="kw">const </span>OUTDOOR   = <span class="number">0b00001000</span>;
+        <span class="kw">const </span>INDOOR    = <span class="number">0b00010000</span>;
     }
 }
 

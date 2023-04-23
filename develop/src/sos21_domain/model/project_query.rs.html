@@ -653,14 +653,6 @@
 <a href="#653" id="653">653</a>
 <a href="#654" id="654">654</a>
 <a href="#655" id="655">655</a>
-<a href="#656" id="656">656</a>
-<a href="#657" id="657">657</a>
-<a href="#658" id="658">658</a>
-<a href="#659" id="659">659</a>
-<a href="#660" id="660">660</a>
-<a href="#661" id="661">661</a>
-<a href="#662" id="662">662</a>
-<a href="#663" id="663">663</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::collections::HashSet;
 
 <span class="kw">use </span><span class="kw">crate</span>::model::bound::{Bounded, Unbounded};
@@ -794,11 +786,11 @@
             category: <span class="prelude-val">None</span>,
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
         };
-        <span class="kw">let </span>project1 = test_model::new_general_online_project(test_model::new_user_id());
+        <span class="kw">let </span>project1 = test_model::new_general_project(test_model::new_user_id());
         <span class="macro">assert!</span>(conj.check_project(<span class="kw-2">&amp;</span>project1));
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -814,12 +806,11 @@
             category: <span class="prelude-val">None</span>,
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
         };
-        <span class="kw">let </span>pending_project =
-            test_model::new_general_online_pending_project(test_model::new_user_id());
+        <span class="kw">let </span>pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         <span class="macro">assert!</span>(conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -838,19 +829,19 @@
         };
         <span class="kw">let </span>project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[],
         );
         <span class="macro">assert!</span>(!conj.check_project(<span class="kw-2">&amp;</span>project1));
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Artistic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(conj.check_project(<span class="kw-2">&amp;</span>project2));
         <span class="kw">let </span>project3 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -860,7 +851,7 @@
         <span class="macro">assert!</span>(conj.check_project(<span class="kw-2">&amp;</span>project3));
         <span class="kw">let </span>project4 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(!conj.check_project(<span class="kw-2">&amp;</span>project4));
@@ -875,19 +866,19 @@
         };
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[],
         );
         <span class="macro">assert!</span>(!conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Artistic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -897,7 +888,7 @@
         <span class="macro">assert!</span>(conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(!conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
@@ -915,19 +906,19 @@
         };
         <span class="kw">let </span>project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[],
         );
         <span class="macro">assert!</span>(!conj.check_project(<span class="kw-2">&amp;</span>project1));
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Artistic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(conj.check_project(<span class="kw-2">&amp;</span>project2));
         <span class="kw">let </span>project3 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -937,7 +928,7 @@
         <span class="macro">assert!</span>(conj.check_project(<span class="kw-2">&amp;</span>project3));
         <span class="kw">let </span>project4 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Artistic, ProjectAttribute::Academic],
         );
         <span class="macro">assert!</span>(!conj.check_project(<span class="kw-2">&amp;</span>project4));
@@ -955,19 +946,19 @@
         };
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[],
         );
         <span class="macro">assert!</span>(!conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Artistic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -977,7 +968,7 @@
         <span class="macro">assert!</span>(conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Artistic, ProjectAttribute::Academic],
         );
         <span class="macro">assert!</span>(!conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
@@ -986,30 +977,26 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_conj_category() {
         <span class="kw">let </span>conj = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::GeneralOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::General),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
         };
-        <span class="macro">assert!</span>(conj.check_project(<span class="kw-2">&amp;</span>test_model::new_general_online_project(
-            test_model::new_user_id()
-        )));
-        <span class="macro">assert!</span>(!conj.check_project(<span class="kw-2">&amp;</span>test_model::new_stage_online_project(
-            test_model::new_user_id()
-        )));
+        <span class="macro">assert!</span>(conj.check_project(<span class="kw-2">&amp;</span>test_model::new_general_project(test_model::new_user_id())));
+        <span class="macro">assert!</span>(!conj.check_project(<span class="kw-2">&amp;</span>test_model::new_stage_project(test_model::new_user_id())));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_pending_project_conj_category() {
         <span class="kw">let </span>conj = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::GeneralOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::General),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
         };
         <span class="macro">assert!</span>(
-            conj.check_pending_project(<span class="kw-2">&amp;</span>test_model::new_general_online_pending_project(
+            conj.check_pending_project(<span class="kw-2">&amp;</span>test_model::new_general_pending_project(
                 test_model::new_user_id()
             ))
         );
         <span class="macro">assert!</span>(
-            !conj.check_pending_project(<span class="kw-2">&amp;</span>test_model::new_stage_online_pending_project(
+            !conj.check_pending_project(<span class="kw-2">&amp;</span>test_model::new_stage_pending_project(
                 test_model::new_user_id()
             ))
         );
@@ -1018,7 +1005,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_conj_complex() {
         <span class="kw">let </span>conj = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::StageOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
@@ -1027,25 +1014,25 @@
         };
         <span class="kw">let </span>project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[],
         );
         <span class="macro">assert!</span>(!conj.check_project(<span class="kw-2">&amp;</span>project1));
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(!conj.check_project(<span class="kw-2">&amp;</span>project2));
         <span class="kw">let </span>project3 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(conj.check_project(<span class="kw-2">&amp;</span>project3));
         <span class="kw">let </span>project4 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic],
         );
         <span class="macro">assert!</span>(!conj.check_project(<span class="kw-2">&amp;</span>project4));
@@ -1054,31 +1041,30 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_pending_project_conj_complex() {
         <span class="kw">let </span>conj = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::StageOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
             ])
             .unwrap(),
         };
-        <span class="kw">let </span>pending_project =
-            test_model::new_general_online_pending_project(test_model::new_user_id());
+        <span class="kw">let </span>pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         <span class="macro">assert!</span>(!conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(!conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic],
         );
         <span class="macro">assert!</span>(!conj.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
@@ -1093,13 +1079,13 @@
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[conj]).unwrap();
         <span class="kw">let </span>project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[],
         );
         <span class="macro">assert!</span>(query.check_project(<span class="kw-2">&amp;</span>project1));
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -1116,12 +1102,11 @@
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[]).unwrap(),
         };
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[conj]).unwrap();
-        <span class="kw">let </span>pending_project =
-            test_model::new_general_online_pending_project(test_model::new_user_id());
+        <span class="kw">let </span>pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         <span class="macro">assert!</span>(query.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -1136,13 +1121,13 @@
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[]).unwrap();
         <span class="kw">let </span>project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[],
         );
         <span class="macro">assert!</span>(!query.check_project(<span class="kw-2">&amp;</span>project1));
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -1155,12 +1140,11 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_pending_project_contradiction() {
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[]).unwrap();
-        <span class="kw">let </span>pending_project =
-            test_model::new_general_online_pending_project(test_model::new_user_id());
+        <span class="kw">let </span>pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         <span class="macro">assert!</span>(!query.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -1173,7 +1157,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_complex() {
         <span class="kw">let </span>conj1 = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::StageOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[ProjectAttribute::Academic])
                 .unwrap(),
         };
@@ -1188,25 +1172,25 @@
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[conj1, conj2]).unwrap();
         <span class="kw">let </span>project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic],
         );
         <span class="macro">assert!</span>(!query.check_project(<span class="kw-2">&amp;</span>project1));
         <span class="kw">let </span>project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic],
         );
         <span class="macro">assert!</span>(query.check_project(<span class="kw-2">&amp;</span>project2));
         <span class="kw">let </span>project3 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(query.check_project(<span class="kw-2">&amp;</span>project3));
         <span class="kw">let </span>project4 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(query.check_project(<span class="kw-2">&amp;</span>project4));
@@ -1215,7 +1199,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_pending_project_complex() {
         <span class="kw">let </span>conj1 = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::StageOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[ProjectAttribute::Academic])
                 .unwrap(),
         };
@@ -1230,25 +1214,25 @@
         <span class="kw">let </span>query = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[conj1, conj2]).unwrap();
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic],
         );
         <span class="macro">assert!</span>(!query.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic],
         );
         <span class="macro">assert!</span>(query.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(query.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
         <span class="kw">let </span>pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             <span class="kw-2">&amp;</span>[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         <span class="macro">assert!</span>(query.check_pending_project(<span class="kw-2">&amp;</span>pending_project));
@@ -1259,13 +1243,13 @@
         <span class="kw">use </span>std::collections::HashSet;
 
         <span class="kw">let </span>conj1 = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::StageOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[ProjectAttribute::Academic])
                 .unwrap(),
         };
         <span class="macro">assert_eq!</span>(
             conj1.possible_categories().collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;(),
-            <span class="macro">vec!</span>[ProjectCategory::StageOnline]
+            <span class="macro">vec!</span>[ProjectCategory::Stage]
         );
         <span class="kw">let </span>conj2 = ProjectQueryConjunction {
             category: <span class="prelude-val">None</span>,
@@ -1283,12 +1267,12 @@
         <span class="kw">use </span>std::collections::HashSet;
 
         <span class="kw">let </span>conj1 = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::StageOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[ProjectAttribute::Academic])
                 .unwrap(),
         };
         <span class="kw">let </span>conj2 = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::FoodPhysical),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Food),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
@@ -1298,14 +1282,14 @@
         <span class="kw">let </span>query1 = ProjectQuery::from_conjunctions(<span class="macro">vec!</span>[conj1, conj2]).unwrap();
         <span class="macro">assert_eq!</span>(
             query1.possible_categories().collect::&lt;HashSet&lt;<span class="kw">_</span>&gt;&gt;(),
-            [ProjectCategory::StageOnline, ProjectCategory::FoodPhysical]
+            [ProjectCategory::Stage, ProjectCategory::Food]
                 .iter()
                 .copied()
                 .collect::&lt;HashSet&lt;<span class="kw">_</span>&gt;&gt;()
         );
 
         <span class="kw">let </span>conj1 = ProjectQueryConjunction {
-            category: <span class="prelude-val">Some</span>(ProjectCategory::StageOnline),
+            category: <span class="prelude-val">Some</span>(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(<span class="macro">vec!</span>[ProjectAttribute::Academic])
                 .unwrap(),
         };

@@ -206,7 +206,7 @@
     </span><span class="kw">async fn </span>test_general_any() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>registration_form1 = test::model::new_registration_form(user.id().clone());
         <span class="kw">let </span>registration_form2 = test::model::new_registration_form(user.id().clone());
         <span class="kw">let </span>registration_form3 = test::model::new_registration_form(other.id().clone());
@@ -244,7 +244,7 @@
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>project = test::model::new_project_with_attributes(
             user.id().clone(),
-            project::ProjectCategory::GeneralOnline,
+            project::ProjectCategory::General,
             <span class="kw-2">&amp;</span>[
                 project::ProjectAttribute::Academic,
                 project::ProjectAttribute::Artistic,

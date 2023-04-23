@@ -421,8 +421,6 @@
 <a href="#421" id="421">421</a>
 <a href="#422" id="422">422</a>
 <a href="#423" id="423">423</a>
-<a href="#424" id="424">424</a>
-<a href="#425" id="425">425</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::error::{UseCaseError, UseCaseResult};
 <span class="kw">use </span><span class="kw">crate</span>::model::file::File;
 <span class="kw">use </span><span class="kw">crate</span>::model::file_sharing::FileSharingId;
@@ -541,7 +539,7 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
-        <span class="kw">let </span>other_project = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>other_project = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>other_answer = test::model::new_registration_form_answer_with_project(
             other.id().clone(),
             other_project.id(),
@@ -592,7 +590,7 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>answer = test::model::new_registration_form_answer_with_project(
             user.id().clone(),
             project.id(),
@@ -642,10 +640,8 @@
 
         <span class="kw">let </span>(owner_file, owner_object) = test::model::new_file(owner.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
-        <span class="kw">let </span>project = test::model::new_general_online_project_with_subowner(
-            owner.id().clone(),
-            user.id().clone(),
-        );
+        <span class="kw">let </span>project =
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
         <span class="kw">let </span>answer = test::model::new_registration_form_answer_with_project(
             owner.id().clone(),
             project.id(),
@@ -695,13 +691,13 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>answer = test::model::new_registration_form_answer_with_project(
             user.id().clone(),
             project.id(),
             <span class="kw-2">&amp;</span>registration_form,
         );
-        <span class="kw">let </span>other_project = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>other_project = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>other_answer = test::model::new_registration_form_answer_with_project(
             other.id().clone(),
             other_project.id(),
@@ -754,7 +750,7 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>answer = test::model::new_registration_form_answer_with_project(
             user.id().clone(),
             project.id(),
@@ -807,7 +803,7 @@
 
         <span class="kw">let </span>(other_file, other_object) = test::model::new_file(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
-        <span class="kw">let </span>project = test::model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(user.id().clone());
         <span class="kw">let </span>answer = test::model::new_registration_form_answer_with_project(
             user.id().clone(),
             project.id(),

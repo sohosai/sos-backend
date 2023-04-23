@@ -545,6 +545,22 @@
 <a href="#545" id="545">545</a>
 <a href="#546" id="546">546</a>
 <a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::error::{UseCaseError, UseCaseResult};
 
 <span class="kw">use </span>anyhow::Context;
@@ -595,16 +611,16 @@
     <span class="kw">pub </span>attribute_artistic: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>attribute_committee: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>attribute_outdoor: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>attribute_indoor: <span class="prelude-ty">Option</span>&lt;String&gt;,
 }
 
 <span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>InputCategoryNames {
-    <span class="kw">pub </span>general_online: String,
-    <span class="kw">pub </span>general_physical: String,
-    <span class="kw">pub </span>stage_online: String,
-    <span class="kw">pub </span>stage_physical: String,
-    <span class="kw">pub </span>cooking_physical: String,
-    <span class="kw">pub </span>food_physical: String,
+    <span class="kw">pub </span>general: String,
+    <span class="kw">pub </span>cooking_requiring_preparation_area: String,
+    <span class="kw">pub </span>cooking: String,
+    <span class="kw">pub </span>food: String,
+    <span class="kw">pub </span>stage: String,
 }
 
 <span class="attr">#[tracing::instrument(skip(ctx))]
@@ -699,6 +715,7 @@
         attribute_artistic,
         attribute_committee,
         attribute_outdoor,
+        attribute_indoor,
     } = <span class="kw-2">&amp;</span>input.field_names;
 
     <span class="macro">macro_rules! </span>write_field {
@@ -737,6 +754,7 @@
     <span class="macro">write_field!</span>(writer, attribute_artistic);
     <span class="macro">write_field!</span>(writer, attribute_committee);
     <span class="macro">write_field!</span>(writer, attribute_outdoor);
+    <span class="macro">write_field!</span>(writer, attribute_indoor);
 
     <span class="comment">// this terminates the record (see docs on `csv::Writer::write_record`)
     </span>writer.write_record(std::iter::empty::&lt;<span class="kw-2">&amp;</span>[u8]&gt;())<span class="question-mark">?</span>;
@@ -789,10 +807,11 @@
         attribute_artistic,
         attribute_committee,
         attribute_outdoor,
+        attribute_indoor,
     } = <span class="kw-2">&amp;</span>input.field_names;
 
     <span class="kw">if </span>id.is_some() {
-        writer.write_field(data.project.id().to_uuid().hyphenated().to_string())<span class="question-mark">?</span>;
+        writer.write_field(data.project.id().to_uuid().to_hyphenated().to_string())<span class="question-mark">?</span>;
     }
 
     <span class="kw">if </span>code.is_some() {
@@ -867,12 +886,13 @@
 
     <span class="kw">if </span>category.is_some() {
         <span class="kw">let </span>category_name = <span class="kw">match </span>data.project.category() {
-            project::ProjectCategory::GeneralOnline =&gt; <span class="kw-2">&amp;</span>input.category_names.general_online,
-            project::ProjectCategory::GeneralPhysical =&gt; <span class="kw-2">&amp;</span>input.category_names.general_physical,
-            project::ProjectCategory::StageOnline =&gt; <span class="kw-2">&amp;</span>input.category_names.stage_online,
-            project::ProjectCategory::StagePhysical =&gt; <span class="kw-2">&amp;</span>input.category_names.stage_physical,
-            project::ProjectCategory::CookingPhysical =&gt; <span class="kw-2">&amp;</span>input.category_names.cooking_physical,
-            project::ProjectCategory::FoodPhysical =&gt; <span class="kw-2">&amp;</span>input.category_names.food_physical,
+            project::ProjectCategory::General =&gt; <span class="kw-2">&amp;</span>input.category_names.general,
+            project::ProjectCategory::CookingRequiringPreparationArea =&gt; {
+                <span class="kw-2">&amp;</span>input.category_names.cooking_requiring_preparation_area
+            }
+            project::ProjectCategory::Cooking =&gt; <span class="kw-2">&amp;</span>input.category_names.cooking,
+            project::ProjectCategory::Food =&gt; <span class="kw-2">&amp;</span>input.category_names.food,
+            project::ProjectCategory::Stage =&gt; <span class="kw-2">&amp;</span>input.category_names.stage,
         };
         writer.write_field(category_name)<span class="question-mark">?</span>;
     }
@@ -918,6 +938,18 @@
             .project
             .attributes()
             .contains(project::ProjectAttribute::Outdoor)
+        {
+            writer.write_field(<span class="string">b&quot;TRUE&quot;</span>)<span class="question-mark">?</span>;
+        } <span class="kw">else </span>{
+            writer.write_field(<span class="string">b&quot;FALSE&quot;</span>)<span class="question-mark">?</span>;
+        }
+    }
+
+    <span class="kw">if </span>attribute_indoor.is_some() {
+        <span class="kw">if </span>data
+            .project
+            .attributes()
+            .contains(project::ProjectAttribute::Indoor)
         {
             writer.write_field(<span class="string">b&quot;TRUE&quot;</span>)<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
@@ -997,8 +1029,8 @@
 
     <span class="kw">async fn </span>prepare_app(login_user: domain::user::User) -&gt; Login&lt;test::context::MockApp&gt; {
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project1 = test::model::new_general_online_project(login_user.id().clone());
-        <span class="kw">let </span>project2 = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project1 = test::model::new_general_project(login_user.id().clone());
+        <span class="kw">let </span>project2 = test::model::new_general_project(other.id().clone());
 
         <span class="kw">let </span>app = test::build_mock_app()
             .users(<span class="macro">vec!</span>[login_user.clone(), other.clone()])
@@ -1039,14 +1071,14 @@
             attribute_artistic: <span class="prelude-val">Some</span>(<span class="string">&quot;芸術企画&quot;</span>.to_string()),
             attribute_committee: <span class="prelude-val">Some</span>(<span class="string">&quot;委員会企画&quot;</span>.to_string()),
             attribute_outdoor: <span class="prelude-val">Some</span>(<span class="string">&quot;屋外企画&quot;</span>.to_string()),
+            attribute_indoor: <span class="prelude-val">Some</span>(<span class="string">&quot;屋内企画&quot;</span>.to_string()),
         };
         <span class="kw">let </span>category_names = export_projects::InputCategoryNames {
-            general_online: <span class="string">&quot;オンライン一般企画&quot;</span>.to_string(),
-            general_physical: <span class="string">&quot;対面一般企画&quot;</span>.to_string(),
-            stage_online: <span class="string">&quot;オンラインステージ企画&quot;</span>.to_string(),
-            stage_physical: <span class="string">&quot;対面ステージ企画&quot;</span>.to_string(),
-            cooking_physical: <span class="string">&quot;調理&quot;</span>.to_string(),
-            food_physical: <span class="string">&quot;飲食物取扱&quot;</span>.to_string(),
+            general: <span class="string">&quot;一般企画（食品取扱い企画を除く）&quot;</span>.to_string(),
+            cooking_requiring_preparation_area: <span class="string">&quot;調理を行う企画（仕込場が必要）&quot;</span>.to_string(),
+            cooking: <span class="string">&quot;調理を行う企画（仕込場が不要）&quot;</span>.to_string(),
+            food: <span class="string">&quot;飲食物取扱い企画&quot;</span>.to_string(),
+            stage: <span class="string">&quot;ステージ企画&quot;</span>.to_string(),
         };
         export_projects::Input {
             field_names,

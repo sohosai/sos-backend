@@ -118,25 +118,6 @@
 <a href="#118" id="118">118</a>
 <a href="#119" id="119">119</a>
 <a href="#120" id="120">120</a>
-<a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a>
-<a href="#123" id="123">123</a>
-<a href="#124" id="124">124</a>
-<a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
-<a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
-<a href="#134" id="134">134</a>
-<a href="#135" id="135">135</a>
-<a href="#136" id="136">136</a>
-<a href="#137" id="137">137</a>
-<a href="#138" id="138">138</a>
-<a href="#139" id="139">139</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::sync::atomic::{AtomicU16, Ordering};
 
 <span class="kw">use </span><span class="kw">crate</span>::model::{
@@ -242,39 +223,20 @@
     new_project_with_attributes(owner_id, category, <span class="kw-2">&amp;</span>[])
 }
 
-<span class="kw">pub fn </span>new_general_online_project(owner_id: UserId) -&gt; Project {
-    new_project(owner_id, ProjectCategory::GeneralOnline)
+<span class="kw">pub fn </span>new_general_project(owner_id: UserId) -&gt; Project {
+    new_project(owner_id, ProjectCategory::General)
 }
 
-<span class="kw">pub fn </span>new_general_physical_project(owner_id: UserId) -&gt; Project {
-    new_project(owner_id, ProjectCategory::GeneralPhysical)
+<span class="kw">pub fn </span>new_stage_project(owner_id: UserId) -&gt; Project {
+    new_project(owner_id, ProjectCategory::Stage)
 }
 
-<span class="kw">pub fn </span>new_stage_online_project(owner_id: UserId) -&gt; Project {
-    new_project(owner_id, ProjectCategory::StageOnline)
+<span class="kw">pub fn </span>new_general_project_with_subowner(owner_id: UserId, subowner_id: UserId) -&gt; Project {
+    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::General)
 }
 
-<span class="kw">pub fn </span>new_stage_physical_project(owner_id: UserId) -&gt; Project {
-    new_project(owner_id, ProjectCategory::StagePhysical)
-}
-
-<span class="kw">pub fn </span>new_general_online_project_with_subowner(owner_id: UserId, subowner_id: UserId) -&gt; Project {
-    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::GeneralOnline)
-}
-
-<span class="kw">pub fn </span>new_general_physical_project_with_subowner(
-    owner_id: UserId,
-    subowner_id: UserId,
-) -&gt; Project {
-    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::GeneralPhysical)
-}
-
-<span class="kw">pub fn </span>new_stage_online_project_with_subowner(owner_id: UserId, subowner_id: UserId) -&gt; Project {
-    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::StageOnline)
-}
-
-<span class="kw">pub fn </span>new_stage_physical_project_with_subowner(owner_id: UserId, subowner_id: UserId) -&gt; Project {
-    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::StagePhysical)
+<span class="kw">pub fn </span>new_stage_project_with_subowner(owner_id: UserId, subowner_id: UserId) -&gt; Project {
+    new_project_with_subowner(owner_id, subowner_id, ProjectCategory::Stage)
 }
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="sos21_domain" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>

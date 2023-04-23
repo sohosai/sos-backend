@@ -652,10 +652,6 @@
 <a href="#652" id="652">652</a>
 <a href="#653" id="653">653</a>
 <a href="#654" id="654">654</a>
-<a href="#655" id="655">655</a>
-<a href="#656" id="656">656</a>
-<a href="#657" id="657">657</a>
-<a href="#658" id="658">658</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::convert::TryInto;
 
 <span class="kw">use </span><span class="kw">crate</span>::context::{
@@ -895,8 +891,7 @@
         }
 
         <span class="kw">if </span>content.attributes.contains(ProjectAttribute::Artistic)
-            &amp;&amp; (content.category == ProjectCategory::StageOnline
-                || content.category == ProjectCategory::StagePhysical)
+            &amp;&amp; content.category == ProjectCategory::Stage
         {
             <span class="kw">return </span><span class="prelude-val">Err</span>(ContentError {
                 kind: ContentErrorKind::ArtisticStageProject,
@@ -1144,14 +1139,14 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_general_owner() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_general_online_project(user.id().clone());
+        <span class="kw">let </span>project = test_model::new_general_project(user.id().clone());
         <span class="macro">assert!</span>(project.is_visible_to(<span class="kw-2">&amp;</span>user));
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_visibility_general_subowner() {
         <span class="kw">let </span>user = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_general_online_project_with_subowner(
+        <span class="kw">let </span>project = test_model::new_general_project_with_subowner(
             test_model::new_user_id(),
             user.id().clone(),
         );
@@ -1162,7 +1157,7 @@
     </span><span class="kw">fn </span>test_visibility_general_other() {
         <span class="kw">let </span>user = test_model::new_general_user();
         <span class="kw">let </span>other = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project = test_model::new_general_project(other.id().clone());
         <span class="macro">assert!</span>(!project.is_visible_to(<span class="kw-2">&amp;</span>user));
     }
 
@@ -1170,7 +1165,7 @@
     </span><span class="kw">fn </span>test_visibility_committee_other() {
         <span class="kw">let </span>user = test_model::new_committee_user();
         <span class="kw">let </span>other = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project = test_model::new_general_project(other.id().clone());
         <span class="macro">assert!</span>(project.is_visible_to(<span class="kw-2">&amp;</span>user));
     }
 
@@ -1178,7 +1173,7 @@
     </span><span class="kw">fn </span>test_visibility_operator_other() {
         <span class="kw">let </span>user = test_model::new_operator_user();
         <span class="kw">let </span>other = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project = test_model::new_general_project(other.id().clone());
         <span class="macro">assert!</span>(project.is_visible_to(<span class="kw-2">&amp;</span>user));
     }
 
@@ -1186,7 +1181,7 @@
     </span><span class="kw">async fn </span>test_new_ok() {
         <span class="kw">let </span>owner = test_model::new_general_user();
         <span class="kw">let </span>subowner = test_model::new_general_user();
-        <span class="kw">let </span>pending_project = test_model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test_model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>app = <span class="kw">crate</span>::test::build_mock_app()
             .users(<span class="macro">vec!</span>[owner.clone(), subowner.clone()])
@@ -1204,7 +1199,7 @@
     </span><span class="kw">async fn </span>test_new_not_answered() {
         <span class="kw">let </span>owner = test_model::new_general_user();
         <span class="kw">let </span>subowner = test_model::new_general_user();
-        <span class="kw">let </span>pending_project = test_model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test_model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>operator = test_model::new_general_user();
         <span class="kw">let </span>registration_form = test_model::new_registration_form(operator.id().clone());
@@ -1225,7 +1220,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_new_same_owner_subowner() {
         <span class="kw">let </span>owner = test_model::new_general_user();
-        <span class="kw">let </span>pending_project = test_model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test_model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>app = <span class="kw">crate</span>::test::build_mock_app()
             .users(<span class="macro">vec!</span>[owner.clone()])
@@ -1243,10 +1238,10 @@
     </span><span class="kw">async fn </span>test_new_already_project_owner() {
         <span class="kw">let </span>owner = test_model::new_general_user();
         <span class="kw">let </span><span class="kw-2">mut </span>subowner = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_general_online_project(subowner.id().clone());
+        <span class="kw">let </span>project = test_model::new_general_project(subowner.id().clone());
         subowner.assign_project_owner(<span class="kw-2">&amp;</span>project).unwrap();
 
-        <span class="kw">let </span>pending_project = test_model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test_model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>app = <span class="kw">crate</span>::test::build_mock_app()
             .users(<span class="macro">vec!</span>[owner.clone(), subowner.clone()])
@@ -1266,13 +1261,11 @@
         <span class="kw">let </span>owner = test_model::new_general_user();
         <span class="kw">let </span>user = test_model::new_general_user();
         <span class="kw">let </span><span class="kw-2">mut </span>subowner = test_model::new_general_user();
-        <span class="kw">let </span>project = test_model::new_general_online_project_with_subowner(
-            user.id().clone(),
-            subowner.id().clone(),
-        );
+        <span class="kw">let </span>project =
+            test_model::new_general_project_with_subowner(user.id().clone(), subowner.id().clone());
         subowner.assign_project_subowner(<span class="kw-2">&amp;</span>project).unwrap();
 
-        <span class="kw">let </span>pending_project = test_model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test_model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>app = <span class="kw">crate</span>::test::build_mock_app()
             .users(<span class="macro">vec!</span>[user, owner.clone(), subowner.clone()])
@@ -1291,13 +1284,12 @@
     </span><span class="kw">async fn </span>test_new_already_pending_project_owner() {
         <span class="kw">let </span>owner = test_model::new_general_user();
         <span class="kw">let </span><span class="kw-2">mut </span>subowner = test_model::new_general_user();
-        <span class="kw">let </span>pending_project1 =
-            test_model::new_general_online_pending_project(subowner.id().clone());
+        <span class="kw">let </span>pending_project1 = test_model::new_general_pending_project(subowner.id().clone());
         subowner
             .assign_pending_project_owner(<span class="kw-2">&amp;</span>pending_project1)
             .unwrap();
 
-        <span class="kw">let </span>pending_project2 = test_model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project2 = test_model::new_general_pending_project(owner.id().clone());
 
         <span class="kw">let </span>app = <span class="kw">crate</span>::test::build_mock_app()
             .users(<span class="macro">vec!</span>[owner.clone(), subowner.clone()])

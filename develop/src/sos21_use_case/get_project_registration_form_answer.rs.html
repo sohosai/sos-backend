@@ -255,8 +255,6 @@
 <a href="#255" id="255">255</a>
 <a href="#256" id="256">256</a>
 <a href="#257" id="257">257</a>
-<a href="#258" id="258">258</a>
-<a href="#259" id="259">259</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::error::{UseCaseError, UseCaseResult};
 <span class="kw">use </span><span class="kw">crate</span>::model::{
     project::ProjectId, registration_form::RegistrationFormId,
@@ -342,7 +340,7 @@
     </span><span class="kw">async fn </span>test_general_other() {
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project_other = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project_other = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(other.id().clone());
         <span class="kw">let </span>answer_other = test::model::new_registration_form_answer_with_project(
             other.id().clone(),
@@ -378,7 +376,7 @@
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>subowner = test::model::new_general_user();
         <span class="kw">let </span>operator = test::model::new_operator_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project_with_subowner(
+        <span class="kw">let </span>project = test::model::new_general_project_with_subowner(
             user.id().clone(),
             subowner.id().clone(),
         );
@@ -416,10 +414,8 @@
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span>user = test::model::new_general_user();
         <span class="kw">let </span>operator = test::model::new_operator_user();
-        <span class="kw">let </span>project = test::model::new_general_online_project_with_subowner(
-            owner.id().clone(),
-            user.id().clone(),
-        );
+        <span class="kw">let </span>project =
+            test::model::new_general_project_with_subowner(owner.id().clone(), user.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(operator.id().clone());
         <span class="kw">let </span>answer_other = test::model::new_registration_form_answer_with_project(
             owner.id().clone(),
@@ -453,7 +449,7 @@
     </span><span class="kw">async fn </span>test_committee_other() {
         <span class="kw">let </span>user = test::model::new_committee_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project_other = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project_other = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(other.id().clone());
         <span class="kw">let </span>answer_other = test::model::new_registration_form_answer_with_project(
             other.id().clone(),
@@ -487,7 +483,7 @@
     </span><span class="kw">async fn </span>test_operator_other() {
         <span class="kw">let </span>user = test::model::new_operator_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>project_other = test::model::new_general_online_project(other.id().clone());
+        <span class="kw">let </span>project_other = test::model::new_general_project(other.id().clone());
         <span class="kw">let </span>registration_form = test::model::new_registration_form(other.id().clone());
         <span class="kw">let </span>answer_other = test::model::new_registration_form_answer_with_project(
             other.id().clone(),

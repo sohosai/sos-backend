@@ -551,7 +551,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_answer_in_period_general_owner() {
         <span class="kw">let </span>owner = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(owner.id().clone());
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>(item_id, items, answer_items) = prepare_items();
@@ -603,7 +603,7 @@
     </span><span class="kw">async fn </span>test_answer_in_period_general_other() {
         <span class="kw">let </span>owner = test::model::new_general_user();
         <span class="kw">let </span>other = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(owner.id().clone());
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>(item_id, items, answer_items) = prepare_items();
@@ -649,7 +649,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_answer_after_period_owner() {
         <span class="kw">let </span>owner = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(owner.id().clone());
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>(<span class="kw">_</span>, items, answer_items) = prepare_items();
@@ -692,7 +692,7 @@
     <span class="attr">#[tokio::test]
     </span><span class="kw">async fn </span>test_answer_in_period_invalid() {
         <span class="kw">let </span>owner = test::model::new_general_user();
-        <span class="kw">let </span>pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(owner.id().clone());
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
         <span class="kw">let </span>(<span class="kw">_</span>, items, answer_items) = prepare_items();

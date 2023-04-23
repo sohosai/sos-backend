@@ -448,7 +448,6 @@
 <a href="#448" id="448">448</a>
 <a href="#449" id="449">449</a>
 <a href="#450" id="450">450</a>
-<a href="#451" id="451">451</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::fmt::{<span class="self">self</span>, Debug};
 
 <span class="kw">use </span><span class="kw">crate</span>::error::{UseCaseError, UseCaseResult};
@@ -642,7 +641,7 @@
     } = <span class="kw-2">&amp;</span>input.field_names;
 
     <span class="kw">if </span>id.is_some() {
-        writer.write_field(answer.id().to_uuid().hyphenated().to_string())<span class="question-mark">?</span>;
+        writer.write_field(answer.id().to_uuid().to_hyphenated().to_string())<span class="question-mark">?</span>;
     }
 
     <span class="kw">if </span>created_at.is_some() {
@@ -659,7 +658,7 @@
         <span class="kw">if let </span>registration_form_answer::RegistrationFormAnswerRespondent::Project(project_id) =
             answer.respondent()
         {
-            writer.write_field(project_id.to_uuid().hyphenated().to_string())<span class="question-mark">?</span>;
+            writer.write_field(project_id.to_uuid().to_hyphenated().to_string())<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
             writer.write_field(<span class="string">&quot;&quot;</span>)<span class="question-mark">?</span>;
         }
@@ -670,7 +669,7 @@
             pending_project_id,
         ) = answer.respondent()
         {
-            writer.write_field(pending_project_id.to_uuid().hyphenated().to_string())<span class="question-mark">?</span>;
+            writer.write_field(pending_project_id.to_uuid().to_hyphenated().to_string())<span class="question-mark">?</span>;
         } <span class="kw">else </span>{
             writer.write_field(<span class="string">&quot;&quot;</span>)<span class="question-mark">?</span>;
         }
@@ -680,7 +679,7 @@
         writer.write_field(<span class="kw-2">&amp;</span>answer.author_id().<span class="number">0</span>)<span class="question-mark">?</span>;
     }
 
-    <span class="kw">let </span>answer_id = answer.id().to_uuid().hyphenated().to_string();
+    <span class="kw">let </span>answer_id = answer.id().to_uuid().to_hyphenated().to_string();
     <span class="kw">let </span>render = |sharing_ids| {
         (input.render_file_answer)(RenderFileAnswerInput {
             answer_id: answer_id.clone(),
@@ -780,7 +779,7 @@
         FormAnswerItemBody::File(sharings) =&gt; {
             <span class="kw">let </span>sharings = sharings
                 .sharing_answers()
-                .map(|answer| answer.sharing_id.to_uuid().hyphenated().to_string())
+                .map(|answer| answer.sharing_id.to_uuid().to_hyphenated().to_string())
                 .collect();
             <span class="kw">let </span>field = (render_file_answer)(sharings).context(<span class="string">&quot;Failed to render file answer&quot;</span>)<span class="question-mark">?</span>;
             writer.write_field(field)<span class="question-mark">?</span>;
@@ -803,9 +802,8 @@
     ) -&gt; (Login&lt;test::context::MockApp&gt;, RegistrationFormId) {
         <span class="kw">let </span>operator = test::model::new_operator_user();
 
-        <span class="kw">let </span>project = test::model::new_general_online_project(login_user.id().clone());
-        <span class="kw">let </span>pending_project =
-            test::model::new_general_online_pending_project(login_user.id().clone());
+        <span class="kw">let </span>project = test::model::new_general_project(login_user.id().clone());
+        <span class="kw">let </span>pending_project = test::model::new_general_pending_project(login_user.id().clone());
 
         <span class="kw">let </span>registration_form1 = test::model::new_registration_form(operator.id().clone());
         <span class="kw">let </span>registration_form1_id = RegistrationFormId::from_entity(registration_form1.id);
