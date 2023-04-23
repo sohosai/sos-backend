@@ -71,8 +71,8 @@ mod tests {
         login_user: domain::user::User,
     ) -> (Login<test::context::MockApp>, Vec<domain::project::Project>) {
         let other = test::model::new_general_user();
-        let project1 = test::model::new_general_online_project(login_user.id().clone());
-        let project2 = test::model::new_general_online_project(other.id().clone());
+        let project1 = test::model::new_general_project(login_user.id().clone());
+        let project2 = test::model::new_general_project(other.id().clone());
 
         let app = test::build_mock_app()
             .users(vec![login_user.clone(), other.clone()])

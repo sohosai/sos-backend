@@ -92,15 +92,10 @@
               "kind": {
                 "Enum": [
                   "general",
-                  "stage",
+                  "cooking_requiring_preparation_area",
                   "cooking",
                   "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
+                  "stage"
                 ]
               }
             }
@@ -147,15 +142,10 @@
                     "kind": {
                       "Enum": [
                         "general",
-                        "stage",
+                        "cooking_requiring_preparation_area",
                         "cooking",
                         "food",
-                        "general_online",
-                        "general_physical",
-                        "stage_online",
-                        "stage_physical",
-                        "cooking_physical",
-                        "food_physical"
+                        "stage"
                       ]
                     }
                   }
@@ -1138,15 +1128,10 @@
               "kind": {
                 "Enum": [
                   "general",
-                  "stage",
+                  "cooking_requiring_preparation_area",
                   "cooking",
                   "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
+                  "stage"
                 ]
               }
             }
@@ -2294,15 +2279,10 @@
                     "kind": {
                       "Enum": [
                         "general",
-                        "stage",
+                        "cooking_requiring_preparation_area",
                         "cooking",
                         "food",
-                        "general_online",
-                        "general_physical",
-                        "stage_online",
-                        "stage_physical",
-                        "cooking_physical",
-                        "food_physical"
+                        "stage"
                       ]
                     }
                   }
@@ -2519,15 +2499,10 @@
               "kind": {
                 "Enum": [
                   "general",
-                  "stage",
+                  "cooking_requiring_preparation_area",
                   "cooking",
                   "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
+                  "stage"
                 ]
               }
             }
@@ -3002,15 +2977,10 @@
               "kind": {
                 "Enum": [
                   "general",
-                  "stage",
+                  "cooking_requiring_preparation_area",
                   "cooking",
                   "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
+                  "stage"
                 ]
               }
             }
@@ -3507,15 +3477,10 @@
               "kind": {
                 "Enum": [
                   "general",
-                  "stage",
+                  "cooking_requiring_preparation_area",
                   "cooking",
                   "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
+                  "stage"
                 ]
               }
             }
@@ -3715,15 +3680,10 @@
               "kind": {
                 "Enum": [
                   "general",
-                  "stage",
+                  "cooking_requiring_preparation_area",
                   "cooking",
                   "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
+                  "stage"
                 ]
               }
             }
@@ -3905,15 +3865,10 @@
               "kind": {
                 "Enum": [
                   "general",
-                  "stage",
+                  "cooking_requiring_preparation_area",
                   "cooking",
                   "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
+                  "stage"
                 ]
               }
             }
@@ -4220,15 +4175,10 @@
               "kind": {
                 "Enum": [
                   "general",
-                  "stage",
+                  "cooking_requiring_preparation_area",
                   "cooking",
                   "food",
-                  "general_online",
-                  "general_physical",
-                  "stage_online",
-                  "stage_physical",
-                  "cooking_physical",
-                  "food_physical"
+                  "stage"
                 ]
               }
             }

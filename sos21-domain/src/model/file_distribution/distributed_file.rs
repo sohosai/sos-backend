@@ -43,7 +43,7 @@ mod tests {
     fn test_visibility_general() {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
-        let project = test_model::new_general_online_project(user.id().clone());
+        let project = test_model::new_general_project(user.id().clone());
         let files = FileDistributionFiles::from_sharings(vec![(
             project.id(),
             FileSharingId::from_uuid(Uuid::new_v4()),
@@ -60,7 +60,7 @@ mod tests {
     fn test_visibility_committee() {
         let user = test_model::new_committee_user();
         let operator = test_model::new_operator_user();
-        let project = test_model::new_general_online_project(user.id().clone());
+        let project = test_model::new_general_project(user.id().clone());
         let files = FileDistributionFiles::from_sharings(vec![(
             project.id(),
             FileSharingId::from_uuid(Uuid::new_v4()),

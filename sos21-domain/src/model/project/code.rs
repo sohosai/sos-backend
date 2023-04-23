@@ -7,21 +7,23 @@ use thiserror::Error;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ProjectKind {
-    General { is_online: bool },
-    Stage { is_online: bool },
+    General,
+    CookingRequiringPreparationArea,
     Cooking,
     Food,
+    Stage,
 }
 
 impl From<ProjectCategory> for ProjectKind {
     fn from(from: ProjectCategory) -> Self {
         match from {
-            ProjectCategory::GeneralOnline => Self::General { is_online: true },
-            ProjectCategory::GeneralPhysical => Self::General { is_online: false },
-            ProjectCategory::StageOnline => Self::Stage { is_online: true },
-            ProjectCategory::StagePhysical => Self::Stage { is_online: false },
-            ProjectCategory::CookingPhysical => Self::Cooking,
-            ProjectCategory::FoodPhysical => Self::Food,
+            ProjectCategory::General => Self::General,
+            ProjectCategory::CookingRequiringPreparationArea => {
+                Self::CookingRequiringPreparationArea
+            }
+            ProjectCategory::Cooking => Self::Cooking,
+            ProjectCategory::Food => Self::Food,
+            ProjectCategory::Stage => Self::Stage,
         }
     }
 }
@@ -35,10 +37,7 @@ pub struct ProjectCode {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ParseCodeErrorKind {
     MismatchedLength,
-    UnknownOnlineFlag,
     UnknownGroup,
-    MissingOnlineFlag,
-    GotExtraOnlineFlag,
     InvalidIndex,
 }
 
@@ -80,12 +79,10 @@ impl ProjectCode {
     pub fn parse_bytes(s: &[u8]) -> Result<Self, ParseCodeError> {
         let kind = match s.len() {
             4 => match s[0] {
-                b'G' | b'S' => {
-                    return Err(ParseCodeError {
-                        kind: ParseCodeErrorKind::MissingOnlineFlag,
-                    })
-                }
+                b'G' => ProjectKind::General,
+                b'S' => ProjectKind::Stage,
                 b'C' => ProjectKind::Cooking,
+                b'A' => ProjectKind::CookingRequiringPreparationArea,
                 b'F' => ProjectKind::Food,
                 _ => {
                     return Err(ParseCodeError {
@@ -93,32 +90,6 @@ impl ProjectCode {
                     })
                 }
             },
-            5 => {
-                let is_online = match s[0] {
-                    b'P' => false,
-                    b'O' => true,
-                    _ => {
-                        return Err(ParseCodeError {
-                            kind: ParseCodeErrorKind::UnknownOnlineFlag,
-                        })
-                    }
-                };
-
-                match s[1] {
-                    b'G' => ProjectKind::General { is_online },
-                    b'S' => ProjectKind::Stage { is_online },
-                    b'C' | b'F' => {
-                        return Err(ParseCodeError {
-                            kind: ParseCodeErrorKind::GotExtraOnlineFlag,
-                        })
-                    }
-                    _ => {
-                        return Err(ParseCodeError {
-                            kind: ParseCodeErrorKind::UnknownGroup,
-                        })
-                    }
-                }
-            }
             _ => {
                 return Err(ParseCodeError {
                     kind: ParseCodeErrorKind::MismatchedLength,
@@ -150,18 +121,12 @@ impl FromStr for ProjectCode {
 
 impl Display for ProjectCode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self.kind {
-            ProjectKind::General { is_online } | ProjectKind::Stage { is_online } => {
-                f.write_char(if is_online { 'O' } else { 'P' })?;
-            }
-            _ => (),
-        };
-
         let group = match self.kind {
-            ProjectKind::General { .. } => 'G',
-            ProjectKind::Stage { .. } => 'S',
+            ProjectKind::General => 'G',
+            ProjectKind::Stage => 'S',
             ProjectKind::Food => 'F',
             ProjectKind::Cooking => 'C',
+            ProjectKind::CookingRequiringPreparationArea => 'A',
         };
 
         f.write_char(group)?;
@@ -177,17 +142,17 @@ mod tests {
     #[test]
     fn test_valid() {
         assert_eq!(
-            ProjectCode::parse("PG001").unwrap(),
+            ProjectCode::parse("G001").unwrap(),
             ProjectCode {
-                kind: ProjectKind::General { is_online: false },
+                kind: ProjectKind::General,
                 index: ProjectIndex::from_u16(1).unwrap(),
             }
         );
 
         assert_eq!(
-            ProjectCode::parse("PS000").unwrap(),
+            ProjectCode::parse("S000").unwrap(),
             ProjectCode {
-                kind: ProjectKind::Stage { is_online: false },
+                kind: ProjectKind::Stage,
                 index: ProjectIndex::from_u16(0).unwrap(),
             }
         );
@@ -209,17 +174,9 @@ mod tests {
         );
 
         assert_eq!(
-            ProjectCode::parse("OG000").unwrap(),
+            ProjectCode::parse("A000").unwrap(),
             ProjectCode {
-                kind: ProjectKind::General { is_online: true },
-                index: ProjectIndex::from_u16(0).unwrap(),
-            }
-        );
-
-        assert_eq!(
-            ProjectCode::parse("OS000").unwrap(),
-            ProjectCode {
-                kind: ProjectKind::Stage { is_online: true },
+                kind: ProjectKind::CookingRequiringPreparationArea,
                 index: ProjectIndex::from_u16(0).unwrap(),
             }
         );
@@ -233,44 +190,17 @@ mod tests {
         );
 
         assert_eq!(
-            ProjectCode::parse("OG0001").unwrap_err().kind(),
+            ProjectCode::parse("G0001").unwrap_err().kind(),
             ParseCodeErrorKind::MismatchedLength
         );
         assert_eq!(
             ProjectCode::parse("OGFFF").unwrap_err().kind(),
-            ParseCodeErrorKind::InvalidIndex
+            ParseCodeErrorKind::MismatchedLength
         );
         assert!(ProjectCode::parse("XA000").is_err());
-        assert_eq!(
-            ProjectCode::parse("AG001").unwrap_err().kind(),
-            ParseCodeErrorKind::UnknownOnlineFlag
-        );
 
         assert_eq!(
-            ProjectCode::parse("G001").unwrap_err().kind(),
-            ParseCodeErrorKind::MissingOnlineFlag
-        );
-        assert_eq!(
-            ProjectCode::parse("S001").unwrap_err().kind(),
-            ParseCodeErrorKind::MissingOnlineFlag
-        );
-
-        assert_eq!(
-            ProjectCode::parse("PF001").unwrap_err().kind(),
-            ParseCodeErrorKind::GotExtraOnlineFlag
-        );
-        assert_eq!(
-            ProjectCode::parse("OC001").unwrap_err().kind(),
-            ParseCodeErrorKind::GotExtraOnlineFlag
-        );
-
-        assert_eq!(
-            ProjectCode::parse("A001").unwrap_err().kind(),
-            ParseCodeErrorKind::UnknownGroup
-        );
-
-        assert_eq!(
-            ProjectCode::parse("OA001").unwrap_err().kind(),
+            ProjectCode::parse("B001").unwrap_err().kind(),
             ParseCodeErrorKind::UnknownGroup
         );
     }
@@ -282,12 +212,12 @@ mod tests {
         }
 
         ser_de(ProjectCode {
-            kind: ProjectKind::General { is_online: false },
+            kind: ProjectKind::General,
             index: ProjectIndex::from_u16(1).unwrap(),
         });
 
         ser_de(ProjectCode {
-            kind: ProjectKind::Stage { is_online: false },
+            kind: ProjectKind::Stage,
             index: ProjectIndex::from_u16(0).unwrap(),
         });
 
@@ -302,12 +232,7 @@ mod tests {
         });
 
         ser_de(ProjectCode {
-            kind: ProjectKind::General { is_online: true },
-            index: ProjectIndex::from_u16(0).unwrap(),
-        });
-
-        ser_de(ProjectCode {
-            kind: ProjectKind::Stage { is_online: true },
+            kind: ProjectKind::CookingRequiringPreparationArea,
             index: ProjectIndex::from_u16(0).unwrap(),
         });
     }
@@ -318,11 +243,10 @@ mod tests {
             assert_eq!(ProjectCode::parse(code).unwrap().to_string(), code);
         }
 
-        de_ser("PG000");
-        de_ser("PS001");
+        de_ser("G000");
+        de_ser("S001");
         de_ser("C010");
+        de_ser("A999");
         de_ser("F011");
-        de_ser("OG100");
-        de_ser("OS999");
     }
 }

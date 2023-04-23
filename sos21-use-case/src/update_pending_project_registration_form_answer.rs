@@ -185,7 +185,7 @@ mod tests {
     #[tokio::test]
     async fn test_answer_in_period_general_owner() {
         let owner = test::model::new_general_user();
-        let pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        let pending_project = test::model::new_general_pending_project(owner.id().clone());
         let operator = test::model::new_operator_user();
 
         let (item_id, items, answer_items) = prepare_items();
@@ -237,7 +237,7 @@ mod tests {
     async fn test_answer_in_period_general_other() {
         let owner = test::model::new_general_user();
         let other = test::model::new_general_user();
-        let pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        let pending_project = test::model::new_general_pending_project(owner.id().clone());
         let operator = test::model::new_operator_user();
 
         let (item_id, items, answer_items) = prepare_items();
@@ -283,7 +283,7 @@ mod tests {
     #[tokio::test]
     async fn test_answer_after_period_owner() {
         let owner = test::model::new_general_user();
-        let pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        let pending_project = test::model::new_general_pending_project(owner.id().clone());
         let operator = test::model::new_operator_user();
 
         let (_, items, answer_items) = prepare_items();
@@ -326,7 +326,7 @@ mod tests {
     #[tokio::test]
     async fn test_answer_in_period_invalid() {
         let owner = test::model::new_general_user();
-        let pending_project = test::model::new_general_online_pending_project(owner.id().clone());
+        let pending_project = test::model::new_general_pending_project(owner.id().clone());
         let operator = test::model::new_operator_user();
 
         let (_, items, answer_items) = prepare_items();

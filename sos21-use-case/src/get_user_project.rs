@@ -65,9 +65,9 @@ mod tests {
     async fn test_general_owner() {
         let mut user = test::model::new_general_user();
         let mut other = test::model::new_general_user();
-        let project1 = test::model::new_general_online_project(user.id().clone());
+        let project1 = test::model::new_general_project(user.id().clone());
         user.assign_project_owner(&project1).unwrap();
-        let project2 = test::model::new_general_online_project(other.id().clone());
+        let project2 = test::model::new_general_project(other.id().clone());
         other.assign_project_owner(&project2).unwrap();
 
         let app = test::build_mock_app()
@@ -86,12 +86,10 @@ mod tests {
         let mut user = test::model::new_general_user();
         let mut other1 = test::model::new_general_user();
         let mut other2 = test::model::new_general_user();
-        let project1 = test::model::new_general_online_project(other1.id().clone());
+        let project1 = test::model::new_general_project(other1.id().clone());
         other1.assign_project_owner(&project1).unwrap();
-        let project2 = test::model::new_general_online_project_with_subowner(
-            other2.id().clone(),
-            user.id().clone(),
-        );
+        let project2 =
+            test::model::new_general_project_with_subowner(other2.id().clone(), user.id().clone());
         other2.assign_project_owner(&project2).unwrap();
         user.assign_project_subowner(&project2).unwrap();
 
@@ -110,7 +108,7 @@ mod tests {
     async fn test_general_not_found() {
         let user = test::model::new_general_user();
         let mut other = test::model::new_general_user();
-        let project = test::model::new_general_online_project(other.id().clone());
+        let project = test::model::new_general_project(other.id().clone());
         other.assign_project_owner(&project).unwrap();
 
         let app = test::build_mock_app()

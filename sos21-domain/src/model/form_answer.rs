@@ -265,7 +265,7 @@ mod tests {
     #[test]
     fn test_visibility_general() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let form = test_model::new_form(operator.id().clone());
         let form_answer = test_model::new_form_answer(user.id().clone(), &user_project, &form);
@@ -275,7 +275,7 @@ mod tests {
     #[test]
     fn test_visibility_committee() {
         let user = test_model::new_committee_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let form = test_model::new_form(operator.id().clone());
         let form_answer = test_model::new_form_answer(user.id().clone(), &user_project, &form);
@@ -285,7 +285,7 @@ mod tests {
     #[test]
     fn test_visibility_operator() {
         let user = test_model::new_operator_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let form = test_model::new_form(operator.id().clone());
         let form_answer = test_model::new_form_answer(user.id().clone(), &user_project, &form);
@@ -295,7 +295,7 @@ mod tests {
     #[test]
     fn test_visibility_general_via_owning_project() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let form = test_model::new_form(operator.id().clone());
         let form_answer = test_model::new_form_answer(user.id().clone(), &user_project, &form);
@@ -306,7 +306,7 @@ mod tests {
     fn test_visibility_general_via_non_owning_project() {
         let user = test_model::new_general_user();
         let operator = test_model::new_operator_user();
-        let operator_project = test_model::new_general_online_project(operator.id().clone());
+        let operator_project = test_model::new_general_project(operator.id().clone());
         let form = test_model::new_form(operator.id().clone());
         let form_answer = test_model::new_form_answer(user.id().clone(), &operator_project, &form);
         assert!(!form_answer.is_visible_to_with_project(&user, &operator_project));
@@ -318,7 +318,7 @@ mod tests {
         use crate::model::form_answer::item as answer_item;
 
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
 
         let (items, answer_items, item_id) = {
@@ -369,7 +369,7 @@ mod tests {
     #[test]
     fn test_set_items_general_after_period() {
         let user = test_model::new_general_user();
-        let user_project = test_model::new_general_online_project(user.id().clone());
+        let user_project = test_model::new_general_project(user.id().clone());
         let operator = test_model::new_operator_user();
         let period = test_model::new_form_period_to_now();
         let form = test_model::new_form_with_period(operator.id().clone(), period);
