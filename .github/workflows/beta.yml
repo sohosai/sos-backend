@@ -32,6 +32,7 @@ jobs:
           STAGE_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_STAGE_PROJECT_CREATION_PERIOD }}"
           GENERAL_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_GENERAL_PROJECT_CREATION_PERIOD }}"
           COOKING_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_COOKING_PROJECT_CREATION_PERIOD }}"
+          COOKING_REQUIRING_PREPARATION_AREA_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_COOKING_REQUIRING_PREPARATION_AREA_PROJECT_CREATION_PERIOD }}"
           FOOD_PROJECT_CREATION_PERIOD: "${{ secrets.BETA_FOOD_PROJECT_CREATION_PERIOD }}"
         run: |
           cat << EOS > ./configuration.nix
@@ -41,12 +42,11 @@ jobs:
               administratorEmail = "$ADMINISTRATOR_EMAIL";
               adminReportSlackWebhook = "$ADMIN_REPORT_SLACK_WEBHOOK";
               projectCreationPeriods = {
-                stage_online = "$STAGE_PROJECT_CREATION_PERIOD";
-                stage_physical = "$STAGE_PROJECT_CREATION_PERIOD";
-                general_online = "$GENERAL_PROJECT_CREATION_PERIOD";
-                general_physical = "$GENERAL_PROJECT_CREATION_PERIOD";
-                cooking_physical = "$COOKING_PROJECT_CREATION_PERIOD";
-                food_physical = "$FOOD_PROJECT_CREATION_PERIOD";
+                stage = "$STAGE_PROJECT_CREATION_PERIOD";
+                general = "$GENERAL_PROJECT_CREATION_PERIOD";
+                cooking = "$COOKING_PROJECT_CREATION_PERIOD";
+                cooking_requiring_preparation_area = "$COOKING_REQUIRING_PREPARATION_AREA_PROJECT_CREATION_PERIOD";
+                food = "$FOOD_PROJECT_CREATION_PERIOD";
               };
             };
           }

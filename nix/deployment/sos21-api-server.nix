@@ -39,6 +39,10 @@ in
         type = types.str;
       };
 
+      adminReportSlackWebhook = mkOption {
+        type = types.str;
+      };
+
       projectCreationPeriods = mkOption {
         type = types.attrsOf types.str;
         default = { };
