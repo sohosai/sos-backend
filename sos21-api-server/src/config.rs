@@ -16,4 +16,5 @@ pub struct Config {
     pub s3_object_bucket: String,
     pub administrator_email: String,
     pub project_creation_periods: HashMap<String, String>,
+    pub admin_report_slack_webhook: String,
 }

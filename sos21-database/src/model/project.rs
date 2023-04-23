@@ -11,12 +11,11 @@ use uuid::Uuid;
 #[sqlx(type_name = "project_category")]
 #[sqlx(rename_all = "snake_case")]
 pub enum ProjectCategory {
-    GeneralOnline,
-    GeneralPhysical,
-    StageOnline,
-    StagePhysical,
-    CookingPhysical,
-    FoodPhysical,
+    General,                         // 一般企画（飲食物取扱い企画、調理企画を除く）
+    CookingRequiringPreparationArea, // 一般企画（調理企画（仕込場が必要））
+    Cooking,                         // 一般企画（調理企画（仕込場が不要））
+    Food,                            // 一般企画（飲食物取扱い企画）
+    Stage,                           // ステージ企画
 }
 
 bitflags::bitflags! {
@@ -25,6 +24,7 @@ bitflags::bitflags! {
         const ARTISTIC  = 0b00000010;
         const COMMITTEE = 0b00000100;
         const OUTDOOR   = 0b00001000;
+        const INDOOR    = 0b00010000;
     }
 }
 
@@ -36,7 +36,7 @@ impl sqlx::Type<sqlx::Postgres> for ProjectAttributes {
 
 impl sqlx::Encode<'_, sqlx::Postgres> for ProjectAttributes {
     fn encode_by_ref(&self, buf: &mut PgArgumentBuffer) -> sqlx::encode::IsNull {
-        (self.bits() as i32).encode_by_ref(buf)
+        <i32 as sqlx::Encode<'_, sqlx::Postgres>>::encode_by_ref(&(self.bits() as i32), buf)
     }
 }
 

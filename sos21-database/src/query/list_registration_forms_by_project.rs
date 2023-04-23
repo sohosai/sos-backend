@@ -62,7 +62,7 @@ GROUP BY registration_forms.id
 
         let query = row
             .query
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_default()
             .into_iter()
             .map(|(category, attributes)| RegistrationFormProjectQueryConjunction {
                 category,

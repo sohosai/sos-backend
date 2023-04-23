@@ -39,11 +39,15 @@ struct Opt {
     #[structopt(long, env = "SOS21_API_SERVER_ADMINISTRATOR_EMAIL")]
     administrator_email: String,
     #[structopt(long, env = "SOS21_API_SERVER_START_PROJECT_CREATION_PERIOD")]
+    #[allow(dead_code)]
     start_project_creation_period: Option<i64>,
     #[structopt(long, env = "SOS21_API_SERVER_END_PROJECT_CREATION_PERIOD")]
+    #[allow(dead_code)]
     end_project_creation_period: Option<i64>,
     #[structopt(short, long, env = "SOS21_API_SERVER_BIND")]
     bind: SocketAddr,
+    #[structopt(short, long, env = "SOS21_API_SERVER_ADMIN_REPORT_SLACK_WEBHOOK")]
+    admin_report_slack_webhook: String,
 }
 
 fn main() {
@@ -87,6 +91,7 @@ fn run(opt: Opt) -> Result<()> {
             s3_endpoint: opt.s3_endpoint,
             s3_object_bucket: opt.s3_object_bucket,
             administrator_email: opt.administrator_email,
+            admin_report_slack_webhook: opt.admin_report_slack_webhook,
             project_creation_periods,
         };
         let server = sos21_api_server::Server::new(config).await?;

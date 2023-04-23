@@ -197,11 +197,7 @@ impl CheckboxFormItem {
         }
 
         for check_id in answer.checked_ids() {
-            if self
-                .boxes()
-                .find(|checkbox| checkbox.id == check_id)
-                .is_none()
-            {
+            if !self.boxes().any(|checkbox| checkbox.id == check_id) {
                 return Err(CheckAnswerError {
                     kind: CheckAnswerErrorKind::UnknownCheckboxId { id: check_id },
                 });

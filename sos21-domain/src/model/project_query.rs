@@ -102,8 +102,7 @@ impl ProjectQuery {
     pub fn possible_categories(&self) -> impl Iterator<Item = ProjectCategory> {
         let categories: HashSet<_> = self
             .conjunctions()
-            .map(|conj| conj.possible_categories())
-            .flatten()
+            .flat_map(|conj| conj.possible_categories())
             .collect();
         categories.into_iter()
     }
@@ -132,11 +131,11 @@ mod tests {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
-        let project1 = test_model::new_general_online_project(test_model::new_user_id());
+        let project1 = test_model::new_general_project(test_model::new_user_id());
         assert!(conj.check_project(&project1));
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -152,12 +151,11 @@ mod tests {
             category: None,
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
-        let pending_project =
-            test_model::new_general_online_pending_project(test_model::new_user_id());
+        let pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         assert!(conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -176,19 +174,19 @@ mod tests {
         };
         let project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[],
         );
         assert!(!conj.check_project(&project1));
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Artistic, ProjectAttribute::Committee],
         );
         assert!(conj.check_project(&project2));
         let project3 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -198,7 +196,7 @@ mod tests {
         assert!(conj.check_project(&project3));
         let project4 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(!conj.check_project(&project4));
@@ -213,19 +211,19 @@ mod tests {
         };
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[],
         );
         assert!(!conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Artistic, ProjectAttribute::Committee],
         );
         assert!(conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -235,7 +233,7 @@ mod tests {
         assert!(conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(!conj.check_pending_project(&pending_project));
@@ -253,19 +251,19 @@ mod tests {
         };
         let project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[],
         );
         assert!(!conj.check_project(&project1));
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Artistic, ProjectAttribute::Committee],
         );
         assert!(conj.check_project(&project2));
         let project3 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -275,7 +273,7 @@ mod tests {
         assert!(conj.check_project(&project3));
         let project4 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Artistic, ProjectAttribute::Academic],
         );
         assert!(!conj.check_project(&project4));
@@ -293,19 +291,19 @@ mod tests {
         };
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[],
         );
         assert!(!conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Artistic, ProjectAttribute::Committee],
         );
         assert!(conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -315,7 +313,7 @@ mod tests {
         assert!(conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Artistic, ProjectAttribute::Academic],
         );
         assert!(!conj.check_pending_project(&pending_project));
@@ -324,30 +322,26 @@ mod tests {
     #[test]
     fn test_conj_category() {
         let conj = ProjectQueryConjunction {
-            category: Some(ProjectCategory::GeneralOnline),
+            category: Some(ProjectCategory::General),
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
-        assert!(conj.check_project(&test_model::new_general_online_project(
-            test_model::new_user_id()
-        )));
-        assert!(!conj.check_project(&test_model::new_stage_online_project(
-            test_model::new_user_id()
-        )));
+        assert!(conj.check_project(&test_model::new_general_project(test_model::new_user_id())));
+        assert!(!conj.check_project(&test_model::new_stage_project(test_model::new_user_id())));
     }
 
     #[test]
     fn test_pending_project_conj_category() {
         let conj = ProjectQueryConjunction {
-            category: Some(ProjectCategory::GeneralOnline),
+            category: Some(ProjectCategory::General),
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
         assert!(
-            conj.check_pending_project(&test_model::new_general_online_pending_project(
+            conj.check_pending_project(&test_model::new_general_pending_project(
                 test_model::new_user_id()
             ))
         );
         assert!(
-            !conj.check_pending_project(&test_model::new_stage_online_pending_project(
+            !conj.check_pending_project(&test_model::new_stage_pending_project(
                 test_model::new_user_id()
             ))
         );
@@ -356,7 +350,7 @@ mod tests {
     #[test]
     fn test_conj_complex() {
         let conj = ProjectQueryConjunction {
-            category: Some(ProjectCategory::StageOnline),
+            category: Some(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(vec![
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
@@ -365,25 +359,25 @@ mod tests {
         };
         let project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[],
         );
         assert!(!conj.check_project(&project1));
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(!conj.check_project(&project2));
         let project3 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(conj.check_project(&project3));
         let project4 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             &[ProjectAttribute::Academic],
         );
         assert!(!conj.check_project(&project4));
@@ -392,31 +386,30 @@ mod tests {
     #[test]
     fn test_pending_project_conj_complex() {
         let conj = ProjectQueryConjunction {
-            category: Some(ProjectCategory::StageOnline),
+            category: Some(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(vec![
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
             ])
             .unwrap(),
         };
-        let pending_project =
-            test_model::new_general_online_pending_project(test_model::new_user_id());
+        let pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         assert!(!conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(!conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(conj.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             &[ProjectAttribute::Academic],
         );
         assert!(!conj.check_pending_project(&pending_project));
@@ -431,13 +424,13 @@ mod tests {
         let query = ProjectQuery::from_conjunctions(vec![conj]).unwrap();
         let project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[],
         );
         assert!(query.check_project(&project1));
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -454,12 +447,11 @@ mod tests {
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         };
         let query = ProjectQuery::from_conjunctions(vec![conj]).unwrap();
-        let pending_project =
-            test_model::new_general_online_pending_project(test_model::new_user_id());
+        let pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         assert!(query.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -474,13 +466,13 @@ mod tests {
         let query = ProjectQuery::from_conjunctions(vec![]).unwrap();
         let project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[],
         );
         assert!(!query.check_project(&project1));
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -493,12 +485,11 @@ mod tests {
     #[test]
     fn test_pending_project_contradiction() {
         let query = ProjectQuery::from_conjunctions(vec![]).unwrap();
-        let pending_project =
-            test_model::new_general_online_pending_project(test_model::new_user_id());
+        let pending_project = test_model::new_general_pending_project(test_model::new_user_id());
         assert!(!query.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[
                 ProjectAttribute::Artistic,
                 ProjectAttribute::Academic,
@@ -511,7 +502,7 @@ mod tests {
     #[test]
     fn test_complex() {
         let conj1 = ProjectQueryConjunction {
-            category: Some(ProjectCategory::StageOnline),
+            category: Some(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic])
                 .unwrap(),
         };
@@ -526,25 +517,25 @@ mod tests {
         let query = ProjectQuery::from_conjunctions(vec![conj1, conj2]).unwrap();
         let project1 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Academic],
         );
         assert!(!query.check_project(&project1));
         let project2 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             &[ProjectAttribute::Academic],
         );
         assert!(query.check_project(&project2));
         let project3 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(query.check_project(&project3));
         let project4 = test_model::new_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(query.check_project(&project4));
@@ -553,7 +544,7 @@ mod tests {
     #[test]
     fn test_pending_project_complex() {
         let conj1 = ProjectQueryConjunction {
-            category: Some(ProjectCategory::StageOnline),
+            category: Some(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic])
                 .unwrap(),
         };
@@ -568,25 +559,25 @@ mod tests {
         let query = ProjectQuery::from_conjunctions(vec![conj1, conj2]).unwrap();
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Academic],
         );
         assert!(!query.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             &[ProjectAttribute::Academic],
         );
         assert!(query.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::StageOnline,
+            ProjectCategory::Stage,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(query.check_pending_project(&pending_project));
         let pending_project = test_model::new_pending_project_with_attributes(
             test_model::new_user_id(),
-            ProjectCategory::GeneralOnline,
+            ProjectCategory::General,
             &[ProjectAttribute::Academic, ProjectAttribute::Committee],
         );
         assert!(query.check_pending_project(&pending_project));
@@ -597,13 +588,13 @@ mod tests {
         use std::collections::HashSet;
 
         let conj1 = ProjectQueryConjunction {
-            category: Some(ProjectCategory::StageOnline),
+            category: Some(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic])
                 .unwrap(),
         };
         assert_eq!(
             conj1.possible_categories().collect::<Vec<_>>(),
-            vec![ProjectCategory::StageOnline]
+            vec![ProjectCategory::Stage]
         );
         let conj2 = ProjectQueryConjunction {
             category: None,
@@ -621,12 +612,12 @@ mod tests {
         use std::collections::HashSet;
 
         let conj1 = ProjectQueryConjunction {
-            category: Some(ProjectCategory::StageOnline),
+            category: Some(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic])
                 .unwrap(),
         };
         let conj2 = ProjectQueryConjunction {
-            category: Some(ProjectCategory::FoodPhysical),
+            category: Some(ProjectCategory::Food),
             attributes: ProjectAttributes::from_attributes(vec![
                 ProjectAttribute::Academic,
                 ProjectAttribute::Committee,
@@ -636,14 +627,14 @@ mod tests {
         let query1 = ProjectQuery::from_conjunctions(vec![conj1, conj2]).unwrap();
         assert_eq!(
             query1.possible_categories().collect::<HashSet<_>>(),
-            [ProjectCategory::StageOnline, ProjectCategory::FoodPhysical]
+            [ProjectCategory::Stage, ProjectCategory::Food]
                 .iter()
                 .copied()
                 .collect::<HashSet<_>>()
         );
 
         let conj1 = ProjectQueryConjunction {
-            category: Some(ProjectCategory::StageOnline),
+            category: Some(ProjectCategory::Stage),
             attributes: ProjectAttributes::from_attributes(vec![ProjectAttribute::Academic])
                 .unwrap(),
         };

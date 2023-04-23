@@ -128,7 +128,7 @@ where
     write_field!(writer, author_id);
 
     for item in registration_form.items.items() {
-        write_item_header_fields(writer, &item)?;
+        write_item_header_fields(writer, item)?;
     }
 
     // this terminates the record (see docs on `csv::Writer::write_record`)
@@ -352,9 +352,8 @@ mod tests {
     ) -> (Login<test::context::MockApp>, RegistrationFormId) {
         let operator = test::model::new_operator_user();
 
-        let project = test::model::new_general_online_project(login_user.id().clone());
-        let pending_project =
-            test::model::new_general_online_pending_project(login_user.id().clone());
+        let project = test::model::new_general_project(login_user.id().clone());
+        let pending_project = test::model::new_general_pending_project(login_user.id().clone());
 
         let registration_form1 = test::model::new_registration_form(operator.id().clone());
         let registration_form1_id = RegistrationFormId::from_entity(registration_form1.id);

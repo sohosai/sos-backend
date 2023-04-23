@@ -5,7 +5,6 @@ use crate::app::App;
 use mime::Mime;
 use warp::{
     http::{header, method::Method},
-    reply::Reply,
     Filter,
 };
 
@@ -69,7 +68,7 @@ macro_rules! routes {
 pub fn endpoints(
     app: App,
     key_store: KeyStore,
-) -> impl Filter<Extract = impl Reply, Error = Infallible> + Clone {
+) -> impl Filter<Extract = (impl warp::Reply,), Error = Infallible> + Clone {
     use crate::handler;
 
     let with_auth = authenticate(key_store, app.config().clone());

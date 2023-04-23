@@ -27,3 +27,6 @@ features = [
   "runtime-tokio-rustls",
   "uuid",
 ]
+
+[build-dependencies]
+syn = "1"

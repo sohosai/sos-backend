@@ -369,7 +369,7 @@ impl FormItem {
             }
         };
 
-        Ok(self.body.check_answer(&body))
+        Ok(self.body.check_answer(body))
     }
 }
 
@@ -448,7 +448,7 @@ impl CheckFormItems {
     ) -> Result<(), FromItemsError> {
         for conj in conditions.conjunctions() {
             for condition in conj {
-                self.check_condition(item_id, &condition)?;
+                self.check_condition(item_id, condition)?;
             }
         }
 
@@ -505,11 +505,7 @@ impl CheckFormItems {
             }
         };
 
-        if item
-            .boxes()
-            .find(|checkbox| checkbox.id == checkbox_id)
-            .is_none()
-        {
+        if !item.boxes().any(|checkbox| checkbox.id == checkbox_id) {
             return Err(FromItemsError {
                 kind: FromItemsErrorKind::UnknownCheckboxIdInConditions {
                     provenance,
@@ -551,11 +547,7 @@ impl CheckFormItems {
             }
         };
 
-        if item
-            .buttons()
-            .find(|button| button.id == radio_id)
-            .is_none()
-        {
+        if !item.buttons().any(|button| button.id == radio_id) {
             return Err(FromItemsError {
                 kind: FromItemsErrorKind::UnknownRadioIdInConditions {
                     provenance,
@@ -597,11 +589,7 @@ impl CheckFormItems {
             }
         };
 
-        if item
-            .columns()
-            .find(|column| column.id == column_id)
-            .is_none()
-        {
+        if !item.columns().any(|column| column.id == column_id) {
             return Err(FromItemsError {
                 kind: FromItemsErrorKind::UnknownGridRadioColumnIdInConditions {
                     provenance,

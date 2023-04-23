@@ -77,7 +77,6 @@ impl Form {
             items: form
                 .into_items()
                 .into_items()
-                .into_iter()
                 .map(FormItem::from_entity)
                 .collect(),
             condition,

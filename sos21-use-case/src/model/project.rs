@@ -19,34 +19,35 @@ impl ProjectId {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ProjectCategory {
-    GeneralOnline,
-    GeneralPhysical,
-    StageOnline,
-    StagePhysical,
-    CookingPhysical,
-    FoodPhysical,
+    General,
+    CookingRequiringPreparationArea,
+    Cooking,
+    Food,
+    Stage,
 }
 
 impl ProjectCategory {
     pub fn from_entity(category: entity::ProjectCategory) -> ProjectCategory {
         match category {
-            entity::ProjectCategory::GeneralOnline => ProjectCategory::GeneralOnline,
-            entity::ProjectCategory::GeneralPhysical => ProjectCategory::GeneralPhysical,
-            entity::ProjectCategory::StageOnline => ProjectCategory::StageOnline,
-            entity::ProjectCategory::StagePhysical => ProjectCategory::StagePhysical,
-            entity::ProjectCategory::CookingPhysical => ProjectCategory::CookingPhysical,
-            entity::ProjectCategory::FoodPhysical => ProjectCategory::FoodPhysical,
+            entity::ProjectCategory::General => ProjectCategory::General,
+            entity::ProjectCategory::CookingRequiringPreparationArea => {
+                ProjectCategory::CookingRequiringPreparationArea
+            }
+            entity::ProjectCategory::Cooking => ProjectCategory::Cooking,
+            entity::ProjectCategory::Food => ProjectCategory::Food,
+            entity::ProjectCategory::Stage => ProjectCategory::Stage,
         }
     }
 
     pub fn into_entity(self) -> entity::ProjectCategory {
         match self {
-            ProjectCategory::GeneralOnline => entity::ProjectCategory::GeneralOnline,
-            ProjectCategory::GeneralPhysical => entity::ProjectCategory::GeneralPhysical,
-            ProjectCategory::StageOnline => entity::ProjectCategory::StageOnline,
-            ProjectCategory::StagePhysical => entity::ProjectCategory::StagePhysical,
-            ProjectCategory::CookingPhysical => entity::ProjectCategory::CookingPhysical,
-            ProjectCategory::FoodPhysical => entity::ProjectCategory::FoodPhysical,
+            ProjectCategory::General => entity::ProjectCategory::General,
+            ProjectCategory::CookingRequiringPreparationArea => {
+                entity::ProjectCategory::CookingRequiringPreparationArea
+            }
+            ProjectCategory::Cooking => entity::ProjectCategory::Cooking,
+            ProjectCategory::Food => entity::ProjectCategory::Food,
+            ProjectCategory::Stage => entity::ProjectCategory::Stage,
         }
     }
 }
@@ -57,6 +58,7 @@ pub enum ProjectAttribute {
     Artistic,
     Committee,
     Outdoor,
+    Indoor,
 }
 
 impl ProjectAttribute {
@@ -66,6 +68,7 @@ impl ProjectAttribute {
             entity::ProjectAttribute::Artistic => ProjectAttribute::Artistic,
             entity::ProjectAttribute::Committee => ProjectAttribute::Committee,
             entity::ProjectAttribute::Outdoor => ProjectAttribute::Outdoor,
+            entity::ProjectAttribute::Indoor => ProjectAttribute::Indoor,
         }
     }
 
@@ -75,6 +78,7 @@ impl ProjectAttribute {
             ProjectAttribute::Artistic => entity::ProjectAttribute::Artistic,
             ProjectAttribute::Committee => entity::ProjectAttribute::Committee,
             ProjectAttribute::Outdoor => entity::ProjectAttribute::Outdoor,
+            ProjectAttribute::Indoor => entity::ProjectAttribute::Indoor,
         }
     }
 }

@@ -23,3 +23,6 @@ sos21-gateway-slack = { path = "../sos21-gateway/slack" }
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 sos21-domain = { path = "../sos21-domain", features = ["test"] }
+
+[build-dependencies]
+syn = "1"

@@ -414,13 +414,13 @@ mod tests {
         use crate::model::project_query::{ProjectQuery, ProjectQueryConjunction};
 
         let query = ProjectQuery::from_conjunctions(vec![ProjectQueryConjunction {
-            category: Some(ProjectCategory::GeneralOnline),
+            category: Some(ProjectCategory::General),
             attributes: ProjectAttributes::from_attributes(vec![]).unwrap(),
         }])
         .unwrap();
         let scope = FileSharingScope::ProjectQuery(query);
         let sharing = FileSharing::new(test_model::new_file_id(), scope);
-        let project = test_model::new_general_online_project(test_model::new_user_id());
+        let project = test_model::new_general_project(test_model::new_user_id());
         assert!(sharing.to_witness_with_project(&project).is_ok());
     }
 
@@ -433,7 +433,7 @@ mod tests {
         let query = ProjectQuery::from_conjunctions(vec![]).unwrap();
         let scope = FileSharingScope::ProjectQuery(query);
         let sharing = FileSharing::new(test_model::new_file_id(), scope);
-        let project = test_model::new_general_online_project(test_model::new_user_id());
+        let project = test_model::new_general_project(test_model::new_user_id());
         assert!(matches!(
             sharing
                 .to_witness_with_project(&project)
@@ -451,7 +451,7 @@ mod tests {
             test_model::new_file_id(),
             FileSharingScope::Project(test_model::new_project_id()),
         );
-        let project = test_model::new_general_online_project(test_model::new_user_id());
+        let project = test_model::new_general_project(test_model::new_user_id());
         assert!(matches!(
             sharing
                 .to_witness_with_project(&project)
@@ -473,7 +473,7 @@ mod tests {
         let owner_id = test_model::new_user_id();
         let answer = test_model::new_form_answer(
             owner_id.clone(),
-            &test_model::new_general_online_project(owner_id.clone()),
+            &test_model::new_general_project(owner_id.clone()),
             &form,
         );
         assert!(matches!(
