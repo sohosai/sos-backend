@@ -110,7 +110,7 @@ impl RegistrationForm {
     {
         domain_ensure!(user.id() == pending_project.owner_id());
 
-        if !self.query.check_pending_project(&pending_project) {
+        if !self.query.check_pending_project(pending_project) {
             return Err(DomainError::Domain(AnswerError {
                 kind: AnswerErrorKind::NotTargeted,
             }));

@@ -128,7 +128,7 @@ where
     write_field!(writer, author_id);
 
     for item in registration_form.items.items() {
-        write_item_header_fields(writer, &item)?;
+        write_item_header_fields(writer, item)?;
     }
 
     // this terminates the record (see docs on `csv::Writer::write_record`)
@@ -191,7 +191,7 @@ where
     } = &input.field_names;
 
     if id.is_some() {
-        writer.write_field(answer.id().to_uuid().to_hyphenated().to_string())?;
+        writer.write_field(answer.id().to_uuid().hyphenated().to_string())?;
     }
 
     if created_at.is_some() {
@@ -208,7 +208,7 @@ where
         if let registration_form_answer::RegistrationFormAnswerRespondent::Project(project_id) =
             answer.respondent()
         {
-            writer.write_field(project_id.to_uuid().to_hyphenated().to_string())?;
+            writer.write_field(project_id.to_uuid().hyphenated().to_string())?;
         } else {
             writer.write_field("")?;
         }
@@ -219,7 +219,7 @@ where
             pending_project_id,
         ) = answer.respondent()
         {
-            writer.write_field(pending_project_id.to_uuid().to_hyphenated().to_string())?;
+            writer.write_field(pending_project_id.to_uuid().hyphenated().to_string())?;
         } else {
             writer.write_field("")?;
         }
@@ -229,7 +229,7 @@ where
         writer.write_field(&answer.author_id().0)?;
     }
 
-    let answer_id = answer.id().to_uuid().to_hyphenated().to_string();
+    let answer_id = answer.id().to_uuid().hyphenated().to_string();
     let render = |sharing_ids| {
         (input.render_file_answer)(RenderFileAnswerInput {
             answer_id: answer_id.clone(),
@@ -329,7 +329,7 @@ where
         FormAnswerItemBody::File(sharings) => {
             let sharings = sharings
                 .sharing_answers()
-                .map(|answer| answer.sharing_id.to_uuid().to_hyphenated().to_string())
+                .map(|answer| answer.sharing_id.to_uuid().hyphenated().to_string())
                 .collect();
             let field = (render_file_answer)(sharings).context("Failed to render file answer")?;
             writer.write_field(field)?;

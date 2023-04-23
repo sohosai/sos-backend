@@ -1,8 +1,8 @@
 { rustChannelOf, makeRustPlatform }:
 let
   channel = rustChannelOf {
-    channel = "1.52.1";
-    sha256 = "157iggldvb9lcr45zsld6af63yp370f3hyswcb0zwjranrg69r79";
+    channel = "1.69.0";
+    sha256 = "eMJethw5ZLrJHmoN2/l0bIyQjoTX1NsvalWSscTixpI=";
   };
 in
 makeRustPlatform {

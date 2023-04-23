@@ -783,7 +783,6 @@ impl RegistrationFormRepository for MockApp {
                     .query
                     .check_pending_project(&pending_project)
             })
-            .cloned()
             .count();
         let len = len.try_into()?;
         Ok(len)
@@ -927,7 +926,6 @@ impl RegistrationFormAnswerRepository for MockApp {
                     .respondent()
                     .is_pending_project(&pending_project)
             })
-            .cloned()
             .count();
         let len = len.try_into()?;
         Ok(len)
@@ -979,7 +977,7 @@ impl UserInvitationRepository for MockApp {
 
 impl ConfigContext for MockApp {
     fn administrator_email(&self) -> &UserEmailAddress {
-        &*test_model::ADMINISTRATOR_EMAIL
+        &test_model::ADMINISTRATOR_EMAIL
     }
 
     fn project_creation_period_for(&self, category: ProjectCategory) -> ProjectCreationPeriod {

@@ -102,8 +102,7 @@ impl ProjectQuery {
     pub fn possible_categories(&self) -> impl Iterator<Item = ProjectCategory> {
         let categories: HashSet<_> = self
             .conjunctions()
-            .map(|conj| conj.possible_categories())
-            .flatten()
+            .flat_map(|conj| conj.possible_categories())
             .collect();
         categories.into_iter()
     }

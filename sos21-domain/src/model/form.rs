@@ -175,7 +175,7 @@ impl Form {
             }));
         }
 
-        domain_ensure!(self.is_visible_to_with_project(&user, project));
+        domain_ensure!(self.is_visible_to_with_project(user, project));
 
         // TODO: Move this to FormAnswer
         let created_at = DateTime::now();

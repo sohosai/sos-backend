@@ -19,7 +19,7 @@ where
         .context("Failed to list file sharings")?;
 
     use_case_ensure!(sharings.iter().all(|(sharing, file)| sharing
-        .is_visible_to_with_file(login_user, &file)
+        .is_visible_to_with_file(login_user, file)
         && file.is_visible_to(login_user)));
 
     let sharings = sharings

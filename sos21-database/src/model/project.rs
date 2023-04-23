@@ -36,7 +36,7 @@ impl sqlx::Type<sqlx::Postgres> for ProjectAttributes {
 
 impl sqlx::Encode<'_, sqlx::Postgres> for ProjectAttributes {
     fn encode_by_ref(&self, buf: &mut PgArgumentBuffer) -> sqlx::encode::IsNull {
-        (self.bits() as i32).encode_by_ref(buf)
+        <i32 as sqlx::Encode<'_, sqlx::Postgres>>::encode_by_ref(&(self.bits() as i32), buf)
     }
 }
 
