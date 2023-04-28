@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["list_registration_forms_by_project"],"struct":["Record"]};

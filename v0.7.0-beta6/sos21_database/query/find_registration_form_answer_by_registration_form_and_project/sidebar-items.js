@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["find_registration_form_answer_by_registration_form_and_project"]};
