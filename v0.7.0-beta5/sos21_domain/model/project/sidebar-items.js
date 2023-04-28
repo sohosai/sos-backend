@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ContentErrorKind","NewProjectErrorKind"],"mod":["attribute","category","code","description","index","name"],"struct":["ContentError","NewProjectError","NoUpdatePermissionError","Project","ProjectContent","ProjectId"]};

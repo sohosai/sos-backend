@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FromSharingsErrorKind"],"struct":["FileDistributionFiles","FromSharingsError"]};
