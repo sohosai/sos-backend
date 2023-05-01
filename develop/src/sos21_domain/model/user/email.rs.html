@@ -89,6 +89,9 @@
 <a href="#89" id="89">89</a>
 <a href="#90" id="90">90</a>
 <a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::model::email::{<span class="self">self</span>, EmailAddress};
 
 <span class="kw">use </span>thiserror::Error;
@@ -141,7 +144,7 @@
         <span class="kw">let </span>email = EmailAddress::from_string(s.into()).map_err(|err| EmailAddressError {
             inner: EmailAddressErrorInner::InvalidEmailAddress(err),
         })<span class="question-mark">?</span>;
-        <span class="kw">if </span>email.ends_with(<span class="string">&quot;tsukuba.ac.jp&quot;</span>) {
+        <span class="kw">if </span>email.ends_with(<span class="string">&quot;tsukuba.ac.jp&quot;</span>) || email.ends_with(<span class="string">&quot;sohosai.com&quot;</span>) {
             <span class="prelude-val">Ok</span>(UserEmailAddress(email))
         } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(EmailAddressError {
@@ -169,6 +172,7 @@
         <span class="macro">assert!</span>(UserEmailAddress::from_string(<span class="string">&quot;a.b.c@de.fg&quot;</span>).is_err());
         <span class="macro">assert!</span>(UserEmailAddress::from_string(<span class="string">&quot;ab.c@d-e.fg&quot;</span>).is_err());
         <span class="macro">assert!</span>(UserEmailAddress::from_string(<span class="string">&quot;a@s.tsukuba.ac.jp.com&quot;</span>).is_err());
+        <span class="macro">assert!</span>(UserEmailAddress::from_string(<span class="string">&quot;b@sohosai.com.jp&quot;</span>).is_err());
     }
 
     <span class="attr">#[test]
@@ -178,6 +182,8 @@
         <span class="macro">assert!</span>(UserEmailAddress::from_string(<span class="string">&quot;a-c@s.tsukuba.ac.jp&quot;</span>).is_ok());
         <span class="macro">assert!</span>(UserEmailAddress::from_string(<span class="string">&quot;abcde@su.tsukuba.ac.jp&quot;</span>).is_ok());
         <span class="macro">assert!</span>(UserEmailAddress::from_string(<span class="string">&quot;ab.c@coins.tsukuba.ac.jp&quot;</span>).is_ok());
+        <span class="macro">assert!</span>(UserEmailAddress::from_string(<span class="string">&quot;a@external.sohosai.com&quot;</span>).is_ok());
+        <span class="macro">assert!</span>(UserEmailAddress::from_string(<span class="string">&quot;a-b@sohosai.com&quot;</span>).is_ok());
     }
 }
 </code></pre></div>
