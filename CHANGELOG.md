@@ -13,6 +13,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 ### Security
 
+## [0.7.1] - 2023-05-01
+
+### Changed
+- Changed so that accounts can also be created from *.sohosai.com.
+
+## [0.7.0] - 2023-04-23
+
+### Added
+- Planning attributes for indoor projects.
+- Slack notification function for any suspicious JWT access.
+
+### Changed
+- Switch to `sos-backend-infrasturucture` from `sos22` one.
+- Updated to nixpkgs 22.11.
+
+### Removed
+- Online Planning category has been removed.
+
 ## [0.6.2] - 2022-06-26
 
 ### Fixed

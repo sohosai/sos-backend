@@ -15,6 +15,10 @@ with the HTTP API interface being the "public API".
 ### Fixed
 ### Security
 
+## [0.7.1] - 2023-05-01
+
+## [0.7.0] - 2023-04-23
+
 ## [0.6.2] - 2022-06-26
 
 ## [0.6.1] - 2022-06-22
