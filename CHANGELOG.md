@@ -13,6 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 ### Security
 
+## [0.7.1] - 2023-05-01
+
+### Changed
+- Changed so that accounts can also be created from *.sohosai.com.
+
 ## [0.7.0] - 2023-04-23
 
 ### Added
