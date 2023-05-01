@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FromCheckedIdsErrorKind"],"struct":["FormAnswerItemChecks","FromCheckedIdsError"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["run","write_header","write_record","write_user_name_fields"],"macro":["write_field"],"static":["CALLSITE","META"],"struct":["Input","InputCategoryNames","InputFieldNames","WriteRecordInput","WriteUserNameFieldsInput"]};

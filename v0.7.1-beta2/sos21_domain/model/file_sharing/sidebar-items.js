@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["FileSharingScope","FileSharingState","RevokeErrorKind","ToWitnessErrorKind"],"mod":["scope","state"],"struct":["FileSharing","FileSharingContent","FileSharingId","FileSharingWitness","InvalidExpirationDateError","RevokeError","ToWitnessError"]};

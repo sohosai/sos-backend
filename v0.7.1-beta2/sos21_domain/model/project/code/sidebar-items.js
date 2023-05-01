@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ParseCodeErrorKind","ProjectKind"],"struct":["ParseCodeError","ProjectCode"]};
