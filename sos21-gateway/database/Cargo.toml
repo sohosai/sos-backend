@@ -1,7 +1,7 @@
 [package]
 name = "sos21-gateway-database"
-version = "0.6.2"
-authors = ["coord_e <me@coord-e.com>", "azarashi2931 <az@rashi.email>"]
+version = "0.7.1"
+authors = ["coord_e <me@coord-e.com>", "azarashi2931 <az@rashi.email>", "yuseiito <me@yuseiito.com>", "momeemt <me@momee.mt>"]
 edition = "2018"
 readme = "README.md"
 documentation = "https://sohosai.github.io/sos21-backend/sos21_gateway_database/"
