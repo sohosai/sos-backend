@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["mock_registration_form_description","mock_registration_form_name","new_registration_form","new_registration_form_id","new_registration_form_with_items","new_registration_form_with_query"]};

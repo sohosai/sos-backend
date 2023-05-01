@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ShareWithExpirationErrorKind"],"mod":["digest","name","size","type_"],"struct":["File","FileId","NonSharableFileError","ShareWithExpirationError"]};

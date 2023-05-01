@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["file","file_sharing","get","pending_project","project"]};

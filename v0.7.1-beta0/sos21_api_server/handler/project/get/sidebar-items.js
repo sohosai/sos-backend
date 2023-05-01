@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Error","RequestSpecifier"],"fn":["handler","run"],"struct":["Request","Response"]};

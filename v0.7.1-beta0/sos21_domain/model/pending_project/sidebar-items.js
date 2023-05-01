@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["NewPendingProjectErrorKind"],"struct":["NewPendingProjectError","NoUpdatePermissionError","PendingProject","PendingProjectContent","PendingProjectId"]};

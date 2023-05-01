@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["delete","get","list"]};

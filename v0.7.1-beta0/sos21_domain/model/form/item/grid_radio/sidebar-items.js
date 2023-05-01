@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CheckAnswerErrorKind","FromColumnsErrorKind","FromRowsErrorKind","GridRadioFormItemRequired"],"mod":["column","row"],"struct":["CheckAnswerError","FromColumnsError","FromRowsError","GridRadioFormItem","GridRadioFormItemColumns","GridRadioFormItemContent","GridRadioFormItemRows","TooFewColumnsError"]};

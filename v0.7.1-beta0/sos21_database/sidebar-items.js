@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["migrate"],"mod":["command","model","query"]};
