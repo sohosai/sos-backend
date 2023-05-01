@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AnswerErrorKind"],"mod":["description","name"],"struct":["AnswerError","RegistrationForm","RegistrationFormId"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ProjectAttribute","ProjectCategory"],"struct":["Project","ProjectFromEntityInput","ProjectId"]};

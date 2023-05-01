@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["endpoints"],"macro":["route","routes"],"mod":["authentication","error","model"],"struct":["AuthenticationInfo","KeyStore"]};
