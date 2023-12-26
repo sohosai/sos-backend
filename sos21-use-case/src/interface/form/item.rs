@@ -244,6 +244,7 @@ pub fn to_form_item(item: FormItem) -> Result<form::FormItem, FormItemError> {
         FormItemBody::Radio {
             buttons,
             is_required,
+            appearance,
         } => {
             let buttons = buttons
                 .into_iter()
@@ -254,6 +255,7 @@ pub fn to_form_item(item: FormItem) -> Result<form::FormItem, FormItemError> {
             let radio_item = item::RadioFormItem {
                 buttons,
                 is_required,
+                appearance,
             };
             item::FormItemBody::Radio(radio_item)
         }

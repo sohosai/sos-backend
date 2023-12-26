@@ -4,7 +4,7 @@ use crate::model::form::item::{
         GridRadioColumn, GridRadioColumnId, GridRadioColumnLabel, GridRadioRow, GridRadioRowId,
         GridRadioRowLabel,
     },
-    radio::{Radio, RadioFormItemButtons, RadioId, RadioLabel},
+    radio::{Appearance, Radio, RadioFormItemButtons, RadioId, RadioLabel},
     FormItem, FormItemBody, FormItemCondition, FormItemConditions, FormItemDescription, FormItemId,
     FormItemName, FormItems, RadioFormItem,
 };
@@ -85,6 +85,7 @@ pub fn new_radio_form_item_body_with_button(button: Radio) -> FormItemBody {
     FormItemBody::Radio(RadioFormItem {
         buttons: RadioFormItemButtons::from_buttons(vec![button]).unwrap(),
         is_required: true,
+        appearance: Appearance::RadioButton,
     })
 }
 
